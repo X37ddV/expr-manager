@@ -1,0 +1,24 @@
+{
+  "name": "expr",
+  "version": "1.0.0",
+  "description": "表达式解析、计算",
+  "main": "./expr.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/X37ddV/expr.git"
+  },
+  "keywords": [
+    "expr",
+    "javascript"
+  ],
+  "author": "X37ddV <X37ddV@iCloud.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/X37ddV/expr/issues"
+  },
+  "homepage": "https://github.com/X37ddV/expr#readme",
+  "devDependencies": {
+    "webpack": "^1.14.0"
+  }
+}
