@@ -1,0 +1,71 @@
+@import './mixins';
+@import './colors';
+
+$button-background-color: $color-background-0;
+$button-default-color: $color-text-700;
+$button-active-color: $color-background-200;
+$button-border-color: $color-line;
+
+.btn-group {
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+
+  .btn + .btn {
+    margin-left: -1px;
+  }
+}
+
+.btn-group > .btn {
+  float: left;
+  position: relative;
+
+  &:first-child {
+    margin-left: 0;
+
+    &:not(:last-child) {
+      border-bottom-right-radius: 0;
+      border-top-right-radius: 0;
+    }
+  }
+
+  &:last-child {
+    &:not(:first-child) {
+      border-bottom-left-radius: 0;
+      border-top-left-radius: 0;
+    }
+  }
+
+  &:not(:first-child) {
+    &:not(:last-child) {
+      border-radius: 0;
+    }
+  }
+}
+
+.btn-default {
+  background-color: $button-background-color;
+  color: $button-default-color;
+
+  &:active {
+    background-color: $button-active-color;
+  }
+}
+
+.btn {
+  @include user-select(none);
+  background-image: none;
+  border: 1px solid $button-border-color;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 400;
+  margin-bottom: 0;
+  outline: none;
+  padding: 4px 6px;
+  text-align: center;
+  touch-action: manipulation;
+  vertical-align: middle;
+  white-space: nowrap;
+}

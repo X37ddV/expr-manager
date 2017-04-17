@@ -1,0 +1,294 @@
+@import '../../styles/colors';
+
+$result-line: $color-background-200;
+$result-line-content-color: $color-primary;
+$result-line-prompt-color: $color-text-700;
+$result-value-prompt-color: $color-text-500;
+$result-warning-prompt-color: $color-warning;
+$result-row-selected-color: $color-primary;
+$result-row-selected-bkg-color: $color-background-highlight-100;
+$result-row-warning-bkg-color: $color-background-highlight-50;
+$result-style-string-color: $color-warning;
+$result-style-number-color: $color-success;
+$result-expand-color: $color-text-700;
+$result-style-icon-color: $color-background-0;
+
+$result-style-icon-null-color: #cbcbcb;
+$result-style-icon-null-border-color: #999;
+$result-style-icon-number-color: #95b8d9;
+$result-style-icon-number-border-color: #6b89a9;
+$result-style-icon-string-color: #ea979a;
+$result-style-icon-string-border-color: #bd6e72;
+$result-style-icon-object-color: #f5dd96;
+$result-style-icon-object-border-color: #cbb471;
+$result-style-icon-array-color: #94c976;
+$result-style-icon-array-border-color: #7eab65;
+$result-style-icon-date-color: #888af5;
+$result-style-icon-date-border-color: #7375d0;
+$result-style-icon-boolean-color: #bea6c9;
+$result-style-icon-boolean-border-color: #8d7798;
+
+.result-view {
+  bottom: 0;
+  cursor: default;
+  left: 0;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  position: absolute;
+  right: 0;
+  top: 0;
+
+  .result-empty {
+    overflow: hidden;
+  }
+
+  .result-empty,
+  .result-rows,
+  .result-row {
+    width: 100%;
+  }
+
+  .result-row {
+    border-left: 2px solid transparent;
+    border-top: 1px solid $result-line;
+    position: relative;
+
+    &.warning {
+      background-color: $result-row-warning-bkg-color;
+
+      .result-value-prompt {
+        padding-top: 2px;
+
+        path {
+          fill: $result-warning-prompt-color;
+        }
+      }
+    }
+
+    &.selected {
+      background-color: $result-row-selected-bkg-color;
+      border-left-color: $result-row-selected-color;
+    }
+  }
+
+  .result-line-content,
+  .result-value-content {
+    margin-left: 18px;
+  }
+
+  .result-line-content {
+    color: $result-line-content-color;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-wrap: normal;
+  }
+
+  .result-line-content,
+  .result-value {
+    line-height: 18px;
+    padding-top: 1px;
+  }
+
+  .result-value {
+    white-space: nowrap;
+
+    span {
+      display: inline-block;
+    }
+
+    .result-value-expand {
+      display: none;
+      height: 10px;
+      width: 10px;
+    }
+
+    .result-value-type {
+      display: none;
+    }
+
+    &.expanded {
+      .result-value-expand {
+        display: inline-block;
+        margin-right: 2px;
+      }
+
+      .result-value-expand-icon {
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 8px solid $result-expand-color;
+        display: block;
+        margin-top: 2px;
+      }
+
+      .result-value-json {
+        display: none;
+      }
+
+      .result-value-type {
+        display: inline-block;
+      }
+    }
+
+    &.collapsed {
+      .result-value-expand {
+        display: inline-block;
+        margin-right: 2px;
+      }
+
+      .result-value-expand-icon {
+        border-bottom: 5px solid transparent;
+        border-left: 8px solid $result-expand-color;
+        border-top: 5px solid transparent;
+        display: block;
+        margin-top: 1px;
+      }
+
+      .result-value-json {
+        font-style: italic;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        word-wrap: normal;
+      }
+    }
+  }
+
+  .result-value-content {
+    ul {
+      margin: 0;
+      padding: 0;
+
+      .result-prefix-none {
+        ul {
+          margin-left: 8px;
+        }
+      }
+
+      .result-prefix-array {
+        ul {
+          margin-left: 34px;
+        }
+
+        > .nochild {
+          > .result-value-expand {
+            display: none;
+          }
+        }
+      }
+
+      .result-prefix-object {
+        ul {
+          margin-left: 20px;
+        }
+
+        .result-value-expand {
+          display: inline-block;
+          margin-right: 2px;
+        }
+      }
+    }
+
+    li {
+      list-style: none;
+    }
+  }
+
+  .result-line-prompt,
+  .result-value-prompt {
+    left: 0;
+    position: absolute;
+    top: 0;
+  }
+
+  .result-line-prompt {
+    padding: 4px 0 0 2px;
+
+    path {
+      fill: $result-line-prompt-color;
+    }
+  }
+
+  .result-value-prompt {
+    padding: 4px 0 0 1px;
+
+    path {
+      fill: $result-value-prompt-color;
+    }
+
+    circle {
+      fill: $result-value-prompt-color;
+    }
+  }
+
+  .result-style-string {
+    color: $result-style-string-color;
+  }
+
+  .result-style-number {
+    color: $result-style-number-color;
+  }
+
+  .result-style-boolean,
+  .result-style-prop {
+    color: $color-info;
+  }
+
+  .result-style-length,
+  .result-style-default,
+  .result-style-index {
+    color: $color-text-500;
+  }
+
+  .result-style-index {
+    overflow: hidden;
+    padding-right: 6px;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 14px;
+    word-wrap: normal;
+  }
+
+  .result-style-icon {
+    background-color: $result-style-icon-null-color;
+    border: 1px solid $result-style-icon-null-border-color;
+    border-radius: 2px;
+    color: $result-style-icon-color;
+    height: 12px;
+    line-height: 14px;
+    margin-right: 3px;
+    text-align: center;
+    width: 12px;
+
+    &.result-style-icon-number {
+      background-color: $result-style-icon-number-color;
+      border-color: $result-style-icon-number-border-color;
+    }
+
+    &.result-style-icon-string {
+      background-color: $result-style-icon-string-color;
+      border-color: $result-style-icon-string-border-color;
+    }
+
+    &.result-style-icon-object {
+      background-color: $result-style-icon-object-color;
+      border-color: $result-style-icon-object-border-color;
+    }
+
+    &.result-style-icon-array {
+      background-color: $result-style-icon-array-color;
+      border-color: $result-style-icon-array-border-color;
+    }
+
+    &.result-style-icon-date {
+      background-color: $result-style-icon-date-color;
+      border-color: $result-style-icon-date-border-color;
+    }
+
+    &.result-style-icon-boolean {
+      background-color: $result-style-icon-boolean-color;
+      border-color: $result-style-icon-boolean-border-color;
+    }
+  }
+}

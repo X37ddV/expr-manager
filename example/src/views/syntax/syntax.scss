@@ -1,0 +1,149 @@
+@import '../../styles/colors';
+
+$syntax-text: $color-background-0;
+$syntax-virtual-color: $color-warning;
+$syntax-type-color: $color-success;
+$syntax-text-color: $color-info;
+$syntax-error-color: $color-text-500;
+$syntax-line: $color-line;
+$syntax-selected-color: $color-background-highlight-200;
+
+.syntax-view {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+
+  ul {
+    margin: 0;
+    padding: 0;
+
+    ul {
+      margin-left: 20px;
+    }
+  }
+
+  li {
+    line-height: 20px;
+    list-style: none;
+  }
+}
+
+.syntax-col {
+  border-bottom: 1px solid $syntax-line;
+  cursor: default;
+  height: 28px;
+  left: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0 4px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  white-space: nowrap;
+
+  span {
+    display: inline-block;
+    margin-top: 1px;
+    padding-top: 2px;
+    text-align: center;
+    width: 7px;
+
+    &.selected {
+      background-color: $syntax-selected-color;
+      border-radius: 2px;
+    }
+  }
+
+  .token-col-index {
+    color: $syntax-line;
+  }
+}
+
+.syntax-tree {
+  bottom: 0;
+  left: 0;
+  overflow: auto;
+  padding: 4px;
+  position: absolute;
+  right: 0;
+  top: 28px;
+}
+
+.syntax-error {
+  color: $syntax-error-color;
+}
+
+.token-item {
+  color: $syntax-text;
+  cursor: default;
+  display: inline-block;
+  white-space: nowrap;
+
+  span {
+    display: inline-block;
+    line-height: 15px;
+  }
+
+  .token-item-expand {
+    width: 11px;
+
+    .token-item-expand-icon {
+      display: none;
+      height: 0;
+      width: 0;
+    }
+  }
+
+  &.selected {
+    .token-item-index {
+      background-color: $syntax-selected-color;
+      color: $syntax-text-color;
+    }
+  }
+
+  &.expanded {
+    .token-item-expand {
+      .token-item-expand-icon {
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 8px solid $syntax-line;
+        display: block;
+      }
+    }
+  }
+
+  &.collapsed {
+    .token-item-expand {
+      .token-item-expand-icon {
+        border-bottom: 5px solid transparent;
+        border-left: 8px solid $syntax-line;
+        border-top: 5px solid transparent;
+        display: block;
+      }
+    }
+  }
+
+  .token-item-type {
+    background-color: $syntax-type-color;
+    border-radius: 2px;
+    padding: 1px 3px;
+
+    &.virtual {
+      background-color: $syntax-virtual-color;
+    }
+  }
+
+  .token-item-text {
+    background-color: $syntax-text-color;
+    border-radius: 2px;
+    padding: 1px 3px;
+  }
+
+  .token-item-index {
+    background-color: $syntax-line;
+    border-radius: 2px;
+    padding: 1px 3px;
+  }
+}

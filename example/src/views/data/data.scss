@@ -1,0 +1,60 @@
+@import '../../styles/colors';
+@import '../../styles/easygrid';
+
+$data-color: $color-text-600;
+$data-line-color: $color-line;
+
+.data-view {
+  bottom: 0;
+  color: $data-color;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+
+  .data-grid-edit {
+    border: 0;
+    bottom: 0;
+    font-size: 12px;
+    left: 0;
+    outline: none;
+    padding: 0 4px;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}
+
+.data-grid0 {
+  height: 50%;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.data-grid-sub {
+  border-top: 1px solid $data-line-color;
+  bottom: 0;
+  height: 50%;
+  left: 0;
+  position: absolute;
+  right: 0;
+}
+
+.data-grid1 {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 50%;
+}
+
+.data-grid2 {
+  border-left: 1px solid $data-line-color;
+  bottom: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 50%;
+}

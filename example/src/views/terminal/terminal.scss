@@ -1,0 +1,128 @@
+@import '../../styles/mixins';
+@import '../../styles/colors';
+
+$terminal-dropdown-bkg-shadow: $color-background-shadow;
+$terminal-dropdown-bkg-shadow-inset: $color-background-shadow-inset;
+$terminal-dropdown-select-bkg-color: $color-success;
+$terminal-dropdown-select-color: $color-background-0;
+$terminal-cursor-color: $color-background-highlight-200;
+$terminal-suggest-color: $color-text-500;
+$terminal-selected-color: $color-background-highlight-200;
+$terminal-selected-blur-color: $color-background-200;
+$terminal-dropdown-bkg-color: $color-background-transparent-0;
+$terminal-dropdown-line-color: $color-line;
+
+@keyframes cursor {
+  0% {
+    background-color: $terminal-cursor-color;
+  }
+
+  25% {
+    background-color: $terminal-cursor-color;
+  }
+
+  26% {
+    background-color: transparent;
+  }
+
+  75% {
+    background-color: transparent;
+  }
+
+  76% {
+    background-color: $terminal-cursor-color;
+  }
+
+  100% {
+    background-color: $terminal-cursor-color;
+  }
+}
+
+.terminal-view {
+  height: 100%;
+  width: 100%;
+
+  .terminal-tpyer-hidden {
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+    top: 8px;
+
+    .terminal-typer {
+      border: 0;
+      left: 0;
+      margin: 0;
+      padding: 0;
+      position: absolute;
+      right: 6px;
+      top: 0;
+    }
+  }
+
+  .terminal-text {
+    cursor: text;
+    overflow: hidden;
+    padding: 8px 0;
+    white-space: nowrap;
+    width: 100%;
+
+    &.terminal-focus {
+      span {
+        &.cursor {
+          @include animation(cursor 1s linear infinite);
+          background-color: $terminal-cursor-color;
+        }
+
+        &.selected {
+          background-color: $terminal-selected-color;
+        }
+
+        &.suggest {
+          color: $terminal-suggest-color;
+        }
+      }
+    }
+
+    span {
+      display: inline-block;
+      height: 12px;
+      min-width: 6px;
+      text-align: center;
+      vertical-align: top;
+
+      &.selected {
+        background-color: $terminal-selected-blur-color;
+      }
+    }
+  }
+}
+
+.terminal-suggest {
+  @include box-shadow($terminal-dropdown-bkg-shadow);
+  background-color: $terminal-dropdown-bkg-color;
+  border: 1px solid $terminal-dropdown-line-color;
+  border-radius: 6px;
+  bottom: 22px;
+  display: none;
+  left: 0;
+  margin: 0;
+  max-height: 160px;
+  min-width: 100px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  padding: 0;
+  position: absolute;
+  top: auto;
+
+  li {
+    list-style: none;
+    padding: 2px 8px;
+
+    &.selected {
+      @include box-shadow($terminal-dropdown-bkg-shadow-inset);
+      background-color: $terminal-dropdown-select-bkg-color;
+      color: $terminal-dropdown-select-color;
+    }
+  }
+}

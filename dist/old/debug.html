@@ -1,0 +1,419 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <style type="text/css">
+        body {
+            font-size: 12px;
+            font-family: Courier,monospace;
+        }
+        #demoData div.collapsed table{/*实体前的+号*/
+            display: none;
+        }
+        #demoData tr.collapsed + tr{/*记录前的+号*/
+            display: none;
+        }
+        .nav, .tokenNav, .rowNav {
+            cursor: pointer;
+        }
+        table {
+            border-spacing: 0px;
+        }
+    </style>
+    <title>ExpreDebug</title>
+    <script src="../../node_modules/jquery/dist/jquery.js"></script>
+    <script src="../../node_modules/moment/moment.js"></script>
+    <script src="../../node_modules/decimal.js/decimal.js"></script>
+    <script type="text/javascript" src="../expr.js"></script>
+    <script type="text/javascript" src="demoData.js"></script>
+    <script type="text/javascript">
+        function encode(v) {
+            return v === undefined ? "undefined" : window.JSON.stringify(v);
+        }
+        function htmlEncode(v) {
+            return $('<div/>').text(v).html();
+        }
+        window.ExprManager = new expr();
+    </script>
+    <!-- 解析表达式 -->
+    <script type="text/javascript">
+        function getSyntaxTree(expr, v) {
+            /// <summary>用树状结构Html显示解析表达式所得的语法树</summary>
+            var n = 0; // 递增，将tokenNav和对应的tokenDiv绑定起来
+            var fn = function (input, level) {
+                /// <summary> 递归函数，深度优先遍历语法树</summary>
+                var s = "";
+                for (var i = 0; i < level; i++) {
+                    s += "<span style='color:#ddd;'>&nbsp;</span>";
+                }
+                if (input.childs && input.childs.length > 0) { // 有子节点
+                    s += "<span class='tokenNav' id='tokenNav" + (++n) + "'>-</span>";
+                }
+                var col = "", c;
+                if (input.tokenType.split("")[0] == "V") { // 虚节点
+                    c = "ff0000";
+                } else { // 实结点，显示token结点在字符串中的起始位置
+                    col = "<span style='font-size:small;'>&nbsp;column:" + input.tokenIndex + "</span>";
+                    c = "0000ff";
+                }
+                s += "&nbsp;" + htmlEncode(input.tokenText) + "<span style='color:#" + c + ";'>" + input.tokenType + "</span>" + col + "<br/>";
+
+                if (input.childs && input.childs.length > 0) { // 有子节点
+                    s += "<div id='tokenDiv" + n + "' style='display:block'>"
+                    for (i = 0; i < input.childs.length; i++) {
+                        s += fn(input.childs[i], level + 1); // 层级加1，按顺序遍历子节点
+                    }
+                    s += "</div>";
+                }
+                return s;
+            };
+
+            var log = [];
+            if (v.errorMsg !== "") { // 分析或计算出错
+                log.push(expr);
+                log.push("<br/>=====================================");
+                log.push("<br/><span style='color:#f00;'>" + v.errorMsg + "</span>"); //显示错误信息
+            } else {
+                var tree = [];
+                // 表达式原样输出
+                tree.push("<span style='color:#00f;'>" + htmlEncode(expr) + "</span>");
+                // 用于对齐
+                var column = "";
+                for (i = 0; i < expr.length; i++) {
+                    column += ((i + 1) + "").split("").pop() + "";
+                }
+                tree.push("<span style='color:#9c9c9c;'>" + htmlEncode(column) + "</span>");
+                // 解析所得的tokens数组
+                var s = "";
+                for (var i = 0; i < v.tokens.length; i++) {
+                    var t = v.tokens[i];
+                    var n = (t.tokenIndex - s.length - 1);
+                    while (n > 0) {
+                        s += " ";
+                        n--;
+                    }
+                    s += v.tokens[i].tokenText;
+                }
+                tree.push(htmlEncode(s));
+                tree.push("");
+                // 表达式计算结果
+                if (v.type == 'string') {
+                    tree.push("<span style='color:#00f;'>\"</span>" + htmlEncode(v.toValue()) + "<span style='color:#00f;'>\"</span>");
+                } else {
+                    tree.push(encode(v.toValue()));
+                }
+                tree.push("<span style='color:#555;'>type:" + v.type + "</span>");
+                tree.push("<span style='color:#555;'>entity:" + (v.entity ? v.entity.fullName : "") + "</span>");
+
+                tree.push("<br/>=====================================");
+                tree.push(fn(v.rootToken, 0)); // 递归生成树状Html文本
+                log.push(tree.join("<br/>"));
+            }
+            log.push("<br/>=====================================");
+            return log.join("");
+        }
+        function calculate() {
+            /// <summary>分析、计算输入的表达式</summary>
+            var expr = document.getElementById("exprtext").value;
+            var tree = document.getElementById("exprtree");
+            var value = ExprManager.calcExpr(expr, "E1", window.dataCursor);
+            tree.innerHTML = getSyntaxTree(expr, value);
+            // 展开和折叠token树
+            $(".tokenNav").on("click", function () {
+                if (this.innerHTML == "+") {
+                    $("#tokenDiv" + this.id.slice(8)).show();
+                    this.innerHTML = "-";
+                } else {
+                    $("#tokenDiv" + this.id.slice(8)).hide();
+                    this.innerHTML = "+";
+                }
+            });
+        }
+        function calculateDependencies() {
+            /// <summary>计算依赖关系</summary>
+            var expr = document.getElementById("exprtext").value;
+            var tree = document.getElementById("exprtree");
+            var value = ExprManager.calcDependencies(expr, "E1");
+            tree.innerHTML = value.errorMsg + "<br/>" + (value.dependencies ? value.dependencies.join("<br/>") : "");
+        }
+    </script>
+    <!-- 显示数据 -->
+    <script type="text/javascript">
+        function showDemoData(id, data, dataContext) {
+            /// <summary>显示演示数据</summary>
+            var demoData = document.getElementById(id);
+            var html = "";
+            for (var entityName in data) { // 遍历data中的每个实体E1,E2 。。。,E1为数组
+                html += genDemoData(entityName, data[entityName], dataContext[entityName]);
+            }
+            demoData.innerHTML = html;
+        }
+        function genDemoData(entityName, entityData, entityContext) {
+            /// <summary>生成Html标签以显示演示数据</summary>
+            var colors = ['#E3E3E3', '#D3D3D3']; // 表头背景色，交替显示以区分各列
+            var fn = function (entityName, entityData, entityContext, level) {
+                var fieldLength = 1; // 该实体普通数据字段个数
+                // 生成折叠标记，记录实体名
+                var h = "<div class='collapsed' style='margin-left:"+level*20+"px;'><span class='nav'>+</span>&nbsp;<span style='font-weight:bold;'>" + entityName + "</span><br/>";
+                // 生成表头
+                h += "<table width='100%'><thead><tr><th style='background-color: #E3E3E3;width:10px;'>&nbsp;</th>";
+                for (var fieldName in entityContext.fields) {
+                    fieldLength++;
+                    h += "<th style='background-color: " + colors[fieldLength % 2] + "'>" + fieldName + "(<span style='font-size:xx-middle;color:red;'>" +
+                            entityContext.fields[fieldName].type.split("")[0].toUpperCase() + "</span>)</th>";
+                }
+                h += "</tr></thead><tbody>";
+                // 遍历该实体的每条记录
+                var subEntityNames = [], subEntityDatas = [], subEntityContexts = [];
+                for (var i = 0; i < entityData.length; i++) {
+                    var recordHtml = "";
+                    var record = entityData[i];
+                    subEntityNames.length = 0; // 清空子实体名称数组
+                    subEntityDatas.length = 0;  // 清空子实体数据数组
+                    subEntityContexts.length = 0; // 清空子实体数据上下文数组
+
+                    for (var fieldName in record) {
+                        if (entityContext.childs && entityContext.childs[fieldName]) {
+                            subEntityNames.push(entityName + " -> " + fieldName);
+                            subEntityDatas.push(record[fieldName]);
+                            subEntityContexts.push(entityContext.childs[fieldName]);
+                        } else { // 普通数据字段
+                            recordHtml += "<td><span style='color:blue;'>" + encode(record[fieldName]) + "</span></td>";
+                        }
+                    }
+                    if (subEntityNames.length != 0) {
+                        h += "<tr class='collapsed'><td><span class='rowNav'>+</span></td>" + recordHtml +
+                        "</tr><tr><td colspan='" + fieldLength + "'>";
+                        for (var j = 0; j < subEntityDatas.length; j++) {
+                            h += fn(subEntityNames[j], subEntityDatas[j], subEntityContexts[j], level+1);
+                        }
+                        h += "</td></tr>";
+                    } else {
+                        h += "<tr><td>&nbsp;</td>" + recordHtml + "</tr>";
+                    }
+                }
+                return h + "</tbody></table></div>";
+            }
+            return fn(entityName, entityData, entityContext, 0);
+        }
+    </script>
+    <!-- 显示上下文变量 -->
+    <script type="text/javascript">
+        function showDemoContext(id, context) {
+            /// <summary>显示上下文变量</summary>
+            var demoContext = document.getElementById(id);
+            var html = genDemoContext(context);
+            demoContext.innerHTML = html;
+        }
+        function genDemoContext(context) {
+            /// <summary>生成Html标签以显示上下文变量</summary>
+            var h = "";
+            for (var i in context) {
+                h += "<b>" + i + ":</b><span>&nbsp;" + context[i] + "</span><br/>";
+            }
+            return h;
+        }
+    </script>
+    <!-- 显示函数列表 -->
+    <script type="text/javascript">
+        function showFunction(id) {
+            /// <summary>显示函数列表</summary>
+            var funcList = document.getElementById(id);
+            var html = genFuncList(window.SysFunctionComent ? window.SysFunctionComent : window.ExprManager.getFunction());
+            funcList.innerHTML = html;
+        }
+        function genFuncList(func) {
+            /// <summary>生成Html标签以显示func中的所有函数</summary>
+            var h = "";
+            for (var i in func) { // 遍历func包括的所有数据类型
+                var f = func[i];
+                var t = i == "" ? "" : i.substring(0, 1).toUpperCase() + i.substring(1) + ".";
+                for (var j in f) { // 遍历某数据类型的所有成员函数
+                    var x = f[j];
+                    var l = x.getLocale();
+                    var summary = l.fn;
+                    var ret = "返回:" + l.r;
+                    var paramStr = "";
+                    for (var k = 0; k < l.p.length; k++) {
+                        var color = Math.round(k / 2) * 2 == k ? "d79" : "e91"; // 颜色交替显示
+                        var v = l.p[k];
+                        var n = "参数";
+                        if (v.indexOf("?") == v.length - 1) {
+                            v = v.replace("?", "");
+                            n = "可选" + n;
+                        }
+                        paramStr += "&nbsp;<span style='color:#" + color + ";'>" + n + (k + 1) + ":" + v + "</span>";
+                    }
+                    h += "<span style='color:#55d;'>" + x.r + "</span>&nbsp;" + t + "<b>" + j + "</b>(" + x.p.join(",&nbsp;") + ")&nbsp;<span style='color:#3F7F00;'>" + summary + "</span>" + paramStr
+                        + "&nbsp;<span style='color:#7A1F00;'>" + ret + "</span>" + "<br/>";
+                }
+            }
+            return h;
+        }
+    </script>
+    <!-- 为控件绑定事件 -->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            window.ExprManager.init(window.data, window.dataContext, window.context);
+            showDemoData("demoData", window.data, window.dataContext);
+            showDemoContext("demoContext", window.context);
+            showFunction("funcList");
+            
+            $("#btnCalc").on("click", function () {
+                calculate();
+            });
+            $("#btnCalcDependencies").on("click", function () {
+                calculateDependencies();
+            });
+            $("#exprtext").on("keypress", function (e) {
+                if (e.keyCode == 13) { // 回车键
+                    calculate();
+                }
+            });
+            $("#btnConsole").on("click", function () {
+                window.open("../index.html");
+            });
+            $("#btnTestExpressions").on("click", function () {
+                window.open("test_expressions.html");
+            });
+            $("#btnTestDependencies").on("click", function () {
+                window.open("test_dependencies.html");
+            });
+            // 展开和折叠数据
+            $(".nav").on("click", function () {
+                if (this.innerHTML == "+") {
+                    this.innerHTML = "-";
+                    $(this.parentNode).removeClass("collapsed");
+                } else {
+                    this.innerHTML = "+";
+                    $(this.parentNode).addClass("collapsed");
+                }
+            });
+            $(".rowNav").on("click", function () {
+                if (this.innerHTML == "+") {
+                    this.innerHTML = "-";
+                    $(this.parentNode.parentNode).removeClass("collapsed");
+                } else {
+                    this.innerHTML = "+";
+                    $(this.parentNode.parentNode).addClass("collapsed");
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <fieldset>
+        <legend>Test</legend>
+        <input id="exprtext" type="text" style="width: 500px;" value='Root().E1[0].Entity1.Sum("ID")' />
+        <input id="btnCalc" type="button" value="Calc" />
+        <input id="btnCalcDependencies" type="button" value="CalcDependencies" />
+        <input id="btnConsole" type="button" value="Console" />
+        <input id="btnTestExpressions" type="button" value="TestExpressions" />
+        <input id="btnTestDependencies" type="button" value="TestDependencies" />
+        <h3>
+            Result:</h3>
+        <div id="exprtree">
+        </div>
+    </fieldset>
+    <br />
+    <fieldset>
+        <legend>Data</legend>
+        <div id="demoData">
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>$C</legend>
+        <div id="demoContext">
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>ValueType</legend><b>string</b><span>&nbsp;&rarr;&nbsp;"string1"&nbsp;'string2'</span><br />
+        <b>number</b><span>&nbsp;&rarr;&nbsp;1&nbsp;-1&nbsp;1.23&nbsp;-1.23</span><br />
+        <b>boolean</b><span>&nbsp;&rarr;&nbsp;true&nbsp;false</span><br />
+        <b>date</b><span>&nbsp;&rarr;&nbsp;Now()</span><br />
+        <b>object</b><span>&nbsp;&rarr;&nbsp;{a:1,b:2}&nbsp;{a:"1",b:"2"}</span><br />
+        <b>array</b><span>&nbsp;&rarr;&nbsp;[1,2]&nbsp;["1","2"]</span><br />
+        <b>null</b><span>&nbsp;&rarr;&nbsp;null</span><br />
+    </fieldset>
+    <fieldset>
+        <legend>PriorityLevel</legend><span>.&nbsp;[]&nbsp;()&nbsp;{}</span><br />
+        <span>+&nbsp;-&nbsp;!</span><br />
+        <span>*&nbsp;/&nbsp;%</span><br />
+        <span>+&nbsp;-</span><br />
+        <span><&nbsp;<=&nbsp;>&nbsp;>=&nbsp;==&nbsp;!=</span><br />
+        <span>&&</span><br />
+        <span>||</span><br />
+        <span>:</span><br />
+        <span>,</span><br />
+    </fieldset>
+    <fieldset>
+        <legend>Functions</legend>
+        <div id="funcList">
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>Others</legend>
+        <ul>
+            <li>SysFunction: String.ToDate() String.ToDate(format) format:<a href="http://docs.sencha.com/ext-js/3-4/#!/api/Date">http://docs.sencha.com/ext-js/3-4/#!/api/Date</a></li>
+            <li>SysFunction: Date.ToString() Date.ToString(format) format:<a href="http://www.php.net/date">http://www.php.net/date</a></li>
+        </ul>
+    </fieldset>
+    <fieldset>
+        <legend>Upgrade</legend>
+        <ul>
+            <li>【新】函数调用方式模仿Linq，例如：Entity1.Where("ID>102").Sum("P1")【旧】函数调用方式为“平板”式，例如：Sum("Entity1",
+                "P1", "ID>102")</li>
+            <li>【新】支持对象，例如：{en:"English",zh_CN:"中文简体",zh_TW:"中文繁體"}</li>
+            <li>【新】支持集合，例如：[1,2]</li>
+            <li>【新】集合加减运算：[1,2]+[3]、[1,2]-[2]</li>
+            <li>【新】访问实体根对象：Root()、Root().E1、Root().E1[0]、Root().E1[0].ID</li>
+            <li>【新】当前实体父实体：Parent()、Parent().E2[0].ID</li>
+            <li>【新】指定实体父实体：Entity1.Parent()</li>
+            <li>【新】$0、$1、$2...标识参数，等价于Lambda的传入参数，例如：Entity1.Sum("$0.P1")，$0是可以省略的，例如：Entity1.Sum("P1")</li>
+        </ul>
+    </fieldset>
+    <fieldset>
+        <legend>Todo</legend>
+        <ul>
+            <li>集合相关函数待补全</li>
+            <li>局部解析，动态提示</li>
+            <li>报错更准确</li>
+        </ul>
+    </fieldset>
+    <fieldset>
+        <legend>更改</legend>
+        <ul>
+            <li>更正Where函数和Distinct函数返回值调用Parent()出错的问题，添加Root().E1[1].Entity1.Where("ID!=102")[0].Parent()和Root().E1[1].Entity1.Distinct()[0].Parent()两个用例</li>
+            <li>添加string类型的Replace函数和ReplaceReg函数，分别支持字符串匹配替换和正则表达式匹配替换，添加测试用例</li>
+            <li>去掉entity.parentEntity字段，为ExprValue对象新增parentObj字段，更正Root().E1[1].Entity1[0].Parent()返回值不正确的问题</li>
+            <li>调用BigDecimal的方法处理Number类型的abs，trunc,Ceil,Floor操作</li>
+            <li>更正在测试数据中加入array类型字段后，显示数据时会将该字段误认为子实体的问题</li>
+            <li>在比较对象时，两个值为undefined的同名属性被视为相等，Root().E1[0]==Root().E1[0]返回true</li>
+            <li>去掉解析过程中结点的prevToken和nextToken属性，减少内存占用</li>
+            <li>修改doGetVariableValue函数，更正{x:23,"$0":"nbgnbv"}["$0"],{x:23,"$0":"nbgnbv"}[""],{x:1}.$C结果出错的问题</li>
+            <li>更改测试用例，屏蔽js自带的length属性访问，只允许通过Count()方法获取数组元素个数</li>
+            <li>设置在计算中，只允许object类型的对象使用.访问属性，如123.x,[1,2].x都会报错</li>
+            <li>更正[1,2,3][2]这样数组作为VTK_SUBSCRIPT第一个孩子结点时报错的问题</li>
+            <li>确定PN5.ToString()这样null结点调用函数统一报错</li>
+            <li>更正[23,45,6,32][2,4,5]下标中出现逗号分隔符没报错的问题</li>
+            <li>更正Root()["E1"]报错了的问题</li>
+            <li>修改语法树显示部分，可以折叠和展开</li>
+            <li>更正调用js自带函数(如:123.toString())出错的问题</li>
+            <li>修改2+(),().a形式的空括号将报错，不再生成undefined结点</li>
+            <li>更正(1,2,3)没报错的问题，()不是参数列表时不允许出现","分隔符</li>
+            <li>更正数字与字符串相加(如:"g"+43)没报错的问题</li>
+            <li>ExprLexer解析字符串token时支持unicode字符(如\u5230),十六进制数(如\x35),八进制数(如\155)</li>
+            <li>更正解析字符串'\'没有报错的问题</li>
+            <li>修改(2)或((2+4))求值出错的问题</li>
+            <li>更正转义符解析出错的问题</li>
+            <li>对语法树做运算关系正确性检查时，子节点若报错，父节点直接返回false不再检查</li>
+            <li>将String类型Token结点的检验提前到ExprLexer阶段，并修正最后一个字符为引号如：'ab'+'时没报错的问题</li>
+            <li>将表达式的前后依赖关系和括号匹配检查提前到ExprLexer部分</li>
+            <li>对将要放入缓存的表达式做简单的trim()处理，防止头/尾部的空格导致需要重新解析</li>
+            <li>对不含有效Token结点的空表达式，直接返回“表达式不能为空”错误提示</li>
+            <li>修正函数列表中重载函数的参数注释显示不正确的问题</li>
+            <li>正确的解析负号，负号的优先级要高于乘号。例如：2*-6应等于-12，而不是报错</li>
+        </ul>
+    </fieldset>
+</body>
+</html>

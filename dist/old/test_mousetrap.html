@@ -1,0 +1,205 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+    <title>test mousetrap</title>
+    <link rel="icon" type="image/x-icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../node_modules/normalize.css/normalize.css">
+    <script src="../../node_modules/underscore/underscore.js"></script>
+    <script src="../../node_modules/underscore.string/dist/underscore.string.js"></script>
+    <script src="../../node_modules/mousetrap/mousetrap.js"></script>
+    <script src="../../node_modules/jquery/dist/jquery.js"></script>
+</head>
+
+<body class="hotkeys">
+    <input name="message" class=""></input>
+    <div class="div1 hotkeys">
+        <div class="div2 hotkeys">
+            <div class="div3 hotkeys">
+
+            </div>
+        </div>
+    </div>
+    <script>
+        var el = $("body").get(0);//
+        var tmp = new Mousetrap(el);
+        var tmp2 = new Mousetrap($("input").get(0));
+        var d = {};
+        var element = $(el);
+        
+        tmp.bind(['b', 'a'], function(e, c) {
+            window.console.log("a");
+        });
+        tmp2.bind(['a'], function(e, c) {
+            window.console.log("aa");
+        });
+        tmp.bind('esc', function() {
+            window.console.log("esc");
+        });
+        tmp2.stopCallback = function(e, element, combo) {
+            return 
+                !("INPUT" === element.tagName || "SELECT" === element.tagName || "TEXTAREA" === element.tagName ||
+                element.contentEditable && "true" === element.contentEditable);
+        };
+
+        tmp.stopCallback = function(e, element, combo) {
+            return "esc" === combo ? false :
+                "INPUT" === element.tagName || "SELECT" === element.tagName || "TEXTAREA" === element.tagName ||
+                element.contentEditable && "true" === element.contentEditable;
+        };
+    </script>
+</body>
+
+</html>
+
+<!--
+interface IHotkeys {
+    [key: string]: string | { (eventObject: JQueryEventObject): void };
+}
+
+interface IView {
+    hotkeys: IHotkeys;
+    preventHotkeys: Array<string>;
+    $el: JQuery;
+    currentView: IView;
+}
+
+let c = [].slice;
+let g = {};
+let emptyFn = () => { return; };
+
+let body = $("body").data("hotkeys", {});
+Mousetrap.stopCallback = (e: ExtendedKeyboardEvent, element: HTMLElement, combo: string) => {
+    return "esc" === combo ? false :
+        "INPUT" === element.tagName || "SELECT" === element.tagName || "TEXTAREA" === element.tagName ||
+        element.contentEditable && "true" === element.contentEditable;
+};
+let e = (a, key) => {
+    let el;
+    let f;
+    for (el = g[key][0]; !el.data("hotkeys"); ) {
+        g[key].shift();
+        el = g[key][0];
+    }
+    f = el.data("hotkeys")[key];
+    return f ? f(a, key) : el === body ? Mousetrap.unbind(key) : void 0;
+};
+export default {
+    add: (view: IView) => {
+        if (view && view.hotkeys) {
+            let hotkeys = _.clone(view.hotkeys);
+            let f = view.$el || body;
+            _.each(view.preventHotkeys, (k) => {
+                return hotkeys[k] = emptyFn;
+            });
+            _.each(hotkeys, (h, j) => {
+                let k = view.currentView;
+                if (k) {
+                    let l = k.hotkeys;
+                    if (l ? !l[j] : !0) {
+                        if (!_.isFunction(h)) {
+                            h = view[h];
+                        }
+                        if (h && _.isFunction(h)) {
+                            h = _.bind(h, c);
+                            let keys = j.split("|");
+                            _.each(keys, (c) => {
+                                hotkeys[c] = h;
+                                Mousetrap.bind(c, e);
+                                if (!g[c]) {
+                                    g[c] = [body];
+                                }
+                                if (f !== body) {
+                                    g[c] = _.without(g[c], f);
+                                    g[c].unshift(f);
+                                }
+                            });
+                        } else {
+                            delete hotkeys[j];
+                        }
+                    }
+                }
+            });
+            if (f === body) {
+                _.extend(body.data("hotkeys"), hotkeys);
+            } else {
+                f.data("hotkeys", hotkeys);
+            }
+        }
+        return this;
+    },
+    remove: () => {
+        let b;
+        let e = arguments[0];
+        let f;
+        let h = 2 <= arguments.length ? c.call(arguments, 1) : [];
+        let i;
+        if (e) {
+            i = !h.length;
+            b = e.$el || body;
+            f = b.data("hotkeys");
+            if (i) {
+                h = _.keys(e.hotkeys || {});
+            }
+            if (f) {
+                _.each(h, (c) => {
+                    delete f[c];
+                    return i && !b === body ? g[c] = _.without(g[c], b) : void 0
+                });
+            }
+        }
+        return this;
+    },
+    reset: () => {
+        Mousetrap.reset();
+        body.data("hotkeys", {});
+        g = {};
+        return this;
+    }
+};
+
+
+// define("lib/hotkey", ["jquery", "underscore", "mousetrap"], function ($, a, b) {
+//     var c = [].slice;
+//     var d, e, f, g, h;
+
+//     d = $("body").data("hotkeys", {});
+//     g = {};
+//     h = function () { };
+//     b.stopCallback = function (a, b, c) {
+//         return "esc" === c ? !1 : "INPUT" === b.tagName || "SELECT" === b.tagName || "TEXTAREA" === b.tagName || b.contentEditable && "true" === b.contentEditable
+//     };
+//     e = function (a, c) {
+//         var e, f;
+//         for (e = g[c][0]; !e.data("hotkeys");) g[c].shift(), e = g[c][0];
+//         return f = e.data("hotkeys")[c], f ? f(a, c) : e === d ? b.unbind(c) : void 0
+//     };
+//     f = {
+//         add: function (c) {
+//             var f, i;
+//             return c || c.hotkeys ? (i = a.clone(c.hotkeys), f = c.$el || d, a.each(c.preventHotkeys, function (a) {
+//                 return i[a] = h
+//             }), a.each(i, function (h, j) {
+//                 var k, l;
+//                 if (null != (k = c.currentView) && null != (l = k.hotkeys) ? !l[j] : !0) return a.isFunction(h) || (h = c[h]), h && a.isFunction(h) ? (h = a.bind(h, c), j = j.split("|"), a.each(j, function (c) {
+//                     return i[c] = h, b.bind(c, e), g[c] || (g[c] = [d]), f !== d ? (g[c] = a.without(g[c], f), g[c].unshift(f)) : void 0
+//                 })) : delete i[j]
+//             }), f === d ? a.extend(d.data("hotkeys"), i) : f.data("hotkeys", i), this) : this
+//         },
+//         remove: function () {
+//             var b, e, f, h, i;
+//             return e = arguments[0], h = 2 <= arguments.length ? c.call(arguments, 1) : [], e ? (i = !h.length, b = e.$el || d, f = b.data("hotkeys"), i && (h = a.keys(e.hotkeys || {})), f && a.each(h, function (c) {
+//                 return delete f[c], i && !b === d ? g[c] = a.without(g[c], b) : void 0
+//             }), this) : this
+//         },
+//         reset: function () {
+//             return b.reset(), d.data("hotkeys", {}), g = {}, this
+//         }
+//     }
+
+//     return f;
+// });-->

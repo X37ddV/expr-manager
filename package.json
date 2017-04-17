@@ -1,9 +1,15 @@
 {
   "name": "expr",
-  "version": "1.0.0",
-  "description": "表达式解析、计算",
-  "main": "./expr.js",
-  "scripts": {},
+  "version": "0.0.1",
+  "description": "表达式解析及计算",
+  "main": "./dist/expr.js",
+  "types": "./dist/expr.d.js",
+  "scripts": {
+    "start": "lite-server -c bs.config.json & rollup -c example/rollup.config.js -w",
+    "watch": "rollup -c example/rollup.config.js -w",
+    "build": "rollup -c rollup.config.js & rollup -c example/rollup.config.js",
+    "test": "ava"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/X37ddV/expr.git"
@@ -18,7 +24,31 @@
     "url": "https://github.com/X37ddV/expr/issues"
   },
   "homepage": "https://github.com/X37ddV/expr#readme",
+  "dependencies": {
+    "@types/decimal.js": "^0.0.29",
+    "@types/moment": "^2.13.0",
+    "decimal.js": "^7.2.0",
+    "moment": "^2.18.1"
+  },
   "devDependencies": {
-    "webpack": "^1.14.0"
+    "@types/jquery": "^2.0.41",
+    "@types/mousetrap": "^1.5.33",
+    "@types/underscore": "^1.8.0",
+    "@types/underscore.string": "^0.0.30",
+    "ava": "^0.19.1",
+    "jquery": "^3.2.1",
+    "lite-server": "^2.3.0",
+    "mousetrap": "^1.6.1",
+    "normalize.css": "^6.0.0",
+    "rollup": "^0.41.6",
+    "rollup-plugin-json": "^2.1.1",
+    "rollup-plugin-sass": "^0.4.10",
+    "rollup-plugin-string": "^2.0.2",
+    "rollup-plugin-typescript": "^0.8.1",
+    "rollup-plugin-uglify": "^1.0.1",
+    "rollup-watch": "^3.2.2",
+    "typescript": "^2.2.2",
+    "underscore": "^1.8.3",
+    "underscore.string": "^3.3.4"
   }
 }

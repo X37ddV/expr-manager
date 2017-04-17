@@ -1,0 +1,147 @@
+@import '../../styles/mixins';
+@import '../../styles/button';
+
+$header-line-color: $color-line;
+$header-bkg-color: $color-background-200;
+$header-color: $color-text-700;
+$header-height: 36px;
+$console-size: 260px;
+
+.main-view {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+
+  &.show-all {
+
+    .main-split {
+      display: block;
+    }
+
+    &.layout-horizontal {
+      .main-data {
+        bottom: 0;
+        right: $console-size;
+      }
+
+      .main-console {
+        border-left: 1px solid $header-line-color;
+        top: $header-height + 1;
+        width: $console-size;
+      }
+
+      .main-split {
+        bottom: 0;
+        cursor: col-resize;
+        right: $console-size - 2;
+        top: $header-height;
+        width: 4px;
+      }
+    }
+
+    &.layout-vertical {
+      .main-data {
+        bottom: $console-size;
+        right: 0;
+      }
+
+      .main-console {
+        border-top: 1px solid $header-line-color;
+        height: $console-size;
+        left: 0;
+      }
+
+      .main-split {
+        bottom: $console-size - 30 + 2;
+        cursor: row-resize;
+        height: 30px;
+        left: 73px;
+        right: 0;
+      }
+    }
+  }
+
+  &.hide-data {
+    .main-data {
+      display: none;
+    }
+
+    .main-console {
+      left: 0;
+      top: $header-height + 1;
+    }
+  }
+
+  &.hide-console {
+    .main-data {
+      bottom: 0;
+      right: 0;
+    }
+
+    .main-console {
+      display: none;
+    }
+  }
+
+  &.none-select {
+    @include user-select(none);
+
+    &.layout-horizontal {
+      cursor: col-resize;
+    }
+
+    &.layout-vertical {
+      cursor: row-resize;
+    }
+  }
+}
+
+.main-header {
+  background-color: $header-bkg-color;
+  border-bottom: 1px solid $header-line-color;
+  color: $header-color;
+  height: $header-height;
+  position: relative;
+  width: 100%;
+
+  .main-header-title {
+    font-size: 24px;
+    padding-left: 8px;
+    padding-top: 6px;
+  }
+
+  .main-header-layouts {
+    position: absolute;
+    right: 8px;
+    top: 6px;
+  }
+
+  .main-header-actions {
+    position: absolute;
+    right: 110px;
+    top: 6px;
+
+    button {
+      padding-bottom: 1px;
+    }
+  }
+}
+
+.main-data {
+  left: 0;
+  position: absolute;
+  top: $header-height + 1;
+}
+
+.main-console {
+  bottom: 0;
+  position: absolute;
+  right: 0;
+}
+
+.main-split {
+  display: none;
+  position: absolute;
+}

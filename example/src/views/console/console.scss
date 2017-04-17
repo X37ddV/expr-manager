@@ -1,0 +1,280 @@
+@import '../../styles/mixins';
+@import '../../styles/colors';
+
+$console-line-color: $color-line;
+$console-bar-line-color: $color-background-200;
+$console-bkg-color: $color-background-0;
+$console-header-color: $color-background-200;
+$console-txt-color: $color-text-600;
+$console-clear-color: $color-text-600;
+$console-clear-active-color: $color-text-700;
+$console-prompt-color: $color-primary;
+$console-bar-height: 28px;
+
+.console-view {
+  background-color: $console-bkg-color;
+  bottom: 0;
+  font-size: 11px;
+  left: 0;
+  line-height: 11px;
+  position: absolute;
+  right: 0;
+  top: 0;
+
+  &.show-all {
+    &.layout-vertical {
+      .console-content {
+        top: 0;
+      }
+
+      .console-terminal-content {
+        top: $console-bar-height;
+      }
+
+      .console-terminal {
+        height: 50%;
+        left: 0;
+        right: 0;
+        top: 0;
+      }
+
+      .console-watch {
+        border-top: 1px solid $console-line-color;
+        bottom: 0;
+        height: 50%;
+        left: 0;
+        right: 0;
+      }
+    }
+
+    &.layout-horizontal {
+      .console-terminal {
+        bottom: 0;
+        left: 0;
+        top: 0;
+        width: 50%;
+      }
+
+      .console-watch {
+        border-left: 1px solid $console-line-color;
+        bottom: 0;
+        right: 0;
+        top: 0;
+        width: 50%;
+      }
+    }
+
+    .console-terminal-split,
+    .console-terminal-right,
+    .console-terminal-left {
+      display: none;
+    }
+
+    .console-terminal-clear {
+      right: 4px;
+    }
+
+    .console-terminal-view {
+      right: 21px;
+    }
+  }
+
+  &.hide-watch {
+    .console-terminal {
+      bottom: 0;
+      left: 0;
+      right: 0;
+      top: 0;
+    }
+
+    .console-watch {
+      display: none;
+    }
+
+    .console-terminal-right {
+      right: 7px;
+      top: 7px;
+
+      &:active {
+        right: 6px;
+        top: 6px;
+      }
+    }
+  }
+
+  &.hide-terminal {
+    .console-watch {
+      bottom: 0;
+      left: 0;
+      right: 0;
+      top: 0;
+    }
+
+    .console-terminal {
+      display: none;
+    }
+
+    .console-watch-left {
+      right: 25px;
+      top: 7px;
+
+      &:active {
+        right: 24px;
+        top: 6px;
+      }
+    }
+  }
+
+  .icon-view {
+    &.icon-color-enabled {
+      border-width: 2px;
+    }
+
+    &.icon-color-disabled {
+      border-width: 1px;
+    }
+  }
+}
+
+.console-header {
+  background-color: $console-header-color;
+  border-bottom: 1px solid $console-line-color;
+  color: $console-txt-color;
+  height: $console-bar-height;
+  position: relative;
+  width: 100%;
+
+  .console-header-title {
+    font-size: 14px;
+    padding-left: 8px;
+    padding-top: 9px;
+  }
+}
+
+.console-content {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: $console-bar-height;
+}
+
+.console-terminal,
+.console-watch {
+  position: absolute;
+}
+
+.console-terminal-content,
+.console-watch-content {
+  border-bottom: 1px solid $console-bar-line-color;
+  bottom: $console-bar-height;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.console-terminal-footer,
+.console-watch-footer {
+  @include user-select(none);
+  bottom: 0;
+  height: $console-bar-height;
+  left: 0;
+  position: absolute;
+  right: 0;
+}
+
+.console-terminal-clear,
+.console-watch-clear,
+.console-terminal-right,
+.console-watch-right,
+.console-terminal-left,
+.console-watch-left {
+  cursor: pointer;
+  position: absolute;
+}
+
+.console-terminal-split,
+.console-watch-split {
+  background-color: $console-line-color;
+  height: 13px;
+  position: absolute;
+  right: 44px;
+  top: 7px;
+  width: 1px;
+}
+
+.console-terminal-right,
+.console-watch-right,
+.console-terminal-left,
+.console-watch-left {
+  top: 6px;
+
+  &:active {
+    .icon-view {
+      &.icon-color-disabled {
+        border-width: 2px;
+      }
+    }
+  }
+}
+
+.console-terminal-right,
+.console-watch-right {
+  right: 6px;
+}
+
+.console-terminal-left,
+.console-watch-left {
+  right: 24px;
+}
+
+.console-terminal-clear,
+.console-watch-clear {
+  right: 47px;
+  top: 5px;
+
+  path {
+    fill: $console-clear-color;
+  }
+
+  &:active {
+    path {
+      fill: $console-clear-active-color;
+    }
+  }
+}
+
+.jquery-console-prompt-label {
+  padding-right: 14px;
+  position: relative;
+
+  svg {
+    position: absolute;
+    top: 1px;
+  }
+}
+
+.console-terminal-prompt,
+.console-terminal-view {
+  position: absolute;
+}
+
+.console-terminal-prompt {
+  bottom: 0;
+  left: 0;
+  padding: 8px 0 0 4px;
+  top: 0;
+  width: 14px;
+
+  path {
+    fill: $console-prompt-color;
+  }
+}
+
+.console-terminal-view {
+  bottom: 0;
+  left: 18px;
+  right: 64px;
+  top: 0;
+}

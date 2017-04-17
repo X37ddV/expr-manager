@@ -1,0 +1,190 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <style type="text/css">
+        body
+        {
+            font-size: 12px;
+        }
+        span
+        {
+            font-weight: bold;
+        }
+        
+        #_DN_
+        {
+            color: #0000BF;
+        }
+        #_DA_
+        {
+            color: #00BFBF;
+        }
+        #_DE_
+        {
+            color: #FF007F;
+        }
+        #_DT_
+        {
+            color: #DDA27C;
+        }
+        #_DI_
+        {
+            color: #DD2A7C;
+        }
+        #_DJ_
+        {
+            color: #DD2A7C;
+        }
+    </style>
+    <title>Test Dependencies</title>
+    <script src="../../node_modules/jquery/dist/jquery.js"></script>
+    <script src="../../node_modules/moment/moment.js"></script>
+    <script src="../../node_modules/decimal.js/decimal.js"></script>
+    <script type="text/javascript" src="../expr.js"></script>
+    <script type="text/javascript" src="demoData.js"></script>
+    <script type="text/javascript" src="demoDependencies.js"></script>
+    <script type="text/javascript">
+        window.ExprManager = new expr();
+        function encode(v) {
+            return v === undefined ? "undefined" : window.JSON.stringify(v);
+        }
+        function htmlEncode(v) {
+            return $('<div/>').text(v).html();
+        }
+        function doEval(expr) {
+            /// <summary>分析、计算表达式expr</summary>
+            /// <returns>计算结果或出错信息</returns>
+            return ExprManager.calcExpr(expr, "E1", window.dataCursor);
+        }
+        // 全局变量-依赖
+        window._DN = 0;  // 组
+        window._DA = 0;  // 正确
+        window._DE = 0;  // 错误
+    </script>
+    <script type="text/javascript">
+        // 显示依赖关系案例
+        function genDependDemo(depend) {
+            window._DN++;
+            var html = "";
+            var e = window.ExprManager,
+                el = e.getExpressionList();
+            e.resetExpression(); // 重置表达式列表对象
+            for (var i in depend.dataSource) {
+                var entity = depend.dataSource[i];
+                var expr = entity.expr;
+                html += "<tr><td colspan='2' style='text-align:right;'><b>" + i + ":</b></td><td colspan='2'>" + expr + "</td></tr>";
+                var s = i.split(".");
+                var p = s.pop();
+                e.addExpression(expr, s.join("."), p);
+            }
+            var msg = e.checkAndSort();
+
+            if (msg == "") {
+                html += "<tr style='font-weight:bold;color:#FFF;background-color:#808080;'><td>No.</td><td colspan='2'>Command</td><td>Dependencies</td></tr>";
+                for (var k = 0; k < depend.testCase.length; k++) {
+                    var c = depend.testCase[k];
+                    var list = [], type = c.cmd[0], entityName = c.cmd[1], propertyName = c.cmd[2];
+                    switch (type) {
+                        case "load":
+                            list = el.getExprsByLoad(entityName);
+                            break;
+                        case "add":
+                            list = el.getExprsByAdd(entityName);
+                            break;
+                        case "remove":
+                            list = el.getExprsByRemove(entityName);
+                            break;
+                        case "update":
+                            list = el.getExprsByUpdate(entityName, propertyName);
+                            break;
+                        default:
+                            alert("demoDependencies.js中有错误");
+                    }
+                    var pList = [], pListHTML = [];
+                    for (var p = 0; p < list.length; p++) {
+                        var l = list[p], iColor = "";
+                        pList.push(l.fullName);
+                        switch (l.updateMode) {
+                            case "Single":
+                                iColor = "#0f0";
+                                break;
+                            case "BranchUpdate":
+                                iColor = "#f0f";
+                                break;
+                            case "BranchDelete":
+                                iColor = "#f00";
+                                break;
+                            case "All":
+                                iColor = "#00f";
+                                break;
+                        }
+                        pListHTML.push("<span style='color:" + iColor + ";'>" + l.fullName + "</span>");
+                    }
+                    var y = k % 2 != 0, color;
+                    if (pList.join("|") == c.r) {
+                        color = y ? "F0F0F0" : "FFFFFF";
+                        window._DA++;
+                    } else {
+                        color = y ? "FF007F" : "FF56AA";
+                        window._DE++;
+                    }
+                    html += "<tr style='background-color:#" + color + ";'><td>" + k + "</td><td colspan='2'>" + c.cmd.join("::") + "</td><td>";
+                    html += pListHTML.join("<span style='color:#99CCCC;'>|</span>");
+                    html += "</td></tr>";
+                }
+            } else {
+                html += "<tr><td colspan='4'><b>Error:</b><span style='color:#FF0000;'>" + msg + "</span></td></tr>";
+            }
+            return html;
+        }
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            window.ExprManager.init(window.data, window.dataContext, window.context);
+
+            // 依赖关系-计算
+            var dBeginTime = new Date();
+            var htmlDeptend = "";
+            for (var m = 0; m < window.demoDependencies.length; m++) {
+                var demoDepend = window.demoDependencies[m];
+                var hd = genDependDemo(demoDepend);
+                htmlDeptend += "<fieldset><legend>" + demoDepend.title + "</legend><table width='100%'><tbody>";
+                htmlDeptend += hd;
+                htmlDeptend += "</tbody></table></fieldset><br/>";
+            }
+            var dEndTime = new Date();
+            var testDeptend = document.getElementById("_test_dependencies_");
+            testDeptend.innerHTML = htmlDeptend;
+
+            // 依赖关系-统计信息
+            document.getElementById("_DN_").innerHTML = window._DN;
+            document.getElementById("_DA_").innerHTML = window._DA + window._DE;
+            document.getElementById("_DE_").innerHTML = window._DE;
+
+            var dvl = new Decimal(dEndTime - dBeginTime + "");
+            var dvr1 = new Decimal(window._DN + "");
+            var dvr2 = new Decimal(window._DA + window._DE + "");
+
+            document.getElementById("_DT_").innerHTML = dEndTime - dBeginTime;
+            document.getElementById("_DI_").innerHTML = Number(dvl.dividedBy(dvr1, 10, 1).toString());
+            document.getElementById("_DJ_").innerHTML = Number(dvl.dividedBy(dvr2, 10, 1).toString());
+        });
+    </script>
+</head>
+<body>
+    <fieldset>
+        <legend>统计信息</legend>
+        <ul>
+            <li>依赖关系测试案例共<span id="_DN_">0</span>组，总数为<span id="_DA_">0</span>条，其中有<span id="_DE_">0</span>条可能是由表达式引擎导致的依赖关系计算错误</li>
+            <li>依赖关系计算耗时：<span id="_DT_">0</span>毫秒，平均每组耗时：<span id="_DI_">0</span>毫秒，平均每条耗时：<span
+                id="_DJ_">0</span>毫秒</li>
+            <li>依赖关系描述：<span style="color: #0f0;">■</span>单条更新&nbsp;<span style="color: #f0f;">■</span>分支更新&nbsp;<span
+                style="color: #f00;">■</span>分支删除&nbsp;<span style="color: #00f;">■</span>全部更新</li>
+        </ul>
+    </fieldset>
+    <br />
+    <div id="_test_dependencies_">
+    </div>
+</body>
+</html>

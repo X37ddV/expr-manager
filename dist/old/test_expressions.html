@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <style type="text/css">
+        body
+        {
+            font-size: 12px;
+        }
+        span
+        {
+            font-weight: bold;
+        }
+        
+        #_YN_
+        {
+            color: #0000BF;
+        }
+        #_Y_
+        {
+            color: #00BFBF;
+        }
+        #_N_
+        {
+            color: #FF7F00;
+        }
+        #_E_
+        {
+            color: #FF007F;
+        }
+        #_T_
+        {
+            color: #DDA27C;
+        }
+        #_I_
+        {
+            color: #DD2A7C;
+        }
+        
+        .expr
+        {
+            background-color: #DD557C;
+        }
+        .value0
+        {
+            background-color: #ED997D;
+        }
+        .value1
+        {
+            background-color: #FD777E;
+        }
+    </style>
+    <title>Test Expressions</title>
+    <script src="../../node_modules/jquery/dist/jquery.js"></script>
+    <script src="../../node_modules/moment/moment.js"></script>
+    <script src="../../node_modules/decimal.js/decimal.js"></script>
+    <script type="text/javascript" src="../expr.js"></script>
+    <script type="text/javascript" src="demoData.js"></script>
+    <script type="text/javascript" src="demoExpressions.js"></script>
+    <script type="text/javascript">
+        window.ExprManager = new expr();
+        function encode(v) {
+            return v === undefined ? "undefined" : window.JSON.stringify(v);
+        }
+        function htmlEncode(v) {
+            return $('<div/>').text(v).html();
+        }
+        function doEval(expr) {
+            /// <summary>分析、计算表达式expr</summary>
+            /// <returns>计算结果或出错信息</returns>
+            return ExprManager.calcExpr(expr, "E1", window.dataCursor);
+        }
+        // 全局变量-表达式
+        window._Y = 0;  // 正常
+        window._N = 0;  // 异常
+        window._E = 0;  // 缺陷
+        window._ErrorList = [];
+    </script>
+    <script type="text/javascript">
+        // 显示演示案例
+        function genDemo(exprs) {
+            var h = "<table width='100%'><tr style='background-color: #E3E3E3'>";
+            h += "<td>No.</td><td>Expression</td><td>Value</td><td>Error</td><td>Description</td>";
+            h += "</tr>";
+            for (var i = 0; i < exprs.length; i++) {
+                if (exprs[i] == undefined)
+                    continue;
+                var e = exprs[i][0];
+                var k = exprs[i][1]; // 预期值 undefined为不校验或校验为错误
+                var d = exprs[i][2] || ""; // 描述
+                var val = doEval(e);
+                var v = encode(val.toValue());
+                var m = val.errorMsg;
+                var t = Object.prototype.toString.call(v);
+                var c, y = i % 2 != 0;
+                if (m == "") { // 返回计算结果
+                    c = y ? "F0F0F0" : "FFFFFF";
+                    window._Y++;
+                } else { // 计算出错
+                    c = y ? "FFAA56" : "FF7F00";
+                    window._N++;
+                }
+                if (typeof k == "string" && k != v) { // 是否符合预期
+                    c = y ? "FF56AA" : "FF007F";
+                    window._E++;
+                    window._ErrorList.push([exprs[i], v]);
+                }
+                h += "<tr style=\"background-color: #" + c + "\">";
+                h += "<td>" + i + "</td>";
+                h += "<td>" + htmlEncode(e) + "</td>";
+                h += "<td>" + htmlEncode(v) + "</td>";
+                h += "<td>" + htmlEncode(m) + "</td>";
+                h += "<td>" + htmlEncode(d) + "</td>";
+                h += "</tr>";
+            }
+            h += "</table>";
+            return h;
+        }
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            window.ExprManager.init(window.data, window.dataContext, window.context);
+            // 计算表达式，生成fieldset
+            var list = {}, fix = "div_"; var html = "";
+            var beginTime = new Date();
+            for (var j = 0; j < window.demoExpr.length; j++) {
+                var demo = window.demoExpr[j];
+                html += "<fieldset><legend>" + demo.title + "</legend><div>" + genDemo(demo.exprs) + "</div></fieldset><br />";
+            }
+            var endTime = new Date();
+            var test = document.getElementById("_test_expressions_");
+            test.innerHTML = html;
+
+            // 显示error
+            var h = "";
+            for (var i = 0; i < window._ErrorList.length; i++) {
+                var v0 = window._ErrorList[i][0][0]; // 表达式
+                var v1 = window._ErrorList[i][0][1]; // 预期值
+                var v2 = window._ErrorList[i][1]; // 实际返回值
+                h += "<li><span class='expr'>" + v0 + "</span><br/>期望值：<span class='value0'>" + v1 + "</span><br/>返回值：<span class='value1'>" + v2 + "</span></li>";
+            }
+            var err = document.getElementById("_error_");
+            err.innerHTML = h;
+
+            // 统计信息
+            document.getElementById("_YN_").innerHTML = window._Y + window._N;
+            document.getElementById("_Y_").innerHTML = window._Y;
+            document.getElementById("_N_").innerHTML = window._N;
+            document.getElementById("_E_").innerHTML = window._E;
+
+            var vl = new Decimal(endTime - beginTime + "");
+            var vr = new Decimal(window._Y + window._N + "");
+
+            document.getElementById("_T_").innerHTML = endTime - beginTime;
+            document.getElementById("_I_").innerHTML = Number(vl.dividedBy(vr, 10, 1).toString());
+        });
+    </script>
+</head>
+<body>
+    <fieldset>
+        <legend>统计信息</legend>
+        <ul>
+            <li>案例总数为<span id="_YN_">0</span>条，其中包括正常表达式<span id="_Y_">0</span>条、异常表达式<span id="_N_">0</span>条，有<span
+                id="_E_">0</span>条可能是由表达式引擎导致的缺陷</li>
+            <li>全部表达式计算耗时：<span id="_T_">0</span>毫秒，平均每条耗时：<span id="_I_">0</span>毫秒</li>
+        </ul>
+        <ol id="_error_">
+        </ol>
+    </fieldset>
+    <br />
+    <div id="_test_expressions_">
+    </div>
+</body>
+</html>

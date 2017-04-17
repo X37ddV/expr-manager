@@ -1,0 +1,129 @@
+@import '../../styles/colors';
+
+$setting-mask-color: rgba(255, 255, 255, .1);
+$setting-bkg-color: rgba(0, 0, 0, .8);
+$setting-line-color: $color-background-0;
+$setting-color: $color-background-0;
+
+.setting-view {
+  background-color: $setting-mask-color;
+  bottom: 0;
+  display: none;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+
+  .setting-content {
+    background-color: $setting-bkg-color;
+    border-radius: 4px;
+    bottom: 8px;
+    color: $setting-color;
+    left: 8px;
+    padding: 20px;
+    position: absolute;
+    right: 8px;
+    top: 8px;
+
+    .setting-close {
+      padding: 4px;
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+  }
+}
+
+.setting-p1 {
+  height: 100%;
+  position: relative;
+  width: 100%;
+
+  .setting-p1-scroll {
+    bottom: 38px;
+    left: 0;
+    overflow-y: auto;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  .setting-p1-actions {
+    bottom: 0;
+    height: 38px;
+    left: 0;
+    position: absolute;
+    right: 0;
+
+    button {
+      bottom: 4px;
+      position: absolute;
+      top: 4px;
+    }
+
+    .setting-p1-error-msg {
+      bottom: 0;
+      left: 0;
+      overflow: hidden;
+      position: absolute;
+      right: 120px;
+      text-overflow: ellipsis;
+      top: 12px;
+      white-space: nowrap;
+      word-wrap: normal;
+    }
+
+    .setting-p1-action-cancel {
+      right: 58px;
+    }
+
+    .setting-p1-action-apply {
+      right: 0;
+    }
+  }
+
+  .setting-p1-title {
+    border-bottom: 1px solid $setting-line-color;
+    font-size: 20px;
+    padding: 4px 0 4px 4px;
+  }
+
+  .setting-p1-content {
+    font-size: 14px;
+    padding: 10px 0;
+  }
+
+  .setting-p1-item {
+    height: 20px;
+    margin-bottom: 4px;
+    padding-bottom: 4px;
+    position: relative;
+
+    label {
+      bottom: 0;
+      font-size: 14px;
+      left: 0;
+      position: absolute;
+      text-align: right;
+      top: 4px;
+      width: 250px;
+    }
+
+    input {
+      background: none;
+      border-bottom: 1px solid $setting-line-color;
+      border-image: none;
+      border-left: 0;
+      border-right: 0;
+      border-top: 0;
+      bottom: 0;
+      color: $setting-color;
+      font-size: 14px;
+      left: 260px;
+      outline: none;
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+  }
+}

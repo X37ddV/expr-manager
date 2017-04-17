@@ -1,0 +1,348 @@
+@import './colors';
+@import './mixins';
+
+$easygrid-header-height: 28px;
+$easygrid-column-shadow: none; // inset 0 0 28px rgba(204, 204, 204, .6);
+$easygrid-line-style: 1px solid $color-line;
+$easygrid-content-line-style: 1px solid $color-background-200;
+$easygrid-how-height: $easygrid-header-height;
+$easygrid-background-color: $color-background-0;
+$easygrid-triangle-color: $color-line;
+$easygrid-triangle-active-color: $color-text-600;
+
+$easygrid-header-background-color: $color-background-200;
+$easygrid-row-col-selected-color: $color-background-100;
+$easygrid-row-selected-color: $color-background-50;
+
+$easygrid-selected-header-background-color: $color-background-highlight-200;
+$easygrid-selected-row-col-selected-color: $color-background-highlight-100;
+$easygrid-selected-row-selected-color: $color-background-highlight-50;
+
+$easygrid-tree-expand-color: $color-text-600;
+$easygrid-split-color: $color-line;
+$easygrid-drag-column-background-color: $color-background-0;
+$easygrid-drag-column-color: $color-line;
+$easygrid-drag-target-color: $color-primary;
+$easygrid-empty-text-color: $color-line;
+
+.easygrid {
+  background-color: $easygrid-background-color;
+  height: 100%;
+  position: relative;
+  width: 100%;
+
+  &.split-dragging {
+    @include user-select(none);
+    cursor: col-resize;
+
+    .easygrid-header-column {
+      cursor: col-resize;
+    }
+  }
+
+  &.column-dragging {
+    @include user-select(none);
+  }
+
+  &.selected {
+    .easygrid-header {
+      background-color: $easygrid-selected-header-background-color;
+    }
+
+    .easygrid-content-row-content {
+      &.selected {
+        background-color: $easygrid-selected-row-selected-color;
+
+        .easygrid-content-cell {
+          &.selected {
+            background-color: $easygrid-selected-row-col-selected-color;
+          }
+        }
+      }
+    }
+
+    .easygrid-content-cell {
+      &.selected {
+        background-color: $easygrid-selected-row-selected-color;
+      }
+    }
+  }
+}
+
+.easygrid-view {
+  height: 100%;
+  overflow: hidden;
+
+  input {
+    &[type='radio'],
+    &[type='checkbox'] {
+      cursor: pointer;
+    }
+  }
+}
+
+.easygrid-header {
+  @include box-shadow($easygrid-column-shadow);
+  background-color: $easygrid-header-background-color;
+  border-bottom: $easygrid-line-style;
+  font-size: 14px;
+  height: $easygrid-header-height;
+}
+
+.easygrid-header-columns {
+  height: $easygrid-header-height;
+  position: relative;
+}
+
+.easygrid-header-column {
+  float: left;
+  height: $easygrid-header-height;
+}
+
+.easygrid-header-column-wrap {
+  border-right: $easygrid-line-style;
+  height: 100%;
+  position: relative;
+}
+
+.easygrid-header-title {
+  left: 0;
+  overflow-x: hidden;
+  padding: 6px 0 0 6px;
+  position: absolute;
+  right: 6px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-wrap: normal;
+}
+
+.easygrid-header-sort {
+  display: none;
+  height: 100%;
+  position: absolute;
+  right: 4px;
+  width: 8px;
+}
+
+.easygrid-triangle-top {
+  border-bottom: 4px solid $easygrid-triangle-color;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  position: absolute;
+  top: 9px;
+}
+
+.easygrid-triangle-bottom {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid $easygrid-triangle-color;
+  position: absolute;
+  top: 15px;
+}
+
+.asc {
+  .easygrid-header-sort {
+    display: block;
+  }
+
+  .easygrid-triangle-top {
+    border-bottom-color: $easygrid-triangle-active-color;
+  }
+}
+
+.desc {
+  .easygrid-header-sort {
+    display: block;
+  }
+
+  .easygrid-triangle-bottom {
+    border-top-color: $easygrid-triangle-active-color;
+  }
+}
+
+.easygrid-header-split {
+  cursor: col-resize;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  width: 4px;
+}
+
+.easygrid-content {
+  bottom: 0;
+  left: 0;
+  overflow: auto;
+  position: absolute;
+  right: 0;
+  top: $easygrid-header-height + 1;
+}
+
+.easygrid-content-row-content {
+  border-bottom: $easygrid-content-line-style;
+  height: $easygrid-how-height;
+
+  &.selected {
+    background-color: $easygrid-row-selected-color;
+
+    .easygrid-content-cell {
+      &.selected {
+        background-color: $easygrid-row-col-selected-color;
+      }
+    }
+  }
+
+  .easygrid-tree-expand {
+    color: $easygrid-tree-expand-color;
+    cursor: pointer;
+    padding-top: 7px;
+    text-align: right;
+    top: 0;
+
+    &::before {
+      content: '\2b';
+    }
+  } 
+
+  &.no-children {
+    .easygrid-tree-expand {
+      color: transparent;
+      cursor: default;
+    }
+  }
+
+  &.expand {
+    .easygrid-tree-expand {
+      &::before {
+        content: '\2212';
+      }
+    }
+  }
+}
+
+.easygrid-content-cell {
+  float: left;
+  height: 100%;
+  position: relative;
+
+  &.selected {
+    background-color: $easygrid-row-selected-color;
+  }
+
+  .easygrid-editor-cell {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}
+
+.easygrid-content-value {
+  overflow: hidden;
+  padding: 8px 4px 0 4px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-wrap: normal;
+
+  &.none-text-ellipsis {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+    word-wrap: normal;
+  }
+
+  &.text-center {
+    text-align: center;
+  }
+
+  &.text-right {
+    text-align: right;
+  }
+}
+
+.easygrid-split-solid {
+  border-left: 1px solid $easygrid-split-color;
+  bottom: 0;
+  display: none;
+  position: absolute;
+  top: 0;
+  width: 1px;
+  z-index: 1;
+}
+
+.easygrid-split-dotted {
+  border-left: 1px dotted $easygrid-split-color;
+  bottom: 0;
+  display: none;
+  position: absolute;
+  top: 0;
+  width: 1px;
+  z-index: 1;
+}
+
+.easygrid-drag-column {
+  @include box-shadow($easygrid-column-shadow);
+  @include user-select(none);
+  background-color: $easygrid-drag-column-background-color;
+  border: $easygrid-line-style;
+  color: $easygrid-drag-column-color;
+  cursor: move;
+  display: none;
+  filter: alpha(opacity=90);
+  height: $easygrid-header-height;
+  opacity: .9;
+  position: absolute;
+  width: 200px;
+  z-index: 1;
+}
+
+.easygrid-drag-target {
+  background-color: $easygrid-drag-target-color;
+  bottom: 0;
+  display: none;
+  filter: alpha(opacity=50);
+  height: $easygrid-header-height;
+  opacity: .5;
+  position: absolute;
+  top: 0;
+  width: 3px;
+  z-index: 1;
+}
+
+.easygrid-empty-text {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  text-align: center;
+  top: 0;
+
+  span {
+    color: $easygrid-empty-text-color;
+    margin-left: 45%;
+    position: absolute;
+    top: 45%;
+  }
+}
+
+.easygrid-tree-indent,
+.easygrid-tree-expand {
+  float: left;
+  height: 100%;
+  width: 20px;
+}
+
+input {
+  &[type='radio'] {
+    &.easygrid-content-value-radio {
+      margin: 8px 0 0 8px;
+    }
+  }
+
+  &[type='checkbox'] {
+    &.easygrid-header-checkbox,
+    &.easygrid-content-value-checkbox {
+      margin: 8px 0 0 8px;
+    }
+  }
+}

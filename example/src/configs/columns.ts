@@ -1,0 +1,116 @@
+const grid0Columns = [{
+    dataField: "ID",
+    readOnly: true,
+    text: "TGroups: ID",
+    width: 110,
+}, {
+    dataField: "FName",
+    text: "FName(s)",
+    width: 90,
+}, {
+    dataField: "FFuncs",
+    text: "FFuncs(o)",
+    width: 100,
+}, {
+    dataField: "E1",
+    readOnly: true,
+    text: "E1(s)",
+    width: 90,
+}, {
+    dataField: "E2",
+    readOnly: true,
+    text: "E2(s)",
+    width: 90,
+}, {
+    dataField: "E3",
+    readOnly: true,
+    text: "E3(n)",
+    width: 90,
+}];
+const grid1Columns = [{
+    dataField: "ID",
+    readOnly: true,
+    text: "TFuncs: ID",
+    width: 110,
+}, {
+    dataField: "FName",
+    text: "FName(s)",
+    width: 90,
+}, {
+    dataField: "FDescription",
+    text: "FDescription(s)",
+    width: 120,
+}, {
+    dataField: "FParams",
+    text: "FParams(a)",
+    width: 100,
+}, {
+    dataField: "FReturnType",
+    text: "FReturnType(s)",
+    width: 120,
+}, {
+    dataField: "FReturnDescription",
+    text: "FReturnDescription(s)",
+    width: 160,
+}, {
+    dataField: "FLastTime",
+    text: "FLastTime(d)",
+    width: 110,
+}, {
+    dataField: "E1",
+    readOnly: true,
+    text: "E1(s)",
+    width: 90,
+}, {
+    dataField: "E2",
+    readOnly: true,
+    text: "E2(s)",
+    width: 90,
+}, {
+    dataField: "E3",
+    readOnly: true,
+    text: "E3(n)",
+    width: 90,
+}];
+const grid2Columns = [{
+    dataField: "ID",
+    readOnly: true,
+    text: "TParams: ID",
+    width: 110,
+}, {
+    dataField: "FIndex",
+    text: "FIndex(n)",
+    width: 90,
+}, {
+    dataField: "FName",
+    text: "FName(s)",
+    width: 90,
+}, {
+    dataField: "FType",
+    text: "FType(s)",
+    width: 90,
+}, {
+    dataField: "FDescription",
+    text: "FDescription(s)",
+    width: 120,
+}, {
+    dataField: "FIsOptional",
+    text: "FIsOptional(b)",
+    width: 110,
+}, {
+    dataField: "E1",
+    readOnly: true,
+    text: "E1(s)",
+    width: 90,
+}, {
+    dataField: "E2",
+    readOnly: true,
+    text: "E2(s)",
+    width: 90,
+}, {
+    dataField: "E3",
+    readOnly: true,
+    text: "E3(n)",
+    width: 90,
+}];
+export default [grid0Columns, grid1Columns, grid2Columns];
