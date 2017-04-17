@@ -1,7 +1,7 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('decimal'), require('moment')) :
-    typeof define === 'function' && define.amd ? define(['decimal', 'moment'], factory) :
-    (global.expr = factory(global.Decimal,global.moment));
+	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('decimal'), require('moment')) :
+	typeof define === 'function' && define.amd ? define(['decimal', 'moment'], factory) :
+	(global.expr = factory(global.Decimal,global.moment));
 }(this, (function (Decimal,moment) { 'use strict';
 
 Decimal = 'default' in Decimal ? Decimal['default'] : Decimal;
