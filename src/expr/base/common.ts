@@ -1,27 +1,30 @@
 import { IToken } from "./interface";
 
+// 内部公共函数
+// ----------
+
+// 是否为**数字**组成字符
 export function isN(s: string): boolean {
-    // 是否为数字组成字符
     return "0123456789.".indexOf(s) >= 0;
 }
+// 是否为**八进制数字**组成字符
 export function isO(s: string): boolean {
-    // 是否为八进制数字组成字符
     return "01234567".indexOf(s) >= 0;
 }
+// 是否为**十六进制数字**组成字符
 export function isX(s: string): boolean {
-    // 是否为十六进制数字组成字符
     return "0123456789abcdefABCDEF".indexOf(s) >= 0;
 }
+// 是否为**标识符**组成字符
 export function isC(s: string): boolean {
-    // 是否为标识符组成字符
     return s !== "." && isN(s) || "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_".indexOf(s) >= 0;
 }
+// 是否为正确数字格式(至多包含一个".")
 export function isNS(s: string): boolean {
-    // 是否为正确数字格式(至多包含一个".")
     return s.replace(/[^\.]/g, "").length <= 1;
 }
+// 是否为不能识别的字符
 export function isUN(s: string): boolean {
-    // 是否为不能识别的字符
     return !isC(s) && " ()[]{}!<>=+-&|*/%'\",.".indexOf(s) < 0;
 }
 export function hasToken(tokenTypes: string, tokenType: string): boolean {

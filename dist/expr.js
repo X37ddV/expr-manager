@@ -1,8 +1,18 @@
+//     expr.js 0.0.1
+//     https://github.com/X37ddV/expr
+//     (c) 2016-2017 X37ddV
+//     Released under the MIT License.
+
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('decimal'), require('moment')) :
 	typeof define === 'function' && define.amd ? define(['decimal', 'moment'], factory) :
 	(global.expr = factory(global.Decimal,global.moment));
 }(this, (function (Decimal,moment) { 'use strict';
+
+// 依赖第三方库
+// ----------
+// + **[decimal.js](https://github.com/MikeMcl/decimal.js 'An arbitrary-precision Decimal type for JavaScript')** 用于高精度计算<br />
+// + **[moment.js](http://momentjs.com 'Parse, validate, manipulate, and display dates in javascript')** 用于日期计算
 
 Decimal = 'default' in Decimal ? Decimal['default'] : Decimal;
 moment = 'default' in moment ? moment['default'] : moment;
@@ -13,28 +23,30 @@ function __extends(d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 }
 
+// 内部公共函数
+// ----------
+// 是否为**数字**组成字符
 function isN(s) {
-    // 是否为数字组成字符
     return "0123456789.".indexOf(s) >= 0;
 }
+// 是否为**八进制数字**组成字符
 function isO(s) {
-    // 是否为八进制数字组成字符
     return "01234567".indexOf(s) >= 0;
 }
+// 是否为**十六进制数字**组成字符
 function isX(s) {
-    // 是否为十六进制数字组成字符
     return "0123456789abcdefABCDEF".indexOf(s) >= 0;
 }
+// 是否为**标识符**组成字符
 function isC(s) {
-    // 是否为标识符组成字符
     return s !== "." && isN(s) || "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_".indexOf(s) >= 0;
 }
+// 是否为正确数字格式(至多包含一个".")
 function isNS(s) {
-    // 是否为正确数字格式(至多包含一个".")
     return s.replace(/[^\.]/g, "").length <= 1;
 }
+// 是否为不能识别的字符
 function isUN(s) {
-    // 是否为不能识别的字符
     return !isC(s) && " ()[]{}!<>=+-&|*/%'\",.".indexOf(s) < 0;
 }
 function hasToken(tokenTypes, tokenType) {
