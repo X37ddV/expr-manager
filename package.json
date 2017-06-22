@@ -8,7 +8,7 @@
     "start": "lite-server -c bs.config.json & rollup -c example/rollup.config.js -w",
     "watch": "rollup -c example/rollup.config.js -w",
     "build": "rollup -c rollup.config.js & rollup -c example/rollup.config.js",
-    "test": "ava"
+    "test": "karma start"
   },
   "repository": {
     "type": "git",
@@ -16,7 +16,8 @@
   },
   "keywords": [
     "expr",
-    "javascript"
+    "javascript",
+    "typescript"
   ],
   "author": "X37ddV <X37ddV@iCloud.com>",
   "license": "MIT",
@@ -35,11 +36,17 @@
     "@types/mousetrap": "^1.5.34",
     "@types/underscore": "^1.8.1",
     "@types/underscore.string": "0.0.30",
-    "ava": "^0.19.1",
+    "jasmine": "^2.6.0",
     "jquery": "^3.2.1",
+    "karma": "^1.7.0",
+    "karma-chrome-launcher": "^2.1.1",
+    "karma-jasmine": "^1.1.0",
+    "karma-requirejs": "^1.1.0",
+    "karma-safari-launcher": "^1.0.0",
     "lite-server": "^2.3.0",
     "mousetrap": "^1.6.1",
     "normalize.css": "^6.0.0",
+    "requirejs": "^2.3.3",
     "rollup": "^0.41.6",
     "rollup-plugin-json": "^2.3.0",
     "rollup-plugin-sass": "^0.4.10",

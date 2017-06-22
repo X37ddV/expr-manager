@@ -24,8 +24,8 @@
     <script src="../../node_modules/jquery/dist/jquery.js"></script>
     <script src="../../node_modules/moment/moment.js"></script>
     <script src="../../node_modules/decimal.js/decimal.js"></script>
-    <script type="text/javascript" src="../expr.js"></script>
-    <script type="text/javascript" src="demoData.js"></script>
+    <script type="text/javascript" src="../../dist/expr.js"></script>
+    <script type="text/javascript" src="../data/test_data.js"></script>
     <script type="text/javascript">
         function encode(v) {
             return v === undefined ? "undefined" : window.JSON.stringify(v);
@@ -273,11 +273,11 @@
             $("#btnConsole").on("click", function () {
                 window.open("../index.html");
             });
-            $("#btnTestExpressions").on("click", function () {
-                window.open("test_expressions.html");
+            $("#btnDebugExpressions").on("click", function () {
+                window.open("debug_expressions.html");
             });
-            $("#btnTestDependencies").on("click", function () {
-                window.open("test_dependencies.html");
+            $("#btnDebugDependencies").on("click", function () {
+                window.open("debug_dependencies.html");
             });
             // 展开和折叠数据
             $(".nav").on("click", function () {
@@ -308,8 +308,8 @@
         <input id="btnCalc" type="button" value="Calc" />
         <input id="btnCalcDependencies" type="button" value="CalcDependencies" />
         <input id="btnConsole" type="button" value="Console" />
-        <input id="btnTestExpressions" type="button" value="TestExpressions" />
-        <input id="btnTestDependencies" type="button" value="TestDependencies" />
+        <input id="btnDebugExpressions" type="button" value="DebugExpressions" />
+        <input id="btnDebugDependencies" type="button" value="DebugDependencies" />
         <h3>
             Result:</h3>
         <div id="exprtree">

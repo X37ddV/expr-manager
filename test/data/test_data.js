@@ -4,10 +4,7 @@
 var context = {
     userId: "admin",
     userName: "管理员",
-    userCode: "00001",
-    deptId: "Glodon",
-    deptName: "广联达",
-    deptFullName: "Glodon"
+    userCode: "00000"
 };
 var data = {
     E1: [{

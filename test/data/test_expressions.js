@@ -1247,7 +1247,7 @@ var exprErr = {
     title: "基于其他的",
     exprs: [
     //
-        ['null && 3/0==5', false],
+        ['null && 3/0==5', 'false'],
         ['"abc" || 3/0==5','undefined'],
     //
 
