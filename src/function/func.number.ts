@@ -1,4 +1,4 @@
-import { isNumber } from "../base/common";
+import { isNumber } from "../lib/base/common";
 
 // Number
 const funcNumberToString = {

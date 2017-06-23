@@ -1,4 +1,4 @@
-import locale from "../base/locale";
+import locale from "../lib/base/locale";
 
 locale.defineLocale("zh-cn", {
     // context

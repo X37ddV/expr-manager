@@ -1,4 +1,4 @@
-import { isArray, isObject, isString } from "../base/common";
+import { isArray, isObject, isString } from "../lib/base/common";
 
 // _
 const funcIIf = {

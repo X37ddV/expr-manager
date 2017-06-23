@@ -4,18 +4,18 @@
 //     Released under the MIT License.
 
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('decimal'), require('moment')) :
-	typeof define === 'function' && define.amd ? define(['decimal', 'moment'], factory) :
-	(global.expr = factory(global.Decimal,global.moment));
-}(this, (function (Decimal,moment) { 'use strict';
+	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('moment'), require('decimal')) :
+	typeof define === 'function' && define.amd ? define(['moment', 'decimal'], factory) :
+	(global.expr = factory(global.moment,global.Decimal));
+}(this, (function (moment,Decimal) { 'use strict';
 
 // 依赖第三方库
 // ----------
 // + **[decimal.js](https://github.com/MikeMcl/decimal.js 'An arbitrary-precision Decimal type for JavaScript')** 用于高精度计算<br />
 // + **[moment.js](http://momentjs.com 'Parse, validate, manipulate, and display dates in javascript')** 用于日期计算
 
-Decimal = 'default' in Decimal ? Decimal['default'] : Decimal;
 moment = 'default' in moment ? moment['default'] : moment;
+Decimal = 'default' in Decimal ? Decimal['default'] : Decimal;
 
 function __extends(d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -206,6 +206,1044 @@ function merger(o, c) {
     return o;
 }
 
+// _
+var funcIIf = {
+    fn: function (context, source, bool, tv, fv) {
+        /// <summary>条件判断函数，如果第一个参数为true，则获取第二个参数，否则获取第三个参数</summary>
+        /// <param name="bool" type="Boolean">条件值</param>
+        /// <param name="tv" type="Object">真值</param>
+        /// <param name="fv" type="Object">假值</param>
+        /// <returns type="Object">第二个参数或第三个参数</returns>
+        return context.genValue(bool ? tv : fv);
+    },
+    p: ["boolean", "undefined", "undefined"],
+    r: "undefined",
+};
+var funcIfNull = {
+    fn: function (context, source, v, d) {
+        /// <summary>空值判断函数，如果第一个参数为null，则获取第二个参数，否则获取第一个参数</summary>
+        /// <param name="v" type="Object">值</param>
+        /// <param name="d" type="Object">默认值</param>
+        /// <returns type="Object">第一个参数或第二个参数</returns>
+        return context.genValue((v !== null) ? v : d);
+    },
+    p: ["undefined", "undefined"],
+    r: "undefined",
+};
+var funcParent = {
+    e: "parent",
+    fn: function (context) {
+        /// <summary>获取当前实体的父实体对象，如果当前为根则获取自己</summary>
+        /// <returns type="Object">父实体对象</returns>
+        return context.getParentValue(null);
+    },
+    p: [],
+    r: "object",
+};
+var funcRecNo = {
+    e: "value",
+    fn: function (context) {
+        /// <summary>获取当前实体的索引号，没有记录返回-1</summary>
+        /// <returns type="Object">索引号</returns>
+        return context.getRecNo(null);
+    },
+    p: [],
+    r: "number",
+};
+var funcRoot = {
+    e: "root",
+    fn: function (context) {
+        /// <summary>获取实体根对象</summary>
+        /// <returns type="Object">实体根对象</returns>
+        return context.getRootValue();
+    },
+    p: [],
+    r: "object",
+};
+var funcNow = {
+    fn: function (context) {
+        /// <summary>获取本地当前日期时间</summary>
+        /// <returns type="Object">本地当前日期时间</returns>
+        return context.genValue(new Date());
+    },
+    p: [],
+    r: "date",
+};
+var funcFieldName = {
+    fn: function (context) {
+        /// <summary>获取当前字段唯一标识</summary>
+        /// <returns type="Object">字段唯一标识</returns>
+        return context.getContextVariableValue("FieldName");
+    },
+    p: [],
+    r: "string",
+};
+var funcFieldDisplayName = {
+    fn: function (context) {
+        /// <summary>获取当前字段别名</summary>
+        /// <returns type="Object">字段别名（显示名称）</returns>
+        return context.getContextVariableValue("FieldDisplayName");
+    },
+    p: [],
+    r: "string",
+};
+var funcFieldValue = {
+    fn: function (context) {
+        /// <summary>获取当前字段值</summary>
+        /// <returns type="Object">字段值</returns>
+        return context.getContextVariableValue("FieldValue");
+    },
+    p: [],
+    r: "undefined",
+};
+var funcPropValue = {
+    fn: function (context, source, obj, prop, delimiter) {
+        /// <summary>获取对象属性值</summary>
+        /// <param name="obj" type="Object">对象或数组(没有分隔符则获取数组第一个元素，有分隔符获取数组所有元素集合)</param>
+        /// <param name="prop" type="String">属性名</param>
+        /// <param name="delimiter" type="String">分隔符</param>
+        /// <returns type="Object">属性值</returns>
+        var r;
+        var o = obj;
+        if (isString(delimiter) && isArray(o)) {
+            r = "";
+            for (var i = 0; i < o.length; i++) {
+                r += isObject(o[i]) ? o[i][prop] : "";
+                if (i < o.length - 1) {
+                    r += delimiter;
+                }
+            }
+        }
+        else {
+            if (isArray(o)) {
+                if (o.length > 0) {
+                    o = o[0];
+                }
+                else {
+                    o = {};
+                }
+            }
+            r = isObject(o) ? o[prop] : null;
+        }
+        if (r === undefined) {
+            r = null;
+        }
+        return context.genValue(r);
+    },
+    p: ["undefined", "string", "string?"],
+    r: "undefined",
+};
+var funcRandom = {
+    fn: function (context) {
+        /// <summary>返回介于 0 ~ 1 之间的一个随机数</summary>
+        /// <returns type="Object">数字</returns>
+        return context.genValue(Math.random());
+    },
+    p: [],
+    r: "number",
+};
+var func__ = {
+    FieldDisplayName: funcFieldDisplayName,
+    FieldName: funcFieldName,
+    FieldValue: funcFieldValue,
+    IIf: funcIIf,
+    IfNull: funcIfNull,
+    Now: funcNow,
+    Parent: funcParent,
+    PropValue: funcPropValue,
+    Random: funcRandom,
+    RecNo: funcRecNo,
+    Root: funcRoot,
+};
+
+function doEachCollection(source, expr, fn) {
+    /// <summary>分别将source中每个值作为计算环境求出expr的值</summary>
+    var r;
+    var msg = "";
+    if (source.isEntity()) {
+        var curr = {};
+        var pa = source.parentObj;
+        while (pa) {
+            if (pa.entity.name !== "" && !curr[pa.entity.name]) {
+                curr[pa.entity.name] = pa.entity.recNo;
+            }
+            pa = pa.parentObj;
+        }
+        for (var en in curr) {
+            if (curr.hasOwnProperty(en)) {
+                this.pushEntityCurrent(en, curr[en]);
+            }
+        }
+        var map = source.entity.map;
+        for (var i = 0; i < map.length; i++) {
+            // 遍历map，计算将每一个map元素作为实体计算环境时expr的值
+            r = this.calcEntityExpr(expr, source.entity.name, map[i]);
+            msg = r.errorMsg;
+            if (msg === "") {
+                var x = fn.call(this, r, i);
+                if (x !== undefined) {
+                    msg = x;
+                    break;
+                }
+            }
+            else {
+                break;
+            }
+        }
+        for (var en in curr) {
+            if (curr.hasOwnProperty(en)) {
+                this.popEntityCurrent();
+            }
+        }
+    }
+    else {
+        for (var j = 0; j < source.value.length; j++) {
+            r = this.calcDataExpr(expr, source.value[j]);
+            msg = r.errorMsg;
+            if (msg === "") {
+                var y = fn.call(this, r, j);
+                if (y !== undefined) {
+                    msg = y;
+                    break;
+                }
+            }
+            else {
+                break;
+            }
+        }
+    }
+    return msg; // 返回出错信息
+}
+function doCompCollection(source, expr, fn) {
+    var _this = this;
+    /// <summary>将source中求出的值经过fn处理后最终的结果</summary>
+    var r;
+    var msg;
+    msg = doEachCollection.call(this, source, expr, function (a) {
+        if (r) {
+            var tmp = fn.call(_this, r, a); // 相加，比较大小...
+            if (tmp.errorMsg) {
+                return tmp.errorMsg;
+            }
+            else {
+                r = tmp; // 存储中间结果，如Max运算中，r始终存储fn函数返回的最大值
+            }
+        }
+        else {
+            r = a; // a为第一个计算数，直接赋给结果值r
+        }
+    });
+    if (msg !== "") {
+        r = this.genErrorValue(msg);
+    }
+    if (!r) {
+        r = this.genValue(null);
+    }
+    return r;
+}
+// Array
+var funcArrayCount = {
+    e: "value",
+    fn: function (context, source) {
+        /// <summary>获取集合元素个数</summary>
+        /// <param name="source" type="Array"></param>
+        /// <returns type="Object">个数</returns>
+        var r = source.toValue().length;
+        return context.genValue(r, "", null, "");
+    },
+    p: [],
+    r: "number",
+};
+var funcArraySum = {
+    e: "value",
+    fn: function (context, source, expr) {
+        /// <summary>获取集合元素的合计值</summary>
+        /// <param name="source" type="Array"></param>
+        /// <param name="expr" type="String">表达式</param>
+        /// <returns type="Object">合计值</returns>
+        expr = expr || "$0";
+        var r = doCompCollection.call(context, source, expr, function (a, b) {
+            return a.add(b);
+        });
+        return r;
+    },
+    p: ["expr?"],
+    r: "undefined",
+};
+var funcArrayMax = {
+    e: "value",
+    fn: function (context, source, expr) {
+        /// <summary>获取集合元素的最大值</summary>
+        /// <param name="source" type="Array"></param>
+        /// <param name="expr" type="String">表达式</param>
+        /// <returns type="Object">最大值</returns>
+        expr = expr || "$0";
+        var r = doCompCollection.call(context, source, expr, function (a, b) {
+            var v = a.compare(b, ">");
+            if (v.errorMsg === "") {
+                v = v.toValue() ? a : b;
+            }
+            return v;
+        });
+        return r;
+    },
+    p: ["expr?"],
+    r: "undefined",
+};
+var funcArrayMin = {
+    e: "value",
+    fn: function (context, source, expr) {
+        /// <summary>获取集合元素的最小值</summary>
+        /// <param name="source" type="Array"></param>
+        /// <param name="expr" type="String">表达式</param>
+        /// <returns type="Object">最小值</returns>
+        expr = expr || "$0";
+        var r = doCompCollection.call(context, source, expr, function (a, b) {
+            var v = a.compare(b, "<");
+            if (v.errorMsg === "") {
+                v = v.toValue() ? a : b;
+            }
+            return v;
+        });
+        return r;
+    },
+    p: ["expr?"],
+    r: "undefined",
+};
+var funcArrayAverage = {
+    e: "value",
+    fn: function (context, source, expr) {
+        /// <summary>获取集合元素的平均值</summary>
+        /// <param name="source" type="Array"></param>
+        /// <param name="expr" type="String">表达式</param>
+        /// <returns type="Object">平均值</returns>
+        expr = expr || "$0";
+        var r = doCompCollection.call(context, source, expr, function (a, b) {
+            return a.add(b);
+        });
+        if (r.errorMsg === "") {
+            if (r.toValue() === null) {
+                r = context.genValue(0);
+            }
+            else {
+                var c = source.toValue().length;
+                r = r.divide(context.genValue(c));
+            }
+        }
+        return r;
+    },
+    p: ["expr?"],
+    r: "number",
+};
+var funcArrayDistinct = {
+    e: "data",
+    fn: function (context, source, expr) {
+        /// <summary>获取集合中唯一元素的集合</summary>
+        /// <param name="source" type="Array"></param>
+        /// <param name="expr" type="String">表达式</param>
+        /// <returns type="Object">集合</returns>
+        expr = expr || "$0";
+        var r = context.genValue([], "array");
+        var arr = [];
+        if (source.entity) {
+            r.entity = context.genEntityInfo(source.entity.fullName);
+            r.entity.map = [];
+            r.parentObj = source.parentObj;
+        }
+        var find = function (v) {
+            var f = false;
+            for (var i = 0; i < arr.length; i++) {
+                f = compare(arr[i], v);
+                if (f) {
+                    break;
+                }
+            }
+            return f;
+        };
+        var msg = doEachCollection.call(context, source, expr, function (a, i) {
+            var b = a.toValue();
+            if (!find(b)) {
+                arr.push(b);
+                r.arrayPush(source.subscript(context.genValue(i)));
+                if (r.entity && r.entity.map) {
+                    r.entity.map.push(source.entity.map[i]);
+                }
+            }
+        });
+        if (msg !== "") {
+            r = context.genErrorValue(msg);
+        }
+        return r;
+    },
+    p: ["expr?"],
+    r: "array",
+};
+var funcArrayWhere = {
+    e: "data",
+    fn: function (context, source, expr) {
+        /// <summary>获取满足条件的元素集合</summary>
+        /// <param name="source" type="Array"></param>
+        /// <param name="expr" type="String">条件表达式</param>
+        /// <returns type="Object">集合</returns>
+        expr = expr || "true";
+        var r = context.genValue([], "array");
+        if (source.entity) {
+            r.entity = context.genEntityInfo(source.entity.fullName);
+            r.entity.map = [];
+            r.parentObj = source.parentObj;
+        }
+        var msg = doEachCollection.call(context, source, expr, function (a, i) {
+            if (a.toValue()) {
+                r.arrayPush(source.subscript(context.genValue(i)));
+                if (r.entity && r.entity.map) {
+                    r.entity.map.push(source.entity.map[i]);
+                }
+            }
+        });
+        if (msg !== "") {
+            r = context.genErrorValue(msg);
+        }
+        return r;
+    },
+    p: ["expr"],
+    r: "array",
+};
+var func_array = {
+    Average: funcArrayAverage,
+    Count: funcArrayCount,
+    Distinct: funcArrayDistinct,
+    Max: funcArrayMax,
+    Min: funcArrayMin,
+    Sum: funcArraySum,
+    Where: funcArrayWhere,
+};
+
+// Boolean
+var funcBooleanToString = {
+    fn: function (context, source) {
+        /// <summary>转换布尔类型为字符串</summary>
+        /// <param name="source" type="Boolean"></param>
+        /// <returns type="Object">字符串</returns>
+        return context.genValue(source.toValue() + "");
+    },
+    p: [],
+    r: "string",
+};
+var func_boolean = {
+    ToString: funcBooleanToString,
+};
+
+// Date
+var funcDateToString = {
+    fn: function (context, source, format) {
+        /// <summary>转换日期时间类型为字符串</summary>
+        /// <param name="source" type="Date"></param>
+        /// <param name="format" type="String">日期时间格式</param>
+        /// <returns type="Object">字符串</returns>
+        return context.genValue(moment(source.toValue()).format(format || ""));
+    },
+    p: ["string?"],
+    r: "string",
+};
+var funcDateDateOf = {
+    fn: function (context, source) {
+        /// <summary>获取 Date 对象的日期部分</summary>
+        /// <param name="source" type="Date"></param>
+        /// <returns type="Object">日期</returns>
+        return context.genValue(moment(source.toValue()).startOf("day").toDate());
+    },
+    p: [],
+    r: "date",
+};
+var funcDateDayOf = {
+    fn: function (context, source) {
+        /// <summary>从 Date 对象获取一个月中的某一天（1 ~ 31）</summary>
+        /// <param name="source" type="Date"></param>
+        /// <returns type="Object">日</returns>
+        return context.genValue(moment(source.toValue()).date());
+    },
+    p: [],
+    r: "number",
+};
+var funcDateDayOfWeek = {
+    fn: function (context, source) {
+        /// <summary>得到一周中的星期几（0 ~ 6）</summary>
+        /// <param name="source" type="Date"></param>
+        /// <returns type="Object">周</returns>
+        return context.genValue(moment(source.toValue()).day());
+    },
+    p: [],
+    r: "number",
+};
+var funcDateDaysBetween = {
+    fn: function (context, source, endDate) {
+        /// <summary>获取日期差</summary>
+        /// <param name="source" type="Date"></param>
+        /// <param name="endDate" type="Date">结束日期时间</param>
+        /// <returns type="Object">日差</returns>
+        return context.genValue(-moment(source.toValue()).diff(endDate, "days"));
+    },
+    p: ["date"],
+    r: "number",
+};
+var funcDateHourOf = {
+    fn: function (context, source) {
+        /// <summary>从 Date 对象获取一天中的第几个小时</summary>
+        /// <param name="source" type="Date"></param>
+        /// <returns type="Object">时</returns>
+        return context.genValue(moment(source.toValue()).hour());
+    },
+    p: [],
+    r: "number",
+};
+var funcDateHoursBetween = {
+    fn: function (context, source, endDate) {
+        /// <summary>获取小时差</summary>
+        /// <param name="source" type="Date"></param>
+        /// <param name="endDate" type="Date">结束日期时间</param>
+        /// <returns type="Object">时差</returns>
+        return context.genValue(-moment(source.toValue()).diff(endDate, "hours"));
+    },
+    p: ["date"],
+    r: "number",
+};
+var funcDateIncDay = {
+    fn: function (context, source, days) {
+        /// <summary>增加指定的天数</summary>
+        /// <param name="source" type="Date"></param>
+        /// <param name="days" type="Number">天数</param>
+        /// <returns type="Object">日期时间</returns>
+        return context.genValue(moment(source.toValue()).add(days, "days").toDate());
+    },
+    p: ["number"],
+    r: "date",
+};
+var funcDateIncHour = {
+    fn: function (context, source, hours) {
+        /// <summary>增加指定的小时数</summary>
+        /// <param name="source" type="Date"></param>
+        /// <param name="hours" type="Number">小时数</param>
+        /// <returns type="Object">日期时间</returns>
+        return context.genValue(moment(source.toValue()).add(hours, "hours").toDate());
+    },
+    p: ["number"],
+    r: "date",
+};
+var funcDateIncMinute = {
+    fn: function (context, source, minutes) {
+        /// <summary>增加指定的分钟数</summary>
+        /// <param name="source" type="Date"></param>
+        /// <param name="minutes" type="Number">分钟数</param>
+        /// <returns type="Object">日期时间</returns>
+        return context.genValue(moment(source.toValue()).add(minutes, "minutes").toDate());
+    },
+    p: ["number"],
+    r: "date",
+};
+var funcDateIncMonth = {
+    fn: function (context, source, months) {
+        /// <summary>增加指定的月数</summary>
+        /// <param name="source" type="Date"></param>
+        /// <param name="months" type="Number">月数</param>
+        /// <returns type="Object">日期时间</returns>
+        return context.genValue(moment(source.toValue()).add(months, "months").toDate());
+    },
+    p: ["number"],
+    r: "date",
+};
+var funcDateIncSecond = {
+    fn: function (context, source, seconds) {
+        /// <summary>增加指定的秒数</summary>
+        /// <param name="source" type="Date"></param>
+        /// <param name="seconds" type="Number">秒数</param>
+        /// <returns type="Object">日期时间</returns>
+        return context.genValue(moment(source.toValue()).add(seconds, "seconds").toDate());
+    },
+    p: ["number"],
+    r: "date",
+};
+var funcDateIncWeek = {
+    fn: function (context, source, weeks) {
+        /// <summary>增加指定的周数</summary>
+        /// <param name="source" type="Date"></param>
+        /// <param name="weeks" type="Number">周数</param>
+        /// <returns type="Object">日期时间</returns>
+        return context.genValue(moment(source.toValue()).add(weeks, "weeks").toDate());
+    },
+    p: ["number"],
+    r: "date",
+};
+var funcDateIncYear = {
+    fn: function (context, source, years) {
+        /// <summary>增加指定的年数</summary>
+        /// <param name="source" type="Date"></param>
+        /// <param name="years" type="Number">年数</param>
+        /// <returns type="Object">日期时间</returns>
+        return context.genValue(moment(source.toValue()).add(years, "years").toDate());
+    },
+    p: ["number"],
+    r: "date",
+};
+var funcDateMilliSecondOf = {
+    fn: function (context, source) {
+        /// <summary>从 Date 对象获取毫秒</summary>
+        /// <param name="source" type="Date"></param>
+        /// <returns type="Object">毫秒</returns>
+        return context.genValue(moment(source.toValue()).millisecond());
+    },
+    p: [],
+    r: "number",
+};
+var funcDateMilliSecondsBetween = {
+    fn: function (context, source, endDate) {
+        /// <summary>获取毫秒差</summary>
+        /// <param name="source" type="Date"></param>
+        /// <param name="endDate" type="Date">结束日期时间</param>
+        /// <returns type="Object">毫秒差</returns>
+        return context.genValue(-moment(source.toValue()).diff(endDate, "milliseconds"));
+    },
+    p: ["date"],
+    r: "number",
+};
+var funcDateMinuteOf = {
+    fn: function (context, source) {
+        /// <summary>从 Date 对象获取分钟（0 ~ 59）</summary>
+        /// <param name="source" type="Date"></param>
+        /// <returns type="Object">分</returns>
+        return context.genValue(moment(source.toValue()).minute());
+    },
+    p: [],
+    r: "number",
+};
+var funcDateMinutesBetween = {
+    fn: function (context, source, endDate) {
+        /// <summary>获取分钟差</summary>
+        /// <param name="source" type="Date"></param>
+        /// <param name="endDate" type="Date">结束日期时间</param>
+        /// <returns type="Object">分差</returns>
+        return context.genValue(-moment(source.toValue()).diff(endDate, "minutes"));
+    },
+    p: ["date"],
+    r: "number",
+};
+var funcDateMonthOf = {
+    fn: function (context, source) {
+        /// <summary>从 Date 对象获取月份（1 ~ 12）</summary>
+        /// <param name="source" type="Date"></param>
+        /// <returns type="Object">月</returns>
+        return context.genValue(moment(source.toValue()).month() + 1);
+    },
+    p: [],
+    r: "number",
+};
+var funcDateMonthsBetween = {
+    fn: function (context, source, endDate) {
+        /// <summary>获取月份差</summary>
+        /// <param name="source" type="Date"></param>
+        /// <param name="endDate" type="Date">结束日期时间</param>
+        /// <returns type="Object">月差</returns>
+        return context.genValue(-moment(source.toValue()).diff(endDate, "months"));
+    },
+    p: ["date"],
+    r: "number",
+};
+var funcDateSecondOf = {
+    fn: function (context, source) {
+        /// <summary>从 Date 对象获取秒数（0 ~ 59）</summary>
+        /// <param name="source" type="Date"></param>
+        /// <returns type="Object">秒</returns>
+        return context.genValue(moment(source.toValue()).second());
+    },
+    p: [],
+    r: "number",
+};
+var funcDateSecondsBetween = {
+    fn: function (context, source, endDate) {
+        /// <summary>获取秒差</summary>
+        /// <param name="source" type="Date"></param>
+        /// <param name="endDate" type="Date">结束日期时间</param>
+        /// <returns type="Object">秒差</returns>
+        return context.genValue(-moment(source.toValue()).diff(endDate, "seconds"));
+    },
+    p: ["date"],
+    r: "number",
+};
+var funcDateWeekOf = {
+    fn: function (context, source) {
+        /// <summary>从 Date 对象获取一年中的第几周（1 ~ 53）</summary>
+        /// <param name="source" type="Date"></param>
+        /// <returns type="Object">周</returns>
+        return context.genValue(moment(source.toValue()).week());
+    },
+    p: [],
+    r: "number",
+};
+var funcDateWeeksBetween = {
+    fn: function (context, source, endDate) {
+        /// <summary>获取周差</summary>
+        /// <param name="source" type="Date"></param>
+        /// <param name="endDate" type="Date">结束日期时间</param>
+        /// <returns type="Object">周差</returns>
+        return context.genValue(-moment(source.toValue()).diff(endDate, "weeks"));
+    },
+    p: ["date"],
+    r: "number",
+};
+var funcDateYearOf = {
+    fn: function (context, source) {
+        /// <summary>从 Date 对象获取年份</summary>
+        /// <param name="source" type="Date"></param>
+        /// <returns type="Object">年</returns>
+        return context.genValue(moment(source.toValue()).year());
+    },
+    p: [],
+    r: "number",
+};
+var funcDateYearsBetween = {
+    fn: function (context, source, endDate) {
+        /// <summary>获取年差</summary>
+        /// <param name="source" type="Date"></param>
+        /// <param name="endDate" type="Date">结束日期时间</param>
+        /// <returns type="Object">年差</returns>
+        return context.genValue(-moment(source.toValue()).diff(endDate, "years"));
+    },
+    p: ["date"],
+    r: "number",
+};
+var func_date = {
+    DateOf: funcDateDateOf,
+    DayOf: funcDateDayOf,
+    DayOfWeek: funcDateDayOfWeek,
+    DaysBetween: funcDateDaysBetween,
+    HourOf: funcDateHourOf,
+    HoursBetween: funcDateHoursBetween,
+    IncDay: funcDateIncDay,
+    IncHour: funcDateIncHour,
+    IncMinute: funcDateIncMinute,
+    IncMonth: funcDateIncMonth,
+    IncSecond: funcDateIncSecond,
+    IncWeek: funcDateIncWeek,
+    IncYear: funcDateIncYear,
+    MilliSecondOf: funcDateMilliSecondOf,
+    MilliSecondsBetween: funcDateMilliSecondsBetween,
+    MinuteOf: funcDateMinuteOf,
+    MinutesBetween: funcDateMinutesBetween,
+    MonthOf: funcDateMonthOf,
+    MonthsBetween: funcDateMonthsBetween,
+    SecondOf: funcDateSecondOf,
+    SecondsBetween: funcDateSecondsBetween,
+    ToString: funcDateToString,
+    WeekOf: funcDateWeekOf,
+    WeeksBetween: funcDateWeeksBetween,
+    YearOf: funcDateYearOf,
+    YearsBetween: funcDateYearsBetween,
+};
+
+// Number
+var funcNumberToString = {
+    fn: function (context, source) {
+        /// <summary>转换数字类型为字符串</summary>
+        /// <param name="source" type="Number"></param>
+        /// <returns type="Object">字符串</returns>
+        return context.genValue(source.toValue() + "");
+    },
+    p: [],
+    r: "string",
+};
+var funcNumberAbs = {
+    fn: function (context, source) {
+        /// <summary>获取数的绝对值</summary>
+        /// <param name="source" type="Number"></param>
+        /// <returns type="Object">绝对值</returns>
+        return source.abs();
+    },
+    p: [],
+    r: "number",
+};
+var funcNumberCeil = {
+    fn: function (context, source) {
+        /// <summary>对数进行向上取整</summary>
+        /// <param name="source" type="Number"></param>
+        /// <returns type="Object">数值</returns>
+        return source.ceil();
+    },
+    p: [],
+    r: "number",
+};
+var funcNumberFloor = {
+    fn: function (context, source) {
+        /// <summary>对数进行向下取整</summary>
+        /// <param name="source" type="Number"></param>
+        /// <returns type="Object">数值</returns>
+        return source.floor();
+    },
+    p: [],
+    r: "number",
+};
+var funcNumberCos = {
+    fn: function (context, source) {
+        /// <summary>获取数的余弦</summary>
+        /// <param name="source" type="Number"></param>
+        /// <returns type="Object">余弦</returns>
+        return source.cos();
+    },
+    p: [],
+    r: "number",
+};
+var funcNumberExp = {
+    fn: function (context, source) {
+        /// <summary>获取 e 的指数</summary>
+        /// <param name="source" type="Number"></param>
+        /// <returns type="Object">指数</returns>
+        return source.exp();
+    },
+    p: [],
+    r: "number",
+};
+var funcNumberLn = {
+    fn: function (context, source) {
+        /// <summary>获取数的自然对数（底为 e）</summary>
+        /// <param name="source" type="Number"></param>
+        /// <returns type="Object">自然对数</returns>
+        return source.ln();
+    },
+    p: [],
+    r: "number",
+};
+var funcNumberLog = {
+    fn: function (context, source, base) {
+        /// <summary>获取数的指定底数的对数</summary>
+        /// <param name="source" type="Number"></param>
+        /// <param name="base" type="Number">底数</param>
+        /// <returns type="Object">对数</returns>
+        return source.log(base);
+    },
+    p: ["number"],
+    r: "number",
+};
+var funcNumberPower = {
+    fn: function (context, source, exponent) {
+        /// <summary>获取数的指定指数的次幂</summary>
+        /// <param name="source" type="Number"></param>
+        /// <param name="exponent" type="Number">指数</param>
+        /// <returns type="Object">次幂</returns>
+        return source.power(exponent);
+    },
+    p: ["number"],
+    r: "number",
+};
+var funcNumberRound = {
+    fn: function (context, source, scale) {
+        /// <summary>根据保留的小数位数对数四舍五入</summary>
+        /// <param name="source" type="Number"></param>
+        /// <param name="scale" type="Number">保留小数位数</param>
+        /// <returns type="Object">数值</returns>
+        return source.round(scale);
+    },
+    p: ["number"],
+    r: "number",
+};
+var funcNumberSin = {
+    fn: function (context, source) {
+        /// <summary>获取数的正弦</summary>
+        /// <param name="source" type="Number"></param>
+        /// <returns type="Object">正弦</returns>
+        return source.sin();
+    },
+    p: [],
+    r: "number",
+};
+var funcNumberSqrt = {
+    fn: function (context, source) {
+        /// <summary>获取数的平方根</summary>
+        /// <param name="source" type="Number"></param>
+        /// <returns type="Object">平方根</returns>
+        return source.sqrt();
+    },
+    p: [],
+    r: "number",
+};
+var funcNumberTan = {
+    fn: function (context, source) {
+        /// <summary>获取树的正切值</summary>
+        /// <param name="source" type="Number"></param>
+        /// <returns type="Object">正切值</returns>
+        return source.tan();
+    },
+    p: [],
+    r: "number",
+};
+var funcNumberTrunc = {
+    fn: function (context, source, scale) {
+        /// <summary>根据保留的小数位数对数进行截断</summary>
+        /// <param name="source" type="Number"></param>
+        /// <param name="scale" type="Number">保留小数位数</param>
+        /// <returns type="Object">数值</returns>
+        return source.trunc(scale);
+    },
+    p: ["number"],
+    r: "number",
+};
+var funcNumberToRMB = {
+    fn: function (context, source, rmb, big) {
+        /// <summary>获取人民币大写</summary>
+        /// <param name="source" type="Number"></param>
+        /// <param name="rmb" type="Boolean">是否人民币(默认true)</param>
+        /// <param name="big" type="Boolean">是否大写(默认true)</param>
+        /// <returns type="Object">人民币大写</returns>
+        var conversion = function (num, isRMB, isBig) {
+            var cn = (isBig ? "零壹贰叁肆伍陆柒捌玖" : "零一二三四五六七八九").split("");
+            var cq = (isBig ? "拾佰仟" : "十百千").split("");
+            cq.unshift("");
+            var cw = "万亿兆".split("");
+            cw.unshift("");
+            var cd = isRMB ? "元" : "点";
+            var cl = "角分厘".split("");
+            var cz = isRMB ? "整" : "";
+            var cf = "负";
+            var v = "";
+            var s = (num + ".").split(".", 2);
+            var x = s[0].split("");
+            var y = s[1].split("");
+            var isNegative = x[0] === "-";
+            if (isNegative) {
+                x.shift();
+            }
+            x = x.reverse();
+            // 处理整数部分
+            var c = "";
+            var i = 0;
+            var t = [];
+            var inZero = true;
+            while (i < x.length) {
+                t.push(x[i++]);
+                if (t.length === 4 || i === x.length) {
+                    // 从个位数起以每四位数为一小节
+                    for (var j = 0; j < t.length; j++) {
+                        var n = Number(t[j]);
+                        if (n === 0) {
+                            // 1. 避免 "零" 的重覆出现; 2. 个位数的 0 不必转成 "零"
+                            if (!inZero && j !== 0) {
+                                c = cn[0] + c;
+                            }
+                            inZero = true;
+                        }
+                        else {
+                            c = cn[n] + cq[j] + c;
+                            inZero = false;
+                        }
+                    }
+                    // 加上该小节的位数
+                    if (c.length === 0) {
+                        if (v.length > 0 && v.split("")[0] !== cn[0]) {
+                            v = cn[0] + v;
+                        }
+                    }
+                    else {
+                        v = c + (cw[Math.floor((i - 1) / 4)] || "") + v;
+                    }
+                    c = "";
+                    t = [];
+                }
+            }
+            // 处理小数部分
+            if (y.length > 0) {
+                v += cd;
+                for (var k = 0; k < y.length; k++) {
+                    var m = Number(y[k]);
+                    if (isRMB) {
+                        // 避免小数点后 "零" 的重覆出现
+                        if ((m !== 0) || (v.substring(v.length - 1) !== cn[0]) || (k > 2)) {
+                            v += cn[m];
+                        }
+                        if ((m !== 0) || (v.substring(v.length - 1) === cn[0]) && (k === 2)) {
+                            v += cl[k] || "";
+                        }
+                    }
+                    else {
+                        v += cn[m];
+                    }
+                }
+            }
+            else {
+                // 处理无小数部分时整数部分的结尾
+                if (v.length === 0) {
+                    v = cn[0];
+                }
+                if (isRMB) {
+                    v += cd + cz;
+                }
+            }
+            // 其他例外状况的处理, 非人民币则将 "壹拾" 或 "一十" 改为 "拾" 或 "十"
+            if (!isRMB && v.substring(0, 2) === cn[1] + cq[1]) {
+                v = v.substring(1);
+            }
+            // 没有整数部分 且 有小数部分
+            if (v.split("")[0] === cd) {
+                if (isRMB) {
+                    v = v.substring(1);
+                }
+                else {
+                    v = cn[0] + v;
+                }
+            }
+            // 是否为负数
+            if (isNegative) {
+                v = cf + v;
+            }
+            return v;
+        };
+        var v = source.toValue();
+        return context.genValue(isNumber(v) ?
+            conversion(v, rmb === undefined || rmb, big === undefined || big) : null);
+    },
+    p: ["boolean?", "boolean?"],
+    r: "string",
+};
+var func_number = {
+    Abs: funcNumberAbs,
+    Ceil: funcNumberCeil,
+    Cos: funcNumberCos,
+    Exp: funcNumberExp,
+    Floor: funcNumberFloor,
+    Ln: funcNumberLn,
+    Log: funcNumberLog,
+    Power: funcNumberPower,
+    Round: funcNumberRound,
+    Sin: funcNumberSin,
+    Sqrt: funcNumberSqrt,
+    Tan: funcNumberTan,
+    ToRMB: funcNumberToRMB,
+    ToString: funcNumberToString,
+    Trunc: funcNumberTrunc,
+};
+
+// Object
+var funcObjectParent = {
+    e: "parent",
+    fn: function (context, source) {
+        /// <summary>获取父实体对象，如果当前为根则获取自己</summary>
+        /// <returns type="Object">父实体对象</returns>
+        return context.getParentValue(source);
+    },
+    p: [],
+    r: "object",
+};
+var funcObjectRecNo = {
+    e: "value",
+    fn: function (context, source) {
+        /// <summary>获取当前实体的索引号，没有实体返回-1</summary>
+        /// <returns type="Object">索引号</returns>
+        return context.getRecNo(source);
+    },
+    p: [],
+    r: "number",
+};
+var func_object = {
+    Parent: funcObjectParent,
+    RecNo: funcObjectRecNo,
+};
+
 var Locale = (function () {
     function Locale() {
         this.localeName = "zh-cn";
@@ -239,6 +1277,304 @@ var Locale = (function () {
     return Locale;
 }());
 var locale = new Locale();
+
+// String
+var funcStringToString = {
+    fn: function (context, source) {
+        /// <summary>转换字符串类型为字符串</summary>
+        /// <param name="source" type="String"></param>
+        /// <returns type="Object">字符串</returns>
+        return context.genValue(source.toValue() + "");
+    },
+    p: [],
+    r: "string",
+};
+var funcStringToNumber = {
+    fn: function (context, source) {
+        /// <summary>转换字符串类型为数字</summary>
+        /// <param name="source" type="String"></param>
+        /// <returns type="Object">数字</returns>
+        var n = Number(source.toValue());
+        var r;
+        if (isNaN(n)) {
+            r = context.genErrorValue(source.toValue() + "无法被转换为数字");
+        }
+        else {
+            r = context.genValue(n);
+        }
+        return r;
+    },
+    p: [],
+    r: "number",
+};
+var funcStringToDate = {
+    fn: function (context, source, fmt) {
+        /// <summary>转换字符串类型为日期时间</summary>
+        /// <param name="source" type="String"></param>
+        /// <param name="fmt" type="String">日期时间格式</param>
+        /// <returns type="Object">日期时间</returns>
+        fmt = fmt || "";
+        var s = source.toValue();
+        var r;
+        var m = moment(s, fmt);
+        if (m.isValid()) {
+            r = context.genValue(m.toDate());
+        }
+        else {
+            r = context.genErrorValue(s + " 无法被 " + fmt + " 格式化为日期时间");
+        }
+        return r;
+    },
+    p: ["string?"],
+    r: "date",
+};
+var funcStringLength = {
+    fn: function (context, source) {
+        /// <summary>获取字符串长度</summary>
+        /// <param name="source" type="String"></param>
+        /// <returns type="Object">字符串长度</returns>
+        var value = source.toValue();
+        return context.genValue(isString(value) ? value.length : null);
+    },
+    p: [],
+    r: "number",
+};
+var funcStringUpper = {
+    fn: function (context, source) {
+        /// <summary>转换字符串为大写</summary>
+        /// <param name="source" type="String"></param>
+        /// <returns type="Object">大写字符串</returns>
+        var value = source.toValue();
+        return context.genValue(isString(value) ? value.toUpperCase() : null);
+    },
+    p: [],
+    r: "string",
+};
+var funcStringLower = {
+    fn: function (context, source) {
+        /// <summary>转换字符串为小写</summary>
+        /// <param name="source" type="String"></param>
+        /// <returns type="Object">小写字符串</returns>
+        var value = source.toValue();
+        return context.genValue(isString(value) ? value.toLowerCase() : null);
+    },
+    p: [],
+    r: "string",
+};
+var funcStringTrim = {
+    fn: function (context, source) {
+        /// <summary>去除字符串两端空格</summary>
+        /// <param name="source" type="String"></param>
+        /// <returns type="Object">字符串</returns>
+        var value = source.toValue();
+        return context.genValue(isString(value) ? value.trim() : null);
+    },
+    p: [],
+    r: "string",
+};
+var funcStringTrimLeft = {
+    fn: function (context, source) {
+        /// <summary>去除字符串左端空格</summary>
+        /// <param name="source" type="String"></param>
+        /// <returns type="Object">字符串</returns>
+        var value = source.toValue();
+        return context.genValue(isString(value) ? value.replace(/^\s+/g, "") : null);
+    },
+    p: [],
+    r: "string",
+};
+var funcStringTrimRight = {
+    fn: function (context, source) {
+        /// <summary>去除字符串右端空格</summary>
+        /// <param name="source" type="String"></param>
+        /// <returns type="Object">字符串</returns>
+        var value = source.toValue();
+        return context.genValue(isString(value) ? value.replace(/\s+$/g, "") : null);
+    },
+    p: [],
+    r: "string",
+};
+var funcStringSubString = {
+    fn: function (context, source, start, len) {
+        /// <summary>获取字符串的子字符串，指定开始位置和长度</summary>
+        /// <param name="source" type="String"></param>
+        /// <param name="start" type="Number">开始位置</param>
+        /// <param name="len" type="Number">长度</param>
+        /// <returns type="Object">子字符串</returns>
+        var value = source.toValue();
+        var left = start >= 0 ? start : value.toString().length + start;
+        var right = left + len;
+        if (left > right) {
+            right = left;
+        }
+        return context.genValue(isString(value) && isNumber(start) && isNumber(len) ?
+            value.substring(left, right) : null);
+    },
+    p: ["number", "number"],
+    r: "string",
+};
+var funcStringLeftString = {
+    fn: function (context, source, len) {
+        /// <summary>获取字符串的左子字符串，指定长度</summary>
+        /// <param name="source" type="String"></param>
+        /// <param name="len" type="Number">长度</param>
+        /// <returns type="Object">子字符串</returns>
+        var value = source.toValue();
+        return context.genValue(isString(value) && isNumber(len) ? value.substring(0, len) : null);
+    },
+    p: ["number"],
+    r: "string",
+};
+var funcStringRightString = {
+    fn: function (context, source, len) {
+        /// <summary>获取字符串的右子字符串，指定长度</summary>
+        /// <param name="source" type="String"></param>
+        /// <param name="len" type="Number">长度</param>
+        /// <returns type="Object">子字符串</returns>
+        var value = source.toValue();
+        return context.genValue(isString(value) && isNumber(len) ?
+            value.substring(value.length - len, value.length) : null);
+    },
+    p: ["number"],
+    r: "string",
+};
+var funcStringPos = {
+    fn: function (context, source, subValue) {
+        /// <summary>检索字符串，获取子字符串在字符串中的起始位置</summary>
+        /// <param name="source" type="String"></param>
+        /// <param name="subValue" type="String">子字符串</param>
+        /// <returns type="Object">位置索引</returns>
+        var value = source.toValue();
+        return context.genValue(isString(value) && isString(subValue) ?
+            value.indexOf(subValue) : null);
+    },
+    p: ["string"],
+    r: "number",
+};
+var funcStringReplace = {
+    fn: function (context, source, srcStr, desStr, model) {
+        /// <summary>字符串替换</summary>
+        /// <param name="source" type="String">源字符串</param>
+        /// <param name="srcStr" type="String">被搜索的子字符串</param>
+        /// <param name="desStr" type="String">用于替换的子字符串</param>
+        /// <param name="model" type="Boolen">匹配模式</param>
+        /// <returns type="Object">替换后的新字符串</returns>
+        var r;
+        var t;
+        if (model === undefined) {
+            model = "g"; // 默认全部替换,且区分大小写(i表示不区分大小写)
+        }
+        var value = source.toValue();
+        var index = 0;
+        var length = srcStr.length;
+        if (/^m?g?i?$/.test(model)) {
+            if (/g/.test(model)) {
+                if (/i/.test(model)) {
+                    index = value.toUpperCase().indexOf(srcStr.toUpperCase(), index);
+                    while (index !== -1) {
+                        t = value.split("");
+                        var param = [index, length];
+                        param = param.concat(desStr.split(""));
+                        Array.prototype.splice.apply(t, param);
+                        value = t.join("");
+                        index = value.toUpperCase().indexOf(srcStr.toUpperCase(), index);
+                    }
+                }
+                else {
+                    index = value.indexOf(srcStr, index);
+                    while (index !== -1) {
+                        t = value.split("");
+                        var param = [index, length];
+                        param = param.concat(desStr.split(""));
+                        Array.prototype.splice.apply(t, param);
+                        value = t.join("");
+                        index = value.indexOf(srcStr, index);
+                    }
+                }
+            }
+            else {
+                if (/i/.test(model)) {
+                    index = value.toUpperCase().indexOf(srcStr.toUpperCase(), index);
+                    if (index !== -1) {
+                        t = value.split("");
+                        var param = [index, length];
+                        param = param.concat(desStr.split(""));
+                        Array.prototype.splice.apply(t, param);
+                        value = t.join("");
+                    }
+                }
+                else {
+                    value = value.replace(srcStr, desStr);
+                }
+            }
+        }
+        else {
+            r = context.genErrorValue(format(locale.getLocale().MSG_EF_MODEL, model));
+        }
+        if (!r) {
+            r = context.genValue(value);
+        }
+        return r;
+    },
+    p: ["string", "string", "string?"],
+    r: "string",
+};
+var funcStringReplaceReg = {
+    fn: function (context, source, srcStr, desStr, model) {
+        /// <summary>正则替换</summary>
+        /// <param name="source" type="String">源字符串</param>
+        /// <param name="srcStr" type="String">用于匹配子字符串的正则表达式</param>
+        /// <param name="desStr" type="String">用于替换的子字符串</param>
+        /// <param name="model" type="Boolen">匹配模式</param>
+        /// <returns type="Object">替换后的新字符串</returns>
+        var r;
+        if (model === undefined) {
+            model = "g"; // 默认全部替换,且区分大小写(i表示不区分大小写)
+        }
+        var value = source.toValue();
+        var regexp;
+        try {
+            regexp = new RegExp(srcStr, model);
+        }
+        catch (e) {
+            r = context.genErrorValue(format(locale.getLocale().MSG_EF_MODEL, model));
+        }
+        value = value.replace(regexp, desStr);
+        if (!r) {
+            r = context.genValue(value);
+        }
+        return r;
+    },
+    p: ["string", "string", "string?"],
+    r: "string",
+};
+var func_string = {
+    LeftString: funcStringLeftString,
+    Length: funcStringLength,
+    Lower: funcStringLower,
+    Pos: funcStringPos,
+    Replace: funcStringReplace,
+    ReplaceReg: funcStringReplaceReg,
+    RightString: funcStringRightString,
+    SubString: funcStringSubString,
+    ToDate: funcStringToDate,
+    ToNumber: funcStringToNumber,
+    ToString: funcStringToString,
+    Trim: funcStringTrim,
+    TrimLeft: funcStringTrimLeft,
+    TrimRight: funcStringTrimRight,
+    Upper: funcStringUpper,
+};
+
+var func = {
+    _: func__,
+    array: func_array,
+    boolean: func_boolean,
+    date: func_date,
+    number: func_number,
+    object: func_object,
+    string: func_string,
+};
 
 var Lexer = (function () {
     function Lexer() {
@@ -3280,1342 +4616,6 @@ var ExprContext = (function (_super) {
     };
     return ExprContext;
 }(Context));
-
-// _
-var funcIIf = {
-    fn: function (context, source, bool, tv, fv) {
-        /// <summary>条件判断函数，如果第一个参数为true，则获取第二个参数，否则获取第三个参数</summary>
-        /// <param name="bool" type="Boolean">条件值</param>
-        /// <param name="tv" type="Object">真值</param>
-        /// <param name="fv" type="Object">假值</param>
-        /// <returns type="Object">第二个参数或第三个参数</returns>
-        return context.genValue(bool ? tv : fv);
-    },
-    p: ["boolean", "undefined", "undefined"],
-    r: "undefined",
-};
-var funcIfNull = {
-    fn: function (context, source, v, d) {
-        /// <summary>空值判断函数，如果第一个参数为null，则获取第二个参数，否则获取第一个参数</summary>
-        /// <param name="v" type="Object">值</param>
-        /// <param name="d" type="Object">默认值</param>
-        /// <returns type="Object">第一个参数或第二个参数</returns>
-        return context.genValue((v !== null) ? v : d);
-    },
-    p: ["undefined", "undefined"],
-    r: "undefined",
-};
-var funcParent = {
-    e: "parent",
-    fn: function (context) {
-        /// <summary>获取当前实体的父实体对象，如果当前为根则获取自己</summary>
-        /// <returns type="Object">父实体对象</returns>
-        return context.getParentValue(null);
-    },
-    p: [],
-    r: "object",
-};
-var funcRecNo = {
-    e: "value",
-    fn: function (context) {
-        /// <summary>获取当前实体的索引号，没有记录返回-1</summary>
-        /// <returns type="Object">索引号</returns>
-        return context.getRecNo(null);
-    },
-    p: [],
-    r: "number",
-};
-var funcRoot = {
-    e: "root",
-    fn: function (context) {
-        /// <summary>获取实体根对象</summary>
-        /// <returns type="Object">实体根对象</returns>
-        return context.getRootValue();
-    },
-    p: [],
-    r: "object",
-};
-var funcNow = {
-    fn: function (context) {
-        /// <summary>获取本地当前日期时间</summary>
-        /// <returns type="Object">本地当前日期时间</returns>
-        return context.genValue(new Date());
-    },
-    p: [],
-    r: "date",
-};
-var funcFieldName = {
-    fn: function (context) {
-        /// <summary>获取当前字段唯一标识</summary>
-        /// <returns type="Object">字段唯一标识</returns>
-        return context.getContextVariableValue("FieldName");
-    },
-    p: [],
-    r: "string",
-};
-var funcFieldDisplayName = {
-    fn: function (context) {
-        /// <summary>获取当前字段别名</summary>
-        /// <returns type="Object">字段别名（显示名称）</returns>
-        return context.getContextVariableValue("FieldDisplayName");
-    },
-    p: [],
-    r: "string",
-};
-var funcFieldValue = {
-    fn: function (context) {
-        /// <summary>获取当前字段值</summary>
-        /// <returns type="Object">字段值</returns>
-        return context.getContextVariableValue("FieldValue");
-    },
-    p: [],
-    r: "undefined",
-};
-var funcPropValue = {
-    fn: function (context, source, obj, prop, delimiter) {
-        /// <summary>获取对象属性值</summary>
-        /// <param name="obj" type="Object">对象或数组(没有分隔符则获取数组第一个元素，有分隔符获取数组所有元素集合)</param>
-        /// <param name="prop" type="String">属性名</param>
-        /// <param name="delimiter" type="String">分隔符</param>
-        /// <returns type="Object">属性值</returns>
-        var r;
-        var o = obj;
-        if (isString(delimiter) && isArray(o)) {
-            r = "";
-            for (var i = 0; i < o.length; i++) {
-                r += isObject(o[i]) ? o[i][prop] : "";
-                if (i < o.length - 1) {
-                    r += delimiter;
-                }
-            }
-        }
-        else {
-            if (isArray(o)) {
-                if (o.length > 0) {
-                    o = o[0];
-                }
-                else {
-                    o = {};
-                }
-            }
-            r = isObject(o) ? o[prop] : null;
-        }
-        if (r === undefined) {
-            r = null;
-        }
-        return context.genValue(r);
-    },
-    p: ["undefined", "string", "string?"],
-    r: "undefined",
-};
-var funcRandom = {
-    fn: function (context) {
-        /// <summary>返回介于 0 ~ 1 之间的一个随机数</summary>
-        /// <returns type="Object">数字</returns>
-        return context.genValue(Math.random());
-    },
-    p: [],
-    r: "number",
-};
-var func__ = {
-    FieldDisplayName: funcFieldDisplayName,
-    FieldName: funcFieldName,
-    FieldValue: funcFieldValue,
-    IIf: funcIIf,
-    IfNull: funcIfNull,
-    Now: funcNow,
-    Parent: funcParent,
-    PropValue: funcPropValue,
-    Random: funcRandom,
-    RecNo: funcRecNo,
-    Root: funcRoot,
-};
-
-function doEachCollection(source, expr, fn) {
-    /// <summary>分别将source中每个值作为计算环境求出expr的值</summary>
-    var r;
-    var msg = "";
-    if (source.isEntity()) {
-        var curr = {};
-        var pa = source.parentObj;
-        while (pa) {
-            if (pa.entity.name !== "" && !curr[pa.entity.name]) {
-                curr[pa.entity.name] = pa.entity.recNo;
-            }
-            pa = pa.parentObj;
-        }
-        for (var en in curr) {
-            if (curr.hasOwnProperty(en)) {
-                this.pushEntityCurrent(en, curr[en]);
-            }
-        }
-        var map = source.entity.map;
-        for (var i = 0; i < map.length; i++) {
-            // 遍历map，计算将每一个map元素作为实体计算环境时expr的值
-            r = this.calcEntityExpr(expr, source.entity.name, map[i]);
-            msg = r.errorMsg;
-            if (msg === "") {
-                var x = fn.call(this, r, i);
-                if (x !== undefined) {
-                    msg = x;
-                    break;
-                }
-            }
-            else {
-                break;
-            }
-        }
-        for (var en in curr) {
-            if (curr.hasOwnProperty(en)) {
-                this.popEntityCurrent();
-            }
-        }
-    }
-    else {
-        for (var j = 0; j < source.value.length; j++) {
-            r = this.calcDataExpr(expr, source.value[j]);
-            msg = r.errorMsg;
-            if (msg === "") {
-                var y = fn.call(this, r, j);
-                if (y !== undefined) {
-                    msg = y;
-                    break;
-                }
-            }
-            else {
-                break;
-            }
-        }
-    }
-    return msg; // 返回出错信息
-}
-function doCompCollection(source, expr, fn) {
-    var _this = this;
-    /// <summary>将source中求出的值经过fn处理后最终的结果</summary>
-    var r;
-    var msg;
-    msg = doEachCollection.call(this, source, expr, function (a) {
-        if (r) {
-            var tmp = fn.call(_this, r, a); // 相加，比较大小...
-            if (tmp.errorMsg) {
-                return tmp.errorMsg;
-            }
-            else {
-                r = tmp; // 存储中间结果，如Max运算中，r始终存储fn函数返回的最大值
-            }
-        }
-        else {
-            r = a; // a为第一个计算数，直接赋给结果值r
-        }
-    });
-    if (msg !== "") {
-        r = this.genErrorValue(msg);
-    }
-    if (!r) {
-        r = this.genValue(null);
-    }
-    return r;
-}
-// Array
-var funcArrayCount = {
-    e: "value",
-    fn: function (context, source) {
-        /// <summary>获取集合元素个数</summary>
-        /// <param name="source" type="Array"></param>
-        /// <returns type="Object">个数</returns>
-        var r = source.toValue().length;
-        return context.genValue(r, "", null, "");
-    },
-    p: [],
-    r: "number",
-};
-var funcArraySum = {
-    e: "value",
-    fn: function (context, source, expr) {
-        /// <summary>获取集合元素的合计值</summary>
-        /// <param name="source" type="Array"></param>
-        /// <param name="expr" type="String">表达式</param>
-        /// <returns type="Object">合计值</returns>
-        expr = expr || "$0";
-        var r = doCompCollection.call(context, source, expr, function (a, b) {
-            return a.add(b);
-        });
-        return r;
-    },
-    p: ["expr?"],
-    r: "undefined",
-};
-var funcArrayMax = {
-    e: "value",
-    fn: function (context, source, expr) {
-        /// <summary>获取集合元素的最大值</summary>
-        /// <param name="source" type="Array"></param>
-        /// <param name="expr" type="String">表达式</param>
-        /// <returns type="Object">最大值</returns>
-        expr = expr || "$0";
-        var r = doCompCollection.call(context, source, expr, function (a, b) {
-            var v = a.compare(b, ">");
-            if (v.errorMsg === "") {
-                v = v.toValue() ? a : b;
-            }
-            return v;
-        });
-        return r;
-    },
-    p: ["expr?"],
-    r: "undefined",
-};
-var funcArrayMin = {
-    e: "value",
-    fn: function (context, source, expr) {
-        /// <summary>获取集合元素的最小值</summary>
-        /// <param name="source" type="Array"></param>
-        /// <param name="expr" type="String">表达式</param>
-        /// <returns type="Object">最小值</returns>
-        expr = expr || "$0";
-        var r = doCompCollection.call(context, source, expr, function (a, b) {
-            var v = a.compare(b, "<");
-            if (v.errorMsg === "") {
-                v = v.toValue() ? a : b;
-            }
-            return v;
-        });
-        return r;
-    },
-    p: ["expr?"],
-    r: "undefined",
-};
-var funcArrayAverage = {
-    e: "value",
-    fn: function (context, source, expr) {
-        /// <summary>获取集合元素的平均值</summary>
-        /// <param name="source" type="Array"></param>
-        /// <param name="expr" type="String">表达式</param>
-        /// <returns type="Object">平均值</returns>
-        expr = expr || "$0";
-        var r = doCompCollection.call(context, source, expr, function (a, b) {
-            return a.add(b);
-        });
-        if (r.errorMsg === "") {
-            if (r.toValue() === null) {
-                r = context.genValue(0);
-            }
-            else {
-                var c = source.toValue().length;
-                r = r.divide(context.genValue(c));
-            }
-        }
-        return r;
-    },
-    p: ["expr?"],
-    r: "number",
-};
-var funcArrayDistinct = {
-    e: "data",
-    fn: function (context, source, expr) {
-        /// <summary>获取集合中唯一元素的集合</summary>
-        /// <param name="source" type="Array"></param>
-        /// <param name="expr" type="String">表达式</param>
-        /// <returns type="Object">集合</returns>
-        expr = expr || "$0";
-        var r = context.genValue([], "array");
-        var arr = [];
-        if (source.entity) {
-            r.entity = context.genEntityInfo(source.entity.fullName);
-            r.entity.map = [];
-            r.parentObj = source.parentObj;
-        }
-        var find = function (v) {
-            var f = false;
-            for (var i = 0; i < arr.length; i++) {
-                f = compare(arr[i], v);
-                if (f) {
-                    break;
-                }
-            }
-            return f;
-        };
-        var msg = doEachCollection.call(context, source, expr, function (a, i) {
-            var b = a.toValue();
-            if (!find(b)) {
-                arr.push(b);
-                r.arrayPush(source.subscript(context.genValue(i)));
-                if (r.entity && r.entity.map) {
-                    r.entity.map.push(source.entity.map[i]);
-                }
-            }
-        });
-        if (msg !== "") {
-            r = context.genErrorValue(msg);
-        }
-        return r;
-    },
-    p: ["expr?"],
-    r: "array",
-};
-var funcArrayWhere = {
-    e: "data",
-    fn: function (context, source, expr) {
-        /// <summary>获取满足条件的元素集合</summary>
-        /// <param name="source" type="Array"></param>
-        /// <param name="expr" type="String">条件表达式</param>
-        /// <returns type="Object">集合</returns>
-        expr = expr || "true";
-        var r = context.genValue([], "array");
-        if (source.entity) {
-            r.entity = context.genEntityInfo(source.entity.fullName);
-            r.entity.map = [];
-            r.parentObj = source.parentObj;
-        }
-        var msg = doEachCollection.call(context, source, expr, function (a, i) {
-            if (a.toValue()) {
-                r.arrayPush(source.subscript(context.genValue(i)));
-                if (r.entity && r.entity.map) {
-                    r.entity.map.push(source.entity.map[i]);
-                }
-            }
-        });
-        if (msg !== "") {
-            r = context.genErrorValue(msg);
-        }
-        return r;
-    },
-    p: ["expr"],
-    r: "array",
-};
-var func_array = {
-    Average: funcArrayAverage,
-    Count: funcArrayCount,
-    Distinct: funcArrayDistinct,
-    Max: funcArrayMax,
-    Min: funcArrayMin,
-    Sum: funcArraySum,
-    Where: funcArrayWhere,
-};
-
-// Boolean
-var funcBooleanToString = {
-    fn: function (context, source) {
-        /// <summary>转换布尔类型为字符串</summary>
-        /// <param name="source" type="Boolean"></param>
-        /// <returns type="Object">字符串</returns>
-        return context.genValue(source.toValue() + "");
-    },
-    p: [],
-    r: "string",
-};
-var func_boolean = {
-    ToString: funcBooleanToString,
-};
-
-// Date
-var funcDateToString = {
-    fn: function (context, source, format) {
-        /// <summary>转换日期时间类型为字符串</summary>
-        /// <param name="source" type="Date"></param>
-        /// <param name="format" type="String">日期时间格式</param>
-        /// <returns type="Object">字符串</returns>
-        return context.genValue(moment(source.toValue()).format(format || ""));
-    },
-    p: ["string?"],
-    r: "string",
-};
-var funcDateDateOf = {
-    fn: function (context, source) {
-        /// <summary>获取 Date 对象的日期部分</summary>
-        /// <param name="source" type="Date"></param>
-        /// <returns type="Object">日期</returns>
-        return context.genValue(moment(source.toValue()).startOf("day").toDate());
-    },
-    p: [],
-    r: "date",
-};
-var funcDateDayOf = {
-    fn: function (context, source) {
-        /// <summary>从 Date 对象获取一个月中的某一天（1 ~ 31）</summary>
-        /// <param name="source" type="Date"></param>
-        /// <returns type="Object">日</returns>
-        return context.genValue(moment(source.toValue()).date());
-    },
-    p: [],
-    r: "number",
-};
-var funcDateDayOfWeek = {
-    fn: function (context, source) {
-        /// <summary>得到一周中的星期几（0 ~ 6）</summary>
-        /// <param name="source" type="Date"></param>
-        /// <returns type="Object">周</returns>
-        return context.genValue(moment(source.toValue()).day());
-    },
-    p: [],
-    r: "number",
-};
-var funcDateDaysBetween = {
-    fn: function (context, source, endDate) {
-        /// <summary>获取日期差</summary>
-        /// <param name="source" type="Date"></param>
-        /// <param name="endDate" type="Date">结束日期时间</param>
-        /// <returns type="Object">日差</returns>
-        return context.genValue(-moment(source.toValue()).diff(endDate, "days"));
-    },
-    p: ["date"],
-    r: "number",
-};
-var funcDateHourOf = {
-    fn: function (context, source) {
-        /// <summary>从 Date 对象获取一天中的第几个小时</summary>
-        /// <param name="source" type="Date"></param>
-        /// <returns type="Object">时</returns>
-        return context.genValue(moment(source.toValue()).hour());
-    },
-    p: [],
-    r: "number",
-};
-var funcDateHoursBetween = {
-    fn: function (context, source, endDate) {
-        /// <summary>获取小时差</summary>
-        /// <param name="source" type="Date"></param>
-        /// <param name="endDate" type="Date">结束日期时间</param>
-        /// <returns type="Object">时差</returns>
-        return context.genValue(-moment(source.toValue()).diff(endDate, "hours"));
-    },
-    p: ["date"],
-    r: "number",
-};
-var funcDateIncDay = {
-    fn: function (context, source, days) {
-        /// <summary>增加指定的天数</summary>
-        /// <param name="source" type="Date"></param>
-        /// <param name="days" type="Number">天数</param>
-        /// <returns type="Object">日期时间</returns>
-        return context.genValue(moment(source.toValue()).add(days, "days").toDate());
-    },
-    p: ["number"],
-    r: "date",
-};
-var funcDateIncHour = {
-    fn: function (context, source, hours) {
-        /// <summary>增加指定的小时数</summary>
-        /// <param name="source" type="Date"></param>
-        /// <param name="hours" type="Number">小时数</param>
-        /// <returns type="Object">日期时间</returns>
-        return context.genValue(moment(source.toValue()).add(hours, "hours").toDate());
-    },
-    p: ["number"],
-    r: "date",
-};
-var funcDateIncMinute = {
-    fn: function (context, source, minutes) {
-        /// <summary>增加指定的分钟数</summary>
-        /// <param name="source" type="Date"></param>
-        /// <param name="minutes" type="Number">分钟数</param>
-        /// <returns type="Object">日期时间</returns>
-        return context.genValue(moment(source.toValue()).add(minutes, "minutes").toDate());
-    },
-    p: ["number"],
-    r: "date",
-};
-var funcDateIncMonth = {
-    fn: function (context, source, months) {
-        /// <summary>增加指定的月数</summary>
-        /// <param name="source" type="Date"></param>
-        /// <param name="months" type="Number">月数</param>
-        /// <returns type="Object">日期时间</returns>
-        return context.genValue(moment(source.toValue()).add(months, "months").toDate());
-    },
-    p: ["number"],
-    r: "date",
-};
-var funcDateIncSecond = {
-    fn: function (context, source, seconds) {
-        /// <summary>增加指定的秒数</summary>
-        /// <param name="source" type="Date"></param>
-        /// <param name="seconds" type="Number">秒数</param>
-        /// <returns type="Object">日期时间</returns>
-        return context.genValue(moment(source.toValue()).add(seconds, "seconds").toDate());
-    },
-    p: ["number"],
-    r: "date",
-};
-var funcDateIncWeek = {
-    fn: function (context, source, weeks) {
-        /// <summary>增加指定的周数</summary>
-        /// <param name="source" type="Date"></param>
-        /// <param name="weeks" type="Number">周数</param>
-        /// <returns type="Object">日期时间</returns>
-        return context.genValue(moment(source.toValue()).add(weeks, "weeks").toDate());
-    },
-    p: ["number"],
-    r: "date",
-};
-var funcDateIncYear = {
-    fn: function (context, source, years) {
-        /// <summary>增加指定的年数</summary>
-        /// <param name="source" type="Date"></param>
-        /// <param name="years" type="Number">年数</param>
-        /// <returns type="Object">日期时间</returns>
-        return context.genValue(moment(source.toValue()).add(years, "years").toDate());
-    },
-    p: ["number"],
-    r: "date",
-};
-var funcDateMilliSecondOf = {
-    fn: function (context, source) {
-        /// <summary>从 Date 对象获取毫秒</summary>
-        /// <param name="source" type="Date"></param>
-        /// <returns type="Object">毫秒</returns>
-        return context.genValue(moment(source.toValue()).millisecond());
-    },
-    p: [],
-    r: "number",
-};
-var funcDateMilliSecondsBetween = {
-    fn: function (context, source, endDate) {
-        /// <summary>获取毫秒差</summary>
-        /// <param name="source" type="Date"></param>
-        /// <param name="endDate" type="Date">结束日期时间</param>
-        /// <returns type="Object">毫秒差</returns>
-        return context.genValue(-moment(source.toValue()).diff(endDate, "milliseconds"));
-    },
-    p: ["date"],
-    r: "number",
-};
-var funcDateMinuteOf = {
-    fn: function (context, source) {
-        /// <summary>从 Date 对象获取分钟（0 ~ 59）</summary>
-        /// <param name="source" type="Date"></param>
-        /// <returns type="Object">分</returns>
-        return context.genValue(moment(source.toValue()).minute());
-    },
-    p: [],
-    r: "number",
-};
-var funcDateMinutesBetween = {
-    fn: function (context, source, endDate) {
-        /// <summary>获取分钟差</summary>
-        /// <param name="source" type="Date"></param>
-        /// <param name="endDate" type="Date">结束日期时间</param>
-        /// <returns type="Object">分差</returns>
-        return context.genValue(-moment(source.toValue()).diff(endDate, "minutes"));
-    },
-    p: ["date"],
-    r: "number",
-};
-var funcDateMonthOf = {
-    fn: function (context, source) {
-        /// <summary>从 Date 对象获取月份（1 ~ 12）</summary>
-        /// <param name="source" type="Date"></param>
-        /// <returns type="Object">月</returns>
-        return context.genValue(moment(source.toValue()).month() + 1);
-    },
-    p: [],
-    r: "number",
-};
-var funcDateMonthsBetween = {
-    fn: function (context, source, endDate) {
-        /// <summary>获取月份差</summary>
-        /// <param name="source" type="Date"></param>
-        /// <param name="endDate" type="Date">结束日期时间</param>
-        /// <returns type="Object">月差</returns>
-        return context.genValue(-moment(source.toValue()).diff(endDate, "months"));
-    },
-    p: ["date"],
-    r: "number",
-};
-var funcDateSecondOf = {
-    fn: function (context, source) {
-        /// <summary>从 Date 对象获取秒数（0 ~ 59）</summary>
-        /// <param name="source" type="Date"></param>
-        /// <returns type="Object">秒</returns>
-        return context.genValue(moment(source.toValue()).second());
-    },
-    p: [],
-    r: "number",
-};
-var funcDateSecondsBetween = {
-    fn: function (context, source, endDate) {
-        /// <summary>获取秒差</summary>
-        /// <param name="source" type="Date"></param>
-        /// <param name="endDate" type="Date">结束日期时间</param>
-        /// <returns type="Object">秒差</returns>
-        return context.genValue(-moment(source.toValue()).diff(endDate, "seconds"));
-    },
-    p: ["date"],
-    r: "number",
-};
-var funcDateWeekOf = {
-    fn: function (context, source) {
-        /// <summary>从 Date 对象获取一年中的第几周（1 ~ 53）</summary>
-        /// <param name="source" type="Date"></param>
-        /// <returns type="Object">周</returns>
-        return context.genValue(moment(source.toValue()).week());
-    },
-    p: [],
-    r: "number",
-};
-var funcDateWeeksBetween = {
-    fn: function (context, source, endDate) {
-        /// <summary>获取周差</summary>
-        /// <param name="source" type="Date"></param>
-        /// <param name="endDate" type="Date">结束日期时间</param>
-        /// <returns type="Object">周差</returns>
-        return context.genValue(-moment(source.toValue()).diff(endDate, "weeks"));
-    },
-    p: ["date"],
-    r: "number",
-};
-var funcDateYearOf = {
-    fn: function (context, source) {
-        /// <summary>从 Date 对象获取年份</summary>
-        /// <param name="source" type="Date"></param>
-        /// <returns type="Object">年</returns>
-        return context.genValue(moment(source.toValue()).year());
-    },
-    p: [],
-    r: "number",
-};
-var funcDateYearsBetween = {
-    fn: function (context, source, endDate) {
-        /// <summary>获取年差</summary>
-        /// <param name="source" type="Date"></param>
-        /// <param name="endDate" type="Date">结束日期时间</param>
-        /// <returns type="Object">年差</returns>
-        return context.genValue(-moment(source.toValue()).diff(endDate, "years"));
-    },
-    p: ["date"],
-    r: "number",
-};
-var func_date = {
-    DateOf: funcDateDateOf,
-    DayOf: funcDateDayOf,
-    DayOfWeek: funcDateDayOfWeek,
-    DaysBetween: funcDateDaysBetween,
-    HourOf: funcDateHourOf,
-    HoursBetween: funcDateHoursBetween,
-    IncDay: funcDateIncDay,
-    IncHour: funcDateIncHour,
-    IncMinute: funcDateIncMinute,
-    IncMonth: funcDateIncMonth,
-    IncSecond: funcDateIncSecond,
-    IncWeek: funcDateIncWeek,
-    IncYear: funcDateIncYear,
-    MilliSecondOf: funcDateMilliSecondOf,
-    MilliSecondsBetween: funcDateMilliSecondsBetween,
-    MinuteOf: funcDateMinuteOf,
-    MinutesBetween: funcDateMinutesBetween,
-    MonthOf: funcDateMonthOf,
-    MonthsBetween: funcDateMonthsBetween,
-    SecondOf: funcDateSecondOf,
-    SecondsBetween: funcDateSecondsBetween,
-    ToString: funcDateToString,
-    WeekOf: funcDateWeekOf,
-    WeeksBetween: funcDateWeeksBetween,
-    YearOf: funcDateYearOf,
-    YearsBetween: funcDateYearsBetween,
-};
-
-// Number
-var funcNumberToString = {
-    fn: function (context, source) {
-        /// <summary>转换数字类型为字符串</summary>
-        /// <param name="source" type="Number"></param>
-        /// <returns type="Object">字符串</returns>
-        return context.genValue(source.toValue() + "");
-    },
-    p: [],
-    r: "string",
-};
-var funcNumberAbs = {
-    fn: function (context, source) {
-        /// <summary>获取数的绝对值</summary>
-        /// <param name="source" type="Number"></param>
-        /// <returns type="Object">绝对值</returns>
-        return source.abs();
-    },
-    p: [],
-    r: "number",
-};
-var funcNumberCeil = {
-    fn: function (context, source) {
-        /// <summary>对数进行向上取整</summary>
-        /// <param name="source" type="Number"></param>
-        /// <returns type="Object">数值</returns>
-        return source.ceil();
-    },
-    p: [],
-    r: "number",
-};
-var funcNumberFloor = {
-    fn: function (context, source) {
-        /// <summary>对数进行向下取整</summary>
-        /// <param name="source" type="Number"></param>
-        /// <returns type="Object">数值</returns>
-        return source.floor();
-    },
-    p: [],
-    r: "number",
-};
-var funcNumberCos = {
-    fn: function (context, source) {
-        /// <summary>获取数的余弦</summary>
-        /// <param name="source" type="Number"></param>
-        /// <returns type="Object">余弦</returns>
-        return source.cos();
-    },
-    p: [],
-    r: "number",
-};
-var funcNumberExp = {
-    fn: function (context, source) {
-        /// <summary>获取 e 的指数</summary>
-        /// <param name="source" type="Number"></param>
-        /// <returns type="Object">指数</returns>
-        return source.exp();
-    },
-    p: [],
-    r: "number",
-};
-var funcNumberLn = {
-    fn: function (context, source) {
-        /// <summary>获取数的自然对数（底为 e）</summary>
-        /// <param name="source" type="Number"></param>
-        /// <returns type="Object">自然对数</returns>
-        return source.ln();
-    },
-    p: [],
-    r: "number",
-};
-var funcNumberLog = {
-    fn: function (context, source, base) {
-        /// <summary>获取数的指定底数的对数</summary>
-        /// <param name="source" type="Number"></param>
-        /// <param name="base" type="Number">底数</param>
-        /// <returns type="Object">对数</returns>
-        return source.log(base);
-    },
-    p: ["number"],
-    r: "number",
-};
-var funcNumberPower = {
-    fn: function (context, source, exponent) {
-        /// <summary>获取数的指定指数的次幂</summary>
-        /// <param name="source" type="Number"></param>
-        /// <param name="exponent" type="Number">指数</param>
-        /// <returns type="Object">次幂</returns>
-        return source.power(exponent);
-    },
-    p: ["number"],
-    r: "number",
-};
-var funcNumberRound = {
-    fn: function (context, source, scale) {
-        /// <summary>根据保留的小数位数对数四舍五入</summary>
-        /// <param name="source" type="Number"></param>
-        /// <param name="scale" type="Number">保留小数位数</param>
-        /// <returns type="Object">数值</returns>
-        return source.round(scale);
-    },
-    p: ["number"],
-    r: "number",
-};
-var funcNumberSin = {
-    fn: function (context, source) {
-        /// <summary>获取数的正弦</summary>
-        /// <param name="source" type="Number"></param>
-        /// <returns type="Object">正弦</returns>
-        return source.sin();
-    },
-    p: [],
-    r: "number",
-};
-var funcNumberSqrt = {
-    fn: function (context, source) {
-        /// <summary>获取数的平方根</summary>
-        /// <param name="source" type="Number"></param>
-        /// <returns type="Object">平方根</returns>
-        return source.sqrt();
-    },
-    p: [],
-    r: "number",
-};
-var funcNumberTan = {
-    fn: function (context, source) {
-        /// <summary>获取树的正切值</summary>
-        /// <param name="source" type="Number"></param>
-        /// <returns type="Object">正切值</returns>
-        return source.tan();
-    },
-    p: [],
-    r: "number",
-};
-var funcNumberTrunc = {
-    fn: function (context, source, scale) {
-        /// <summary>根据保留的小数位数对数进行截断</summary>
-        /// <param name="source" type="Number"></param>
-        /// <param name="scale" type="Number">保留小数位数</param>
-        /// <returns type="Object">数值</returns>
-        return source.trunc(scale);
-    },
-    p: ["number"],
-    r: "number",
-};
-var funcNumberToRMB = {
-    fn: function (context, source, rmb, big) {
-        /// <summary>获取人民币大写</summary>
-        /// <param name="source" type="Number"></param>
-        /// <param name="rmb" type="Boolean">是否人民币(默认true)</param>
-        /// <param name="big" type="Boolean">是否大写(默认true)</param>
-        /// <returns type="Object">人民币大写</returns>
-        var conversion = function (num, isRMB, isBig) {
-            var cn = (isBig ? "零壹贰叁肆伍陆柒捌玖" : "零一二三四五六七八九").split("");
-            var cq = (isBig ? "拾佰仟" : "十百千").split("");
-            cq.unshift("");
-            var cw = "万亿兆".split("");
-            cw.unshift("");
-            var cd = isRMB ? "元" : "点";
-            var cl = "角分厘".split("");
-            var cz = isRMB ? "整" : "";
-            var cf = "负";
-            var v = "";
-            var s = (num + ".").split(".", 2);
-            var x = s[0].split("");
-            var y = s[1].split("");
-            var isNegative = x[0] === "-";
-            if (isNegative) {
-                x.shift();
-            }
-            x = x.reverse();
-            // 处理整数部分
-            var c = "";
-            var i = 0;
-            var t = [];
-            var inZero = true;
-            while (i < x.length) {
-                t.push(x[i++]);
-                if (t.length === 4 || i === x.length) {
-                    // 从个位数起以每四位数为一小节
-                    for (var j = 0; j < t.length; j++) {
-                        var n = Number(t[j]);
-                        if (n === 0) {
-                            // 1. 避免 "零" 的重覆出现; 2. 个位数的 0 不必转成 "零"
-                            if (!inZero && j !== 0) {
-                                c = cn[0] + c;
-                            }
-                            inZero = true;
-                        }
-                        else {
-                            c = cn[n] + cq[j] + c;
-                            inZero = false;
-                        }
-                    }
-                    // 加上该小节的位数
-                    if (c.length === 0) {
-                        if (v.length > 0 && v.split("")[0] !== cn[0]) {
-                            v = cn[0] + v;
-                        }
-                    }
-                    else {
-                        v = c + (cw[Math.floor((i - 1) / 4)] || "") + v;
-                    }
-                    c = "";
-                    t = [];
-                }
-            }
-            // 处理小数部分
-            if (y.length > 0) {
-                v += cd;
-                for (var k = 0; k < y.length; k++) {
-                    var m = Number(y[k]);
-                    if (isRMB) {
-                        // 避免小数点后 "零" 的重覆出现
-                        if ((m !== 0) || (v.substring(v.length - 1) !== cn[0]) || (k > 2)) {
-                            v += cn[m];
-                        }
-                        if ((m !== 0) || (v.substring(v.length - 1) === cn[0]) && (k === 2)) {
-                            v += cl[k] || "";
-                        }
-                    }
-                    else {
-                        v += cn[m];
-                    }
-                }
-            }
-            else {
-                // 处理无小数部分时整数部分的结尾
-                if (v.length === 0) {
-                    v = cn[0];
-                }
-                if (isRMB) {
-                    v += cd + cz;
-                }
-            }
-            // 其他例外状况的处理, 非人民币则将 "壹拾" 或 "一十" 改为 "拾" 或 "十"
-            if (!isRMB && v.substring(0, 2) === cn[1] + cq[1]) {
-                v = v.substring(1);
-            }
-            // 没有整数部分 且 有小数部分
-            if (v.split("")[0] === cd) {
-                if (isRMB) {
-                    v = v.substring(1);
-                }
-                else {
-                    v = cn[0] + v;
-                }
-            }
-            // 是否为负数
-            if (isNegative) {
-                v = cf + v;
-            }
-            return v;
-        };
-        var v = source.toValue();
-        return context.genValue(isNumber(v) ?
-            conversion(v, rmb === undefined || rmb, big === undefined || big) : null);
-    },
-    p: ["boolean?", "boolean?"],
-    r: "string",
-};
-var func_number = {
-    Abs: funcNumberAbs,
-    Ceil: funcNumberCeil,
-    Cos: funcNumberCos,
-    Exp: funcNumberExp,
-    Floor: funcNumberFloor,
-    Ln: funcNumberLn,
-    Log: funcNumberLog,
-    Power: funcNumberPower,
-    Round: funcNumberRound,
-    Sin: funcNumberSin,
-    Sqrt: funcNumberSqrt,
-    Tan: funcNumberTan,
-    ToRMB: funcNumberToRMB,
-    ToString: funcNumberToString,
-    Trunc: funcNumberTrunc,
-};
-
-// Object
-var funcObjectParent = {
-    e: "parent",
-    fn: function (context, source) {
-        /// <summary>获取父实体对象，如果当前为根则获取自己</summary>
-        /// <returns type="Object">父实体对象</returns>
-        return context.getParentValue(source);
-    },
-    p: [],
-    r: "object",
-};
-var funcObjectRecNo = {
-    e: "value",
-    fn: function (context, source) {
-        /// <summary>获取当前实体的索引号，没有实体返回-1</summary>
-        /// <returns type="Object">索引号</returns>
-        return context.getRecNo(source);
-    },
-    p: [],
-    r: "number",
-};
-var func_object = {
-    Parent: funcObjectParent,
-    RecNo: funcObjectRecNo,
-};
-
-// String
-var funcStringToString = {
-    fn: function (context, source) {
-        /// <summary>转换字符串类型为字符串</summary>
-        /// <param name="source" type="String"></param>
-        /// <returns type="Object">字符串</returns>
-        return context.genValue(source.toValue() + "");
-    },
-    p: [],
-    r: "string",
-};
-var funcStringToNumber = {
-    fn: function (context, source) {
-        /// <summary>转换字符串类型为数字</summary>
-        /// <param name="source" type="String"></param>
-        /// <returns type="Object">数字</returns>
-        var n = Number(source.toValue());
-        var r;
-        if (isNaN(n)) {
-            r = context.genErrorValue(source.toValue() + "无法被转换为数字");
-        }
-        else {
-            r = context.genValue(n);
-        }
-        return r;
-    },
-    p: [],
-    r: "number",
-};
-var funcStringToDate = {
-    fn: function (context, source, fmt) {
-        /// <summary>转换字符串类型为日期时间</summary>
-        /// <param name="source" type="String"></param>
-        /// <param name="fmt" type="String">日期时间格式</param>
-        /// <returns type="Object">日期时间</returns>
-        fmt = fmt || "";
-        var s = source.toValue();
-        var r;
-        var m = moment(s, fmt);
-        if (m.isValid()) {
-            r = context.genValue(m.toDate());
-        }
-        else {
-            r = context.genErrorValue(s + " 无法被 " + fmt + " 格式化为日期时间");
-        }
-        return r;
-    },
-    p: ["string?"],
-    r: "date",
-};
-var funcStringLength = {
-    fn: function (context, source) {
-        /// <summary>获取字符串长度</summary>
-        /// <param name="source" type="String"></param>
-        /// <returns type="Object">字符串长度</returns>
-        var value = source.toValue();
-        return context.genValue(isString(value) ? value.length : null);
-    },
-    p: [],
-    r: "number",
-};
-var funcStringUpper = {
-    fn: function (context, source) {
-        /// <summary>转换字符串为大写</summary>
-        /// <param name="source" type="String"></param>
-        /// <returns type="Object">大写字符串</returns>
-        var value = source.toValue();
-        return context.genValue(isString(value) ? value.toUpperCase() : null);
-    },
-    p: [],
-    r: "string",
-};
-var funcStringLower = {
-    fn: function (context, source) {
-        /// <summary>转换字符串为小写</summary>
-        /// <param name="source" type="String"></param>
-        /// <returns type="Object">小写字符串</returns>
-        var value = source.toValue();
-        return context.genValue(isString(value) ? value.toLowerCase() : null);
-    },
-    p: [],
-    r: "string",
-};
-var funcStringTrim = {
-    fn: function (context, source) {
-        /// <summary>去除字符串两端空格</summary>
-        /// <param name="source" type="String"></param>
-        /// <returns type="Object">字符串</returns>
-        var value = source.toValue();
-        return context.genValue(isString(value) ? value.trim() : null);
-    },
-    p: [],
-    r: "string",
-};
-var funcStringTrimLeft = {
-    fn: function (context, source) {
-        /// <summary>去除字符串左端空格</summary>
-        /// <param name="source" type="String"></param>
-        /// <returns type="Object">字符串</returns>
-        var value = source.toValue();
-        return context.genValue(isString(value) ? value.replace(/^\s+/g, "") : null);
-    },
-    p: [],
-    r: "string",
-};
-var funcStringTrimRight = {
-    fn: function (context, source) {
-        /// <summary>去除字符串右端空格</summary>
-        /// <param name="source" type="String"></param>
-        /// <returns type="Object">字符串</returns>
-        var value = source.toValue();
-        return context.genValue(isString(value) ? value.replace(/\s+$/g, "") : null);
-    },
-    p: [],
-    r: "string",
-};
-var funcStringSubString = {
-    fn: function (context, source, start, len) {
-        /// <summary>获取字符串的子字符串，指定开始位置和长度</summary>
-        /// <param name="source" type="String"></param>
-        /// <param name="start" type="Number">开始位置</param>
-        /// <param name="len" type="Number">长度</param>
-        /// <returns type="Object">子字符串</returns>
-        var value = source.toValue();
-        var left = start >= 0 ? start : value.toString().length + start;
-        var right = left + len;
-        if (left > right) {
-            right = left;
-        }
-        return context.genValue(isString(value) && isNumber(start) && isNumber(len) ?
-            value.substring(left, right) : null);
-    },
-    p: ["number", "number"],
-    r: "string",
-};
-var funcStringLeftString = {
-    fn: function (context, source, len) {
-        /// <summary>获取字符串的左子字符串，指定长度</summary>
-        /// <param name="source" type="String"></param>
-        /// <param name="len" type="Number">长度</param>
-        /// <returns type="Object">子字符串</returns>
-        var value = source.toValue();
-        return context.genValue(isString(value) && isNumber(len) ? value.substring(0, len) : null);
-    },
-    p: ["number"],
-    r: "string",
-};
-var funcStringRightString = {
-    fn: function (context, source, len) {
-        /// <summary>获取字符串的右子字符串，指定长度</summary>
-        /// <param name="source" type="String"></param>
-        /// <param name="len" type="Number">长度</param>
-        /// <returns type="Object">子字符串</returns>
-        var value = source.toValue();
-        return context.genValue(isString(value) && isNumber(len) ?
-            value.substring(value.length - len, value.length) : null);
-    },
-    p: ["number"],
-    r: "string",
-};
-var funcStringPos = {
-    fn: function (context, source, subValue) {
-        /// <summary>检索字符串，获取子字符串在字符串中的起始位置</summary>
-        /// <param name="source" type="String"></param>
-        /// <param name="subValue" type="String">子字符串</param>
-        /// <returns type="Object">位置索引</returns>
-        var value = source.toValue();
-        return context.genValue(isString(value) && isString(subValue) ?
-            value.indexOf(subValue) : null);
-    },
-    p: ["string"],
-    r: "number",
-};
-var funcStringReplace = {
-    fn: function (context, source, srcStr, desStr, model) {
-        /// <summary>字符串替换</summary>
-        /// <param name="source" type="String">源字符串</param>
-        /// <param name="srcStr" type="String">被搜索的子字符串</param>
-        /// <param name="desStr" type="String">用于替换的子字符串</param>
-        /// <param name="model" type="Boolen">匹配模式</param>
-        /// <returns type="Object">替换后的新字符串</returns>
-        var r;
-        var t;
-        if (model === undefined) {
-            model = "g"; // 默认全部替换,且区分大小写(i表示不区分大小写)
-        }
-        var value = source.toValue();
-        var index = 0;
-        var length = srcStr.length;
-        if (/^m?g?i?$/.test(model)) {
-            if (/g/.test(model)) {
-                if (/i/.test(model)) {
-                    index = value.toUpperCase().indexOf(srcStr.toUpperCase(), index);
-                    while (index !== -1) {
-                        t = value.split("");
-                        var param = [index, length];
-                        param = param.concat(desStr.split(""));
-                        Array.prototype.splice.apply(t, param);
-                        value = t.join("");
-                        index = value.toUpperCase().indexOf(srcStr.toUpperCase(), index);
-                    }
-                }
-                else {
-                    index = value.indexOf(srcStr, index);
-                    while (index !== -1) {
-                        t = value.split("");
-                        var param = [index, length];
-                        param = param.concat(desStr.split(""));
-                        Array.prototype.splice.apply(t, param);
-                        value = t.join("");
-                        index = value.indexOf(srcStr, index);
-                    }
-                }
-            }
-            else {
-                if (/i/.test(model)) {
-                    index = value.toUpperCase().indexOf(srcStr.toUpperCase(), index);
-                    if (index !== -1) {
-                        t = value.split("");
-                        var param = [index, length];
-                        param = param.concat(desStr.split(""));
-                        Array.prototype.splice.apply(t, param);
-                        value = t.join("");
-                    }
-                }
-                else {
-                    value = value.replace(srcStr, desStr);
-                }
-            }
-        }
-        else {
-            r = context.genErrorValue(format(locale.getLocale().MSG_EF_MODEL, model));
-        }
-        if (!r) {
-            r = context.genValue(value);
-        }
-        return r;
-    },
-    p: ["string", "string", "string?"],
-    r: "string",
-};
-var funcStringReplaceReg = {
-    fn: function (context, source, srcStr, desStr, model) {
-        /// <summary>正则替换</summary>
-        /// <param name="source" type="String">源字符串</param>
-        /// <param name="srcStr" type="String">用于匹配子字符串的正则表达式</param>
-        /// <param name="desStr" type="String">用于替换的子字符串</param>
-        /// <param name="model" type="Boolen">匹配模式</param>
-        /// <returns type="Object">替换后的新字符串</returns>
-        var r;
-        if (model === undefined) {
-            model = "g"; // 默认全部替换,且区分大小写(i表示不区分大小写)
-        }
-        var value = source.toValue();
-        var regexp;
-        try {
-            regexp = new RegExp(srcStr, model);
-        }
-        catch (e) {
-            r = context.genErrorValue(format(locale.getLocale().MSG_EF_MODEL, model));
-        }
-        value = value.replace(regexp, desStr);
-        if (!r) {
-            r = context.genValue(value);
-        }
-        return r;
-    },
-    p: ["string", "string", "string?"],
-    r: "string",
-};
-var func_string = {
-    LeftString: funcStringLeftString,
-    Length: funcStringLength,
-    Lower: funcStringLower,
-    Pos: funcStringPos,
-    Replace: funcStringReplace,
-    ReplaceReg: funcStringReplaceReg,
-    RightString: funcStringRightString,
-    SubString: funcStringSubString,
-    ToDate: funcStringToDate,
-    ToNumber: funcStringToNumber,
-    ToString: funcStringToString,
-    Trim: funcStringTrim,
-    TrimLeft: funcStringTrimLeft,
-    TrimRight: funcStringTrimRight,
-    Upper: funcStringUpper,
-};
-
-var func = {
-    _: func__,
-    array: func_array,
-    boolean: func_boolean,
-    date: func_date,
-    number: func_number,
-    object: func_object,
-    string: func_string,
-};
 
 var ExprList = (function () {
     function ExprList() {

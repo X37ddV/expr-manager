@@ -1,7 +1,7 @@
-import ExprContext from "./expr/context";
-import func from "./expr/function/func";
-import ExprList from "./expr/list";
-import "./expr/locale/zh-cn";
+import func from "./function/func";
+import ExprContext from "./lib/context";
+import ExprList from "./lib/list";
+import "./locale/zh-cn";
 
 export default class ExprManager {
     private exprContext: ExprContext = new ExprContext();

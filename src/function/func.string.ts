@@ -1,5 +1,5 @@
-import { format, isNumber, isString } from "../base/common";
-import locale from "../base/locale";
+import { format, isNumber, isString } from "../lib/base/common";
+import locale from "../lib/base/locale";
 import moment from "moment";
 
 // String

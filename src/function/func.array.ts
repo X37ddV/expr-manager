@@ -1,4 +1,4 @@
-import { compare } from "../base/common";
+import { compare } from "../lib/base/common";
 
 function doEachCollection(source, expr, fn) {
     /// <summary>分别将source中每个值作为计算环境求出expr的值</summary>
