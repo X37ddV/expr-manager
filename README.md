@@ -2,4 +2,4 @@
 
 项目构建中
 
-![](preview.gif)
+![](docs/preview.gif)
