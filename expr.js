@@ -3944,7 +3944,7 @@ var ExprContext = (function (_super) {
             }
             if (!r) {
                 var entity = null;
-                var type = undefined;
+                var type = void 0;
                 switch (ft.e) {
                     case "root":
                         entity = "";
@@ -4010,8 +4010,9 @@ var ExprContext = (function (_super) {
         }
         var p = [source].concat(paramValue); // 实参数组
         var pt = []; // 各个实参类型组成的数组
-        for (var i = 0; i < paramValue.length; i++) {
-            pt.push(getValueType(paramValue[i]));
+        for (var _i = 0, paramValue_1 = paramValue; _i < paramValue_1.length; _i++) {
+            var item = paramValue_1[_i];
+            pt.push(getValueType(item));
         }
         var f = this.getFunc(t, name, pt); // 类型t的name函数
         if (f) {
@@ -4256,7 +4257,7 @@ var ExprContext = (function (_super) {
         }
         var r = {
             field: field.join("."),
-            fullName: fullName,
+            fullName: (fullName),
             name: name.join("."),
             recNo: -1,
             type: dataType,
@@ -4592,7 +4593,7 @@ var ExprContext = (function (_super) {
         /// <summary>向栈顶添加新的计算环境</summary>
         this.exprContext.push([{
                 current: entityName,
-                cursor: cursor,
+                cursor: (cursor),
                 isEntityData: true,
             }]);
     };
@@ -4847,13 +4848,13 @@ var ExprList = (function () {
         }
         if (index === -1) {
             this.list.push({
-                callback: callback,
+                callback: (callback),
                 entityName: entityName || "",
                 expr: expr || "",
                 fullName: propertyName ? entityName + "." + propertyName : entityName || "",
                 propertyName: propertyName || "",
-                scope: scope,
-                types: types,
+                scope: (scope),
+                types: (types),
             });
         }
     };
@@ -4904,12 +4905,13 @@ var ExprList = (function () {
             };
             var depends_1 = function (item, stack) {
                 if (!findItem_1(stack, item)) {
-                    for (var a = 0; a < fillList_1.length; a++) {
-                        var e = fillList_1[a];
+                    for (var _i = 0, fillList_2 = fillList_1; _i < fillList_2.length; _i++) {
+                        var fillItem = fillList_2[_i];
                         var f = false;
                         if (item && item.dependencies) {
-                            for (var b = 0; b < item.dependencies.length; b++) {
-                                f = e.fullName === item.dependencies[b];
+                            for (var _a = 0, _b = item.dependencies; _a < _b.length; _a++) {
+                                var dependency = _b[_a];
+                                f = fillItem.fullName === dependency;
                                 if (f) {
                                     break;
                                 }
@@ -4917,7 +4919,7 @@ var ExprList = (function () {
                         }
                         if (f) {
                             stack.push(item);
-                            depends_1(e, stack);
+                            depends_1(fillItem, stack);
                         }
                     }
                     if (!findItem_1(newList_1, item)) {
@@ -4925,20 +4927,20 @@ var ExprList = (function () {
                     }
                 }
             };
-            for (var x = 0; x < this.list.length; x++) {
-                var xx = this.list[x];
-                if (xx.fullName !== "") {
-                    fillList_1.push(xx);
+            for (var _b = 0, _c = this.list; _b < _c.length; _b++) {
+                var item = _c[_b];
+                if (item.fullName !== "") {
+                    fillList_1.push(item);
                 }
             }
-            for (var y = 0; y < fillList_1.length; y++) {
-                var stack = [];
-                depends_1(fillList_1[y], stack);
+            for (var _d = 0, fillList_3 = fillList_1; _d < fillList_3.length; _d++) {
+                var fillItem = fillList_3[_d];
+                depends_1(fillItem, []);
             }
-            for (var z = 0; z < this.list.length; z++) {
-                var zz = this.list[z];
-                if (zz.fullName === "") {
-                    newList_1.push(zz);
+            for (var _e = 0, _f = this.list; _e < _f.length; _e++) {
+                var item = _f[_e];
+                if (item.fullName === "") {
+                    newList_1.push(item);
                 }
             }
             this.list = newList_1;

@@ -89,7 +89,7 @@ export default class ExprList {
         // 计算字段表达式的依赖更新模式
         if (updateList && l && l.dependencies) {
             for (let i = 0; i < updateList.length; i++) {
-                let u = updateList[i];
+                const u = updateList[i];
                 for (let j = 0; j < l.dependencies.length; j++) {
                     if (u.fullName === l.dependencies[j]) {
                         let commonAncestry = true;
@@ -225,13 +225,13 @@ export default class ExprList {
         }
         if (index === -1) { // 如果缓存里没有，则添加
             this.list.push({
-                callback: callback,
+                callback: (callback),
                 entityName: entityName || "",
                 expr: expr || "",
                 fullName: propertyName ? entityName + "." + propertyName : entityName || "",
                 propertyName: propertyName || "",
-                scope: scope,
-                types: types,
+                scope: (scope),
+                types: (types),
             });
         }
     }
@@ -280,12 +280,11 @@ export default class ExprList {
             };
             const depends = (item, stack) => {
                 if (!findItem(stack, item)) {
-                    for (let a = 0; a < fillList.length; a++) {
-                        const e = fillList[a];
+                    for (const fillItem of fillList) {
                         let f = false;
                         if (item && item.dependencies) {
-                            for (let b = 0; b < item.dependencies.length; b++) {
-                                f = e.fullName === item.dependencies[b];
+                            for (const dependency of item.dependencies) {
+                                f = fillItem.fullName === dependency;
                                 if (f) {
                                     break;
                                 }
@@ -293,7 +292,7 @@ export default class ExprList {
                         }
                         if (f) {
                             stack.push(item);
-                            depends(e, stack);
+                            depends(fillItem, stack);
                         }
                     }
                     if (!findItem(newList, item)) {
@@ -301,20 +300,17 @@ export default class ExprList {
                     }
                 }
             };
-            for (let x = 0; x < this.list.length; x++) {
-                const xx = this.list[x];
-                if (xx.fullName !== "") {
-                    fillList.push(xx);
+            for (const item of this.list) {
+                if (item.fullName !== "") {
+                    fillList.push(item);
                 }
             }
-            for (let y = 0; y < fillList.length; y++) {
-                const stack = [];
-                depends(fillList[y], stack);
+            for (const fillItem of fillList) {
+                depends(fillItem, []);
             }
-            for (let z = 0; z < this.list.length; z++) {
-                const zz = this.list[z];
-                if (zz.fullName === "") {
-                    newList.push(zz);
+            for (const item of this.list) {
+                if (item.fullName === "") {
+                    newList.push(item);
                 }
             }
             this.list = newList;

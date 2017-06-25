@@ -98,7 +98,7 @@ export default class ExprContext extends Context {
             }
             if (!r) {
                 let entity = null;
-                let type = undefined;
+                let type;
                 switch (ft.e) {
                     case "root":
                         entity = "";
@@ -160,8 +160,8 @@ export default class ExprContext extends Context {
         }
         const p = [source].concat(paramValue);  // 实参数组
         const pt = []; // 各个实参类型组成的数组
-        for (let i = 0; i < paramValue.length; i++) {
-            pt.push(getValueType(paramValue[i]));
+        for (const item of paramValue) {
+            pt.push(getValueType(item));
         }
         const f = this.getFunc(t, name, pt); // 类型t的name函数
         if (f) {
@@ -382,7 +382,7 @@ export default class ExprContext extends Context {
         }
         let r = {
             field: field.join("."),
-            fullName: fullName,
+            fullName: (fullName),
             name: name.join("."),
             recNo: -1,
             type: dataType,
@@ -705,7 +705,7 @@ export default class ExprContext extends Context {
         /// <summary>向栈顶添加新的计算环境</summary>
         this.exprContext.push([{
             current: entityName,
-            cursor: cursor,
+            cursor: (cursor),
             isEntityData: true,
         }]);
     }

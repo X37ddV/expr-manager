@@ -6,7 +6,7 @@
   "types": "expr.d.js",
   "scripts": {
     "start": "gulp",
-    "lint:ts": "gulp lint:ts",
+    "lint:ts": "gulp build:expr lint:ts",
     "build:expr": "gulp build:expr build:expr:min",
     "build:example": "gulp build:example",
     "build:docs": "gulp build:expr build:docs",

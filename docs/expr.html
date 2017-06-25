@@ -6918,7 +6918,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             }
             <span class="hljs-keyword">if</span> (!r) {
                 <span class="hljs-keyword">var</span> entity = <span class="hljs-literal">null</span>;
-                <span class="hljs-keyword">var</span> type = <span class="hljs-literal">undefined</span>;
+                <span class="hljs-keyword">var</span> type = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>;
                 <span class="hljs-keyword">switch</span> (ft.e) {
                     <span class="hljs-keyword">case</span> <span class="hljs-string">"root"</span>:
                         entity = <span class="hljs-string">""</span>;
@@ -6997,8 +6997,9 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
         }
         <span class="hljs-keyword">var</span> p = [source].concat(paramValue); <span class="hljs-comment">// 实参数组</span>
         <span class="hljs-keyword">var</span> pt = []; <span class="hljs-comment">// 各个实参类型组成的数组</span>
-        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; paramValue.length; i++) {
-            pt.push(getValueType(paramValue[i]));
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _i = <span class="hljs-number">0</span>, paramValue_1 = paramValue; _i &lt; paramValue_1.length; _i++) {
+            <span class="hljs-keyword">var</span> item = paramValue_1[_i];
+            pt.push(getValueType(item));
         }
         <span class="hljs-keyword">var</span> f = <span class="hljs-keyword">this</span>.getFunc(t, name, pt); <span class="hljs-comment">// 类型t的name函数</span>
         <span class="hljs-keyword">if</span> (f) {
@@ -7295,7 +7296,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
         }
         <span class="hljs-keyword">var</span> r = {
             <span class="hljs-attr">field</span>: field.join(<span class="hljs-string">"."</span>),
-            <span class="hljs-attr">fullName</span>: fullName,
+            <span class="hljs-attr">fullName</span>: (fullName),
             <span class="hljs-attr">name</span>: name.join(<span class="hljs-string">"."</span>),
             <span class="hljs-attr">recNo</span>: <span class="hljs-number">-1</span>,
             <span class="hljs-attr">type</span>: dataType,
@@ -7852,7 +7853,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">this</span>.exprContext.push([{
                 <span class="hljs-attr">current</span>: entityName,
-                <span class="hljs-attr">cursor</span>: cursor,
+                <span class="hljs-attr">cursor</span>: (cursor),
                 <span class="hljs-attr">isEntityData</span>: <span class="hljs-literal">true</span>,
             }]);
     };
@@ -8380,13 +8381,13 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
         }
         <span class="hljs-keyword">if</span> (index === <span class="hljs-number">-1</span>) {
             <span class="hljs-keyword">this</span>.list.push({
-                <span class="hljs-attr">callback</span>: callback,
+                <span class="hljs-attr">callback</span>: (callback),
                 <span class="hljs-attr">entityName</span>: entityName || <span class="hljs-string">""</span>,
                 <span class="hljs-attr">expr</span>: expr || <span class="hljs-string">""</span>,
                 <span class="hljs-attr">fullName</span>: propertyName ? entityName + <span class="hljs-string">"."</span> + propertyName : entityName || <span class="hljs-string">""</span>,
                 <span class="hljs-attr">propertyName</span>: propertyName || <span class="hljs-string">""</span>,
-                <span class="hljs-attr">scope</span>: scope,
-                <span class="hljs-attr">types</span>: types,
+                <span class="hljs-attr">scope</span>: (scope),
+                <span class="hljs-attr">types</span>: (types),
             });
         }
     };
@@ -8463,12 +8464,13 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             };
             <span class="hljs-keyword">var</span> depends_1 = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">item, stack</span>) </span>{
                 <span class="hljs-keyword">if</span> (!findItem_1(stack, item)) {
-                    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> a = <span class="hljs-number">0</span>; a &lt; fillList_1.length; a++) {
-                        <span class="hljs-keyword">var</span> e = fillList_1[a];
+                    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _i = <span class="hljs-number">0</span>, fillList_2 = fillList_1; _i &lt; fillList_2.length; _i++) {
+                        <span class="hljs-keyword">var</span> fillItem = fillList_2[_i];
                         <span class="hljs-keyword">var</span> f = <span class="hljs-literal">false</span>;
                         <span class="hljs-keyword">if</span> (item &amp;&amp; item.dependencies) {
-                            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> b = <span class="hljs-number">0</span>; b &lt; item.dependencies.length; b++) {
-                                f = e.fullName === item.dependencies[b];
+                            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _a = <span class="hljs-number">0</span>, _b = item.dependencies; _a &lt; _b.length; _a++) {
+                                <span class="hljs-keyword">var</span> dependency = _b[_a];
+                                f = fillItem.fullName === dependency;
                                 <span class="hljs-keyword">if</span> (f) {
                                     <span class="hljs-keyword">break</span>;
                                 }
@@ -8476,7 +8478,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                         }
                         <span class="hljs-keyword">if</span> (f) {
                             stack.push(item);
-                            depends_1(e, stack);
+                            depends_1(fillItem, stack);
                         }
                     }
                     <span class="hljs-keyword">if</span> (!findItem_1(newList_1, item)) {
@@ -8484,20 +8486,20 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                     }
                 }
             };
-            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> x = <span class="hljs-number">0</span>; x &lt; <span class="hljs-keyword">this</span>.list.length; x++) {
-                <span class="hljs-keyword">var</span> xx = <span class="hljs-keyword">this</span>.list[x];
-                <span class="hljs-keyword">if</span> (xx.fullName !== <span class="hljs-string">""</span>) {
-                    fillList_1.push(xx);
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _b = <span class="hljs-number">0</span>, _c = <span class="hljs-keyword">this</span>.list; _b &lt; _c.length; _b++) {
+                <span class="hljs-keyword">var</span> item = _c[_b];
+                <span class="hljs-keyword">if</span> (item.fullName !== <span class="hljs-string">""</span>) {
+                    fillList_1.push(item);
                 }
             }
-            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> y = <span class="hljs-number">0</span>; y &lt; fillList_1.length; y++) {
-                <span class="hljs-keyword">var</span> stack = [];
-                depends_1(fillList_1[y], stack);
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _d = <span class="hljs-number">0</span>, fillList_3 = fillList_1; _d &lt; fillList_3.length; _d++) {
+                <span class="hljs-keyword">var</span> fillItem = fillList_3[_d];
+                depends_1(fillItem, []);
             }
-            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> z = <span class="hljs-number">0</span>; z &lt; <span class="hljs-keyword">this</span>.list.length; z++) {
-                <span class="hljs-keyword">var</span> zz = <span class="hljs-keyword">this</span>.list[z];
-                <span class="hljs-keyword">if</span> (zz.fullName === <span class="hljs-string">""</span>) {
-                    newList_1.push(zz);
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _e = <span class="hljs-number">0</span>, _f = <span class="hljs-keyword">this</span>.list; _e &lt; _f.length; _e++) {
+                <span class="hljs-keyword">var</span> item = _f[_e];
+                <span class="hljs-keyword">if</span> (item.fullName === <span class="hljs-string">""</span>) {
+                    newList_1.push(item);
                 }
             }
             <span class="hljs-keyword">this</span>.list = newList_1;
