@@ -5,7 +5,7 @@ function doEachCollection(source, expr, fn) {
     let r;
     let msg = "";
     if (source.isEntity()) { // source为实体数据，如Root().E1[0].Entity1.Sum("ID")中的Root().E1[0].Entity1
-        let curr = {};
+        const curr = {};
         let pa = source.parentObj;
         while (pa) {
             if (pa.entity.name !== "" && !curr[pa.entity.name]) {
@@ -13,18 +13,18 @@ function doEachCollection(source, expr, fn) {
             }
             pa = pa.parentObj;
         }
-        for (let en in curr) {  // 将该source数组的父对象，祖父对象...(一直到根节点Root())放入计算环境堆栈
+        for (const en in curr) {  // 将该source数组的父对象，祖父对象...(一直到根节点Root())放入计算环境堆栈
             if (curr.hasOwnProperty(en)) {
                 this.pushEntityCurrent(en, curr[en]);
             }
         }
-        let map = source.entity.map;
+        const map = source.entity.map;
         for (let i = 0; i < map.length; i++) {
             // 遍历map，计算将每一个map元素作为实体计算环境时expr的值
             r = this.calcEntityExpr(expr, source.entity.name, map[i]);
             msg = r.errorMsg;
             if (msg === "") {
-                let x = fn.call(this, r, i);
+                const x = fn.call(this, r, i);
                 if (x !== undefined) { // 两计算数运算出错，如：Root().E1.Sum("P3"),当Root().E1有多条记录时
                     msg = x;
                     break;
@@ -33,7 +33,7 @@ function doEachCollection(source, expr, fn) {
                 break;
             }
         }
-        for (let en in curr) { // 恢复堆栈
+        for (const en in curr) { // 恢复堆栈
             if (curr.hasOwnProperty(en)) {
                 this.popEntityCurrent();
             }
@@ -43,7 +43,7 @@ function doEachCollection(source, expr, fn) {
             r = this.calcDataExpr(expr, source.value[j]);
             msg = r.errorMsg;
             if (msg === "") {
-                let y = fn.call(this, r, j);
+                const y = fn.call(this, r, j);
                 if (y !== undefined) { // 两计算数运算出错，如：[1,2,[3]].Sum()
                     msg = y;
                     break;
@@ -61,7 +61,7 @@ function doCompCollection(source, expr, fn) {
     let msg;
     msg = doEachCollection.call(this, source, expr, (a) => { // a为分别将source中每个值作为计算环境求出expr的值
         if (r) { // 从第二个计算数开始，与结果值r做fn运算
-            let tmp = fn.call(this, r, a); // 相加，比较大小...
+            const tmp = fn.call(this, r, a); // 相加，比较大小...
             if (tmp.errorMsg) { // r,a两计算数运算出错，如：[1,2,[3]].Sum()
                 return tmp.errorMsg;
             } else {
@@ -87,7 +87,7 @@ const funcArrayCount = {
         /// <summary>获取集合元素个数</summary>
         /// <param name="source" type="Array"></param>
         /// <returns type="Object">个数</returns>
-        let r = source.toValue().length;
+        const r = source.toValue().length;
         return context.genValue(r, "", null, "");
     },
     p: [],
@@ -101,7 +101,7 @@ const funcArraySum = {
         /// <param name="expr" type="String">表达式</param>
         /// <returns type="Object">合计值</returns>
         expr = expr || "$0";
-        let r = doCompCollection.call(context, source, expr, (a, b) => {
+        const r = doCompCollection.call(context, source, expr, (a, b) => {
             return a.add(b);
         });
         return r;
@@ -117,7 +117,7 @@ const funcArrayMax = {
         /// <param name="expr" type="String">表达式</param>
         /// <returns type="Object">最大值</returns>
         expr = expr || "$0";
-        let r = doCompCollection.call(context, source, expr, (a, b) => {
+        const r = doCompCollection.call(context, source, expr, (a, b) => {
             let v = a.compare(b, ">");
             if (v.errorMsg === "") {
                 v = v.toValue() ? a : b;
@@ -137,7 +137,7 @@ const funcArrayMin = {
         /// <param name="expr" type="String">表达式</param>
         /// <returns type="Object">最小值</returns>
         expr = expr || "$0";
-        let r = doCompCollection.call(context, source, expr, (a, b) => {
+        const r = doCompCollection.call(context, source, expr, (a, b) => {
             let v = a.compare(b, "<");
             if (v.errorMsg === "") {
                 v = v.toValue() ? a : b;
@@ -164,7 +164,7 @@ const funcArrayAverage = {
             if (r.toValue() === null) {
                 r = context.genValue(0);
             } else {
-                let c = source.toValue().length;
+                const c = source.toValue().length;
                 r = r.divide(context.genValue(c));
             }
         }
@@ -182,24 +182,24 @@ const funcArrayDistinct = {
         /// <returns type="Object">集合</returns>
         expr = expr || "$0";
         let r = context.genValue([], "array");
-        let arr = [];
+        const arr = [];
         if (source.entity) {
             r.entity = context.genEntityInfo(source.entity.fullName);
             r.entity.map = [];
             r.parentObj = source.parentObj;
         }
-        let find = (v) => { // 查找表达式结果是否有重复值
+        const find = (v) => { // 查找表达式结果是否有重复值
             let f = false;
-            for (let i = 0; i < arr.length; i++) {
-                f = compare(arr[i], v);
+            for (const item of arr) {
+                f = compare(item, v);
                 if (f) {
                     break;
                 }
             }
             return f;
         };
-        let msg = doEachCollection.call(context, source, expr, (a, i) => {
-            let b = a.toValue();
+        const msg = doEachCollection.call(context, source, expr, (a, i) => {
+            const b = a.toValue();
             if (!find(b)) {
                 arr.push(b);
                 r.arrayPush(source.subscript(context.genValue(i)));
@@ -230,7 +230,7 @@ const funcArrayWhere = {
             r.entity.map = [];
             r.parentObj = source.parentObj;
         }
-        let msg = doEachCollection.call(context, source, expr, (a, i) => {
+        const msg = doEachCollection.call(context, source, expr, (a, i) => {
             if (a.toValue()) {
                 r.arrayPush(source.subscript(context.genValue(i)));
                 if (r.entity && r.entity.map) {

@@ -25,6 +25,10 @@ function __extends(d, b) {
 
 // 内部公共函数
 // ----------
+// 判断**tokenType**是否包含在**tokenTypes**中
+function hasToken(tokenTypes, tokenType) {
+    return (tokenTypes + ",").indexOf(tokenType + ",") >= 0;
+}
 // 是否为**数字**组成字符
 function isN(s) {
     return "0123456789.".indexOf(s) >= 0;
@@ -41,7 +45,7 @@ function isX(s) {
 function isC(s) {
     return s !== "." && isN(s) || "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_".indexOf(s) >= 0;
 }
-// 是否为正确数字格式(至多包含一个".")
+// 是否至多包含一个"."
 function isNS(s) {
     return s.replace(/[^\.]/g, "").length <= 1;
 }
@@ -49,43 +53,40 @@ function isNS(s) {
 function isUN(s) {
     return !isC(s) && " ()[]{}!<>=+-&|*/%'\",.".indexOf(s) < 0;
 }
-function hasToken(tokenTypes, tokenType) {
-    // token类型是否包含在tokens中
-    return (tokenTypes + ",").indexOf(tokenType + ",") >= 0;
-}
+// 是否为变量标识符（排除函数名，对象属性名的情况）
 function isIDENToken(token) {
-    // 是否为变量标识符(排除函数名, 对象属性名的情况)
     var p = token.parent;
     return !(p &&
         (hasToken("VTK_FUNCTION,TK_COLON", p.tokenType) && p.childs[0] === token ||
             p.tokenType === "TK_DOT" && p.childs[0] !== token));
 }
+// t是否为n(,,)函数形式中的","结点
 function isFunctionToken(t, name) {
-    // t是否为n(,,)函数形式中的","结点
     return t && t.tokenType === "VTK_COMMA" &&
         t.parent && t.parent.tokenType === "VTK_PAREN" &&
         t.parent.parent && t.parent.parent.tokenType === "TK_IDEN" &&
-        t.parent.parent.tokenValue === name; // 函数名为n
+        t.parent.parent.tokenValue === name; // 函数名为name
 }
+// 遍历语法树
 function eachToken(token, fn, scope) {
-    // 遍历语法树
     var r = true;
     if (token.childs) {
-        for (var i = 0; i < token.childs.length; i++) {
-            if (eachToken(token.childs[i], fn, scope) === false) {
+        for (var _i = 0, _a = token.childs; _i < _a.length; _i++) {
+            var item = _a[_i];
+            if (eachToken(item, fn, scope) === false) {
                 r = false;
-                break; // 子节点出错, 父节点、祖父节点...直接返回false
+                break;
             }
         }
     }
     return !r ? r : fn.call(scope, token);
 }
+// 格式化字符串str, 替换掉str中的{0}、{1}等
 function format(str) {
     var values = [];
     for (var _i = 1; _i < arguments.length; _i++) {
         values[_i - 1] = arguments[_i];
     }
-    // 格式化字符串s, 替换掉s中的{0}、{1}等
     return str.replace(/\{(\d+)\}/g, function (m, i) { return values[i]; });
 }
 function isArray(v) {
@@ -100,11 +101,8 @@ function isObject(v) {
 function isNumber(v) {
     return getValueType(v) === "number";
 }
+// 得到value的数据类型
 function getValueType(value) {
-    // 得到v的数据类型
-    // IE8下, Object.prototype.toString.call(null) === "[object Object]"
-    // IE9下, Object.prototype.toString.call(null) === "[object NULL]"
-    // 所以为了兼容, 单独处理 v === null 的情况
     if (value === null) {
         return "null";
     }
@@ -112,8 +110,8 @@ function getValueType(value) {
         return Object.prototype.toString.call(value).replace("[object ", "").replace("]", "").toLowerCase();
     }
 }
+// 比较数组
 function compareArray(farr, sarr, isKey) {
-    // 比较数组
     var r = true;
     if (farr.length !== sarr.length) {
         r = false;
@@ -136,6 +134,7 @@ function compareArray(farr, sarr, isKey) {
     }
     return r;
 }
+// 比较对象
 function compareObject(fobj, sobj) {
     var f = [];
     var s = [];
@@ -316,12 +315,7 @@ var funcPropValue = {
         }
         else {
             if (isArray(o)) {
-                if (o.length > 0) {
-                    o = o[0];
-                }
-                else {
-                    o = {};
-                }
+                o = o.length > 0 ? o[0] : {};
             }
             r = isObject(o) ? o[prop] : null;
         }
@@ -552,8 +546,9 @@ var funcArrayDistinct = {
         }
         var find = function (v) {
             var f = false;
-            for (var i = 0; i < arr.length; i++) {
-                f = compare(arr[i], v);
+            for (var _i = 0, arr_1 = arr; _i < arr_1.length; _i++) {
+                var item = arr_1[_i];
+                f = compare(item, v);
                 if (f) {
                     break;
                 }
@@ -1180,12 +1175,7 @@ var funcNumberToRMB = {
             }
             // 没有整数部分 且 有小数部分
             if (v.split("")[0] === cd) {
-                if (isRMB) {
-                    v = v.substring(1);
-                }
-                else {
-                    v = cn[0] + v;
-                }
+                v = isRMB ? v.substring(1) : cn[0] + v;
             }
             // 是否为负数
             if (isNegative) {
@@ -1295,14 +1285,9 @@ var funcStringToNumber = {
         /// <param name="source" type="String"></param>
         /// <returns type="Object">数字</returns>
         var n = Number(source.toValue());
-        var r;
-        if (isNaN(n)) {
-            r = context.genErrorValue(source.toValue() + "无法被转换为数字");
-        }
-        else {
-            r = context.genValue(n);
-        }
-        return r;
+        return isNaN(n) ?
+            context.genErrorValue(source.toValue() + "无法被转换为数字") :
+            context.genValue(n);
     },
     p: [],
     r: "number",
@@ -1315,15 +1300,10 @@ var funcStringToDate = {
         /// <returns type="Object">日期时间</returns>
         fmt = fmt || "";
         var s = source.toValue();
-        var r;
         var m = moment(s, fmt);
-        if (m.isValid()) {
-            r = context.genValue(m.toDate());
-        }
-        else {
-            r = context.genErrorValue(s + " 无法被 " + fmt + " 格式化为日期时间");
-        }
-        return r;
+        return m.isValid() ?
+            context.genValue(m.toDate()) :
+            context.genErrorValue(s + " 无法被 " + fmt + " 格式化为日期时间");
     },
     p: ["string?"],
     r: "date",
@@ -2129,8 +2109,9 @@ var Parser = (function () {
                                 msg = format(locale.getLocale().MSG_EP_SYNTAX_SUB, ","); // [23,45,6,32][2,4,5] 要报错
                             }
                             if (t.childs[0].childs) {
-                                for (var i = 0; i < t.childs[0].childs.length; i++) {
-                                    if (t.childs[0].childs[i].tokenType === "TK_COLON") {
+                                for (var _i = 0, _a = t.childs[0].childs; _i < _a.length; _i++) {
+                                    var item = _a[_i];
+                                    if (item.tokenType === "TK_COLON") {
                                         // [2,"ds",a:"tt",564] 要报错
                                         msg = format(locale.getLocale().MSG_EP_SYNTAX_A, ":");
                                         break;
@@ -2145,8 +2126,9 @@ var Parser = (function () {
                     if (t.childs && (t.childs.length === 0 || hasToken("TK_COLON,VTK_COMMA", t.childs[0].tokenType))) {
                         if (t.childs.length > 0 && t.childs[0].tokenType === "VTK_COMMA") {
                             if (t.childs[0].childs) {
-                                for (var i = 0; i < t.childs[0].childs.length; i++) {
-                                    y = t.childs[0].childs[i].tokenType === "TK_COLON"; // ","的每个子节点均为"x:a"格式
+                                for (var _b = 0, _c = t.childs[0].childs; _b < _c.length; _b++) {
+                                    var item = _c[_b];
+                                    y = item.tokenType === "TK_COLON"; // ","的每个子节点均为"x:a"格式
                                     if (!y) {
                                         break;
                                     }
@@ -2438,13 +2420,13 @@ var Type = (function () {
     };
     Type.prototype.objectSetProperties = function (et) {
         if (this.type === "object" && et.type === "array") {
-            var h = et.info;
-            for (var i = 0; i < h.length; i++) {
-                this.info[h[i].key] = h[i].value;
+            for (var _i = 0, _a = et.info; _i < _a.length; _i++) {
+                var item = _a[_i];
+                this.info[item.key] = item.value;
             }
-            var d = et.data;
-            for (var j = 0; j < d.length; j++) {
-                this.data[d[j].key] = d[j].value;
+            for (var _b = 0, _c = et.data; _b < _c.length; _b++) {
+                var item = _c[_b];
+                this.data[item.key] = item.value;
             }
         }
         return this;
@@ -2462,8 +2444,7 @@ var Type = (function () {
         return t;
     };
     Type.prototype.not = function () {
-        var t = this.genType("boolean");
-        return t;
+        return this.genType("boolean");
     };
     Type.prototype.multiply = function (et) {
         var t;
@@ -2669,18 +2650,15 @@ var Type = (function () {
     };
     Type.prototype.hashItem = function (et) {
         /// <summary>得到{key:...,value:...}键值对对象</summary>
-        var t = this.genType("object", { key: this.data, value: et.info }, { key: this.data, value: et.data });
-        return t;
+        return this.genType("object", { key: this.data, value: et.info }, { key: this.data, value: et.data });
     };
     Type.prototype.getVariableType = function (et) {
-        var t = this.context.getVariableType(this.data, et);
-        return t;
+        return this.context.getVariableType(this.data, et);
     };
     Type.prototype.getFunctionType = function (et) {
         /// <summary>得到函数执行结果的ExprType对象</summary>
         /// <param name="ev">函数调用者</param>
-        var v = this.context.getFunctionType(this.info.key, et, this.info.value, this.data.value);
-        return v;
+        return this.context.getFunctionType(this.info.key, et, this.info.value, this.data.value);
     };
     return Type;
 }());
@@ -2743,8 +2721,9 @@ var Value = (function () {
         /// <summary>设置对象多个属性值</summary>
         if (this.type === "object" && ev.type === "array") {
             var h = ev.toValue();
-            for (var i = 0; i < h.length; i++) {
-                this.value[h[i].key] = h[i].value;
+            for (var _i = 0, h_1 = h; _i < h_1.length; _i++) {
+                var item = h_1[_i];
+                this.value[item.key] = item.value;
             }
         }
         return this;
@@ -2882,16 +2861,18 @@ var Value = (function () {
             vr = ev.value || [];
             v = [];
             var found = void 0;
-            for (var i = 0; i < vl.length; i++) {
+            for (var _i = 0, vl_1 = vl; _i < vl_1.length; _i++) {
+                var left = vl_1[_i];
                 found = false;
-                for (var j = 0; j < vr.length; j++) {
-                    found = compare(vl[i], vr[j]); // 比较数组元素是否相等(简单类型/日期/对象/数组)
+                for (var _a = 0, vr_1 = vr; _a < vr_1.length; _a++) {
+                    var right = vr_1[_a];
+                    found = compare(left, right); // 比较数组元素是否相等(简单类型/日期/对象/数组)
                     if (found) {
                         break;
                     }
                 }
                 if (!found) {
-                    v.push(vl[i]);
+                    v.push(left);
                 }
             }
             v = this.genValue(v, "array");
@@ -3099,8 +3080,7 @@ var Value = (function () {
     };
     Value.prototype.hashItem = function (ev) {
         /// <summary>得到{key:...,value:...}键值对对象</summary>
-        var v = this.genValue({ key: this.toValue(), value: ev.toValue() }, "object");
-        return v;
+        return this.genValue({ key: this.toValue(), value: ev.toValue() }, "object");
     };
     Value.prototype.getVariableValue = function (ev) {
         /// <summary>得到对象ev的this.toValue()属性值</summary>
@@ -3262,33 +3242,27 @@ var Context = (function () {
     };
     Context.prototype.getFunctionType = function (name, source, paramType, paramData) {
         // 得到函数source.name(paramValue)返回值的ExprType对象
-        var r = this.doGetFunctionType(name, source, paramType, paramData);
-        return r;
+        return this.doGetFunctionType(name, source, paramType, paramData);
     };
     Context.prototype.getFunctionValue = function (name, source, paramValue) {
         // 得到函数source.name(paramValue)执行结果
-        var r = this.doGetFunctionValue(name, source, paramValue);
-        return r;
+        return this.doGetFunctionValue(name, source, paramValue);
     };
     Context.prototype.getVariableType = function (name, source) {
         // 得到变量类型
-        var r = this.doGetVariableType(name, source);
-        return r;
+        return this.doGetVariableType(name, source);
     };
     Context.prototype.getVariableValue = function (name, source) {
         // 得到对象source的name属性值
-        var r = this.doGetVariableValue(name, source);
-        return r;
+        return this.doGetVariableValue(name, source);
     };
     Context.prototype.getEntityType = function (source) {
         // 得到实体类型
-        var r = this.doGetEntityType(source);
-        return r;
+        return this.doGetEntityType(source);
     };
     Context.prototype.getEntityValue = function (source, index) {
         // 从实体数组source中取出第index条实体记录
-        var r = this.doGetEntityValue(source, index);
-        return r;
+        return this.doGetEntityValue(source, index);
     };
     Context.prototype.getParserInfo = function (expr) {
         /// <summary>得到解析信息</summary>
@@ -3325,12 +3299,24 @@ var Context = (function () {
     };
     Context.prototype.doGetIfNullName = function () { return ""; };
     Context.prototype.doGetIIfName = function () { return ""; };
-    Context.prototype.doGetVariableType = function (name, source) { };
-    Context.prototype.doGetVariableValue = function (name, source) { };
-    Context.prototype.doGetFunctionType = function (name, source, paramType, paramData) { };
-    Context.prototype.doGetFunctionValue = function (name, source, paramValue) { };
-    Context.prototype.doGetEntityType = function (source) { };
-    Context.prototype.doGetEntityValue = function (source, index) { };
+    Context.prototype.doGetVariableType = function (name, source) {
+        //
+    };
+    Context.prototype.doGetVariableValue = function (name, source) {
+        //
+    };
+    Context.prototype.doGetFunctionType = function (name, source, paramType, paramData) {
+        //
+    };
+    Context.prototype.doGetFunctionValue = function (name, source, paramValue) {
+        //
+    };
+    Context.prototype.doGetEntityType = function (source) {
+        //
+    };
+    Context.prototype.doGetEntityValue = function (source, index) {
+        //
+    };
     return Context;
 }());
 
@@ -3384,8 +3370,8 @@ var Calc = (function () {
         /// <param name="rootToken" type="Object">当前被求值的Token对象结点</param>
         /// <returns name="msg" type="String">计算过程中的出错信息，若为空则代表没有错误</returns>
         var t = rootToken;
-        var msg = "";
         var p = t.parent;
+        var msg = "";
         var l;
         var r;
         var tv = null;
@@ -3489,8 +3475,9 @@ var Calc = (function () {
                     break;
                 case "VTK_COMMA":
                     tv = this.genValue([], "array");
-                    for (var j = 0; j < t.childs.length; j++) {
-                        lv = this.getValue(t.childs[j].id);
+                    for (var _i = 0, _a = t.childs; _i < _a.length; _i++) {
+                        var item = _a[_i];
+                        lv = this.getValue(item.id);
                         tv.arrayPush(lv); // lv为(1,2)或{x:1,y:2}中，的子节点
                     }
                     break;
@@ -3590,14 +3577,16 @@ var Check = (function () {
                 var ds_1 = [];
                 var pushDepends_1 = function (d) {
                     if (getValueType(d) === "array") {
-                        for (var j = 0; j < d.length; j++) {
-                            pushDepends_1(d[j]);
+                        for (var _i = 0, d_1 = d; _i < d_1.length; _i++) {
+                            var item = d_1[_i];
+                            pushDepends_1(item);
                         }
                     }
                     else {
                         var f = false;
-                        for (var i = 0; i < ds_1.length; i++) {
-                            f = ds_1[i] === d;
+                        for (var _a = 0, ds_2 = ds_1; _a < ds_2.length; _a++) {
+                            var item = ds_2[_a];
+                            f = item === d;
                             if (f) {
                                 break;
                             }
@@ -3640,8 +3629,8 @@ var Check = (function () {
         /// <param name="rootToken" type="Object">当前检查的Token对象结点</param>
         /// <returns name="msg" type="String">运算关系的出错信息，若为空则代表没有错误</returns>
         var t = rootToken;
-        var msg = "";
         var p = t.parent;
+        var msg = "";
         var l;
         var r; // 语法树上的结点
         var tt = null;
@@ -3730,25 +3719,23 @@ var Check = (function () {
                     break;
                 case "VTK_COMMA":
                     tt = this.genType("array", [], []);
-                    for (var j = 0; j < t.childs.length; j++) {
-                        lt = this.getType(t.childs[j].id);
+                    for (var _i = 0, _a = t.childs; _i < _a.length; _i++) {
+                        var item = _a[_i];
+                        lt = this.getType(item.id);
                         tt.arrayPush(lt); // lt为(1,2)或[x:1,y:2]中，的子节点
                     }
                     break;
                 case "VTK_PAREN":
                     if (t.childs.length === 0) {
-                        if (p && p.tokenType === "TK_IDEN") {
-                            tt = this.genType("array", [], []);
-                        }
-                        else {
-                            tt = this.genType("undefined");
-                        }
+                        tt = (p && p.tokenType === "TK_IDEN") ?
+                            this.genType("array", [], []) :
+                            this.genType("undefined");
                     }
                     else if (p && p.tokenType === "TK_IDEN" && l.tokenType !== "VTK_COMMA") {
                         tt = this.genType("array", [], []).arrayPush(lt); // 如：fun(2)
                     }
                     else {
-                        tt = lt; // 如：fun(1,2,3) 或 2+((4)) 
+                        tt = lt; // 如：fun(1,2,3) 或 2+((4))
                     }
                     break;
                 case "VTK_ARRAY":
@@ -3814,8 +3801,7 @@ var ExprCurrent = (function () {
     };
     ExprCurrent.prototype.isValid = function (index) {
         /// <summary>栈顶计算环境的params属性是否存在第index条记录</summary>
-        var r = index >= 0 && this.curr.length > 0 && index < this.curr[0].params.length;
-        return r;
+        return index >= 0 && this.curr.length > 0 && index < this.curr[0].params.length;
     };
     ExprCurrent.prototype.isEntityData = function (index) {
         /// <summary>栈顶计算环境的params属性的第index条记录是否为实体数据</summary>
@@ -4329,8 +4315,8 @@ var ExprContext = (function (_super) {
         if (entityName !== "") {
             var p = entityName.split(".");
             var cp = [];
-            for (var i = 0; i < p.length; i++) {
-                var prop = p[i];
+            for (var _i = 0, p_1 = p; _i < p_1.length; _i++) {
+                var prop = p_1[_i];
                 cp.push(prop);
                 d = d[prop]; // data[E1],得到实体数组
                 var cursor = this.exprContext.getEntityDataCursor(cp.join("."), index);
@@ -4344,8 +4330,7 @@ var ExprContext = (function (_super) {
     };
     ExprContext.prototype.getData = function (index) {
         /// <summary>得到当前信息的第0条记录的params属性的第index条记录的数据</summary>
-        var d = this.exprContext.getData(index);
-        return d;
+        return this.exprContext.getData(index);
     };
     ExprContext.prototype.getParentName = function (name) {
         /// <summary>获取父名称</summary>
@@ -4485,11 +4470,12 @@ var ExprContext = (function (_super) {
         var fn = this.getFunc(type, name, params);
         if (getValueType(fn) === "array") {
             var t = "";
-            for (var i = 0; i < fn.length; i++) {
+            for (var _i = 0, fn_1 = fn; _i < fn_1.length; _i++) {
+                var item = fn_1[_i];
                 if (r === null) {
-                    t = fn[i].r;
+                    t = item.r;
                 }
-                else if (fn[i].r !== type) {
+                else if (item.r !== type) {
                     t = "undefined";
                     break;
                 }
@@ -4633,15 +4619,15 @@ var ExprList = (function () {
             var s_1 = {};
             var l_1 = {};
             var list_1 = [];
-            for (var h = 0; h < this.list.length; h++) {
-                var x = this.list[h];
-                if (x.types) {
-                    if (x.types.indexOf(type) >= 0) {
-                        list_1.push(x);
+            for (var _i = 0, _a = this.list; _i < _a.length; _i++) {
+                var item = _a[_i];
+                if (item.types) {
+                    if (item.types.indexOf(type) >= 0) {
+                        list_1.push(item);
                     }
                 }
                 else {
-                    list_1.push(x);
+                    list_1.push(item);
                 }
             }
             var fn_1 = function (fullName, entityName) {
@@ -4651,8 +4637,9 @@ var ExprList = (function () {
                         var x = list_1[i];
                         var f = isLoadOrAdd && (x.entityName === entityName && x.entityName !== "");
                         if (!f && x.dependencies) {
-                            for (var j = 0; j < x.dependencies.length; j++) {
-                                f = x.dependencies[j] === fullName;
+                            for (var _i = 0, _a = x.dependencies; _i < _a.length; _i++) {
+                                var dependency = _a[_i];
+                                f = dependency === fullName;
                                 if (f) {
                                     break;
                                 }
@@ -4692,16 +4679,16 @@ var ExprList = (function () {
                 updateMode: "Single",
                 updateTarget: "",
             }];
-        for (var i = 0; i < r.length; i++) {
-            var l = r[i];
-            this._doGetMode(updateList, l);
+        for (var _i = 0, r_1 = r; _i < r_1.length; _i++) {
+            var item = r_1[_i];
+            this._doGetMode(updateList, item);
             updateList.push({
-                entityName: l.entityName,
-                fullName: l.fullName,
-                propertyName: l.propertyName,
+                entityName: item.entityName,
+                fullName: item.fullName,
+                propertyName: item.propertyName,
                 type: "U",
-                updateMode: l.updateMode,
-                updateTarget: l.updateTarget,
+                updateMode: item.updateMode,
+                updateTarget: item.updateTarget,
             });
         }
     };
@@ -4810,9 +4797,10 @@ var ExprList = (function () {
         var at = "";
         var b;
         var bt;
-        for (var k = 0; k < modeList.length; k++) {
-            b = modeList[k].updateMode;
-            bt = modeList[k].updateTarget || "";
+        for (var _i = 0, modeList_1 = modeList; _i < modeList_1.length; _i++) {
+            var item = modeList_1[_i];
+            b = item.updateMode;
+            bt = item.updateTarget || "";
             if (a === b && (a === "BranchDelete" || a === "BranchUpdate")) {
                 if (at.length > bt.length) {
                     at = bt;
@@ -4836,8 +4824,7 @@ var ExprList = (function () {
         var p = parent.split(".");
         var m = me.split(".");
         p.push(m[p.length]);
-        var r = p.join(".");
-        return r;
+        return p.join(".");
     };
     ExprList.prototype.reset = function () {
         /// <summary>重置表达式列表对象</summary>
@@ -4887,16 +4874,16 @@ var ExprList = (function () {
         this.cache = {};
         this.sorted = true;
         var msg = "";
-        for (var i = 0; i < this.list.length; i++) {
-            var l = this.list[i];
-            if (!l.dependencies && dependCallback) {
-                var d = dependCallback(l.expr, l.entityName);
+        for (var _i = 0, _a = this.list; _i < _a.length; _i++) {
+            var item = _a[_i];
+            if (!item.dependencies && dependCallback) {
+                var d = dependCallback(item.expr, item.entityName);
                 msg = d.errorMsg;
                 if (msg === "") {
-                    l.dependencies = d.dependencies;
+                    item.dependencies = d.dependencies;
                 }
                 else {
-                    msg = format(locale.getLocale().MSG_ES_PARSER, l.entityName, l.expr, msg);
+                    msg = format(locale.getLocale().MSG_ES_PARSER, item.entityName, item.expr, msg);
                     break;
                 }
             }
@@ -4907,8 +4894,9 @@ var ExprList = (function () {
             var newList_1 = [];
             var findItem_1 = function (list, item) {
                 var r = false;
-                for (var o = 0; o < list.length; o++) {
-                    if (list[o] === item) {
+                for (var _i = 0, list_2 = list; _i < list_2.length; _i++) {
+                    var listItem = list_2[_i];
+                    if (listItem === item) {
                         r = true;
                     }
                 }
@@ -5037,17 +5025,17 @@ locale.defineLocale("zh-cn", {
     MSG_EX_TRUNC: "做截断运算时，保留小数位数不能为负数: {0}",
 });
 locale.defineFunction("zh-cn", {
-    FieldDisplayName: { fn: "获取当前字段别名", p: [], r: "字段别名（显示名称）" },
-    FieldName: { fn: "获取当前字段唯一标识", p: [], r: "字段唯一标识" },
-    FieldValue: { fn: "获取当前字段值", p: [], r: "字段值" },
-    IIf: { fn: "条件判断函数，如果第一个参数为true，则获取第二个参数，否则获取第三个参数", p: ["条件值", "真值", "假值"], r: "第二个参数或第三个参数" },
-    IfNull: { fn: "空值判断函数，如果第一个参数为null，则获取第二个参数，否则获取第一个参数", p: ["值", "默认值"], r: "第一个参数或第二个参数" },
-    Now: { fn: "获取本地当前日期时间", p: [], r: "本地当前日期时间" },
-    Parent: { fn: "获取当前实体的父实体对象，如果当前为根则获取自己", p: [], r: "父实体对象" },
-    PropValue: { fn: "获取对象属性值", p: ["对象或数组(没有分隔符则获取数组第一个元素，有分隔符获取数组所有元素集合)", "属性名", "分隔符?"], r: "属性值" },
-    Random: { fn: "返回介于 0 ~ 1 之间的一个随机数", p: [], r: "数字" },
-    RecNo: { fn: "获取当前实体的索引号，没有记录返回-1", p: [], r: "索引号" },
-    Root: { fn: "获取实体根对象", p: [], r: "实体根对象" },
+    "FieldDisplayName": { fn: "获取当前字段别名", p: [], r: "字段别名（显示名称）" },
+    "FieldName": { fn: "获取当前字段唯一标识", p: [], r: "字段唯一标识" },
+    "FieldValue": { fn: "获取当前字段值", p: [], r: "字段值" },
+    "IIf": { fn: "条件判断函数，如果第一个参数为true，则获取第二个参数，否则获取第三个参数", p: ["条件值", "真值", "假值"], r: "第二个参数或第三个参数" },
+    "IfNull": { fn: "空值判断函数，如果第一个参数为null，则获取第二个参数，否则获取第一个参数", p: ["值", "默认值"], r: "第一个参数或第二个参数" },
+    "Now": { fn: "获取本地当前日期时间", p: [], r: "本地当前日期时间" },
+    "Parent": { fn: "获取当前实体的父实体对象，如果当前为根则获取自己", p: [], r: "父实体对象" },
+    "PropValue": { fn: "获取对象属性值", p: ["对象或数组(没有分隔符则获取数组第一个元素，有分隔符获取数组所有元素集合)", "属性名", "分隔符?"], r: "属性值" },
+    "Random": { fn: "返回介于 0 ~ 1 之间的一个随机数", p: [], r: "数字" },
+    "RecNo": { fn: "获取当前实体的索引号，没有记录返回-1", p: [], r: "索引号" },
+    "Root": { fn: "获取实体根对象", p: [], r: "实体根对象" },
     "array.Average": { fn: "获取集合元素的平均值", p: ["表达式?"], r: "平均值" },
     "array.Count": { fn: "获取集合元素个数", p: [], r: "个数" },
     "array.Distinct": { fn: "获取集合中唯一元素的集合", p: ["表达式?"], r: "集合" },
@@ -5178,10 +5166,10 @@ var ExprManager = (function () {
             default:
                 break;
         }
-        for (var i = 0; i < list.length; i++) {
-            var l = list[i];
-            info.exprInfo = l;
-            l.callback.call(l.scope, type, info);
+        for (var _i = 0, list_1 = list; _i < list_1.length; _i++) {
+            var item = list_1[_i];
+            info.exprInfo = item;
+            item.callback.call(item.scope, type, info);
         }
         return this;
     };
@@ -5209,10 +5197,9 @@ var ExprManager = (function () {
         }
         return r;
     };
+    // 计算表达式expr的值
     ExprManager.prototype.calc = function (expr, data) {
-        // 计算表达式expr的值
-        var r = this.exprContext.calcDataExpr(expr, data);
-        return r;
+        return this.exprContext.calcDataExpr(expr, data);
     };
     return ExprManager;
 }());

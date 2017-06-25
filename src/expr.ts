@@ -64,10 +64,9 @@ export default class ExprManager {
             default:
                 break;
         }
-        for (let i = 0; i < list.length; i++) {
-            let l = list[i];
-            info.exprInfo = l;
-            l.callback.call(l.scope, type, info);
+        for (const item of list) {
+            info.exprInfo = item;
+            item.callback.call(item.scope, type, info);
         }
         return this;
     }
@@ -89,15 +88,14 @@ export default class ExprManager {
         if (field) {
             this.exprContext.pushContextVariables(field);
         }
-        let r = this.exprContext.calcEntityExpr(expr, entityName, dataCursor[entityName]);
+        const r = this.exprContext.calcEntityExpr(expr, entityName, dataCursor[entityName]);
         if (field) {
             this.exprContext.popContextVariables();
         }
         return r;
     }
+    // 计算表达式expr的值
     public calc(expr, data) {
-        // 计算表达式expr的值
-        let r = this.exprContext.calcDataExpr(expr, data);
-        return r;
+        return this.exprContext.calcDataExpr(expr, data);
     }
 }

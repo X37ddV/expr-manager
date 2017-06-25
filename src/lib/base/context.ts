@@ -29,33 +29,27 @@ export default class Context implements IContext {
     }
     public getFunctionType(name, source, paramType, paramData) {
         // 得到函数source.name(paramValue)返回值的ExprType对象
-        let r = this.doGetFunctionType(name, source, paramType, paramData);
-        return r;
+        return this.doGetFunctionType(name, source, paramType, paramData);
     }
     public getFunctionValue(name, source, paramValue) {
         // 得到函数source.name(paramValue)执行结果
-        let r = this.doGetFunctionValue(name, source, paramValue);
-        return r;
+        return this.doGetFunctionValue(name, source, paramValue);
     }
     public getVariableType(name, source) {
         // 得到变量类型
-        let r = this.doGetVariableType(name, source);
-        return r;
+        return this.doGetVariableType(name, source);
     }
     public getVariableValue(name, source) {
         // 得到对象source的name属性值
-        let r = this.doGetVariableValue(name, source);
-        return r;
+        return this.doGetVariableValue(name, source);
     }
     public getEntityType(source) {
         // 得到实体类型
-        let r = this.doGetEntityType(source);
-        return r;
+        return this.doGetEntityType(source);
     }
     public getEntityValue(source, index) {
         // 从实体数组source中取出第index条实体记录
-        let r = this.doGetEntityValue(source, index);
-        return r;
+        return this.doGetEntityValue(source, index);
     }
     public getParserInfo(expr) {
         /// <summary>得到解析信息</summary>
@@ -72,7 +66,7 @@ export default class Context implements IContext {
         if (index >= 0) { // 该表达式之前被解析过，直接返回缓存里的解析结果
             r = this.exprList[index].parser;
         } else { // 该表达式之前从未被解析过，开始新的解析
-            let p = new Parser();
+            const p = new Parser();
             r = p.parser(expr); // return this;
             this.exprList.push({ // 将解析过的表达式缓存，下次不需要再次解析
                 parser: r,
@@ -91,10 +85,22 @@ export default class Context implements IContext {
     }
     public doGetIfNullName(): string { return ""; }
     public doGetIIfName(): string { return ""; }
-    public doGetVariableType(name, source) { }
-    public doGetVariableValue(name, source) { }
-    public doGetFunctionType(name, source, paramType, paramData) { }
-    public doGetFunctionValue(name, source, paramValue) { }
-    public doGetEntityType(source) { }
-    public doGetEntityValue(source, index) { }
+    public doGetVariableType(name, source) {
+        //
+    }
+    public doGetVariableValue(name, source) {
+        //
+    }
+    public doGetFunctionType(name, source, paramType, paramData) {
+        //
+    }
+    public doGetFunctionValue(name, source, paramValue) {
+        //
+    }
+    public doGetEntityType(source) {
+        //
+    }
+    public doGetEntityValue(source, index) {
+        //
+    }
 }

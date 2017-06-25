@@ -9,8 +9,8 @@
     "lint:ts": "gulp lint:ts",
     "build:expr": "gulp build:expr build:expr:min",
     "build:example": "gulp build:example",
-    "build:docs": "gulp build:docs",
-    "test": "gulp test:karma"
+    "build:docs": "gulp build:expr build:docs",
+    "test": "gulp build:expr test:karma"
   },
   "repository": {
     "type": "git",

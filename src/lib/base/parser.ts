@@ -74,8 +74,8 @@ export default class Parser {
     private doDoublyLinkedList() {
         // 将表达式构建成Token双向链表
         let t = this.lexer.nextToken();
-        let ts = this.tokens;
-        let stack = [];
+        const ts = this.tokens;
+        const stack = [];
         let r = "";
         while (!r && t) { // 循环得到Token结点
             if (t.tokenType === "TK_UNKNOWN") { // 未知的Token结点类型
@@ -162,7 +162,7 @@ export default class Parser {
             t.id = id++; // 给树上的每个token结点都加上唯一标识的ID属性
             s = t.tokenText;
             switch (t.tokenType) {
-                case "TK_DOT": // .  
+                case "TK_DOT": // .
                     if (t.childs[1].tokenType === "TK_IDEN" &&
                         !hasToken("VTK_FUNCTION,TK_IDEN,TK_DOT,VTK_SUBSCRIPT,VTK_PAREN,VTK_OBJECT",
                             t.childs[0].tokenType)) {
@@ -200,8 +200,8 @@ export default class Parser {
                             }
 
                             if (t.childs[0].childs) {
-                                for (let i = 0; i < t.childs[0].childs.length; i++) {
-                                    if (t.childs[0].childs[i].tokenType === "TK_COLON") {
+                                for (const item of t.childs[0].childs) {
+                                    if (item.tokenType === "TK_COLON") {
                                         // [2,"ds",a:"tt",564] 要报错
                                         msg = format(locale.getLocale().MSG_EP_SYNTAX_A, ":");
                                         break;
@@ -216,8 +216,8 @@ export default class Parser {
                     if (t.childs && (t.childs.length === 0 || hasToken("TK_COLON,VTK_COMMA", t.childs[0].tokenType))) {
                         if (t.childs.length > 0 && t.childs[0].tokenType === "VTK_COMMA") { // 第一个字节点为","
                             if (t.childs[0].childs) {
-                                for (let i = 0; i < t.childs[0].childs.length; i++) {
-                                    y = t.childs[0].childs[i].tokenType === "TK_COLON"; // ","的每个子节点均为"x:a"格式
+                                for (const item of t.childs[0].childs) {
+                                    y = item.tokenType === "TK_COLON"; // ","的每个子节点均为"x:a"格式
                                     if (!y) {
                                         break;
                                     }
@@ -257,7 +257,7 @@ export default class Parser {
             if (counter > 0) { // 该token位于括号内，暂时压入缓存队列中
                 queue.push(t);
             } else if (queue.length > 0) { // 该token位于顶层，且缓存队列中有数据
-                let root = queue.shift();
+                const root = queue.shift();
                 let rootType;
                 switch (root.tokenType) {
                     case "TK_LP": rootType = "VTK_PAREN"; break; // ()参数或者是普通括号
@@ -267,7 +267,7 @@ export default class Parser {
                 }
                 t = this.doCreateVirtualToken(rootType);
                 t.tokenIndex = root.tokenIndex; // 记录该括号结点的
-                let tmp = this.doParser(queue);
+                const tmp = this.doParser(queue);
                 if (tmp) {
                     t.childs.push(tmp);
                     tmp.parent = t;
@@ -331,7 +331,7 @@ export default class Parser {
                             n = ts[i + 1];
                             break;
                         case "VTK_ARRAY": // []下标访问
-                            let tmp = this.doCreateVirtualToken("VTK_SUBSCRIPT");
+                            const tmp = this.doCreateVirtualToken("VTK_SUBSCRIPT");
                             tmp.childs.push(t);
                             t.parent = tmp;
                             tmp.childs.push(n);

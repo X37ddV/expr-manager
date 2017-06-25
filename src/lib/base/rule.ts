@@ -1,7 +1,7 @@
 const tokens = ("TK_UNKNOWN,TK_STRING,TK_NUMBER,TK_BOOL,TK_NULL,TK_IDEN,TK_DOT,TK_LP,TK_LA," +
     "TK_LO,TK_RP,TK_RA,TK_RO,TK_UNARY,TK_NOT,TK_MULTI,TK_DIV,TK_MOD,TK_PLUS,TK_MINUS," +
     "TK_CO,TK_AND,TK_OR,TK_COLON,TK_COMMA").split(",");
-const genTokenState = (tks: string[], opts: string[]): Object => {
+const genTokenState = (tks: string[], opts: string[]): object => {
     const r = {};
     tks.forEach((v, i) => r[v] = opts[i] === "1");
     return r;
@@ -11,7 +11,7 @@ export const RULE_BTOKENS = genTokenState(tokens, "0111110111000110000000000".sp
 // ETOKENS[zz]==true表示tokens[z]可以作为结束结点
 export const RULE_ETOKENS = genTokenState(tokens, "0111110000111000000000000".split(""));
 // LEXICAL[xx][yy]==true表示tokens[x]后可以紧接着出现tokens[y]
-export const RULE_LEXICAL = ((tks: string[], opts: string[]): Object => {
+export const RULE_LEXICAL = ((tks: string[], opts: string[]): object => {
     const r = {};
     tks.forEach((v, i) => r[v] = genTokenState(tks, opts[i].split("")));
     return r;

@@ -152,19 +152,19 @@ const funcNumberToRMB = {
         /// <param name="rmb" type="Boolean">是否人民币(默认true)</param>
         /// <param name="big" type="Boolean">是否大写(默认true)</param>
         /// <returns type="Object">人民币大写</returns>
-        let conversion = (num, isRMB, isBig) => {
-            let cn = (isBig ? "零壹贰叁肆伍陆柒捌玖" : "零一二三四五六七八九").split("");
-            let cq = (isBig ? "拾佰仟" : "十百千").split(""); cq.unshift("");
-            let cw = "万亿兆".split(""); cw.unshift("");
-            let cd = isRMB ? "元" : "点";
-            let cl = "角分厘".split("");
-            let cz = isRMB ? "整" : "";
-            let cf = "负";
+        const conversion = (num, isRMB, isBig) => {
+            const cn = (isBig ? "零壹贰叁肆伍陆柒捌玖" : "零一二三四五六七八九").split("");
+            const cq = (isBig ? "拾佰仟" : "十百千").split(""); cq.unshift("");
+            const cw = "万亿兆".split(""); cw.unshift("");
+            const cd = isRMB ? "元" : "点";
+            const cl = "角分厘".split("");
+            const cz = isRMB ? "整" : "";
+            const cf = "负";
             let v = "";
-            let s = (num + ".").split(".", 2);
+            const s = (num + ".").split(".", 2);
             let x = s[0].split("");
-            let y = s[1].split("");
-            let isNegative = x[0] === "-";
+            const y = s[1].split("");
+            const isNegative = x[0] === "-";
             if (isNegative) {
                 x.shift();
             }
@@ -180,7 +180,7 @@ const funcNumberToRMB = {
                 if (t.length === 4 || i === x.length) {
                     // 从个位数起以每四位数为一小节
                     for (let j = 0; j < t.length; j++) {
-                        let n = Number(t[j]);
+                        const n = Number(t[j]);
                         if (n === 0) {
                             // 1. 避免 "零" 的重覆出现; 2. 个位数的 0 不必转成 "零"
                             if (!inZero && j !== 0) {
@@ -209,7 +209,7 @@ const funcNumberToRMB = {
             if (y.length > 0) {
                 v += cd;
                 for (let k = 0; k < y.length; k++) {
-                    let m = Number(y[k]);
+                    const m = Number(y[k]);
                     if (isRMB) {
                         // 避免小数点后 "零" 的重覆出现
                         if ((m !== 0) || (v.substring(v.length - 1) !== cn[0]) || (k > 2)) {
@@ -239,11 +239,7 @@ const funcNumberToRMB = {
 
             // 没有整数部分 且 有小数部分
             if (v.split("")[0] === cd) {
-                if (isRMB) {
-                    v = v.substring(1);
-                } else {
-                    v = cn[0] + v;
-                }
+                v = isRMB ? v.substring(1) : cn[0] + v;
             }
 
             // 是否为负数
@@ -253,7 +249,7 @@ const funcNumberToRMB = {
 
             return v;
         };
-        let v = source.toValue();
+        const v = source.toValue();
         return context.genValue(isNumber(v) ?
             conversion(v, rmb === undefined || rmb, big === undefined || big) : null);
     },

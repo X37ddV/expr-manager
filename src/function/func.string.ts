@@ -1,6 +1,6 @@
+import moment from "moment";
 import { format, isNumber, isString } from "../lib/base/common";
 import locale from "../lib/base/locale";
-import moment from "moment";
 
 // String
 const funcStringToString = {
@@ -18,14 +18,10 @@ const funcStringToNumber = {
         /// <summary>转换字符串类型为数字</summary>
         /// <param name="source" type="String"></param>
         /// <returns type="Object">数字</returns>
-        let n = Number(source.toValue());
-        let r;
-        if (isNaN(n)) {
-            r = context.genErrorValue(source.toValue() + "无法被转换为数字");
-        } else {
-            r = context.genValue(n);
-        }
-        return r;
+        const n = Number(source.toValue());
+        return isNaN(n) ?
+            context.genErrorValue(source.toValue() + "无法被转换为数字") :
+            context.genValue(n);
     },
     p: [],
     r: "number",
@@ -37,15 +33,11 @@ const funcStringToDate = {
         /// <param name="fmt" type="String">日期时间格式</param>
         /// <returns type="Object">日期时间</returns>
         fmt = fmt || "";
-        let s = source.toValue();
-        let r;
-        let m = moment(s, fmt);
-        if (m.isValid()) {
-            r = context.genValue(m.toDate());
-        } else {
-            r = context.genErrorValue(s + " 无法被 " + fmt + " 格式化为日期时间");
-        }
-        return r;
+        const s = source.toValue();
+        const m = moment(s, fmt);
+        return m.isValid() ?
+            context.genValue(m.toDate()) :
+            context.genErrorValue(s + " 无法被 " + fmt + " 格式化为日期时间");
     },
     p: ["string?"],
     r: "date",
@@ -55,7 +47,7 @@ const funcStringLength = {
         /// <summary>获取字符串长度</summary>
         /// <param name="source" type="String"></param>
         /// <returns type="Object">字符串长度</returns>
-        let value = source.toValue();
+        const value = source.toValue();
         return context.genValue(isString(value) ? value.length : null);
     },
     p: [],
@@ -66,7 +58,7 @@ const funcStringUpper = {
         /// <summary>转换字符串为大写</summary>
         /// <param name="source" type="String"></param>
         /// <returns type="Object">大写字符串</returns>
-        let value = source.toValue();
+        const value = source.toValue();
         return context.genValue(isString(value) ? value.toUpperCase() : null);
     },
     p: [],
@@ -77,7 +69,7 @@ const funcStringLower = {
         /// <summary>转换字符串为小写</summary>
         /// <param name="source" type="String"></param>
         /// <returns type="Object">小写字符串</returns>
-        let value = source.toValue();
+        const value = source.toValue();
         return context.genValue(isString(value) ? value.toLowerCase() : null);
     },
     p: [],
@@ -88,7 +80,7 @@ const funcStringTrim = {
         /// <summary>去除字符串两端空格</summary>
         /// <param name="source" type="String"></param>
         /// <returns type="Object">字符串</returns>
-        let value = source.toValue();
+        const value = source.toValue();
         return context.genValue(isString(value) ? value.trim() : null);
     },
     p: [],
@@ -99,7 +91,7 @@ const funcStringTrimLeft = {
         /// <summary>去除字符串左端空格</summary>
         /// <param name="source" type="String"></param>
         /// <returns type="Object">字符串</returns>
-        let value = source.toValue();
+        const value = source.toValue();
         return context.genValue(isString(value) ? value.replace(/^\s+/g, "") : null);
     },
     p: [],
@@ -110,7 +102,7 @@ const funcStringTrimRight = {
         /// <summary>去除字符串右端空格</summary>
         /// <param name="source" type="String"></param>
         /// <returns type="Object">字符串</returns>
-        let value = source.toValue();
+        const value = source.toValue();
         return context.genValue(isString(value) ? value.replace(/\s+$/g, "") : null);
     },
     p: [],
@@ -123,8 +115,8 @@ const funcStringSubString = {
         /// <param name="start" type="Number">开始位置</param>
         /// <param name="len" type="Number">长度</param>
         /// <returns type="Object">子字符串</returns>
-        let value = source.toValue();
-        let left = start >= 0 ? start : value.toString().length + start;
+        const value = source.toValue();
+        const left = start >= 0 ? start : value.toString().length + start;
         let right = left + len;
         if (left > right) {
             right = left;
@@ -141,7 +133,7 @@ const funcStringLeftString = {
         /// <param name="source" type="String"></param>
         /// <param name="len" type="Number">长度</param>
         /// <returns type="Object">子字符串</returns>
-        let value = source.toValue();
+        const value = source.toValue();
         return context.genValue(isString(value) && isNumber(len) ? value.substring(0, len) : null);
     },
     p: ["number"],
@@ -153,7 +145,7 @@ const funcStringRightString = {
         /// <param name="source" type="String"></param>
         /// <param name="len" type="Number">长度</param>
         /// <returns type="Object">子字符串</returns>
-        let value = source.toValue();
+        const value = source.toValue();
         return context.genValue(isString(value) && isNumber(len) ?
             value.substring(value.length - len, value.length) : null);
     },
@@ -166,7 +158,7 @@ const funcStringPos = {
         /// <param name="source" type="String"></param>
         /// <param name="subValue" type="String">子字符串</param>
         /// <returns type="Object">位置索引</returns>
-        let value = source.toValue();
+        const value = source.toValue();
         return context.genValue(isString(value) && isString(subValue) ?
             value.indexOf(subValue) : null);
     },
@@ -188,7 +180,7 @@ const funcStringReplace = {
         }
         let value = source.toValue();
         let index = 0;
-        let length = srcStr.length;
+        const length = srcStr.length;
         if (/^m?g?i?$/.test(model)) {
             if (/g/.test(model)) { // 全部替换
                 if (/i/.test(model)) { // 不区分大小写

@@ -28,9 +28,9 @@ export default class Calc {
         /// <returns name="r" type="ExprValue">语法树根节点对应的ExprValue对象</returns>
         this.context = context || new Context();
         let r;
-        let p = this.context.getParserInfo(expr); // 在context数据上下文中对expr进行语法分析
+        const p = this.context.getParserInfo(expr); // 在context数据上下文中对expr进行语法分析
         if (p.errorMsg === "") { // 表达式解析正确(语法正确，但是计算结果尚需验证如3/0)
-            let msg = this.doCalc(p.rootToken); // 将表达式按照既定规则运算
+            const msg = this.doCalc(p.rootToken); // 将表达式按照既定规则运算
             if (msg === "") { // 计算正确，返回根节点对应的ExprValue对象
                 r = this.getValue(p.rootToken.id);
                 r.tokens = p.tokens;
@@ -47,17 +47,17 @@ export default class Calc {
         /// <summary>对表达式进行数值计算</summary>
         /// <param name="rootToken" type="Object">当前被求值的Token对象结点</param>
         /// <returns name="msg" type="String">计算过程中的出错信息，若为空则代表没有错误</returns>
-        let t = rootToken;
+        const t = rootToken;
+        const p = t.parent;
         let msg = "";
-        let p = t.parent;
         let l;
         let r;
         let tv = null;
         let lv;
         let rv;
         if (t.childs) { // 先计算该结点的所有子节点
-            let isIfNull = this.context.isIfNullToken(t); // 是否为IfNull(1,2)函数形式的","结点
-            let isIIf = this.context.isIIfToken(t); // 是否为IIf(true,1,2)函数形式的","结点
+            const isIfNull = this.context.isIfNullToken(t); // 是否为IfNull(1,2)函数形式的","结点
+            const isIIf = this.context.isIIfToken(t); // 是否为IIf(true,1,2)函数形式的","结点
 
             for (let i = 0; i < t.childs.length; i++) {
                 msg = this.doCalc(t.childs[i]);
@@ -150,8 +150,8 @@ export default class Calc {
                     break;
                 case "VTK_COMMA": // ,结点
                     tv = this.genValue([], "array");
-                    for (let j = 0; j < t.childs.length; j++) {
-                        lv = this.getValue(t.childs[j].id);
+                    for (const item of t.childs) {
+                        lv = this.getValue(item.id);
                         tv.arrayPush(lv); // lv为(1,2)或{x:1,y:2}中，的子节点
                     }
                     break;
@@ -164,7 +164,7 @@ export default class Calc {
                         tv = lv; // 如：fun(1,2,3) 或 2+((4))
                     }
                     break;
-                case "VTK_ARRAY": // []结点 
+                case "VTK_ARRAY": // []结点
                     tv = this.genValue([], "array");
                     if (t.childs.length > 0) {
                         if (l.tokenType === "VTK_COMMA") {

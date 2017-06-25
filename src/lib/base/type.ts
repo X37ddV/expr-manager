@@ -53,22 +53,20 @@ export default class Type {
     }
     public objectSetProperty(et) {
         if (this.type === "object") {
-            let h = et.info;
+            const h = et.info;
             this.info[h.key] = h.value;
-            let d = et.data;
+            const d = et.data;
             this.data[d.key] = d.value;
         }
         return this;
     }
     public objectSetProperties(et) {
         if (this.type === "object" && et.type === "array") {
-            let h = et.info;
-            for (let i = 0; i < h.length; i++) {
-                this.info[h[i].key] = h[i].value;
+            for (const item of et.info) {
+                this.info[item.key] = item.value;
             }
-            let d = et.data;
-            for (let j = 0; j < d.length; j++) {
-                this.data[d[j].key] = d[j].value;
+            for (const item of et.data) {
+                this.data[item.key] = item.value;
             }
         }
         return this;
@@ -85,8 +83,7 @@ export default class Type {
         return t;
     }
     public not() {
-        let t = this.genType("boolean");
-        return t;
+        return this.genType("boolean");
     }
     public multiply(et) {
         let t;
@@ -172,7 +169,7 @@ export default class Type {
     }
     public equal(et, op) {
         let t;
-        let b = op === "==";
+        const b = op === "==";
         if (this.type === "undefined" || et.type === "undefined" || this.type === "null" || et.type === "null" ||
             this.type === et.type) {
             t = this.genType("boolean");
@@ -255,17 +252,14 @@ export default class Type {
     }
     public hashItem(et) {
         /// <summary>得到{key:...,value:...}键值对对象</summary>
-        let t = this.genType("object", { key: this.data, value: et.info }, { key: this.data, value: et.data });
-        return t;
+        return this.genType("object", { key: this.data, value: et.info }, { key: this.data, value: et.data });
     }
     public getVariableType(et) {
-        let t = this.context.getVariableType(this.data, et);
-        return t;
+        return this.context.getVariableType(this.data, et);
     }
     public getFunctionType(et) {
         /// <summary>得到函数执行结果的ExprType对象</summary>
         /// <param name="ev">函数调用者</param>
-        let v = this.context.getFunctionType(this.info.key, et, this.info.value, this.data.value);
-        return v;
+        return this.context.getFunctionType(this.info.key, et, this.info.value, this.data.value);
     }
 }

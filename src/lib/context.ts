@@ -37,12 +37,12 @@ export default class ExprContext extends Context {
         gs.number = func.number || {};
         gs.object = func.object || {};
         gs.string = func.string || {};
-        for (let g in gs) {
+        for (const g in gs) {
             if (gs.hasOwnProperty(g)) {
-                let group = gs[g];
-                for (let n in group) {
+                const group = gs[g];
+                for (const n in group) {
                     if (group.hasOwnProperty(n)) {
-                        let fullName = g ? g + "." + n : n;
+                        const fullName = g ? g + "." + n : n;
                         group[n].getLocale = ((key) => () => locale.getFunction()[key])(fullName);
                     }
                 }
@@ -72,13 +72,13 @@ export default class ExprContext extends Context {
         } else { // 无显式调用者，全局函数
             t = "";
         }
-        let ft = this.getFuncType(t, name, paramType); // 类型t的name函数
+        const ft = this.getFuncType(t, name, paramType); // 类型t的name函数
         if (ft === null) {
             r = this.genErrorType(format(locale.getLocale().MSG_EC_FUNC_T, t, name));
         } else {
             let depends = [];
             if (ft.p) {
-                let pd = paramData;
+                const pd = paramData;
                 for (let i = 0; i < ft.p.length; i++) { // 参数中含有子表达式，先求出子表达式的依赖关系
                     if (ft.p[i] === "expr" && paramType[i] === "string" && getValueType(pd[i]) === "string") {
                         let dr;
@@ -158,12 +158,12 @@ export default class ExprContext extends Context {
         } else { // 无显式调用者，全局函数
             t = "";
         }
-        let p = [source].concat(paramValue);  // 实参数组
-        let pt = []; // 各个实参类型组成的数组
+        const p = [source].concat(paramValue);  // 实参数组
+        const pt = []; // 各个实参类型组成的数组
         for (let i = 0; i < paramValue.length; i++) {
             pt.push(getValueType(paramValue[i]));
         }
-        let f = this.getFunc(t, name, pt); // 类型t的name函数
+        const f = this.getFunc(t, name, pt); // 类型t的name函数
         if (f) {
             r = f.fn.apply(this, [this].concat(p));
         } else { // 没有该函数或参数不匹配
@@ -329,17 +329,17 @@ export default class ExprContext extends Context {
         return r;
     }
     public doGetEntityType(source) {
-        let e = this.genEntityInfo(source.entity, "object");
-        let t = this.genType("object", "object", undefined, e, [e.fullName]);
+        const e = this.genEntityInfo(source.entity, "object");
+        const t = this.genType("object", "object", undefined, e, [e.fullName]);
         return t;
     }
     public doGetEntityValue(source, index) {
         /// <summary>从实体数组source中取出第index条实体记录</summary>
-        let v = source.toValue()[index];
-        let e = this.genEntityInfo(source.entity, "object");
+        const v = source.toValue()[index];
+        const e = this.genEntityInfo(source.entity, "object");
         e.recNo = source.entity.map[index];
-        let parentObj = source.parentObj;
-        let r = this.genValue(v, getValueType(v), e, "", parentObj);
+        const parentObj = source.parentObj;
+        const r = this.genValue(v, getValueType(v), e, "", parentObj);
         return r;
     }
     public genEntityInfo(fullName, type?) {
@@ -349,13 +349,13 @@ export default class ExprContext extends Context {
         if (getValueType(fullName) === "object") {
             fullName = fullName.fullName;
         }
-        let name = [];
-        let field = [];
+        const name = [];
+        const field = [];
         let dataType;
         if (fullName !== "") {
-            let p = fullName.split(".");
+            const p = fullName.split(".");
             let x = p[0]; // "E1"
-            let c = this.dataContext;
+            const c = this.dataContext;
             let t = c[x]; // dataContext["E1"]
             if (t) {
                 name.push(x);
@@ -399,7 +399,7 @@ export default class ExprContext extends Context {
     }
     public getRootValue() {
         /// <summary>得到data封装而成的ExprValue对象</summary>
-        let entity = this.genEntityInfo("", "object");
+        const entity = this.genEntityInfo("", "object");
         entity.recNo = 0;
         return this.genValue(this.data, "object", entity, "");
     }
@@ -422,7 +422,7 @@ export default class ExprContext extends Context {
             if (!r) {
                 entity = this.genEntityInfo(this.getParentName(entity), "object");
                 entity.recNo = this.exprContext.getEntityDataCursor(entity.name);
-                let value = this.getEntityData(entity.name); // 取父实体对象
+                const value = this.getEntityData(entity.name); // 取父实体对象
                 r = this.genValue(value, "", entity);
             }
         } else {
@@ -434,13 +434,12 @@ export default class ExprContext extends Context {
         /// <summary>得到实体全名称entityName数组的第index个实体对象</summary>
         let d = this.data;
         if (entityName !== "") {
-            let p = entityName.split(".");
-            let cp = [];
-            for (let i = 0; i < p.length; i++) {
-                let prop = p[i];
+            const p = entityName.split(".");
+            const cp = [];
+            for (const prop of p) {
                 cp.push(prop);
                 d = d[prop]; // data[E1],得到实体数组
-                let cursor = this.exprContext.getEntityDataCursor(cp.join("."), index);
+                const cursor = this.exprContext.getEntityDataCursor(cp.join("."), index);
                 d = d[cursor]; // 得到实体数组中第cursor条实体记录
                 if (d === undefined) {
                     break;
@@ -451,14 +450,13 @@ export default class ExprContext extends Context {
     }
     public getData(index) {
         /// <summary>得到当前信息的第0条记录的params属性的第index条记录的数据</summary>
-        let d = this.exprContext.getData(index);
-        return d;
+        return this.exprContext.getData(index);
     }
     public getParentName(name) {
         /// <summary>获取父名称</summary>
         /// <param name="name" type="String">名称</param>
         /// <returns type="String"></returns>
-        let p = name.split(".");
+        const p = name.split(".");
         let r;
         if (p.length > 0) {
             p.pop();
@@ -489,7 +487,7 @@ export default class ExprContext extends Context {
             let entity;
             if (source === null) { // RecNo()
                 entity = this.exprContext.getEntityName();
-                let value = this.exprContext.getEntityDataCursor(entity);
+                const value = this.exprContext.getEntityDataCursor(entity);
                 r = this.genValue(value);
             } else if (source.entity && source.entity.field === "") { // Root().E1[0].Entity1[3].RecNo()
                 r = this.genValue(source.entity.recNo);
@@ -513,7 +511,7 @@ export default class ExprContext extends Context {
         /// <param name="ps" type="Array">形参的数组，尾部带?表示可选参数</param>
         /// <param name="p" type="Array">当前调用的实参数组</param>
         let r = [];
-        let pt = [];
+        const pt = [];
         let pl = ps.length;
         for (let i = 0; i < ps.length; i++) {
             let x = ps[i];
@@ -550,8 +548,8 @@ export default class ExprContext extends Context {
         let r;
         if (type === "undefined") {
             let f;
-            let fList = [];
-            for (let i in this.functions) {
+            const fList = [];
+            for (const i in this.functions) {
                 if (this.functions.hasOwnProperty(i)) {
                     f = this.functions[i][name];
                     if (f && this.findParams(f.p, params) !== null) {
@@ -581,13 +579,13 @@ export default class ExprContext extends Context {
         /// <param name="name" type="String">函数名</param>
         /// <param name="params" type="Array">实参类型数组</param>
         let r = null;
-        let fn = this.getFunc(type, name, params);
+        const fn = this.getFunc(type, name, params);
         if (getValueType(fn) === "array") {
             let t = "";
-            for (let i = 0; i < fn.length; i++) {
+            for (const item of fn) {
                 if (r === null) {
-                    t = fn[i].r;
-                } else if (fn[i].r !== type) {
+                    t = item.r;
+                } else if (item.r !== type) {
                     t = "undefined";
                     break;
                 }
@@ -608,7 +606,7 @@ export default class ExprContext extends Context {
     }
     public getContextVariableValue(key) {
         let r;
-        let v = this.contextVariables;
+        const v = this.contextVariables;
         if (v.length > 0) {
             r = v[v.length - 1][key];
         }
@@ -629,8 +627,8 @@ export default class ExprContext extends Context {
             this.exprContext.push(curr);
         }
 
-        let e = new Calc();
-        let r = e.calc(expr, this); // 调用计算器对象对表达式进行分析和计算
+        const e = new Calc();
+        const r = e.calc(expr, this); // 调用计算器对象对表达式进行分析和计算
 
         if (curr.length > 0) {
             this.exprContext.pop();
@@ -639,7 +637,7 @@ export default class ExprContext extends Context {
     }
     public calcEntityExpr(expr, entityName, cursor) {
         /// <summary>在实体计算环境下计算表达式expr的值</summary>
-        let c = [];
+        const c = [];
         let i = 1;
         while (i < arguments.length) {
             c.push({
@@ -653,7 +651,7 @@ export default class ExprContext extends Context {
     }
     public calcDataExpr(expr, data) {
         /// <summary>在数据计算环境下计算表达式expr的值</summary>
-        let c = [];
+        const c = [];
         let i = 1;
         while (i < arguments.length) {
             c.push({
@@ -670,8 +668,8 @@ export default class ExprContext extends Context {
             this.exprContext.push(curr);
         }
 
-        let p = new Check();
-        let r = p.check(expr, this);
+        const p = new Check();
+        const r = p.check(expr, this);
 
         if (curr.length > 0) {
             this.exprContext.pop();
@@ -680,7 +678,7 @@ export default class ExprContext extends Context {
     }
     public calcEntityDependencies(expr, entityName?) {
         /// <summary>在实体计算环境下计算表达式expr的依赖关系</summary>
-        let c = [];
+        const c = [];
         let i = 1;
         while (i < arguments.length) {
             c.push({
@@ -693,7 +691,7 @@ export default class ExprContext extends Context {
     }
     public calcDataDependencies(expr) {
         /// <summary>在数据计算环境下计算表达式expr的依赖关系</summary>
-        let c = [];
+        const c = [];
         let i = 1;
         while (i < arguments.length) {
             c.push({

@@ -1,9 +1,9 @@
+import Decimal from "decimal";
 import locale from "../base/locale";
 import { compare, format, getValueType } from "./common";
 import { IContext } from "./interface";
-import Decimal from "decimal";
 
-let Big = (v) => {
+const Big = (v) => {
     return new Decimal(v);
 };
 
@@ -59,7 +59,7 @@ export default class Value {
     public objectSetProperty(ev) {
         /// <summary>设置对象属性值</summary>
         if (this.type === "object") {
-            let h = ev.toValue();
+            const h = ev.toValue();
             this.value[h.key] = h.value;
         }
         return this;
@@ -67,9 +67,9 @@ export default class Value {
     public objectSetProperties(ev) {
         /// <summary>设置对象多个属性值</summary>
         if (this.type === "object" && ev.type === "array") {
-            let h = ev.toValue();
-            for (let i = 0; i < h.length; i++) {
-                this.value[h[i].key] = h[i].value;
+            const h = ev.toValue();
+            for (const item of h) {
+                this.value[item.key] = item.value;
             }
         }
         return this;
@@ -107,8 +107,8 @@ export default class Value {
         if (this.type === "null" && ev.type === "null") { // null*null结果为null
             v = this.genValue(null, "null");
         } else if ((this.type === "number" || this.type === "null") && (ev.type === "number" || ev.type === "null")) {
-            let vl = Big(this.value || "0"); // null与数字做乘法运算时，null被转换成数字0
-            let vr = Big(ev.value || "0");
+            const vl = Big(this.value || "0"); // null与数字做乘法运算时，null被转换成数字0
+            const vr = Big(ev.value || "0");
             v = this.genValue(vl.times(vr).toString(), "number");
         } else { // 两运算数不能进行乘法运算
             v = this.genErrorValue(format(locale.getLocale().MSG_EX_MULTIPLY, this.type, ev.type));
@@ -123,8 +123,8 @@ export default class Value {
         } else if (ev.type === "null" || ev.type === "number" && ev.value === "0") { // 除数为0，报错
             v = this.genErrorValue(format(locale.getLocale().MSG_EX_DIVIDE_N, ev.value));
         } else if ((this.type === "number" || this.type === "null") && (ev.type === "number")) {
-            let vl = Big(this.value || "0"); // 被除数为null时会被转换成"0"
-            let vr = Big(ev.value);
+            const vl = Big(this.value || "0"); // 被除数为null时会被转换成"0"
+            const vr = Big(ev.value);
             v = this.genValue(vl.div(vr, 10, 1).toString(), "number");
         } else { // 两运算数不能进行除法运算
             v = this.genErrorValue(format(locale.getLocale().MSG_EX_DIVIDE, this.type, ev.type));
@@ -139,8 +139,8 @@ export default class Value {
         } else if (ev.type === "null" || ev.type === "number" && ev.value === "0") { // 除数为0，报错
             v = this.genErrorValue(format(locale.getLocale().MSG_EX_REMAINDER_N, ev.value));
         } else if ((this.type === "number" || this.type === "null") && (ev.type === "number")) {
-            let vl = Big(this.value || "0"); // 被除数为null时会被转换成"0"
-            let vr = Big(ev.value);
+            const vl = Big(this.value || "0"); // 被除数为null时会被转换成"0"
+            const vr = Big(ev.value);
             v = this.genValue(vl.mod(vr).toString(), "number");
         } else { // 两运算数不能进行求余运算
             v = this.genErrorValue(format(locale.getLocale().MSG_EX_REMAINDER, this.type, ev.type));
@@ -189,16 +189,16 @@ export default class Value {
             vr = ev.value || [];
             v = [];
             let found;
-            for (let i = 0; i < vl.length; i++) {
+            for (const left of vl) {
                 found = false;
-                for (let j = 0; j < vr.length; j++) {
-                    found = compare(vl[i], vr[j]);  // 比较数组元素是否相等(简单类型/日期/对象/数组)
+                for (const right of vr) {
+                    found = compare(left, right);  // 比较数组元素是否相等(简单类型/日期/对象/数组)
                     if (found) {
                         break;
                     }
                 }
                 if (!found) {
-                    v.push(vl[i]);
+                    v.push(left);
                 }
             }
             v = this.genValue(v, "array");
@@ -212,7 +212,7 @@ export default class Value {
         let v;
         let vl;
         let vr;
-        let b = op === "==";
+        const b = op === "==";
         if (this.type === "null" && ev.type === "null") { // null==null
             v = this.genValue(b, "boolean");
         } else if (this.type === "null" || ev.type === "null") { // 除null外任何值都不等于null
@@ -353,8 +353,7 @@ export default class Value {
     }
     public hashItem(ev) {
         /// <summary>得到{key:...,value:...}键值对对象</summary>
-        let v = this.genValue({ key: this.toValue(), value: ev.toValue() }, "object");
-        return v;
+        return this.genValue({ key: this.toValue(), value: ev.toValue() }, "object");
     }
     public getVariableValue(ev) {
         /// <summary>得到对象ev的this.toValue()属性值</summary>

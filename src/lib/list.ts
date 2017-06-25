@@ -6,34 +6,33 @@ export default class ExprList {
     private cache = {};
     private sorted = false;
     public _getExprs(entity, property, type) {
-        let name = property ? entity + "." + property : entity;
-        let isLoadOrAdd = type === "L" || type === "A";
-        let key = name + "|" + type;
+        const name = property ? entity + "." + property : entity;
+        const isLoadOrAdd = type === "L" || type === "A";
+        const key = name + "|" + type;
         let r = this.sorted ? this.cache[key] : [];
         if (!r) {
             r = [];
-            let s = {};
-            let l = {};
-            let list = [];
-            for (let h = 0; h < this.list.length; h++) {
-                let x = this.list[h];
-                if (x.types) {
-                    if (x.types.indexOf(type) >= 0) {
-                        list.push(x);
+            const s = {};
+            const l = {};
+            const list = [];
+            for (const item of this.list) {
+                if (item.types) {
+                    if (item.types.indexOf(type) >= 0) {
+                        list.push(item);
                     }
                 } else {
-                    list.push(x);
+                    list.push(item);
                 }
             }
-            let fn = (fullName, entityName) => {
+            const fn = (fullName, entityName) => {
                 for (let i = 0; i < list.length; i++) {
                     if (l[i] !== true) {
                         l[i] = true;
-                        let x = list[i];
+                        const x = list[i];
                         let f = isLoadOrAdd && (x.entityName === entityName && x.entityName !== "");
                         if (!f && x.dependencies) {
-                            for (let j = 0; j < x.dependencies.length; j++) {
-                                f = x.dependencies[j] === fullName;
+                            for (const dependency of x.dependencies) {
+                                f = dependency === fullName;
                                 if (f) {
                                     break;
                                 }
@@ -50,8 +49,8 @@ export default class ExprList {
             fn(name, name);
             for (let k = 0; k < list.length; k++) {
                 if (s[k]) {
-                    let o = {};
-                    for (let p in list[k]) {
+                    const o = {};
+                    for (const p in list[k]) {
                         if (list[k].hasOwnProperty(p)) {
                             o[p] = list[k][p];
                         }
@@ -65,7 +64,7 @@ export default class ExprList {
         return r;
     }
     public _doUpdateMode(r, t, name, entity, property) {
-        let updateList = [{
+        const updateList = [{
             entityName: entity,     // 实体名
             fullName: name,         // 全名
             propertyName: property, // 属性名
@@ -73,21 +72,20 @@ export default class ExprList {
             updateMode: "Single",   // 更新模式 Single: 单挑记录修改
             updateTarget: "",       // 更新目标
         }];
-        for (let i = 0; i < r.length; i++) {
-            let l = r[i];
-            this._doGetMode(updateList, l);
+        for (const item of r) {
+            this._doGetMode(updateList, item);
             updateList.push({
-                entityName: l.entityName,     // 实体名
-                fullName: l.fullName,         // 全名
-                propertyName: l.propertyName, // 属性名
+                entityName: item.entityName,     // 实体名
+                fullName: item.fullName,         // 全名
+                propertyName: item.propertyName, // 属性名
                 type: "U",
-                updateMode: l.updateMode,
-                updateTarget: l.updateTarget,
+                updateMode: item.updateMode,
+                updateTarget: item.updateTarget,
             });
         }
     }
     public _doGetMode(updateList, l) {
-        let modeList = [];
+        const modeList = [];
         // 计算字段表达式的依赖更新模式
         if (updateList && l && l.dependencies) {
             for (let i = 0; i < updateList.length; i++) {
@@ -180,9 +178,9 @@ export default class ExprList {
         let at = "";
         let b;
         let bt;
-        for (let k = 0; k < modeList.length; k++) {
-            b = modeList[k].updateMode;
-            bt = modeList[k].updateTarget || "";
+        for (const item of modeList) {
+            b = item.updateMode;
+            bt = item.updateTarget || "";
             if (a === b && (a === "BranchDelete" || a === "BranchUpdate")) {
                 if (at.length > bt.length) {
                     at = bt;
@@ -201,11 +199,10 @@ export default class ExprList {
         l.updateTarget = at;
     }
     public _doGetUpdateTarget(parent, me) {
-        let p = parent.split(".");
-        let m = me.split(".");
+        const p = parent.split(".");
+        const m = me.split(".");
         p.push(m[p.length]);
-        let r = p.join(".");
-        return r;
+        return p.join(".");
     }
     public reset() {
         /// <summary>重置表达式列表对象</summary>
@@ -219,7 +216,7 @@ export default class ExprList {
         this.sorted = false;
         let index = -1;
         for (let i = 0; i < this.list.length; i++) {
-            let item = this.list[i];
+            const item = this.list[i];
             if (item.expr === expr && item.entityName === entityName && item.propertyName === propertyName &&
                 item.types === types && item.callback === callback && item.scope === scope) {
                 index = i;
@@ -255,15 +252,14 @@ export default class ExprList {
         this.cache = {};
         this.sorted = true;
         let msg = "";
-        for (let i = 0; i < this.list.length; i++) {
-            let l = this.list[i];
-            if (!l.dependencies && dependCallback) { // 计算该组测试用例中每个表达式的依赖关系
-                let d = dependCallback(l.expr, l.entityName);
+        for (const item of this.list) {
+            if (!item.dependencies && dependCallback) { // 计算该组测试用例中每个表达式的依赖关系
+                const d = dependCallback(item.expr, item.entityName);
                 msg = d.errorMsg;
                 if (msg === "") {
-                    l.dependencies = d.dependencies;
+                    item.dependencies = d.dependencies;
                 } else {
-                    msg = format(locale.getLocale().MSG_ES_PARSER, l.entityName, l.expr, msg);
+                    msg = format(locale.getLocale().MSG_ES_PARSER, item.entityName, item.expr, msg);
                     break;
                 }
             }
@@ -271,21 +267,21 @@ export default class ExprList {
 
         if (msg === "") {
             // 按依赖关系排序
-            let fillList = [];
-            let newList = [];
-            let findItem = (list, item) => {
+            const fillList = [];
+            const newList = [];
+            const findItem = (list, item) => {
                 let r = false;
-                for (let o = 0; o < list.length; o++) {
-                    if (list[o] === item) {
+                for (const listItem of list) {
+                    if (listItem === item) {
                         r = true;
                     }
                 }
                 return r;
             };
-            let depends = (item, stack) => {
+            const depends = (item, stack) => {
                 if (!findItem(stack, item)) {
                     for (let a = 0; a < fillList.length; a++) {
-                        let e = fillList[a];
+                        const e = fillList[a];
                         let f = false;
                         if (item && item.dependencies) {
                             for (let b = 0; b < item.dependencies.length; b++) {
@@ -306,17 +302,17 @@ export default class ExprList {
                 }
             };
             for (let x = 0; x < this.list.length; x++) {
-                let xx = this.list[x];
+                const xx = this.list[x];
                 if (xx.fullName !== "") {
                     fillList.push(xx);
                 }
             }
             for (let y = 0; y < fillList.length; y++) {
-                let stack = [];
+                const stack = [];
                 depends(fillList[y], stack);
             }
             for (let z = 0; z < this.list.length; z++) {
-                let zz = this.list[z];
+                const zz = this.list[z];
                 if (zz.fullName === "") {
                     newList.push(zz);
                 }

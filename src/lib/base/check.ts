@@ -28,23 +28,23 @@ export default class Check {
         /// <returns name="r" type="ExprValue">语法树根节点对应的ExprType对象</returns>
         this.context = context || new Context(); // TODO 是否允许context不存在？
         let r;
-        let p = this.context.getParserInfo(expr); // 在context数据上下文中对expr进行语法分析
+        const p = this.context.getParserInfo(expr); // 在context数据上下文中对expr进行语法分析
         if (p.errorMsg === "") { // 表达式解析正确(语法正确，但是运算关系正确性还没验证如：1>2&&43会报错)
-            let msg = this.doCheck(p.rootToken); // 检查表达式运算关系正确性
+            const msg = this.doCheck(p.rootToken); // 检查表达式运算关系正确性
             if (msg === "") {
                 r = this.getType(p.rootToken.id); // 返回根节点对应的ExprType对象
                 r.tokens = p.tokens;
                 r.rootToken = p.rootToken;
-                let ds = [];
-                let pushDepends = (d) => {
+                const ds = [];
+                const pushDepends = (d) => {
                     if (getValueType(d) === "array") {
-                        for (let j = 0; j < d.length; j++) {
-                            pushDepends(d[j]);
+                        for (const item of d) {
+                            pushDepends(item);
                         }
                     } else {
                         let f = false;
-                        for (let i = 0; i < ds.length; i++) {
-                            f = ds[i] === d;
+                        for (const item of ds) {
+                            f = item === d;
                             if (f) {
                                 break;
                             }
@@ -55,15 +55,15 @@ export default class Check {
                     }
                 };
                 eachToken(r.rootToken, (token) => {
-                    let tt = this.getType(token.id);
+                    const tt = this.getType(token.id);
                     if (tt) {
                         if (tt.depends) {
                             pushDepends(tt.depends);
                         }
-                        let e = tt.entity;
+                        const e = tt.entity;
                         if (e) {
-                            let pp = token.parent;
-                            let pt = pp ? this.getType(pp.id) : null;
+                            const pp = token.parent;
+                            const pt = pp ? this.getType(pp.id) : null;
                             if (!pt || !pt.entity) {
                                 pushDepends(e.fullName);
                             }
@@ -84,9 +84,9 @@ export default class Check {
         /// <summary>检查表达式运算关系正确性</summary>
         /// <param name="rootToken" type="Object">当前检查的Token对象结点</param>
         /// <returns name="msg" type="String">运算关系的出错信息，若为空则代表没有错误</returns>
-        let t = rootToken;
+        const t = rootToken;
+        const p = t.parent;
         let msg = "";
-        let p = t.parent;
         let l;
         let r; // 语法树上的结点
         let tt = null;
@@ -173,22 +173,20 @@ export default class Check {
                     break;
                 case "VTK_COMMA": // ,结点
                     tt = this.genType("array", [], []);
-                    for (let j = 0; j < t.childs.length; j++) {
-                        lt = this.getType(t.childs[j].id);
+                    for (const item of t.childs) {
+                        lt = this.getType(item.id);
                         tt.arrayPush(lt); // lt为(1,2)或[x:1,y:2]中，的子节点
                     }
                     break;
                 case "VTK_PAREN": // ()结点
-                    if (t.childs.length === 0) {// 如：fun()
-                        if (p && p.tokenType === "TK_IDEN") {
-                            tt = this.genType("array", [], []);
-                        } else {
-                            tt = this.genType("undefined");
-                        }
+                    if (t.childs.length === 0) { // 如：fun()
+                        tt = (p && p.tokenType === "TK_IDEN") ?
+                            this.genType("array", [], []) :
+                            this.genType("undefined");
                     } else if (p && p.tokenType === "TK_IDEN" && l.tokenType !== "VTK_COMMA") {
                         tt = this.genType("array", [], []).arrayPush(lt); // 如：fun(2)
                     } else {
-                        tt = lt; // 如：fun(1,2,3) 或 2+((4)) 
+                        tt = lt; // 如：fun(1,2,3) 或 2+((4))
                     }
                     break;
                 case "VTK_ARRAY": // []结点

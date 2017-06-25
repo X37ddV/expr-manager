@@ -18,7 +18,7 @@ export default class Lexer {
     public nextToken(): IToken {
         // 下一个Token结点
         let n = this.index; // 从上一次调用nextToken()的结束位置开始
-        let s = this.expr;
+        const s = this.expr;
         let hasWrong = false; // 解析Token过程是否出错
         let token; // 要返回的token对象
         while (n < s.length) {
@@ -31,7 +31,7 @@ export default class Lexer {
         let tValue = "";
         let tType = "";
         let tText = "";
-        let tIndex = n + 1;
+        const tIndex = n + 1;
 
         if (n < s.length) {
             switch (s[n]) {
@@ -103,8 +103,8 @@ export default class Lexer {
                     break;
                 case "'":
                 case "\"":
-                    let start = s[n]; // '或"
-                    let v = [];
+                    const start = s[n]; // '或"
+                    const v = [];
                     let endFlag = false; // 是否找到对应的反引号
                     tValue += s[n++];
                     while (!hasWrong && n < s.length) {
@@ -143,7 +143,7 @@ export default class Lexer {
                                     v.push("\f");
                                     break;
                                 case "u": // unicode字符
-                                    let strU = s.join("").substring(n + 2, n + 6);
+                                    const strU = s.join("").substring(n + 2, n + 6);
                                     if (isX(s[n + 2]) && isX(s[n + 3]) && isX(s[n + 4]) && isX(s[n + 5])) {
                                         v.push(String.fromCharCode(parseInt(strU, 16)));
                                         n += 5;
@@ -157,7 +157,7 @@ export default class Lexer {
                                     }
                                     break;
                                 case "x": // 十六进制数
-                                    let strX = s.join("").substring(n + 2, n + 4);
+                                    const strX = s.join("").substring(n + 2, n + 4);
                                     if (isX(s[n + 2]) && isX(s[n + 3])) {
                                         v.push(String.fromCharCode(parseInt(strX, 16)));
                                         n += 3;
@@ -178,7 +178,7 @@ export default class Lexer {
                                 case "5":
                                 case "6":
                                 case "7": // 八进制数
-                                    let strN = s.join("").substring(n + 1, n + 4);
+                                    const strN = s.join("").substring(n + 1, n + 4);
                                     if (isO(s[n + 1]) && isO(s[n + 2]) && isO(s[n + 3])) {
                                         v.push(String.fromCharCode(parseInt(strN, 8)));
                                         n += 3;

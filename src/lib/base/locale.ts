@@ -74,8 +74,8 @@ interface IFunctionConfig {
 
 class Locale {
     public localeName: string = "zh-cn";
-    private locales: Object = {};
-    private functions: Object = {};
+    private locales: object = {};
+    private functions: object = {};
     public defineLocale(name: string, config: ILocaleConfig): void {
         if (config !== null) {
             this.locales[name] = merger(this.locales[name] || {}, config);

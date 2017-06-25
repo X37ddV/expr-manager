@@ -109,11 +109,7 @@ const funcPropValue = {
             }
         } else {
             if (isArray(o)) {
-                if (o.length > 0) {
-                    o = o[0];
-                } else {
-                    o = {};
-                }
+                o = o.length > 0 ? o[0] : {};
             }
             r = isObject(o) ? o[prop] : null;
         }
