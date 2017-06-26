@@ -5,7 +5,7 @@ import Lexer from "./lexer";
 import { RULE_BTOKENS, RULE_ETOKENS, RULE_LEXICAL } from "./rule";
 
 export default class Parser {
-    private tokens: Array<IToken> = []; // 按照顺序存储Token对象
+    private tokens: IToken[] = []; // 按照顺序存储Token对象
     private rootToken: IToken = null; // 存储语法树的根Token对象
     private errorMsg: string = ""; // 错误信息，如果为空字符串则表示没有错误
     private lexer: Lexer = new Lexer(); // 词法分析器对象，将表达式拆成Token对象数组
@@ -133,7 +133,7 @@ export default class Parser {
         }
         return r;
     }
-    private doParser(ts: Array<IToken>): IToken {
+    private doParser(ts: IToken[]): IToken {
         let p = null;
         if (ts && !ts.length) {
             return p; // ts为空数组则直接返回null根节点
@@ -240,10 +240,10 @@ export default class Parser {
         }, this);
         return msg;
     }
-    private doParser_0(ts: Array<IToken>): Array<IToken> {
+    private doParser_0(ts: IToken[]): IToken[] {
         // () [] {}，将括号中的多个token拿出来计算并生成虚token插入到原来的token数组中
         let t;
-        let l = [];
+        const l = [];
         let counter = 0;
         let queue = [];
         let i = 0;
@@ -281,18 +281,18 @@ export default class Parser {
         }
         return l;
     }
-    private doParser_1(ts: Array<IToken>): Array<IToken> {
+    private doParser_1(ts: IToken[]): IToken[] {
         // 标识符与()相连构成函数
         let t;
         let n;
-        let l = [];
+        const l = [];
         let i = 0;
         while (i < ts.length) {
             t = ts[i];
             n = ts[i + 1];
             // 判断相连两个Token能否构成函数调用的格式
             if (t.tokenType === "TK_IDEN" && n && n.tokenType === "VTK_PAREN") {
-                let tmp = this.doCreateVirtualToken("VTK_FUNCTION");
+                const tmp = this.doCreateVirtualToken("VTK_FUNCTION");
                 tmp.tokenIndex = t.tokenIndex;
                 tmp.childs.push(t);
                 t.parent = tmp;
@@ -307,11 +307,11 @@ export default class Parser {
         }
         return l;
     }
-    private doParser_2(ts: Array<IToken>): Array<IToken> {
+    private doParser_2(ts: IToken[]): IToken[] {
         // . [] 与标识符、string、()、[]、{}一起构成下标访问属性访问
         let t;
         let n;
-        let l = [];
+        const l = [];
         let i = 0;
         while (i < ts.length) {
             t = ts[i];
@@ -352,10 +352,10 @@ export default class Parser {
         }
         return l;
     }
-    private doParser_3(ts: Array<IToken>): Array<IToken> {
+    private doParser_3(ts: IToken[]): IToken[] {
         // + - ! 单目运算
         let t;
-        let l = [];
+        const l = [];
         let i = 0;
         while (i < ts.length) {
             t = ts[i];
@@ -363,7 +363,7 @@ export default class Parser {
                 l.push(t); // t会被添加子节点，子节点被添加孙结点...
                 // 多个单目运算符相连，前一个是后一个的父节点
                 do {
-                    let tmp = ts[++i];
+                    const tmp = ts[++i];
                     t.childs.push(tmp);
                     tmp.parent = t;
                     t = ts[i]; // t指向原来的tmp，tmp指向tokens数组中的下一个结点
@@ -375,11 +375,11 @@ export default class Parser {
         }
         return l;
     }
-    private doParser_4(ts: Array<IToken>, tts: string): Array<IToken> {
+    private doParser_4(ts: IToken[], tts: string): IToken[] {
         // 1.* / % 2.+ - 3.< <= > >= == != 4.&& 5.|| 6.: 处理优先级
         let t;
         let n;
-        let l = [];
+        const l = [];
         let i = 0;
         while (i < ts.length) {
             t = ts[i];
@@ -409,17 +409,17 @@ export default class Parser {
         }
         return l;
     }
-    private doParser_5(ts: Array<IToken>): Array<IToken> {
+    private doParser_5(ts: IToken[]): IToken[] {
         // , 对象字段分隔{a:1,b:'re'}或数组元素[1,2,3]，函数参数分隔符fun(a,b)
         let t;
         let n;
-        let l = [];
+        const l = [];
         let i = 0;
         while (i < ts.length) {
             t = ts[i];
             n = ts[i + 1];
             if (n && n.tokenType === "TK_COMMA") {
-                let tmp = this.doCreateVirtualToken("VTK_COMMA");
+                const tmp = this.doCreateVirtualToken("VTK_COMMA");
                 tmp.tokenIndex = n.tokenIndex; // 使用第一个,的位置
                 while (n && n.tokenType === "TK_COMMA") {
                     tmp.childs.push(t); // 添加逗号之前的结点为子节点

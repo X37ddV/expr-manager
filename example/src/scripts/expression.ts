@@ -1,12 +1,12 @@
-import context from "../configs/context";
-import tables from "../configs/tables";
-import { IExprSuggestResult, exprSuggest } from "./expression.suggest";
 import expr from "expr";
 import _ from "underscore";
+import context from "../configs/context";
+import tables from "../configs/tables";
+import { exprSuggest, IExprSuggestResult } from "./expression.suggest";
 
 export default class Expression {
     private data;
-    private nameList: Array<string>;
+    private nameList: string[];
     private primaryKeyMap;
     private cursorMap;
     private childsMap;
@@ -24,7 +24,7 @@ export default class Expression {
         this.fieldsMap = {};
         this.eachTables(tables, ((me) => (name, fields, childs) => {
             let pk = "";
-            for (let key in fields) {
+            for (const key in fields) {
                 if (fields.hasOwnProperty(key)) {
                     if (fields[key].primaryKey) {
                         pk = key;
@@ -45,7 +45,7 @@ export default class Expression {
         this.expr.init(this.data, tables, context);
         this.dataLoad();
     }
-    public length(): Number {
+    public length(): number {
         return this.nameList.length;
     }
     public calcExpr(line: string): Value {
@@ -59,30 +59,26 @@ export default class Expression {
         return this.nameList[n];
     }
     public getFields_T(n: number) {
-        let name = this.nameList[n];
+        const name = this.nameList[n];
         return this.fieldsMap[name];
     }
     public getData_T(n: number) {
-        let name = this.nameList[n];
+        const name = this.nameList[n];
         return this.getData(name, this.data, this.cursorMap);
     }
     public getCursor_T(n: number): number {
-        let name = this.nameList[n];
+        const name = this.nameList[n];
         return this.cursorMap[name];
     }
-    public setCursor_T(n: number, index: number): Array<number> {
-        let name = this.nameList[n];
-        let r = []; // 返回需要更新的表索引号
+    public setCursor_T(n: number, index: number): number[] {
+        const name = this.nameList[n];
+        const r = []; // 返回需要更新的表索引号
         if (this.cursorMap[name] !== index) {
             this.cursorMap[name] = index;
             this.nameList.forEach(((me) => (v, i) => {
                 if (v.length > name.length && v.indexOf(name) === 0) {
-                    let d = me.getData_T(i);
-                    if (d && d.length > 0) {
-                        me.cursorMap[v] = 0;
-                    } else {
-                        me.cursorMap[v] = -1;
-                    }
+                    const d = me.getData_T(i);
+                    me.cursorMap[v] = (d && d.length > 0) ? 0 : -1;
                     r.push(i);
                 }
             })(this));
@@ -108,9 +104,9 @@ export default class Expression {
     public checkExpression(): string {
         this.expr.resetExpression();
         this.eachTables(tables, ((me) => (name, fields, childs) => {
-            for (let fieldName in fields) {
+            for (const fieldName in fields) {
                 if (fields.hasOwnProperty(fieldName)) {
-                    let field = fields[fieldName];
+                    const field = fields[fieldName];
                     if (field.expr) {
                         me.expr.addExpression(field.expr, name, fieldName, "L|A|U|R", me.doCalcExpr, me);
                     } else if (field.defaultExpr) {
@@ -122,10 +118,10 @@ export default class Expression {
         return this.expr.checkAndSort();
     }
     public dataLoad(): Expression {
-        let msg = this.checkExpression();
+        const msg = this.checkExpression();
         if (!msg) {
             this.nameList.forEach(((me) => (name, index) => {
-                let info = {
+                const info = {
                     entityName: name,
                     propertyName: null,
                 };
@@ -137,11 +133,11 @@ export default class Expression {
         return this;
     }
     public dataAdd(n: number): Expression {
-        let data = this.getData_T(n);
-        let name = this.nameList[n];
+        const data = this.getData_T(n);
+        const name = this.nameList[n];
         data.push(this.newData(n));
         this.setCursor_T(n, data.length - 1);
-        let info = {
+        const info = {
             entityName: name,
             propertyName: null,
         };
@@ -149,12 +145,12 @@ export default class Expression {
         return this;
     }
     public dataUpdate(n: number, fieldName: string, value: any): Expression {
-        let data = this.getData_T(n);
-        let name = this.nameList[n];
-        let index = this.cursorMap[name];
+        const data = this.getData_T(n);
+        const name = this.nameList[n];
+        const index = this.cursorMap[name];
         if (index >= 0) {
             data[index][fieldName] = value;
-            let info = {
+            const info = {
                 entityName: name,
                 propertyName: fieldName,
             };
@@ -163,15 +159,15 @@ export default class Expression {
         return this;
     }
     public dataRemove(n: number): Expression {
-        let data = this.getData_T(n);
-        let name = this.nameList[n];
-        let index = this.cursorMap[name];
+        const data = this.getData_T(n);
+        const name = this.nameList[n];
+        const index = this.cursorMap[name];
         if (index >= 0) {
             data.splice(index, 1);
             if (index >= data.length) {
                 this.setCursor_T(n, data.length - 1);
             }
-            let info = {
+            const info = {
                 entityName: name,
                 propertyName: null,
             };
@@ -181,9 +177,9 @@ export default class Expression {
     }
     private eachTables(ts, callback: (name: string, fields, childs) => void, pName?: string) {
         if (ts) {
-            for (let t in ts) {
+            for (const t in ts) {
                 if (ts.hasOwnProperty(t)) {
-                    let name = pName ? pName + "." + t : t;
+                    const name = pName ? pName + "." + t : t;
                     callback.call(this, name, ts[t].fields, ts[t].childs);
                     this.eachTables(ts[t].childs, callback, name);
                 }
@@ -192,9 +188,9 @@ export default class Expression {
     }
     private getData(name: string, d, cursor) {
         let n = "";
-        let names = name.split(".");
+        const names = name.split(".");
         for (let i = 0; i < names.length; i++) {
-            let v = names[i];
+            const v = names[i];
             n += (n ? "." : "") + v;
             if (d) {
                 d = d[v];
@@ -213,10 +209,10 @@ export default class Expression {
         let idFuncs = 0;
         let idParams = 0;
         function genParams(func) {
-            let r = [];
-            let ps = func.p;
-            let pl = func.getLocale().p;
-            let p = String(func.fn).match(/\(.*\)/)[0].replace(/[\(\)\s]/g, "").split(",");
+            const r = [];
+            const ps = func.p;
+            const pl = func.getLocale().p;
+            const p = String(func.fn).match(/\(.*\)/)[0].replace(/[\(\)\s]/g, "").split(",");
             for (let i = 0; i < ps.length; i++) {
                 let type = ps[i];
                 let desc = pl[i];
@@ -226,7 +222,7 @@ export default class Expression {
                     desc = desc.replace("?", "");
                     isOptional = true;
                 }
-                let paramItem = {
+                const paramItem = {
                     FDescription: desc,
                     FIndex: i + 1,
                     FIsOptional: isOptional,
@@ -239,13 +235,13 @@ export default class Expression {
             return r;
         }
         function genFuncs(funcs) {
-            let r = [];
-            for (let name in funcs) {
+            const r = [];
+            for (const name in funcs) {
                 if (funcs.hasOwnProperty(name)) {
-                    let f = funcs[name];
-                    let params = genParams(f);
-                    let l = f.getLocale();
-                    let funcItem = {
+                    const f = funcs[name];
+                    const params = genParams(f);
+                    const l = f.getLocale();
+                    const funcItem = {
                         FDescription: l.fn,
                         FLastTime: new Date(),
                         FName: name,
@@ -261,17 +257,16 @@ export default class Expression {
             return r;
         }
         function genGroups(groups) {
-            let r = [];
-            for (let name in groups) {
+            const r = [];
+            for (const name in groups) {
                 if (groups.hasOwnProperty(name)) {
-                    let g = groups[name];
-                    let o = {};
-                    let funcs = genFuncs(g);
-                    for (let i = 0; i < funcs.length; i++) {
-                        let f = funcs[i];
-                        o[f.FName] = f.FReturnType;
+                    const g = groups[name];
+                    const o = {};
+                    const funcs = genFuncs(g);
+                    for (const func of funcs) {
+                        o[func.FName] = func.FReturnType;
                     }
-                    let groupItem = {
+                    const groupItem = {
                         FFuncs: o,
                         FName: name,
                         ID: idGroups++,
@@ -282,7 +277,7 @@ export default class Expression {
             }
             return r;
         }
-        let r = {
+        const r = {
             TGroups: genGroups(this.expr.getFunction()),
         };
         return r;
@@ -291,15 +286,15 @@ export default class Expression {
         return this.currentNewId--;
     }
     private newData(n: number) {
-        let name = this.nameList[n];
-        let r = {};
-        let pk = this.primaryKeyMap[name];
+        const name = this.nameList[n];
+        const r = {};
+        const pk = this.primaryKeyMap[name];
         if (pk) {
             r[pk] = this.newId();
         }
-        let childs = this.childsMap[name];
+        const childs = this.childsMap[name];
         if (childs) {
-            for (let subName in childs) {
+            for (const subName in childs) {
                 if (childs.hasOwnProperty(subName)) {
                     r[subName] = [];
                 }
@@ -308,8 +303,8 @@ export default class Expression {
         return r;
     }
     private doCalcExpr(type, info): void {
-        let exprStr = info.exprInfo.expr;
-        let cursor = _.clone(this.cursorMap);
+        const exprStr = info.exprInfo.expr;
+        const cursor = _.clone(this.cursorMap);
         switch (type) {
             case "remove":
             case "update":
@@ -318,20 +313,20 @@ export default class Expression {
                 break;
             case "load":
             default:
-                let name = info.entityName;
+                const name = info.entityName;
                 this.doCalcExprLoad(exprStr, cursor, info.exprInfo, name, 0);
                 break;
         }
     }
     private doCalcExprLoad(exprStr, dataCursor, exprInfo, name, level): void {
-        let cursor = _.clone(dataCursor);
-        let names = name.split(".");
-        let nameList = [];
+        const cursor = _.clone(dataCursor);
+        const names = name.split(".");
+        const nameList = [];
         for (let i = 0; i <= level; i++) {
             nameList.push(names[i]);
         }
-        let n = nameList.join(".");
-        let data = this.getData(n, this.data, cursor);
+        const n = nameList.join(".");
+        const data = this.getData(n, this.data, cursor);
         for (let i = 0; i < data.length; i++) {
             cursor[n] = i;
             if (names.length === nameList.length) {
@@ -342,31 +337,31 @@ export default class Expression {
         }
     }
     private doCalcExprValue(exprStr: string, dataCursor, exprInfo): void {
-        let cursor = _.clone(dataCursor);
-        let entityName = exprInfo.entityName;
-        let calcExprAndSetValue = (record) => {
-            let value = this.expr.calcExpr(exprStr, entityName, cursor, {
+        const cursor = _.clone(dataCursor);
+        const entityName = exprInfo.entityName;
+        const calcExprAndSetValue = (record) => {
+            const value = this.expr.calcExpr(exprStr, entityName, cursor, {
                 FieldDisplayName: "",  // TODO:
                 FieldName: exprInfo.propertyName,
                 FieldValue: "",  // TODO:
             });
             record[exprInfo.propertyName] = value.toValue();
         };
-        let eachBranch = (name, data) => {
+        const eachBranch = (name, data) => {
             for (let i = 0; i < data.length; i++) {
                 cursor[name] = i;
                 if (name === entityName) {
                     calcExprAndSetValue.call(this, data[i]);
                 } else {
-                    let nextName = name + "." + entityName.replace(name + ".", "").split(".")[0];
+                    const nextName = name + "." + entityName.replace(name + ".", "").split(".")[0];
                     eachBranch.call(this, nextName, this.getData(nextName, this.data, cursor));
                 }
             }
         };
         switch (exprInfo.updateMode) {
             case "Single": // updateTarget: undefined
-                let data = this.getData(entityName, this.data, cursor);
-                let index = cursor[entityName];
+                const data = this.getData(entityName, this.data, cursor);
+                const index = cursor[entityName];
                 if (index < data.length) {
                     calcExprAndSetValue.call(this, data[index]);
                 }

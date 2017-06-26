@@ -1,5 +1,5 @@
 export interface IToken {
-    childs?: Array<IToken>;
+    childs?: IToken[];
     id?: number;
     parent?: IToken;
     tokenErrorMsg?: string;

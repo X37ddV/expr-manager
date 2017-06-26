@@ -1,4 +1,4 @@
-import Decimal from "decimal";
+import Decimal from "decimal.js";
 import locale from "../base/locale";
 import { compare, format, getValueType } from "./common";
 import { IContext } from "./interface";
@@ -90,16 +90,12 @@ export default class Value {
     }
     public not() {
         /// <summary>非运算</summary>
-        let v;
-        if (this.type === "boolean") { // 布尔类型取相反值
-            v = this.genValue(!this.value, "boolean");
-        } else if (this.type === "string" && this.value === "" || this.type === "number" && this.value === "0"
-                    || this.type === "null") { // ""或者0或者null非运算后结果为true
-            v = this.genValue(true, "boolean");
-        } else { // 其余情况非运算后结果均为false
-            v = this.genValue(false, "boolean");
-        }
-        return v;
+        return (this.type === "boolean") ? // 布尔类型取相反值
+            this.genValue(!this.value, "boolean") :
+            (this.type === "string" && this.value === "" || this.type === "number" && this.value === "0"
+                || this.type === "null") ? // ""或者0或者null非运算后结果为true
+                this.genValue(true, "boolean") :
+                this.genValue(false, "boolean");
     }
     public multiply(ev) {
         /// <summary>乘法</summary>
@@ -125,7 +121,7 @@ export default class Value {
         } else if ((this.type === "number" || this.type === "null") && (ev.type === "number")) {
             const vl = Big(this.value || "0"); // 被除数为null时会被转换成"0"
             const vr = Big(ev.value);
-            v = this.genValue(vl.div(vr, 10, 1).toString(), "number");
+            v = this.genValue(vl.div(vr).toString(), "number");
         } else { // 两运算数不能进行除法运算
             v = this.genErrorValue(format(locale.getLocale().MSG_EX_DIVIDE, this.type, ev.type));
         }
@@ -287,15 +283,13 @@ export default class Value {
         /// <summary>与运算</summary>
         let v;
         if (!ev) { // 左运算视为false时，右运算数计算被跳过所以ev==undefined
-            if (this.type === "boolean" || this.type === "null") {
-                v = this.genValue(false, "boolean");
-            } else {
-                v = this.genErrorValue(format(locale.getLocale().MSG_EX_AND_L, this.type));
-            }
-        } else if (this.type === "boolean" && (ev.type === "boolean" || ev.type === "null")) {
-            v = this.genValue(!!(this.value && ev.value), "boolean");
-        } else { // 两运算数不能进行与运算
-            v = this.genErrorValue(format(locale.getLocale().MSG_EX_AND, this.type, ev.type));
+            v = (this.type === "boolean" || this.type === "null") ?
+                this.genValue(false, "boolean") :
+                this.genErrorValue(format(locale.getLocale().MSG_EX_AND_L, this.type));
+        } else {
+            v = (this.type === "boolean" && (ev.type === "boolean" || ev.type === "null")) ?
+                this.genValue(!!(this.value && ev.value), "boolean") :
+                this.genErrorValue(format(locale.getLocale().MSG_EX_AND, this.type, ev.type));
         }
         return v;
     }
@@ -303,15 +297,13 @@ export default class Value {
         /// <summary>或运算</summary>
         let v;
         if (!ev) { // 左运算视为true时，右运算数计算被跳过所以ev==undefined
-            if (this.type === "boolean") {
-                v = this.genValue(true, "boolean");
-            } else {
-                v = this.genErrorValue(format(locale.getLocale().MSG_EX_OR_L, this.type));
-            }
-        } else if ((this.type === "boolean" || this.type === "null") && (ev.type === "boolean" || ev.type === "null")) {
-            v = this.genValue(!!(this.value || ev.value), "boolean");
-        } else { // 两运算数不能进行或运算
-            v = this.genErrorValue(format(locale.getLocale().MSG_EX_OR, this.type, ev.type));
+            v = (this.type === "boolean") ?
+                this.genValue(true, "boolean") :
+                this.genErrorValue(format(locale.getLocale().MSG_EX_OR_L, this.type));
+        } else {
+            v = ((this.type === "boolean" || this.type === "null") && (ev.type === "boolean" || ev.type === "null")) ?
+                this.genValue(!!(this.value || ev.value), "boolean") :
+                this.genErrorValue(format(locale.getLocale().MSG_EX_OR, this.type, ev.type)); // 两运算数不能进行或运算
         }
         return v;
     }
@@ -357,44 +349,32 @@ export default class Value {
     }
     public getVariableValue(ev) {
         /// <summary>得到对象ev的this.toValue()属性值</summary>
-        let v;
-        if (ev && ev.type !== "object") {
-            v = this.genErrorValue(format(locale.getLocale().MSG_EX_DOT, ev.type));
-        } else {
-            v = this.context.getVariableValue(this.toValue(), ev);
-        }
-        return v;
+        return (ev && ev.type !== "object") ?
+            this.genErrorValue(format(locale.getLocale().MSG_EX_DOT, ev.type)) :
+            this.context.getVariableValue(this.toValue(), ev);
     }
     public getFunctionValue(ev) {
         /// <summary>得到函数执行结果</summary>
         /// <param name="ev">函数调用者</param>
-        let v = this.toValue();
-        if (ev && ev.value === null) {
-            v = this.genErrorValue(format(locale.getLocale().MSG_EX_FUNC_NULL, v.key));
-        } else {
-            v = this.context.getFunctionValue(v.key, ev, v.value);
-        }
-        return v;
+        const v = this.toValue();
+        return (ev && ev.value === null) ?
+            this.genErrorValue(format(locale.getLocale().MSG_EX_FUNC_NULL, v.key)) :
+            this.context.getFunctionValue(v.key, ev, v.value);
     }
     public abs() {
         /// <summary>获取数的绝对值</summary>
-        let v = Big(this.value || "0");
-        v = this.genValue(v.abs().toString(), "number");
-        return v;
+        const v = Big(this.value || "0");
+        return this.genValue(v.abs().toString(), "number");
     }
     public ceil() {
         /// <summary>向上取整</summary>
-        let v = Big(this.value || "0");
-        v = v.ceil();
-        v = this.genValue(v.toString(), "number");
-        return v;
+        const v = Big(this.value || "0");
+        return this.genValue(v.ceil().toString(), "number");
     }
     public floor() {
         /// <summary>向下取整</summary>
-        let v = Big(this.value || "0");
-        v = v.floor();
-        v = this.genValue(v.toString(), "number");
-        return v;
+        const v = Big(this.value || "0");
+        return this.genValue(v.floor().toString(), "number");
     }
     public round(scale) {
         /// <summary>四舍五入保留scale位小数</summary>
@@ -423,65 +403,64 @@ export default class Value {
     public cos() {
         /// <summary>获取数的余弦</summary>
         let v = Big(this.value || "0");
-        v = v.cos();
-        v = this.genValue(v.toString(), "number");
-        return v;
+        const name = "cos";
+        v = v[name]();
+        return this.genValue(v.toString(), "number");
     }
     public exp() {
         /// <summary>获取 e 的指数</summary>
         let v = Big(this.value || "0");
         v = v.exp();
-        v = this.genValue(v.toString(), "number");
-        return v;
+        return this.genValue(v.toString(), "number");
     }
     public ln() {
         /// <summary>获取数的自然对数（底为 e）</summary>
+        let value;
         let v = Big(this.value || "0");
         if (v.greaterThan("0")) {
             v = v.ln();
-            v = this.genValue(v.toString(), "number");
+            value = this.genValue(v.toString(), "number");
         } else {
-            v = this.genErrorValue(format(locale.getLocale().MSG_EX_LN, v.toString()));
+            value = this.genErrorValue(format(locale.getLocale().MSG_EX_LN, v.toString()));
         }
-        return v;
+        return value;
     }
     public log(base) {
         /// <summary>获取数的指定底数的对数</summary>
+        let value;
         let v = Big(this.value || "0");
         if (v.greaterThan("0") && base > 0 && base !== 1) {
             v = v.log(base);
-            v = this.genValue(v.toString(), "number");
+            value = this.genValue(v.toString(), "number");
         } else {
-            v = this.genErrorValue(format(locale.getLocale().MSG_EX_LOG, base, v.toString()));
+            value = this.genErrorValue(format(locale.getLocale().MSG_EX_LOG, base, v.toString()));
         }
-        return v;
+        return value;
     }
     public power(exponent) {
         /// <summary>获取数的指定指数的次幂</summary>
         let v = Big(this.value || "0");
         v = v.pow(exponent);
-        v = this.genValue(v.toString(), "number");
-        return v;
+        return this.genValue(v.toString(), "number");
     }
     public sin() {
         /// <summary>获取数的正弦</summary>
         let v = Big(this.value || "0");
-        v = v.sin();
-        v = this.genValue(v.toString(), "number");
-        return v;
+        const name = "sin";
+        v = v[name]();
+        return this.genValue(v.toString(), "number");
     }
     public sqrt() {
         /// <summary>获取数的平方根</summary>
         let v = Big(this.value || "0");
         v = v.sqrt();
-        v = this.genValue(v.toString(), "number");
-        return v;
+        return this.genValue(v.toString(), "number");
     }
     public tan() {
         /// <summary>获取树的正切值</summary>
         let v = Big(this.value || "0");
-        v = v.tan();
-        v = this.genValue(v.toString(), "number");
-        return v;
+        const name = "tan";
+        v = v[name]();
+        return this.genValue(v.toString(), "number");
     }
 }

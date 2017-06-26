@@ -88,40 +88,41 @@ export default class ExprList {
         const modeList = [];
         // 计算字段表达式的依赖更新模式
         if (updateList && l && l.dependencies) {
-            for (let i = 0; i < updateList.length; i++) {
-                const u = updateList[i];
-                for (let j = 0; j < l.dependencies.length; j++) {
-                    if (u.fullName === l.dependencies[j]) {
+            for (const updateItem of updateList.length) {
+                for (const dependency of l.dependencies) {
+                    if (updateItem.fullName === dependency) {
                         let commonAncestry = true;
                         let isSubChange = false;
                         // 找到依赖的变化字段
-                        if (u.type === "U") {
+                        if (updateItem.type === "U") {
                             // 如果该字段是更新
 
                             let isDependEntity = false; // 表达式是否依赖了实体
-                            for (let k = 0; k < l.dependencies.length; k++) {
-                                isDependEntity = (u.fullName.indexOf(l.dependencies[k] + ".") === 0);
+                            for (const depend of l.dependencies) {
+                                isDependEntity = (updateItem.fullName.indexOf(depend + ".") === 0);
                                 if (isDependEntity) {
                                     break;
                                 }
                             }
 
-                            if (u.entityName === l.entityName) {
+                            if (updateItem.entityName === l.entityName) {
                                 // 同级更新
                                 if (isDependEntity) {
                                     modeList.push({ updateMode: "All" });
                                 } else {
                                     modeList.push({ updateMode: "Single" });
                                 }
-                            } else if (l.entityName.indexOf(u.entityName + ".") === 0) {
+                            } else if (l.entityName.indexOf(updateItem.entityName + ".") === 0) {
                                 // 上级更新
                                 if (isDependEntity) {
                                     modeList.push({ updateMode: "All" });
                                 } else {
-                                    modeList.push({ updateMode: "BranchUpdate",
-                                        updateTarget: this._doGetUpdateTarget(u.entityName, l.entityName) });
+                                    modeList.push({
+                                        updateMode: "BranchUpdate",
+                                        updateTarget: this._doGetUpdateTarget(updateItem.entityName, l.entityName),
+                                    });
                                 }
-                            } else if (u.entityName.indexOf(l.entityName + ".") === 0) {
+                            } else if (updateItem.entityName.indexOf(l.entityName + ".") === 0) {
                                 // 下级更新
                                 modeList.push({ updateMode: "Single" });
                                 isSubChange = true;
@@ -130,16 +131,18 @@ export default class ExprList {
                                 modeList.push({ updateMode: "All" });
                                 commonAncestry = false;
                             }
-                        } else if (u.type === "R") {
+                        } else if (updateItem.type === "R") {
                             // 如果该记录是删除
-                            if (u.entityName === l.entityName) {
+                            if (updateItem.entityName === l.entityName) {
                                 // 同级删除
                                 modeList.push({ updateMode: "All" });
-                            } else if (l.entityName.indexOf(u.entityName + ".") === 0) {
+                            } else if (l.entityName.indexOf(updateItem.entityName + ".") === 0) {
                                 // 上级删除
-                                modeList.push({ updateMode: "BranchDelete",
-                                    updateTarget: this._doGetUpdateTarget(u.entityName, l.entityName) });
-                            } else if (u.entityName.indexOf(l.entityName + ".") === 0) {
+                                modeList.push({
+                                    updateMode: "BranchDelete",
+                                    updateTarget: this._doGetUpdateTarget(updateItem.entityName, l.entityName),
+                                });
+                            } else if (updateItem.entityName.indexOf(l.entityName + ".") === 0) {
                                 // 下级删除
                                 modeList.push({ updateMode: "Single" });
                                 isSubChange = true;
@@ -150,13 +153,13 @@ export default class ExprList {
                             }
                         } else {
                             // 如果该记录是添加或加载
-                            if (u.entityName === l.entityName) {
+                            if (updateItem.entityName === l.entityName) {
                                 // 同级添加
                                 modeList.push({ updateMode: "All" });
-                            } else if (l.entityName.indexOf(u.entityName + ".") === 0) {
+                            } else if (l.entityName.indexOf(updateItem.entityName + ".") === 0) {
                                 // 上级添加
                                 modeList.push({ updateMode: "All" });
-                            } else if (u.entityName.indexOf(l.entityName + ".") === 0) {
+                            } else if (updateItem.entityName.indexOf(l.entityName + ".") === 0) {
                                 // 下级添加
                                 modeList.push({ updateMode: "Single" });
                                 isSubChange = true;
@@ -167,7 +170,7 @@ export default class ExprList {
                             }
                         }
                         if (commonAncestry && !isSubChange) {
-                            modeList.push({ updateMode: u.updateMode, updateTarget: u.updateTarget });
+                            modeList.push({ updateMode: updateItem.updateMode, updateTarget: updateItem.updateTarget });
                         }
                     }
                 }
@@ -240,7 +243,7 @@ export default class ExprList {
         this.cache = {};
         this.sorted = false;
         for (let i = 0; i < this.list.length; i++) {
-            let item = this.list[i];
+            const item = this.list[i];
             if (item.expr === expr && item.entityName === entityName && item.propertyName === propertyName &&
                 item.types === types && item.callback === callback && item.scope === scope) {
                 this.list.splice(i, 1); // 删除匹配的项
@@ -248,7 +251,7 @@ export default class ExprList {
             }
         }
     }
-    public checkAndSort(dependCallback: Function) {
+    public checkAndSort(dependCallback) {
         this.cache = {};
         this.sorted = true;
         let msg = "";

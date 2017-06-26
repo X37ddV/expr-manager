@@ -1,13 +1,13 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('jquery'), require('underscore'), require('underscore.string'), require('expr'), require('moment'), require('mousetrap')) :
-	typeof define === 'function' && define.amd ? define(['jquery', 'underscore', 'underscore.string', 'expr', 'moment', 'mousetrap'], factory) :
-	(factory(global.jQuery,global._,global.s,global.expr,global.moment,global.Mousetrap));
-}(this, (function ($,_,s,expr,moment,Mousetrap) { 'use strict';
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('jquery'), require('underscore'), require('expr'), require('underscore.string'), require('moment'), require('mousetrap')) :
+	typeof define === 'function' && define.amd ? define(['jquery', 'underscore', 'expr', 'underscore.string', 'moment', 'mousetrap'], factory) :
+	(factory(global.jQuery,global._,global.expr,global.s,global.moment,global.Mousetrap));
+}(this, (function ($,_,expr,s,moment,Mousetrap) { 'use strict';
 
 $ = 'default' in $ ? $['default'] : $;
 _ = 'default' in _ ? _['default'] : _;
-s = 'default' in s ? s['default'] : s;
 expr = 'default' in expr ? expr['default'] : expr;
+s = 'default' in s ? s['default'] : s;
 moment = 'default' in moment ? moment['default'] : moment;
 Mousetrap = 'default' in Mousetrap ? Mousetrap['default'] : Mousetrap;
 
@@ -120,8 +120,9 @@ var View = (function () {
             return this;
         }
         var ids = object ? [object.privListenId] : _.keys(listeningTo);
-        for (var i = 0; i < ids.length; i++) {
-            var listening = listeningTo[ids[i]];
+        for (var _i = 0, ids_1 = ids; _i < ids_1.length; _i++) {
+            var id = ids_1[_i];
+            var listening = listeningTo[id];
             if (!listening) {
                 break;
             }
@@ -175,7 +176,7 @@ var View = (function () {
                 attrs.id = _.result(this, "id");
             }
             if (this.className) {
-                attrs["class"] = _.result(this, "className");
+                attrs.class = _.result(this, "className");
             }
             this.setElement(this._createElement(_.result(this, "tagName")));
             this._setAttributes(attrs);
@@ -257,8 +258,8 @@ var offApi = function (events, name, callback, options) {
             break;
         }
         var remaining = [];
-        for (var j = 0; j < handlers.length; j++) {
-            var handler = handlers[j];
+        for (var _i = 0, handlers_1 = handlers; _i < handlers_1.length; _i++) {
+            var handler = handlers_1[_i];
             if (callback && callback !== handler.callback &&
                 callback !== handler.callback._callback ||
                 context && context !== handler.context) {
@@ -564,8 +565,6 @@ function exprSuggestGetPropertyName(object) {
     }
     return r;
 }
-
-
 function exprSuggest(line, pos, info) {
     var r = null; // null表示无需提示，""表示无限制提示
     var input = "";
@@ -682,12 +681,7 @@ var Expression = (function () {
             this.nameList.forEach((function (me) { return function (v, i) {
                 if (v.length > name.length && v.indexOf(name) === 0) {
                     var d = me.getData_T(i);
-                    if (d && d.length > 0) {
-                        me.cursorMap[v] = 0;
-                    }
-                    else {
-                        me.cursorMap[v] = -1;
-                    }
+                    me.cursorMap[v] = (d && d.length > 0) ? 0 : -1;
                     r.push(i);
                 }
             }; })(this));
@@ -874,9 +868,9 @@ var Expression = (function () {
                     var g = groups[name];
                     var o = {};
                     var funcs = genFuncs(g);
-                    for (var i = 0; i < funcs.length; i++) {
-                        var f = funcs[i];
-                        o[f.FName] = f.FReturnType;
+                    for (var _i = 0, funcs_1 = funcs; _i < funcs_1.length; _i++) {
+                        var func = funcs_1[_i];
+                        o[func.FName] = func.FReturnType;
                     }
                     var groupItem = {
                         FFuncs: o,
@@ -1159,12 +1153,7 @@ function parserValue(v, type) {
     }
     else if (type === "date") {
         var m = moment(v);
-        if (m.isValid()) {
-            value = m.toDate();
-        }
-        else {
-            value = NaN;
-        }
+        value = (m.isValid()) ? m.toDate() : NaN;
     }
     else {
         try {
@@ -1283,8 +1272,9 @@ var hotkeyBindElement = function (element, keys, callback, action) {
         }
         var hotkeys = el.addClass(hotkeyName).data(hotkeyName) || {};
         if (keys instanceof Array) {
-            for (var i = 0; i < keys.length; i++) {
-                hotkeys[keys[i] + "|" + (action || "")] = callback;
+            for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+                var key = keys_1[_i];
+                hotkeys[key + "|" + (action || "")] = callback;
             }
         }
         else {
@@ -1396,10 +1386,10 @@ var Result = (function (_super) {
         this.itemId = 0;
         this.className = "result-view";
         this.events = {
+            "click .result-empty": this.doClickEmpty,
             "click .result-row": this.doClickRow,
             "click .result-row-warning": this.doClickRow,
             "click .result-value": this.doClickValue,
-            "click .result-empty": this.doClickEmpty,
         };
     };
     Result.prototype.initialize = function () {
@@ -1492,30 +1482,16 @@ var Result = (function (_super) {
         }
         else {
             v = value.toValue();
-            if (value.type === "array") {
-                v = "<ul>" + this.genArrayValue(v, ObjectPrefixType.None) + "</ul>";
-            }
-            else if (value.type === "object") {
-                v = "<ul>" + this.genObjectValue(v, ObjectPrefixType.None) + "</ul>";
-            }
-            else {
-                v = "<div class='result-value'>" + this.genJSONValue(v) + "</div>";
-            }
+            v = (value.type === "array") ? "<ul>" + this.genArrayValue(v, ObjectPrefixType.None) + "</ul>" :
+                (value.type === "object") ? "<ul>" + this.genObjectValue(v, ObjectPrefixType.None) + "</ul>" :
+                    "<div class='result-value'>" + this.genJSONValue(v) + "</div>";
         }
         return v;
     };
     Result.prototype.getValuePrefixClass = function (op) {
-        var prefixCls = "";
-        if (op === ObjectPrefixType.Array) {
-            prefixCls = "array";
-        }
-        else if (op === ObjectPrefixType.Object) {
-            prefixCls = "object";
-        }
-        else {
-            prefixCls = "none";
-        }
-        return prefixCls;
+        return (op === ObjectPrefixType.Array) ? "array" :
+            (op === ObjectPrefixType.Object) ? "object" :
+                "none";
     };
     Result.prototype.getValuePrefix = function (v, typeName, op, prefix, hasChild) {
         var collapsed = hasChild ? " collapsed" : " nochild";
@@ -1595,11 +1571,12 @@ var Result = (function (_super) {
         switch (t) {
             case "array":
                 r = "[";
-                for (var i = 0; i < v.length; i++) {
+                for (var _i = 0, v_1 = v; _i < v_1.length; _i++) {
+                    var item = v_1[_i];
                     if (r !== "[") {
                         r += ", ";
                     }
-                    r += this.genJSONValue(v[i]);
+                    r += this.genJSONValue(item);
                 }
                 r += "]";
                 break;
@@ -1691,10 +1668,10 @@ var Syntax = (function (_super) {
         this.className = "syntax-view";
         this.events = {
             "click ": this.doClick,
-            "click .token-item-type": this.doClickExpand,
-            "click .token-item-expand": this.doClickExpand,
             "click .col-item": this.doClickColItem,
             "click .token-item": this.doClickTokenItem,
+            "click .token-item-expand": this.doClickExpand,
+            "click .token-item-type": this.doClickExpand,
         };
     };
     Syntax.prototype.initialize = function () {
@@ -1849,8 +1826,9 @@ var Syntax = (function (_super) {
         r += "</div>";
         if (hasChild) {
             r += "<ul>";
-            for (var i = 0; i < rootToken.childs.length; i++) {
-                r += this.genTree(rootToken.childs[i], level + 1);
+            for (var _i = 0, _a = rootToken.childs; _i < _a.length; _i++) {
+                var item = _a[_i];
+                r += this.genTree(item, level + 1);
             }
             r += "</ul>";
         }
@@ -1912,17 +1890,17 @@ var Terminal = (function (_super) {
     Terminal.prototype.preinitialize = function () {
         this.className = "terminal-view";
         this.events = {
+            "blur .terminal-typer": this.doBlur,
+            "change .terminal-typer": this.internalRefresh,
+            "dblclick .terminal-text": this.doDblClick,
+            "focus .terminal-typer": this.doFocus,
+            "input .terminal-typer": this.internalRefresh,
+            "keydown .terminal-typer": this.internalRefresh,
+            "keypress .terminal-typer": this.internalRefresh,
             "mousedown .terminal-text": this.doMousedown,
             "mousemove .terminal-text": this.doMousemove,
             "mouseup .terminal-text": this.doMouseup,
-            "dblclick .terminal-text": this.doDblClick,
-            "blur .terminal-typer": this.doBlur,
-            "focus .terminal-typer": this.doFocus,
             "paste .terminal-typer": this.internalRefresh,
-            "keydown .terminal-typer": this.internalRefresh,
-            "keypress .terminal-typer": this.internalRefresh,
-            "change .terminal-typer": this.internalRefresh,
-            "input .terminal-typer": this.internalRefresh,
         };
         this.history = [];
         this.historyIndex = 1;
@@ -2314,12 +2292,7 @@ var Terminal = (function (_super) {
             }
             if (selIndex.length > 0) {
                 startIndex = _.min(selIndex);
-                if (start === end) {
-                    endIndex = startIndex;
-                }
-                else {
-                    endIndex = _.max(selIndex) + 1;
-                }
+                endIndex = (start === end) ? startIndex : _.max(selIndex) + 1;
             }
             this.setTyperSelection(startIndex, endIndex);
         }
@@ -2380,11 +2353,11 @@ var Console = (function (_super) {
         this.events = {
             "click .console-terminal-clear": this.doClearResult,
             "click .console-terminal-left": this.doClickLeft,
+            "click .console-terminal-prompt": this.doClickPrompt,
             "click .console-terminal-right": this.doClickRight,
             "click .console-watch-clear": this.doClearSyntax,
             "click .console-watch-left": this.doClickLeft,
             "click .console-watch-right": this.doClickRight,
-            "click .console-terminal-prompt": this.doClickPrompt,
         };
     };
     Console.prototype.initialize = function () {
@@ -2637,10 +2610,10 @@ var Data = (function (_super) {
         this.className = "data-view";
         this.gridName = "grid";
         this.events = {
+            "blur .data-grid-edit": this.doBlurEdit,
             "click .data-grid0": this.doClickGrid,
             "click .data-grid1": this.doClickGrid,
             "click .data-grid2": this.doClickGrid,
-            "blur .data-grid-edit": this.doBlurEdit,
         };
     };
     Data.prototype.initialize = function () {
@@ -2747,12 +2720,8 @@ var Data = (function (_super) {
                     if (fields.hasOwnProperty(n)) {
                         var field = fields[n];
                         var val = value[n];
-                        if (_.isNaN(val) || _.isNull(val) || _.isUndefined(val)) {
-                            v[n] = "";
-                        }
-                        else {
-                            v[n] = formatValue(val, field.type);
-                        }
+                        v[n] = (_.isNaN(val) || _.isNull(val) || _.isUndefined(val)) ? "" :
+                            formatValue(val, field.type);
                         if (field.primaryKey) {
                             v._id = val;
                         }
@@ -2802,8 +2771,8 @@ var Setting = (function (_super) {
         this.className = "setting-view";
         this.events = {
             "click .setting-close": this.doClickClose,
-            "click .setting-p1-action-cancel": this.doClickP1Cancel,
             "click .setting-p1-action-apply": this.doClickP1Apply,
+            "click .setting-p1-action-cancel": this.doClickP1Cancel,
         };
     };
     Setting.prototype.initialize = function () {
@@ -2968,16 +2937,16 @@ var Main = (function (_super) {
     Main.prototype.preinitialize = function () {
         this.className = "main-view";
         this.events = {
+            "click .act-add": this.doClickAdd,
+            "click .act-center": this.doClickCenter,
+            "click .act-left": this.doClickLeft,
+            "click .act-remove": this.doClickRemove,
+            "click .act-right": this.doClickRight,
+            "click .act-setting": this.doClickSetting,
             "dblclick .main-split": this.doDblClickSplit,
             "mousedown .main-split": this.doMousedown,
             "mousemove ": this.doMousemove,
             "mouseup ": this.doMouseup,
-            "click .act-left": this.doClickLeft,
-            "click .act-center": this.doClickCenter,
-            "click .act-right": this.doClickRight,
-            "click .act-setting": this.doClickSetting,
-            "click .act-add": this.doClickAdd,
-            "click .act-remove": this.doClickRemove,
         };
     };
     Main.prototype.initialize = function () {

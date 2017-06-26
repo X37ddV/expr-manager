@@ -61,11 +61,11 @@ class Console extends View {
         this.events = {
             "click .console-terminal-clear": this.doClearResult,
             "click .console-terminal-left": this.doClickLeft,
+            "click .console-terminal-prompt": this.doClickPrompt,
             "click .console-terminal-right": this.doClickRight,
             "click .console-watch-clear": this.doClearSyntax,
             "click .console-watch-left": this.doClickLeft,
             "click .console-watch-right": this.doClickRight,
-            "click .console-terminal-prompt": this.doClickPrompt,
         };
     }
     protected initialize(): void {
@@ -130,7 +130,7 @@ class Console extends View {
                     me.doClearResult();
                     break;
                 default:
-                    let v = me.expression.calcExpr(line);
+                    const v = me.expression.calcExpr(line);
                     me.syntaxView.load(line, v);
                     me.resultView.add(line, v);
                     break;

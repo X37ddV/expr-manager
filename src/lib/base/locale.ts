@@ -67,7 +67,7 @@ interface ILocaleConfig {
 interface IFunctionConfig {
     [propName: string]: {
         fn: string;
-        p: Array<string>;
+        p: string[];
         r: string;
     };
 }

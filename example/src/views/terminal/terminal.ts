@@ -1,16 +1,16 @@
-import { ShowFocusType, showFocus } from "../../scripts/common";
+import $ from "jquery";
+import _ from "underscore";
+import s from "underscore.string";
+import { showFocus, ShowFocusType } from "../../scripts/common";
 import Expression from "../../scripts/expression";
 import hotkey from "../../scripts/hotkey";
 import View from "../../scripts/view";
 import "./terminal.scss";
 import terminal_tpl from "./terminal.tpl";
-import $ from "jquery";
-import _ from "underscore";
-import s from "underscore.string";
 
 class Terminal extends View {
     private expression: Expression;
-    private history: Array<string>;
+    private history: string[];
     private historyIndex: number;
     private refreshId: number;
     private suggestIndex: number;
@@ -46,17 +46,17 @@ class Terminal extends View {
     protected preinitialize(): void {
         this.className = "terminal-view";
         this.events = {
+            "blur .terminal-typer": this.doBlur,
+            "change .terminal-typer": this.internalRefresh,
+            "dblclick .terminal-text": this.doDblClick,
+            "focus .terminal-typer": this.doFocus,
+            "input .terminal-typer": this.internalRefresh,
+            "keydown .terminal-typer": this.internalRefresh,
+            "keypress .terminal-typer": this.internalRefresh,
             "mousedown .terminal-text": this.doMousedown,
             "mousemove .terminal-text": this.doMousemove,
             "mouseup .terminal-text": this.doMouseup,
-            "dblclick .terminal-text": this.doDblClick,
-            "blur .terminal-typer": this.doBlur,
-            "focus .terminal-typer": this.doFocus,
             "paste .terminal-typer": this.internalRefresh,
-            "keydown .terminal-typer": this.internalRefresh,
-            "keypress .terminal-typer": this.internalRefresh,
-            "change .terminal-typer": this.internalRefresh,
-            "input .terminal-typer": this.internalRefresh,
         };
         this.history = [];
         this.historyIndex = 1;
@@ -77,7 +77,7 @@ class Terminal extends View {
         this.initHotkey();
     }
     protected doMousedown(e: JQueryMouseEventObject): Terminal {
-        let t = this.$(e.target);
+        const t = this.$(e.target);
         if (t.parent().hasClass("terminal-text")) {
             this.dragging = true;
             this.draggingStartX = t.position().left + e.offsetX;
@@ -93,7 +93,7 @@ class Terminal extends View {
     }
     protected doMousemove(e: JQueryMouseEventObject): Terminal {
         if (this.dragging) {
-            let t = this.$(e.target);
+            const t = this.$(e.target);
             if (t.parent().hasClass("terminal-text")) {
                 this.draggingEndX = t.position().left + e.offsetX;
                 this.refreshSelection();
@@ -106,7 +106,7 @@ class Terminal extends View {
     }
     protected doMouseup(e: JQueryMouseEventObject): Terminal {
         if (this.dragging) {
-            let t = this.$(e.target);
+            const t = this.$(e.target);
             if (t.parent().hasClass("terminal-text")) {
                 this.draggingEndX = t.position().left + e.offsetX;
                 this.refreshSelection();
@@ -147,7 +147,7 @@ class Terminal extends View {
         return this;
     }
     private initHotkey(): Terminal {
-        let input = this.$typer.get(0);
+        const input = this.$typer.get(0);
         let keys = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_$.".split("");
         keys.push("backspace");
         keys.push("del");
@@ -167,16 +167,16 @@ class Terminal extends View {
         keys = ["tab", "enter", "right"];
         hotkey.bindElement(input, keys, ((me) => (e, combo) => {
             if (me.suggestCount > 0) {
-                let selection = me.getTyperSelection();
+                const selection = me.getTyperSelection();
                 if (selection.start === selection.end) {
                     me.$typer.val(s.insert(me.$typer.val(), selection.start, me.suggestValue));
-                    let pos = selection.start + me.suggestValue.length;
+                    const pos = selection.start + me.suggestValue.length;
                     me.setTyperSelection(pos, pos);
                     e.stopPropagation();
                     e.preventDefault();
                 }
             } else if (combo === "enter") {
-                let cmd = me.$typer.val();
+                const cmd = me.$typer.val();
                 if (cmd !== "") {
                     if (me.history[me.history.length - 1] !== cmd) {
                         me.history.push(cmd);
@@ -228,16 +228,16 @@ class Terminal extends View {
         if (this.refreshId) {
             clearTimeout(this.refreshId);
         }
-        this.refreshId = setTimeout((me => () => {
-            let typer = me.$typer;
-            let text = me.$text;
-            let selection = me.getTyperSelection();
+        this.refreshId = setTimeout(((me) => () => {
+            const typer = me.$typer;
+            const text = me.$text;
+            const selection = me.getTyperSelection();
             // 判断按键
-            let val = typer.val();
+            const val = typer.val();
             if (me.tmpKeyCombo && selection.start === selection.end) {
-                let n = val.length - me.tmpOldValue.length;
+                const n = val.length - me.tmpOldValue.length;
                 if (n === 1 || n === -1) {
-                    let suggest = me.expression.getSuggest(val, selection.start);
+                    const suggest = me.expression.getSuggest(val, selection.start);
                     if (suggest.suggestList.length > 0) {
                         me.showSuggestBox(suggest.suggestList, suggest.inputValue);
                     } else {
@@ -273,18 +273,18 @@ class Terminal extends View {
             me.tmpOldValue = val;
             // 补充span
             let items = text.children();
-            let spanCount = val.length + 1 + me.suggestValue.length;
+            const spanCount = val.length + 1 + me.suggestValue.length;
             if (spanCount > items.length) {
-                let l = spanCount - items.length;
+                const l = spanCount - items.length;
                 for (let i = 0; i < l; i++) {
                     text.append("<span></span>");
                 }
             }
             // 填充字符
-            let displayValue = s.insert(val, selection.start, me.suggestValue);
+            const displayValue = s.insert(val, selection.start, me.suggestValue);
             items = text.children();
             for (let i = 0; i < items.length; i++) {
-                let item = $(items[i]);
+                const item = $(items[i]);
                 if (i <= displayValue.length) {
                     if (i === displayValue.length) {
                         item.text(" ");
@@ -313,7 +313,7 @@ class Terminal extends View {
                 }
             }
             // 同步滚动条
-            let left = typer.scrollLeft();
+            const left = typer.scrollLeft();
             text.scrollLeft(left);
             // 刷新建议框位置
             if (me.suggestCount > 0) {
@@ -328,9 +328,9 @@ class Terminal extends View {
         })(this), 0);
         return this;
     }
-    private showSuggestBox(list: Array<string>, val: string): Terminal {
+    private showSuggestBox(list: string[], val: string): Terminal {
         this.suggestInput = val;
-        let hash = list.join("|");
+        const hash = list.join("|");
         if (hash !== this.suggestHash) {
             let h = "";
             let maxLength = 0;
@@ -344,7 +344,7 @@ class Terminal extends View {
                 }
             })(this));
             // 刷新宽度
-            let w = maxLength * this.getSingleWordWidth() + 16;
+            const w = maxLength * this.getSingleWordWidth() + 16;
             if (w > 100) {
                 this.$suggest.css("min-width", w + 20);
             } else {
@@ -358,7 +358,7 @@ class Terminal extends View {
         if (this.suggestIndex >= 0) {
             // 刷新焦点
             this.$suggest.children().removeClass("selected");
-            let focusRow = this.$suggest.children(".id" + this.suggestIndex).addClass("selected");
+            const focusRow = this.$suggest.children(".id" + this.suggestIndex).addClass("selected");
             showFocus(this.$suggest, focusRow, ShowFocusType.Height);
             this.suggestValue = this.suggestHash.split("|")[this.suggestIndex].replace(this.suggestInput, "");
         }
@@ -380,7 +380,7 @@ class Terminal extends View {
             // TODO:
             window.console.warn("TODO: 获取光标位置未兼容ie <terminal.ts>");
         } else {
-            let el: any = this.$typer.get(0);
+            const el: any = this.$typer.get(0);
             el.setSelectionRange(start, end);
         }
         this.changeSelection = false;
@@ -396,7 +396,7 @@ class Terminal extends View {
             selectionStart = 0;
             selectionEnd = 0;
         } else {
-            let el: any = this.$typer.get(0);
+            const el: any = this.$typer.get(0);
             selectionStart = el.selectionStart;
             selectionEnd = el.selectionEnd;
         }
@@ -411,16 +411,16 @@ class Terminal extends View {
     private refreshSelection(): Terminal {
         if (this.dragging) {
             this.$text.addClass("terminal-focus");
-            let start = Math.min(this.draggingStartX, this.draggingEndX);
-            let end = Math.max(this.draggingStartX, this.draggingEndX);
-            let items = this.$text.children().removeClass("cursor");
+            const start = Math.min(this.draggingStartX, this.draggingEndX);
+            const end = Math.max(this.draggingStartX, this.draggingEndX);
+            const items = this.$text.children().removeClass("cursor");
             let startIndex = items.length;
             let endIndex = items.length;
-            let selIndex = [];
+            const selIndex = [];
             for (let i = 0; i < items.length - 1; i++) {
-                let item = this.$(items.get(i));
-                let left = item.position().left;
-                let right = left + this.getSingleWordWidth();
+                const item = this.$(items.get(i));
+                const left = item.position().left;
+                const right = left + this.getSingleWordWidth();
                 if (start <= right && left <= end) {
                     item.addClass("selected");
                     selIndex.push(i);
@@ -430,11 +430,7 @@ class Terminal extends View {
             }
             if (selIndex.length > 0) {
                 startIndex = _.min(selIndex);
-                if (start === end) {
-                    endIndex = startIndex;
-                } else {
-                    endIndex = _.max(selIndex) + 1;
-                }
+                endIndex = (start === end) ? startIndex : _.max(selIndex) + 1;
             }
             this.setTyperSelection(startIndex, endIndex);
         }

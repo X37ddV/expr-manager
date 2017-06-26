@@ -1,4 +1,4 @@
-import { ShowFocusType, htmlEncode, showFocus } from "../../scripts/common";
+import { htmlEncode, showFocus, ShowFocusType } from "../../scripts/common";
 import hotkey from "../../scripts/hotkey";
 import View from "../../scripts/view";
 import "./syntax.scss";
@@ -7,7 +7,7 @@ import syntax_tpl from "./syntax.tpl";
 class Syntax extends View {
     private oldLine: string;
     private currentIndex: number;
-    private treeListIndex: Array<number>;
+    private treeListIndex: number[];
     private $col: JQuery;
     private $tree: JQuery;
     public load(line: string, value: Value): Syntax {
@@ -47,10 +47,10 @@ class Syntax extends View {
         this.className = "syntax-view";
         this.events = {
             "click ": this.doClick,
-            "click .token-item-type": this.doClickExpand,
-            "click .token-item-expand": this.doClickExpand,
             "click .col-item": this.doClickColItem,
             "click .token-item": this.doClickTokenItem,
+            "click .token-item-expand": this.doClickExpand,
+            "click .token-item-type": this.doClickExpand,
         };
     }
     protected initialize(): void {
@@ -62,7 +62,7 @@ class Syntax extends View {
         return this;
     }
     protected doClickExpand(e): Syntax {
-        let item = this.$(e.target).parents(".token-item");
+        const item = this.$(e.target).parents(".token-item");
         if (item.hasClass("expanded")) {
             item.removeClass("expanded").addClass("collapsed");
             item.siblings("ul").hide();
@@ -73,14 +73,14 @@ class Syntax extends View {
         return this;
     }
     protected doClickColItem(e): Syntax {
-        let t = this.$(e.target);
-        let item = t.hasClass("col-item") ? t : t.parents(".col-item");
+        const t = this.$(e.target);
+        const item = t.hasClass("col-item") ? t : t.parents(".col-item");
         this.selectItem(item.data("id"));
         return this;
     }
     protected doClickTokenItem(e): Syntax {
-        let t = this.$(e.target);
-        let item = t.hasClass("token-item") ? t : t.parents(".token-item");
+        const t = this.$(e.target);
+        const item = t.hasClass("token-item") ? t : t.parents(".token-item");
         this.selectItem(item.data("id"));
         return this;
     }
@@ -143,15 +143,15 @@ class Syntax extends View {
         })(this));
         hotkey.bindView(this, ["meta+right", "meta+left", "meta+up", "meta+down"], ((me) => (e, combo) => {
             if (combo === "meta+up") {
-                let items = me.$(".syntax-tree .expanded");
+                const items = me.$(".syntax-tree .expanded");
                 items.removeClass("expanded").addClass("collapsed");
                 items.siblings("ul").hide();
             } else if (combo === "meta+down") {
-                let items = me.$(".syntax-tree .collapsed");
+                const items = me.$(".syntax-tree .collapsed");
                 items.removeClass("collapsed").addClass("expanded");
                 items.siblings("ul").show();
             } else {
-                let item = me.$(".syntax-tree .selected").first();
+                const item = me.$(".syntax-tree .selected").first();
                 if (combo === "meta+left" && item.hasClass("expanded")) {
                     item.removeClass("expanded").addClass("collapsed");
                     item.siblings("ul").hide();
@@ -165,11 +165,11 @@ class Syntax extends View {
     }
     private showFocusItem(): Syntax {
         // 字符串索引焦点
-        let focusCell = this.$col.find(".selected");
+        const focusCell = this.$col.find(".selected");
         showFocus(this.$col, focusCell, ShowFocusType.Width);
         // 语法树节点焦点
-        let focusItem = this.$tree.find(".selected").first();
-        let parentItems = focusItem.parent("li").parents("li").children(".collapsed");
+        const focusItem = this.$tree.find(".selected").first();
+        const parentItems = focusItem.parent("li").parents("li").children(".collapsed");
         parentItems.removeClass("collapsed").addClass("expanded");
         parentItems.siblings("ul").show();
         showFocus(this.$tree, focusItem, ShowFocusType.HeightAndWidth);
@@ -177,11 +177,11 @@ class Syntax extends View {
     }
     private genTree(rootToken: IToken, level?: number): string {
         level = level === undefined ? 0 : level;
-        let isRoot = level === 0;
-        let hasChild = rootToken.childs && rootToken.childs.length > 0;
-        let isVCls = rootToken.tokenType.indexOf("V") === 0 ? " virtual" : "";
+        const isRoot = level === 0;
+        const hasChild = rootToken.childs && rootToken.childs.length > 0;
+        const isVCls = rootToken.tokenType.indexOf("V") === 0 ? " virtual" : "";
         let r = (isRoot ? "<ul>" : "") + "<li>";
-        let cls = hasChild ? "expanded" : "none";
+        const cls = hasChild ? "expanded" : "none";
         if (this.treeListIndex[this.treeListIndex.length - 1] !== rootToken.tokenIndex) {
             this.treeListIndex.push(rootToken.tokenIndex);
         }
@@ -194,8 +194,8 @@ class Syntax extends View {
         r += "</div>";
         if (hasChild) {
             r += "<ul>";
-            for (let i = 0; i < rootToken.childs.length; i++) {
-                r += this.genTree(rootToken.childs[i], level + 1);
+            for (const item of rootToken.childs) {
+                r += this.genTree(item, level + 1);
             }
             r += "</ul>";
         }
@@ -203,14 +203,14 @@ class Syntax extends View {
         return r;
     }
     private genCol(line: string): string {
-        let l = [];
+        const l = [];
         for (let i = 1; i <= line.length; i++) {
             l.push((i + "").split("").pop());
         }
-        let cs = line.split("");
+        const cs = line.split("");
         let r = "";
         l.forEach((element, i) => {
-            let t = cs[i] === " " ? "&nbsp;" : cs[i];
+            const t = cs[i] === " " ? "&nbsp;" : cs[i];
             r += "<span data-id=" + (i + 1) + " class='col-item item-" + (i + 1) + "'>" +
                 "<div class='token-col-index'>" + element + "</div>" +
                 "<div class='token-col-text'>" + t + "</div>" +

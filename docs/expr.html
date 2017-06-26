@@ -36,8 +36,8 @@ Released under the MIT License.
             
             <div class="content"><div class='highlight'><pre>
 (<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">global, factory</span>) </span>{
-	<span class="hljs-keyword">typeof</span> exports === <span class="hljs-string">'object'</span> &amp;&amp; <span class="hljs-keyword">typeof</span> <span class="hljs-built_in">module</span> !== <span class="hljs-string">'undefined'</span> ? <span class="hljs-built_in">module</span>.exports = factory(<span class="hljs-built_in">require</span>(<span class="hljs-string">'moment'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'decimal'</span>)) :
-	<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd ? define([<span class="hljs-string">'moment'</span>, <span class="hljs-string">'decimal'</span>], factory) :
+	<span class="hljs-keyword">typeof</span> exports === <span class="hljs-string">'object'</span> &amp;&amp; <span class="hljs-keyword">typeof</span> <span class="hljs-built_in">module</span> !== <span class="hljs-string">'undefined'</span> ? <span class="hljs-built_in">module</span>.exports = factory(<span class="hljs-built_in">require</span>(<span class="hljs-string">'moment'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'decimal.js'</span>)) :
+	<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd ? define([<span class="hljs-string">'moment'</span>, <span class="hljs-string">'decimal.js'</span>], factory) :
 	(global.expr = factory(global.moment,global.Decimal));
 }(<span class="hljs-keyword">this</span>, (<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">moment,Decimal</span>) </span>{ <span class="hljs-string">'use strict'</span>;</pre></div></div>
             
@@ -4413,18 +4413,10 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"boolean"</span>);
     };
     Type.prototype.multiply = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">et</span>) </span>{
-        <span class="hljs-keyword">var</span> t;
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> &amp;&amp; et.type === <span class="hljs-string">"null"</span>) {
-            t = <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"null"</span>);
-        }
-        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"number"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span>) &amp;&amp;
-            (et.type === <span class="hljs-string">"number"</span> || et.type === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"undefined"</span>)) {
-            t = <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"number"</span>);
-        }
-        <span class="hljs-keyword">else</span> {
-            t = <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_MULTIPLY, <span class="hljs-keyword">this</span>.type, et.type));
-        }
-        <span class="hljs-keyword">return</span> t;
+        <span class="hljs-keyword">return</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> &amp;&amp; et.type === <span class="hljs-string">"null"</span>) ? <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"null"</span>) :
+            ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"number"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span>) &amp;&amp;
+                (et.type === <span class="hljs-string">"number"</span> || et.type === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"undefined"</span>)) ? <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"number"</span>) :
+                <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_MULTIPLY, <span class="hljs-keyword">this</span>.type, et.type));
     };
     Type.prototype.divide = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">et</span>) </span>{
         <span class="hljs-keyword">var</span> t;
@@ -4433,12 +4425,9 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
         }
         <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"number"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span>) &amp;&amp;
             (et.type === <span class="hljs-string">"number"</span> || et.type === <span class="hljs-string">"undefined"</span>)) {
-            <span class="hljs-keyword">if</span> (et.hasData() &amp;&amp; (et.data === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"number"</span> &amp;&amp; <span class="hljs-built_in">Number</span>(et.data) === <span class="hljs-number">0</span>)) {
-                t = <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_DIVIDE_N, et.info));
-            }
-            <span class="hljs-keyword">else</span> {
-                t = <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"number"</span>);
-            }
+            t = (et.hasData() &amp;&amp; (et.data === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"number"</span> &amp;&amp; <span class="hljs-built_in">Number</span>(et.data) === <span class="hljs-number">0</span>)) ?
+                <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_DIVIDE_N, et.info)) :
+                <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"number"</span>);
         }
         <span class="hljs-keyword">else</span> {
             t = <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_DIVIDE, <span class="hljs-keyword">this</span>.type, et.type));
@@ -4452,12 +4441,9 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
         }
         <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"number"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span>) &amp;&amp;
             (et.type === <span class="hljs-string">"number"</span> || et.type === <span class="hljs-string">"undefined"</span>)) {
-            <span class="hljs-keyword">if</span> (et.hasData() &amp;&amp; (et.data === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"number"</span> &amp;&amp; <span class="hljs-built_in">Number</span>(et.data) === <span class="hljs-number">0</span>)) {
-                t = <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_REMAINDER_N, et.info));
-            }
-            <span class="hljs-keyword">else</span> {
-                t = <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"number"</span>);
-            }
+            t = (et.hasData() &amp;&amp; (et.data === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"number"</span> &amp;&amp; <span class="hljs-built_in">Number</span>(et.data) === <span class="hljs-number">0</span>)) ?
+                <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_REMAINDER_N, et.info)) :
+                <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"number"</span>);
         }
         <span class="hljs-keyword">else</span> {
             t = <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_REMAINDER, <span class="hljs-keyword">this</span>.type, et.type));
@@ -4465,51 +4451,30 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
         <span class="hljs-keyword">return</span> t;
     };
     Type.prototype.add = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">et</span>) </span>{
-        <span class="hljs-keyword">var</span> t;
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span> &amp;&amp; et.type === <span class="hljs-string">"undefined"</span>) {
-            t = <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"undefined"</span>);
-        }
-        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> &amp;&amp; et.type === <span class="hljs-string">"null"</span>) {
-            t = <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"null"</span>);
-        }
-        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"number"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span>) &amp;&amp;
-            (et.type === <span class="hljs-string">"number"</span> || et.type === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"undefined"</span>)) {
-            t = <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"number"</span>);
-        }
-        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"string"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"number"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> ||
-            <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span>) &amp;&amp;
-            (et.type === <span class="hljs-string">"string"</span> || et.type === <span class="hljs-string">"number"</span> || et.type === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"undefined"</span>)) {
-            t = <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"string"</span>);
-        }
-        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"array"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span>) &amp;&amp;
-            (et.type === <span class="hljs-string">"array"</span> || et.type === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"undefined"</span>)) {
-            t = <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"array"</span>);
-        }
-        <span class="hljs-keyword">else</span> {
-            t = <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_ADD, <span class="hljs-keyword">this</span>.type, et.type));
-        }
-        <span class="hljs-keyword">return</span> t;
+        <span class="hljs-keyword">return</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span> &amp;&amp; et.type === <span class="hljs-string">"undefined"</span>) ? <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"undefined"</span>) :
+            (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> &amp;&amp; et.type === <span class="hljs-string">"null"</span>) ? <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"null"</span>) :
+                ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"number"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span>) &amp;&amp;
+                    (et.type === <span class="hljs-string">"number"</span> || et.type === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"undefined"</span>)) ? <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"number"</span>) :
+                    ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"string"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"number"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> ||
+                        <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span>) &amp;&amp; (et.type === <span class="hljs-string">"string"</span> || et.type === <span class="hljs-string">"number"</span> ||
+                        et.type === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"undefined"</span>)) ? <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"string"</span>) :
+                        ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"array"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span>) &amp;&amp;
+                            (et.type === <span class="hljs-string">"array"</span> || et.type === <span class="hljs-string">"null"</span> ||
+                                et.type === <span class="hljs-string">"undefined"</span>)) ? <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"array"</span>) :
+                            <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_ADD, <span class="hljs-keyword">this</span>.type, et.type));
     };
     Type.prototype.subtract = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">et</span>) </span>{
-        <span class="hljs-keyword">var</span> t;
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span> &amp;&amp; et.type === <span class="hljs-string">"undefined"</span>) {
-            t = <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"undefined"</span>);
-        }
-        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> &amp;&amp; et.type === <span class="hljs-string">"null"</span>) {
-            t = <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"null"</span>);
-        }
-        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"number"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span>) &amp;&amp;
-            (et.type === <span class="hljs-string">"number"</span> || et.type === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"undefined"</span>)) {
-            t = <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"number"</span>);
-        }
-        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"array"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span>) &amp;&amp;
-            (et.type === <span class="hljs-string">"array"</span> || et.type === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"undefined"</span>)) {
-            t = <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"array"</span>);
-        }
-        <span class="hljs-keyword">else</span> {
-            t = <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_SUBTRACT, <span class="hljs-keyword">this</span>.type, et.type));
-        }
-        <span class="hljs-keyword">return</span> t;
+        <span class="hljs-keyword">return</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span> &amp;&amp; et.type === <span class="hljs-string">"undefined"</span>) ?
+            <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"undefined"</span>) :
+            (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> &amp;&amp; et.type === <span class="hljs-string">"null"</span>) ?
+                <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"null"</span>) :
+                ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"number"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span>) &amp;&amp;
+                    (et.type === <span class="hljs-string">"number"</span> || et.type === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"undefined"</span>)) ?
+                    <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"number"</span>) :
+                    ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"array"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span>) &amp;&amp;
+                        (et.type === <span class="hljs-string">"array"</span> || et.type === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"undefined"</span>)) ?
+                        <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"array"</span>) :
+                        <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_SUBTRACT, <span class="hljs-keyword">this</span>.type, et.type));
     };
     Type.prototype.equal = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">et, op</span>) </span>{
         <span class="hljs-keyword">var</span> t;
@@ -4556,47 +4521,29 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
         }
     };
     Type.prototype.and = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">et</span>) </span>{
-        <span class="hljs-keyword">var</span> t;
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span> || et.type === <span class="hljs-string">"undefined"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"null"</span> ||
-            (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"boolean"</span> &amp;&amp; et.type === <span class="hljs-string">"boolean"</span>)) {
-            t = <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"boolean"</span>);
-        }
-        <span class="hljs-keyword">else</span> {
-            t = <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_AND, <span class="hljs-keyword">this</span>.type, et.type));
-        }
-        <span class="hljs-keyword">return</span> t;
+        <span class="hljs-keyword">return</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span> || et.type === <span class="hljs-string">"undefined"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"null"</span> ||
+            (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"boolean"</span> &amp;&amp; et.type === <span class="hljs-string">"boolean"</span>)) ?
+            <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"boolean"</span>) :
+            <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_AND, <span class="hljs-keyword">this</span>.type, et.type));
     };
     Type.prototype.or = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">et</span>) </span>{
-        <span class="hljs-keyword">var</span> t;
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span> || et.type === <span class="hljs-string">"undefined"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"null"</span> ||
-            (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"boolean"</span> &amp;&amp; et.type === <span class="hljs-string">"boolean"</span>)) {
-            t = <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"boolean"</span>);
-        }
-        <span class="hljs-keyword">else</span> {
-            t = <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_OR, <span class="hljs-keyword">this</span>.type, et.type));
-        }
-        <span class="hljs-keyword">return</span> t;
+        <span class="hljs-keyword">return</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span> || et.type === <span class="hljs-string">"undefined"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"null"</span> ||
+            (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"boolean"</span> &amp;&amp; et.type === <span class="hljs-string">"boolean"</span>)) ?
+            <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"boolean"</span>) :
+            <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_OR, <span class="hljs-keyword">this</span>.type, et.type));
     };
     Type.prototype.subscript = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">et</span>) </span>{
         <span class="hljs-keyword">var</span> t;
-        <span class="hljs-keyword">var</span> i;
-        <span class="hljs-keyword">if</span> (et.type === <span class="hljs-string">"array"</span>) {
-            i = et.info[<span class="hljs-number">0</span>];
-        }
-        <span class="hljs-keyword">else</span> {
-            i = et.info;
-        }
+        <span class="hljs-keyword">var</span> i = (et.type === <span class="hljs-string">"array"</span>) ?
+            et.info[<span class="hljs-number">0</span>] :
+            et.info;
         <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"string"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"array"</span>) {
             <span class="hljs-keyword">if</span> (i === <span class="hljs-string">"number"</span>) {
-                <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"array"</span> &amp;&amp; <span class="hljs-keyword">this</span>.entity) {
-                    t = <span class="hljs-keyword">this</span>.context.getEntityType(<span class="hljs-keyword">this</span>);
-                }
-                <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"string"</span>) {
-                    t = <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"string"</span>);
-                }
-                <span class="hljs-keyword">else</span> {
-                    t = <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"undefined"</span>);
-                }
+                t = (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"array"</span> &amp;&amp; <span class="hljs-keyword">this</span>.entity) ?
+                    <span class="hljs-keyword">this</span>.context.getEntityType(<span class="hljs-keyword">this</span>) :
+                    (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"string"</span>) ?
+                        <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"string"</span>) :
+                        <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"undefined"</span>);
             }
             <span class="hljs-keyword">else</span> {
                 t = <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_SUBSCRIPT_T, i));
@@ -4606,11 +4553,10 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             t = <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"string"</span>, <span class="hljs-string">"string"</span>, i);
             t = t.getVariableType(<span class="hljs-keyword">this</span>);
         }
-        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span>) {
-            t = <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"undefined"</span>);
-        }
         <span class="hljs-keyword">else</span> {
-            t = <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_SUBSCRIPT, <span class="hljs-keyword">this</span>.type));
+            t = (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span>) ?
+                <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"undefined"</span>) :
+                <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_SUBSCRIPT, <span class="hljs-keyword">this</span>.type));
         }
         <span class="hljs-keyword">return</span> t;
     };
@@ -4868,18 +4814,12 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> v;
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"boolean"</span>) {
-            v = <span class="hljs-keyword">this</span>.genValue(!<span class="hljs-keyword">this</span>.value, <span class="hljs-string">"boolean"</span>);
-        }
-        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"string"</span> &amp;&amp; <span class="hljs-keyword">this</span>.value === <span class="hljs-string">""</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"number"</span> &amp;&amp; <span class="hljs-keyword">this</span>.value === <span class="hljs-string">"0"</span>
-            || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span>) {
-            v = <span class="hljs-keyword">this</span>.genValue(<span class="hljs-literal">true</span>, <span class="hljs-string">"boolean"</span>);
-        }
-        <span class="hljs-keyword">else</span> {
-            v = <span class="hljs-keyword">this</span>.genValue(<span class="hljs-literal">false</span>, <span class="hljs-string">"boolean"</span>);
-        }
-        <span class="hljs-keyword">return</span> v;
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"boolean"</span>) ?
+            <span class="hljs-keyword">this</span>.genValue(!<span class="hljs-keyword">this</span>.value, <span class="hljs-string">"boolean"</span>) :
+            (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"string"</span> &amp;&amp; <span class="hljs-keyword">this</span>.value === <span class="hljs-string">""</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"number"</span> &amp;&amp; <span class="hljs-keyword">this</span>.value === <span class="hljs-string">"0"</span>
+                || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span>) ?
+                <span class="hljs-keyword">this</span>.genValue(<span class="hljs-literal">true</span>, <span class="hljs-string">"boolean"</span>) :
+                <span class="hljs-keyword">this</span>.genValue(<span class="hljs-literal">false</span>, <span class="hljs-string">"boolean"</span>);
     };
     Value.prototype.multiply = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">ev</span>) </span>{</pre></div></div>
             
@@ -4935,7 +4875,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
         <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"number"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span>) &amp;&amp; (ev.type === <span class="hljs-string">"number"</span>)) {
             <span class="hljs-keyword">var</span> vl = Big(<span class="hljs-keyword">this</span>.value || <span class="hljs-string">"0"</span>); <span class="hljs-comment">// 被除数为null时会被转换成"0"</span>
             <span class="hljs-keyword">var</span> vr = Big(ev.value);
-            v = <span class="hljs-keyword">this</span>.genValue(vl.div(vr, <span class="hljs-number">10</span>, <span class="hljs-number">1</span>).toString(), <span class="hljs-string">"number"</span>);
+            v = <span class="hljs-keyword">this</span>.genValue(vl.div(vr).toString(), <span class="hljs-string">"number"</span>);
         }
         <span class="hljs-keyword">else</span> {
             v = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EX_DIVIDE, <span class="hljs-keyword">this</span>.type, ev.type));
@@ -5228,18 +5168,14 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> v;
         <span class="hljs-keyword">if</span> (!ev) {
-            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"boolean"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span>) {
-                v = <span class="hljs-keyword">this</span>.genValue(<span class="hljs-literal">false</span>, <span class="hljs-string">"boolean"</span>);
-            }
-            <span class="hljs-keyword">else</span> {
-                v = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EX_AND_L, <span class="hljs-keyword">this</span>.type));
-            }
-        }
-        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"boolean"</span> &amp;&amp; (ev.type === <span class="hljs-string">"boolean"</span> || ev.type === <span class="hljs-string">"null"</span>)) {
-            v = <span class="hljs-keyword">this</span>.genValue(!!(<span class="hljs-keyword">this</span>.value &amp;&amp; ev.value), <span class="hljs-string">"boolean"</span>);
+            v = (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"boolean"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span>) ?
+                <span class="hljs-keyword">this</span>.genValue(<span class="hljs-literal">false</span>, <span class="hljs-string">"boolean"</span>) :
+                <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EX_AND_L, <span class="hljs-keyword">this</span>.type));
         }
         <span class="hljs-keyword">else</span> {
-            v = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EX_AND, <span class="hljs-keyword">this</span>.type, ev.type));
+            v = (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"boolean"</span> &amp;&amp; (ev.type === <span class="hljs-string">"boolean"</span> || ev.type === <span class="hljs-string">"null"</span>)) ?
+                <span class="hljs-keyword">this</span>.genValue(!!(<span class="hljs-keyword">this</span>.value &amp;&amp; ev.value), <span class="hljs-string">"boolean"</span>) :
+                <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EX_AND, <span class="hljs-keyword">this</span>.type, ev.type));
         }
         <span class="hljs-keyword">return</span> v;
     };
@@ -5260,18 +5196,14 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> v;
         <span class="hljs-keyword">if</span> (!ev) {
-            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"boolean"</span>) {
-                v = <span class="hljs-keyword">this</span>.genValue(<span class="hljs-literal">true</span>, <span class="hljs-string">"boolean"</span>);
-            }
-            <span class="hljs-keyword">else</span> {
-                v = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EX_OR_L, <span class="hljs-keyword">this</span>.type));
-            }
-        }
-        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"boolean"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span>) &amp;&amp; (ev.type === <span class="hljs-string">"boolean"</span> || ev.type === <span class="hljs-string">"null"</span>)) {
-            v = <span class="hljs-keyword">this</span>.genValue(!!(<span class="hljs-keyword">this</span>.value || ev.value), <span class="hljs-string">"boolean"</span>);
+            v = (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"boolean"</span>) ?
+                <span class="hljs-keyword">this</span>.genValue(<span class="hljs-literal">true</span>, <span class="hljs-string">"boolean"</span>) :
+                <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EX_OR_L, <span class="hljs-keyword">this</span>.type));
         }
         <span class="hljs-keyword">else</span> {
-            v = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EX_OR, <span class="hljs-keyword">this</span>.type, ev.type));
+            v = ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"boolean"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span>) &amp;&amp; (ev.type === <span class="hljs-string">"boolean"</span> || ev.type === <span class="hljs-string">"null"</span>)) ?
+                <span class="hljs-keyword">this</span>.genValue(!!(<span class="hljs-keyword">this</span>.value || ev.value), <span class="hljs-string">"boolean"</span>) :
+                <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EX_OR, <span class="hljs-keyword">this</span>.type, ev.type)); <span class="hljs-comment">// 两运算数不能进行或运算</span>
         }
         <span class="hljs-keyword">return</span> v;
     };
@@ -5362,14 +5294,9 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> v;
-        <span class="hljs-keyword">if</span> (ev &amp;&amp; ev.type !== <span class="hljs-string">"object"</span>) {
-            v = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EX_DOT, ev.type));
-        }
-        <span class="hljs-keyword">else</span> {
-            v = <span class="hljs-keyword">this</span>.context.getVariableValue(<span class="hljs-keyword">this</span>.toValue(), ev);
-        }
-        <span class="hljs-keyword">return</span> v;
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> (ev &amp;&amp; ev.type !== <span class="hljs-string">"object"</span>) ?
+            <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EX_DOT, ev.type)) :
+            <span class="hljs-keyword">this</span>.context.getVariableValue(<span class="hljs-keyword">this</span>.toValue(), ev);
     };
     Value.prototype.getFunctionValue = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">ev</span>) </span>{</pre></div></div>
             
@@ -5388,13 +5315,9 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> v = <span class="hljs-keyword">this</span>.toValue();
-        <span class="hljs-keyword">if</span> (ev &amp;&amp; ev.value === <span class="hljs-literal">null</span>) {
-            v = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EX_FUNC_NULL, v.key));
-        }
-        <span class="hljs-keyword">else</span> {
-            v = <span class="hljs-keyword">this</span>.context.getFunctionValue(v.key, ev, v.value);
-        }
-        <span class="hljs-keyword">return</span> v;
+        <span class="hljs-keyword">return</span> (ev &amp;&amp; ev.value === <span class="hljs-literal">null</span>) ?
+            <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EX_FUNC_NULL, v.key)) :
+            <span class="hljs-keyword">this</span>.context.getFunctionValue(v.key, ev, v.value);
     };
     Value.prototype.abs = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{</pre></div></div>
             
@@ -5412,8 +5335,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> v = Big(<span class="hljs-keyword">this</span>.value || <span class="hljs-string">"0"</span>);
-        v = <span class="hljs-keyword">this</span>.genValue(v.abs().toString(), <span class="hljs-string">"number"</span>);
-        <span class="hljs-keyword">return</span> v;
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.genValue(v.abs().toString(), <span class="hljs-string">"number"</span>);
     };
     Value.prototype.ceil = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{</pre></div></div>
             
@@ -5431,9 +5353,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> v = Big(<span class="hljs-keyword">this</span>.value || <span class="hljs-string">"0"</span>);
-        v = v.ceil();
-        v = <span class="hljs-keyword">this</span>.genValue(v.toString(), <span class="hljs-string">"number"</span>);
-        <span class="hljs-keyword">return</span> v;
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.genValue(v.ceil().toString(), <span class="hljs-string">"number"</span>);
     };
     Value.prototype.floor = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{</pre></div></div>
             
@@ -5451,9 +5371,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> v = Big(<span class="hljs-keyword">this</span>.value || <span class="hljs-string">"0"</span>);
-        v = v.floor();
-        v = <span class="hljs-keyword">this</span>.genValue(v.toString(), <span class="hljs-string">"number"</span>);
-        <span class="hljs-keyword">return</span> v;
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.genValue(v.floor().toString(), <span class="hljs-string">"number"</span>);
     };
     Value.prototype.round = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">scale</span>) </span>{</pre></div></div>
             
@@ -5523,9 +5441,9 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> v = Big(<span class="hljs-keyword">this</span>.value || <span class="hljs-string">"0"</span>);
-        v = v.cos();
-        v = <span class="hljs-keyword">this</span>.genValue(v.toString(), <span class="hljs-string">"number"</span>);
-        <span class="hljs-keyword">return</span> v;
+        <span class="hljs-keyword">var</span> name = <span class="hljs-string">"cos"</span>;
+        v = v[name]();
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.genValue(v.toString(), <span class="hljs-string">"number"</span>);
     };
     Value.prototype.exp = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{</pre></div></div>
             
@@ -5544,8 +5462,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> v = Big(<span class="hljs-keyword">this</span>.value || <span class="hljs-string">"0"</span>);
         v = v.exp();
-        v = <span class="hljs-keyword">this</span>.genValue(v.toString(), <span class="hljs-string">"number"</span>);
-        <span class="hljs-keyword">return</span> v;
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.genValue(v.toString(), <span class="hljs-string">"number"</span>);
     };
     Value.prototype.ln = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{</pre></div></div>
             
@@ -5562,15 +5479,16 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> v = Big(<span class="hljs-keyword">this</span>.value || <span class="hljs-string">"0"</span>);
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> value;
+        <span class="hljs-keyword">var</span> v = Big(<span class="hljs-keyword">this</span>.value || <span class="hljs-string">"0"</span>);
         <span class="hljs-keyword">if</span> (v.greaterThan(<span class="hljs-string">"0"</span>)) {
             v = v.ln();
-            v = <span class="hljs-keyword">this</span>.genValue(v.toString(), <span class="hljs-string">"number"</span>);
+            value = <span class="hljs-keyword">this</span>.genValue(v.toString(), <span class="hljs-string">"number"</span>);
         }
         <span class="hljs-keyword">else</span> {
-            v = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EX_LN, v.toString()));
+            value = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EX_LN, v.toString()));
         }
-        <span class="hljs-keyword">return</span> v;
+        <span class="hljs-keyword">return</span> value;
     };
     Value.prototype.log = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">base</span>) </span>{</pre></div></div>
             
@@ -5587,15 +5505,16 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> v = Big(<span class="hljs-keyword">this</span>.value || <span class="hljs-string">"0"</span>);
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> value;
+        <span class="hljs-keyword">var</span> v = Big(<span class="hljs-keyword">this</span>.value || <span class="hljs-string">"0"</span>);
         <span class="hljs-keyword">if</span> (v.greaterThan(<span class="hljs-string">"0"</span>) &amp;&amp; base &gt; <span class="hljs-number">0</span> &amp;&amp; base !== <span class="hljs-number">1</span>) {
             v = v.log(base);
-            v = <span class="hljs-keyword">this</span>.genValue(v.toString(), <span class="hljs-string">"number"</span>);
+            value = <span class="hljs-keyword">this</span>.genValue(v.toString(), <span class="hljs-string">"number"</span>);
         }
         <span class="hljs-keyword">else</span> {
-            v = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EX_LOG, base, v.toString()));
+            value = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EX_LOG, base, v.toString()));
         }
-        <span class="hljs-keyword">return</span> v;
+        <span class="hljs-keyword">return</span> value;
     };
     Value.prototype.power = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">exponent</span>) </span>{</pre></div></div>
             
@@ -5614,8 +5533,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> v = Big(<span class="hljs-keyword">this</span>.value || <span class="hljs-string">"0"</span>);
         v = v.pow(exponent);
-        v = <span class="hljs-keyword">this</span>.genValue(v.toString(), <span class="hljs-string">"number"</span>);
-        <span class="hljs-keyword">return</span> v;
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.genValue(v.toString(), <span class="hljs-string">"number"</span>);
     };
     Value.prototype.sin = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{</pre></div></div>
             
@@ -5633,9 +5551,9 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> v = Big(<span class="hljs-keyword">this</span>.value || <span class="hljs-string">"0"</span>);
-        v = v.sin();
-        v = <span class="hljs-keyword">this</span>.genValue(v.toString(), <span class="hljs-string">"number"</span>);
-        <span class="hljs-keyword">return</span> v;
+        <span class="hljs-keyword">var</span> name = <span class="hljs-string">"sin"</span>;
+        v = v[name]();
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.genValue(v.toString(), <span class="hljs-string">"number"</span>);
     };
     Value.prototype.sqrt = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{</pre></div></div>
             
@@ -5654,8 +5572,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> v = Big(<span class="hljs-keyword">this</span>.value || <span class="hljs-string">"0"</span>);
         v = v.sqrt();
-        v = <span class="hljs-keyword">this</span>.genValue(v.toString(), <span class="hljs-string">"number"</span>);
-        <span class="hljs-keyword">return</span> v;
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.genValue(v.toString(), <span class="hljs-string">"number"</span>);
     };
     Value.prototype.tan = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{</pre></div></div>
             
@@ -5673,9 +5590,9 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> v = Big(<span class="hljs-keyword">this</span>.value || <span class="hljs-string">"0"</span>);
-        v = v.tan();
-        v = <span class="hljs-keyword">this</span>.genValue(v.toString(), <span class="hljs-string">"number"</span>);
-        <span class="hljs-keyword">return</span> v;
+        <span class="hljs-keyword">var</span> name = <span class="hljs-string">"tan"</span>;
+        v = v[name]();
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.genValue(v.toString(), <span class="hljs-string">"number"</span>);
     };
     <span class="hljs-keyword">return</span> Value;
 }());
@@ -6261,15 +6178,11 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                     }
                     <span class="hljs-keyword">break</span>;
                 <span class="hljs-keyword">case</span> <span class="hljs-string">"VTK_PAREN"</span>:
-                    <span class="hljs-keyword">if</span> (t.childs.length === <span class="hljs-number">0</span>) {
-                        tv = <span class="hljs-keyword">this</span>.genValue([], <span class="hljs-string">"array"</span>);
-                    }
-                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (p &amp;&amp; p.tokenType === <span class="hljs-string">"TK_IDEN"</span> &amp;&amp; l.tokenType !== <span class="hljs-string">"VTK_COMMA"</span>) {
-                        tv = <span class="hljs-keyword">this</span>.genValue([], <span class="hljs-string">"array"</span>).arrayPush(lv); <span class="hljs-comment">// 如：fun(2)</span>
-                    }
-                    <span class="hljs-keyword">else</span> {
-                        tv = lv; <span class="hljs-comment">// 如：fun(1,2,3) 或 2+((4))</span>
-                    }
+                    tv = (t.childs.length === <span class="hljs-number">0</span>) ?
+                        <span class="hljs-keyword">this</span>.genValue([], <span class="hljs-string">"array"</span>) :
+                        (p &amp;&amp; p.tokenType === <span class="hljs-string">"TK_IDEN"</span> &amp;&amp; l.tokenType !== <span class="hljs-string">"VTK_COMMA"</span>) ?
+                            <span class="hljs-keyword">this</span>.genValue([], <span class="hljs-string">"array"</span>).arrayPush(lv) :
+                            lv; <span class="hljs-comment">// 如：fun(1,2,3) 或 2+((4))</span>
                     <span class="hljs-keyword">break</span>;
                 <span class="hljs-keyword">case</span> <span class="hljs-string">"VTK_ARRAY"</span>:
                     tv = <span class="hljs-keyword">this</span>.genValue([], <span class="hljs-string">"array"</span>);
@@ -6297,12 +6210,9 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                     tv = lv.subscript(rv);
                     <span class="hljs-keyword">break</span>;
                 <span class="hljs-keyword">case</span> <span class="hljs-string">"VTK_FUNCTION"</span>:
-                    <span class="hljs-keyword">if</span> (p &amp;&amp; p.tokenType === <span class="hljs-string">"TK_DOT"</span> &amp;&amp; p.childs[<span class="hljs-number">0</span>] !== t) {
-                        tv = lv.hashItem(rv);
-                    }
-                    <span class="hljs-keyword">else</span> {
-                        tv = lv.hashItem(rv).getFunctionValue(<span class="hljs-literal">null</span>);
-                    }
+                    tv = (p &amp;&amp; p.tokenType === <span class="hljs-string">"TK_DOT"</span> &amp;&amp; p.childs[<span class="hljs-number">0</span>] !== t) ?
+                        lv.hashItem(rv) :
+                        lv.hashItem(rv).getFunctionValue(<span class="hljs-literal">null</span>); <span class="hljs-comment">// 没有显式调用者</span>
                     <span class="hljs-keyword">break</span>;
                 <span class="hljs-keyword">default</span>:
                     <span class="hljs-keyword">break</span>;
@@ -6588,11 +6498,10 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                             <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"array"</span>, [], []) :
                             <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"undefined"</span>);
                     }
-                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (p &amp;&amp; p.tokenType === <span class="hljs-string">"TK_IDEN"</span> &amp;&amp; l.tokenType !== <span class="hljs-string">"VTK_COMMA"</span>) {
-                        tt = <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"array"</span>, [], []).arrayPush(lt); <span class="hljs-comment">// 如：fun(2)</span>
-                    }
                     <span class="hljs-keyword">else</span> {
-                        tt = lt; <span class="hljs-comment">// 如：fun(1,2,3) 或 2+((4))</span>
+                        tt = (p &amp;&amp; p.tokenType === <span class="hljs-string">"TK_IDEN"</span> &amp;&amp; l.tokenType !== <span class="hljs-string">"VTK_COMMA"</span>) ?
+                            <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"array"</span>, [], []).arrayPush(lt) :
+                            lt; <span class="hljs-comment">// 如：fun(1,2,3) 或 2+((4))</span>
                     }
                     <span class="hljs-keyword">break</span>;
                 <span class="hljs-keyword">case</span> <span class="hljs-string">"VTK_ARRAY"</span>:
@@ -6621,12 +6530,9 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                     tt = lt.subscript(rt);
                     <span class="hljs-keyword">break</span>;
                 <span class="hljs-keyword">case</span> <span class="hljs-string">"VTK_FUNCTION"</span>:
-                    <span class="hljs-keyword">if</span> (p &amp;&amp; p.tokenType === <span class="hljs-string">"TK_DOT"</span> &amp;&amp; p.childs[<span class="hljs-number">0</span>] !== t) {
-                        tt = lt.hashItem(rt);
-                    }
-                    <span class="hljs-keyword">else</span> {
-                        tt = lt.hashItem(rt).getFunctionType(<span class="hljs-literal">null</span>);
-                    }
+                    tt = (p &amp;&amp; p.tokenType === <span class="hljs-string">"TK_DOT"</span> &amp;&amp; p.childs[<span class="hljs-number">0</span>] !== t) ?
+                        lt.hashItem(rt) :
+                        lt.hashItem(rt).getFunctionType(<span class="hljs-literal">null</span>); <span class="hljs-comment">// 没有显式调用者</span>
                     <span class="hljs-keyword">break</span>;
                 <span class="hljs-keyword">default</span>:
                     <span class="hljs-keyword">break</span>;
@@ -6882,13 +6788,9 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> r;
-        <span class="hljs-keyword">var</span> t; <span class="hljs-comment">// 调用者类型，如"string","number","array","object"</span>
-        <span class="hljs-keyword">if</span> (source !== <span class="hljs-literal">null</span>) {
-            t = source.entity ? source.entity.type : source.type;
-        }
-        <span class="hljs-keyword">else</span> {
-            t = <span class="hljs-string">""</span>;
-        }
+        <span class="hljs-keyword">var</span> t = (source !== <span class="hljs-literal">null</span>) ?
+            (source.entity ? source.entity.type : source.type) :
+            <span class="hljs-string">""</span>; <span class="hljs-comment">// 无显式调用者，全局函数</span>
         <span class="hljs-keyword">var</span> ft = <span class="hljs-keyword">this</span>.getFuncType(t, name, paramType); <span class="hljs-comment">// 类型t的name函数</span>
         <span class="hljs-keyword">if</span> (ft === <span class="hljs-literal">null</span>) {
             r = <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EC_FUNC_T, t, name));
@@ -6899,13 +6801,9 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                 <span class="hljs-keyword">var</span> pd = paramData;
                 <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; ft.p.length; i++) {
                     <span class="hljs-keyword">if</span> (ft.p[i] === <span class="hljs-string">"expr"</span> &amp;&amp; paramType[i] === <span class="hljs-string">"string"</span> &amp;&amp; getValueType(pd[i]) === <span class="hljs-string">"string"</span>) {
-                        <span class="hljs-keyword">var</span> dr = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>;
-                        <span class="hljs-keyword">if</span> (source &amp;&amp; source.entity) {
-                            dr = <span class="hljs-keyword">this</span>.calcEntityDependencies(pd[i], source.entity.fullName);
-                        }
-                        <span class="hljs-keyword">else</span> {
-                            dr = <span class="hljs-keyword">this</span>.calcEntityDependencies(pd[i]);
-                        }
+                        <span class="hljs-keyword">var</span> dr = (source &amp;&amp; source.entity) ?
+                            <span class="hljs-keyword">this</span>.calcEntityDependencies(pd[i], source.entity.fullName) :
+                            <span class="hljs-keyword">this</span>.calcEntityDependencies(pd[i]);
                         <span class="hljs-keyword">if</span> (dr.errorMsg === <span class="hljs-string">""</span>) {
                             depends = depends.concat(dr.dependencies);
                         }
@@ -6987,14 +6885,9 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> r;
-        <span class="hljs-keyword">var</span> t; <span class="hljs-comment">// 调用者类型，如"string","number","array","object"</span>
-        <span class="hljs-keyword">if</span> (source !== <span class="hljs-literal">null</span>) {
-            t = source.entity ? source.entity.type : source.type;
-        }
-        <span class="hljs-keyword">else</span> {
-            t = <span class="hljs-string">""</span>;
-        }
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> t = (source !== <span class="hljs-literal">null</span>) ?
+            (source.entity ? source.entity.type : source.type) :
+            <span class="hljs-string">""</span>; <span class="hljs-comment">// 无显式调用者，全局函数</span>
         <span class="hljs-keyword">var</span> p = [source].concat(paramValue); <span class="hljs-comment">// 实参数组</span>
         <span class="hljs-keyword">var</span> pt = []; <span class="hljs-comment">// 各个实参类型组成的数组</span>
         <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _i = <span class="hljs-number">0</span>, paramValue_1 = paramValue; _i &lt; paramValue_1.length; _i++) {
@@ -7002,12 +6895,9 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             pt.push(getValueType(item));
         }
         <span class="hljs-keyword">var</span> f = <span class="hljs-keyword">this</span>.getFunc(t, name, pt); <span class="hljs-comment">// 类型t的name函数</span>
-        <span class="hljs-keyword">if</span> (f) {
-            r = f.fn.apply(<span class="hljs-keyword">this</span>, [<span class="hljs-keyword">this</span>].concat(p));
-        }
-        <span class="hljs-keyword">else</span> {
-            r = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EC_FUNC_P, t, name));
-        }
+        <span class="hljs-keyword">var</span> r = f ?
+            f.fn.apply(<span class="hljs-keyword">this</span>, [<span class="hljs-keyword">this</span>].concat(p)) :
+            <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EC_FUNC_P, t, name)); <span class="hljs-comment">// 没有该函数或参数不匹配</span>
         <span class="hljs-keyword">return</span> r;
     };
     ExprContext.prototype.doGetVariableType = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name, source</span>) </span>{
@@ -7123,11 +7013,10 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                     <span class="hljs-keyword">if</span> (!entity) {
                         r = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EC_PROP_N, name));
                     }
-                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (entity.field !== <span class="hljs-string">""</span> || name === <span class="hljs-string">""</span>) {
-                        value = <span class="hljs-keyword">this</span>.getEntityData(entity.name, pIndex);
-                    }
                     <span class="hljs-keyword">else</span> {
-                        value = <span class="hljs-keyword">this</span>.getEntityData(<span class="hljs-keyword">this</span>.getParentName(entity.name), pIndex);
+                        value = (entity.field !== <span class="hljs-string">""</span> || name === <span class="hljs-string">""</span>) ?
+                            <span class="hljs-keyword">this</span>.getEntityData(entity.name, pIndex) :
+                            <span class="hljs-keyword">this</span>.getEntityData(<span class="hljs-keyword">this</span>.getParentName(entity.name), pIndex); <span class="hljs-comment">// name为当前信息默认实体E1的子实体,Entity1</span>
                     }
                     parentObj = <span class="hljs-literal">null</span>;
                 }
@@ -7190,12 +7079,9 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                 }
             }
             <span class="hljs-keyword">else</span> {
-                <span class="hljs-keyword">if</span> (source === <span class="hljs-literal">null</span>) {
-                    value = <span class="hljs-keyword">this</span>.getData(pIndex);
-                }
-                <span class="hljs-keyword">else</span> {
+                value = (source === <span class="hljs-literal">null</span>) ?
+                    <span class="hljs-keyword">this</span>.getData(pIndex) :
                     value = source.toValue();
-                }
                 <span class="hljs-keyword">if</span> (!(source === <span class="hljs-literal">null</span> &amp;&amp; name === <span class="hljs-string">""</span>)) {
                     <span class="hljs-keyword">switch</span> (getValueType(value)) {
                         <span class="hljs-keyword">case</span> <span class="hljs-string">"object"</span>:
@@ -7469,17 +7355,9 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> r;
-        <span class="hljs-keyword">if</span> (name &amp;&amp; prop) {
-            r = name + <span class="hljs-string">"."</span> + prop;
-        }
-        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (name) {
-            r = name;
-        }
-        <span class="hljs-keyword">else</span> {
-            r = prop;
-        }
-        <span class="hljs-keyword">return</span> r;
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> (name &amp;&amp; prop) ?
+            (name + <span class="hljs-string">"."</span> + prop) :
+            (name ? name : prop);
     };
     ExprContext.prototype.getRecNo = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">source</span>) </span>{</pre></div></div>
             
@@ -7504,11 +7382,10 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                 <span class="hljs-keyword">var</span> value = <span class="hljs-keyword">this</span>.exprContext.getEntityDataCursor(entity);
                 r = <span class="hljs-keyword">this</span>.genValue(value);
             }
-            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (source.entity &amp;&amp; source.entity.field === <span class="hljs-string">""</span>) {
-                r = <span class="hljs-keyword">this</span>.genValue(source.entity.recNo);
-            }
             <span class="hljs-keyword">else</span> {
-                r = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EC_FUNC_E, <span class="hljs-string">"RecNo"</span>));
+                r = (source.entity &amp;&amp; source.entity.field === <span class="hljs-string">""</span>) ?
+                    <span class="hljs-keyword">this</span>.genValue(source.entity.recNo) :
+                    <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EC_FUNC_E, <span class="hljs-string">"RecNo"</span>)); <span class="hljs-comment">// {x:1}.RecNo()</span>
             }
         }
         <span class="hljs-keyword">else</span> {
@@ -7600,15 +7477,8 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                     }
                 }
             }
-            <span class="hljs-keyword">if</span> (fList.length &gt; <span class="hljs-number">1</span>) {
-                r = fList;
-            }
-            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (fList.length === <span class="hljs-number">1</span>) {
-                r = fList[<span class="hljs-number">0</span>];
-            }
-            <span class="hljs-keyword">else</span> {
-                r = <span class="hljs-literal">null</span>;
-            }
+            r = (fList.length &gt; <span class="hljs-number">1</span>) ? fList :
+                ((fList.length === <span class="hljs-number">1</span>) ? fList[<span class="hljs-number">0</span>] : <span class="hljs-literal">null</span>);
         }
         <span class="hljs-keyword">else</span> {
             r = <span class="hljs-keyword">this</span>.functions[type][name];
@@ -7983,10 +7853,11 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> (updateList &amp;&amp; l &amp;&amp; l.dependencies) {
-            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; updateList.length; i++) {
-                <span class="hljs-keyword">var</span> u = updateList[i];
-                <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = <span class="hljs-number">0</span>; j &lt; l.dependencies.length; j++) {
-                    <span class="hljs-keyword">if</span> (u.fullName === l.dependencies[j]) {
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _i = <span class="hljs-number">0</span>, _a = updateList.length; _i &lt; _a.length; _i++) {
+                <span class="hljs-keyword">var</span> updateItem = _a[_i];
+                <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _b = <span class="hljs-number">0</span>, _c = l.dependencies; _b &lt; _c.length; _b++) {
+                    <span class="hljs-keyword">var</span> dependency = _c[_b];
+                    <span class="hljs-keyword">if</span> (updateItem.fullName === dependency) {
                         <span class="hljs-keyword">var</span> commonAncestry = <span class="hljs-literal">true</span>;
                         <span class="hljs-keyword">var</span> isSubChange = <span class="hljs-literal">false</span>;</pre></div></div>
             
@@ -8003,7 +7874,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">if</span> (u.type === <span class="hljs-string">"U"</span>) {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">if</span> (updateItem.type === <span class="hljs-string">"U"</span>) {</pre></div></div>
             
         </li>
         
@@ -8019,13 +7890,14 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             </div>
             
             <div class="content"><div class='highlight'><pre>                            <span class="hljs-keyword">var</span> isDependEntity = <span class="hljs-literal">false</span>; <span class="hljs-comment">// 表达式是否依赖了实体</span>
-                            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> k = <span class="hljs-number">0</span>; k &lt; l.dependencies.length; k++) {
-                                isDependEntity = (u.fullName.indexOf(l.dependencies[k] + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>);
+                            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _d = <span class="hljs-number">0</span>, _e = l.dependencies; _d &lt; _e.length; _d++) {
+                                <span class="hljs-keyword">var</span> depend = _e[_d];
+                                isDependEntity = (updateItem.fullName.indexOf(depend + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>);
                                 <span class="hljs-keyword">if</span> (isDependEntity) {
                                     <span class="hljs-keyword">break</span>;
                                 }
                             }
-                            <span class="hljs-keyword">if</span> (u.entityName === l.entityName) {</pre></div></div>
+                            <span class="hljs-keyword">if</span> (updateItem.entityName === l.entityName) {</pre></div></div>
             
         </li>
         
@@ -8047,7 +7919,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                                     modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"Single"</span> });
                                 }
                             }
-                            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (l.entityName.indexOf(u.entityName + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>) {</pre></div></div>
+                            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (l.entityName.indexOf(updateItem.entityName + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>) {</pre></div></div>
             
         </li>
         
@@ -8066,11 +7938,13 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                                     modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"All"</span> });
                                 }
                                 <span class="hljs-keyword">else</span> {
-                                    modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"BranchUpdate"</span>,
-                                        <span class="hljs-attr">updateTarget</span>: <span class="hljs-keyword">this</span>._doGetUpdateTarget(u.entityName, l.entityName) });
+                                    modeList.push({
+                                        <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"BranchUpdate"</span>,
+                                        <span class="hljs-attr">updateTarget</span>: <span class="hljs-keyword">this</span>._doGetUpdateTarget(updateItem.entityName, l.entityName),
+                                    });
                                 }
                             }
-                            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (u.entityName.indexOf(l.entityName + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>) {</pre></div></div>
+                            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (updateItem.entityName.indexOf(l.entityName + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>) {</pre></div></div>
             
         </li>
         
@@ -8107,7 +7981,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                                 commonAncestry = <span class="hljs-literal">false</span>;
                             }
                         }
-                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (u.type === <span class="hljs-string">"R"</span>) {</pre></div></div>
+                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (updateItem.type === <span class="hljs-string">"R"</span>) {</pre></div></div>
             
         </li>
         
@@ -8122,7 +7996,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                            <span class="hljs-keyword">if</span> (u.entityName === l.entityName) {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                            <span class="hljs-keyword">if</span> (updateItem.entityName === l.entityName) {</pre></div></div>
             
         </li>
         
@@ -8139,7 +8013,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             
             <div class="content"><div class='highlight'><pre>                                modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"All"</span> });
                             }
-                            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (l.entityName.indexOf(u.entityName + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>) {</pre></div></div>
+                            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (l.entityName.indexOf(updateItem.entityName + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>) {</pre></div></div>
             
         </li>
         
@@ -8154,10 +8028,12 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                                modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"BranchDelete"</span>,
-                                    <span class="hljs-attr">updateTarget</span>: <span class="hljs-keyword">this</span>._doGetUpdateTarget(u.entityName, l.entityName) });
+            <div class="content"><div class='highlight'><pre>                                modeList.push({
+                                    <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"BranchDelete"</span>,
+                                    <span class="hljs-attr">updateTarget</span>: <span class="hljs-keyword">this</span>._doGetUpdateTarget(updateItem.entityName, l.entityName),
+                                });
                             }
-                            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (u.entityName.indexOf(l.entityName + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>) {</pre></div></div>
+                            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (updateItem.entityName.indexOf(l.entityName + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>) {</pre></div></div>
             
         </li>
         
@@ -8209,7 +8085,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                            <span class="hljs-keyword">if</span> (u.entityName === l.entityName) {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                            <span class="hljs-keyword">if</span> (updateItem.entityName === l.entityName) {</pre></div></div>
             
         </li>
         
@@ -8226,7 +8102,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             
             <div class="content"><div class='highlight'><pre>                                modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"All"</span> });
                             }
-                            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (l.entityName.indexOf(u.entityName + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>) {</pre></div></div>
+                            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (l.entityName.indexOf(updateItem.entityName + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>) {</pre></div></div>
             
         </li>
         
@@ -8243,7 +8119,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             
             <div class="content"><div class='highlight'><pre>                                modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"All"</span> });
                             }
-                            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (u.entityName.indexOf(l.entityName + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>) {</pre></div></div>
+                            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (updateItem.entityName.indexOf(l.entityName + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>) {</pre></div></div>
             
         </li>
         
@@ -8281,7 +8157,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                             }
                         }
                         <span class="hljs-keyword">if</span> (commonAncestry &amp;&amp; !isSubChange) {
-                            modeList.push({ <span class="hljs-attr">updateMode</span>: u.updateMode, <span class="hljs-attr">updateTarget</span>: u.updateTarget });
+                            modeList.push({ <span class="hljs-attr">updateMode</span>: updateItem.updateMode, <span class="hljs-attr">updateTarget</span>: updateItem.updateTarget });
                         }
                     }
                 }
@@ -8305,8 +8181,8 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
         <span class="hljs-keyword">var</span> at = <span class="hljs-string">""</span>;
         <span class="hljs-keyword">var</span> b;
         <span class="hljs-keyword">var</span> bt;
-        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _i = <span class="hljs-number">0</span>, modeList_1 = modeList; _i &lt; modeList_1.length; _i++) {
-            <span class="hljs-keyword">var</span> item = modeList_1[_i];
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _f = <span class="hljs-number">0</span>, modeList_1 = modeList; _f &lt; modeList_1.length; _f++) {
+            <span class="hljs-keyword">var</span> item = modeList_1[_f];
             b = item.updateMode;
             bt = item.updateTarget || <span class="hljs-string">""</span>;
             <span class="hljs-keyword">if</span> (a === b &amp;&amp; (a === <span class="hljs-string">"BranchDelete"</span> || a === <span class="hljs-string">"BranchUpdate"</span>)) {

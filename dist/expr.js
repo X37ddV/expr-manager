@@ -1,18 +1,8 @@
-//     expr.js 0.0.1
-//     https://github.com/X37ddV/expr
-//     (c) 2016-2017 X37ddV
-//     Released under the MIT License.
-
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('moment'), require('decimal.js')) :
-	typeof define === 'function' && define.amd ? define(['moment', 'decimal.js'], factory) :
-	(global.expr = factory(global.moment,global.Decimal));
+    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('moment'), require('decimal.js')) :
+    typeof define === 'function' && define.amd ? define(['moment', 'decimal.js'], factory) :
+    (global.expr = factory(global.moment,global.Decimal));
 }(this, (function (moment,Decimal) { 'use strict';
-
-// 依赖第三方库
-// ----------
-// + **[decimal.js](https://github.com/MikeMcl/decimal.js 'An arbitrary-precision Decimal type for JavaScript')** 用于高精度计算<br />
-// + **[moment.js](http://momentjs.com 'Parse, validate, manipulate, and display dates in javascript')** 用于日期计算
 
 moment = 'default' in moment ? moment['default'] : moment;
 Decimal = 'default' in Decimal ? Decimal['default'] : Decimal;

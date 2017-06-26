@@ -156,13 +156,11 @@ export default class Calc {
                     }
                     break;
                 case "VTK_PAREN": // ()结点
-                    if (t.childs.length === 0) { // 如：fun()
-                        tv = this.genValue([], "array");
-                    } else if (p && p.tokenType === "TK_IDEN" && l.tokenType !== "VTK_COMMA") {
-                        tv = this.genValue([], "array").arrayPush(lv); // 如：fun(2)
-                    } else {
-                        tv = lv; // 如：fun(1,2,3) 或 2+((4))
-                    }
+                    tv = (t.childs.length === 0) ?
+                        this.genValue([], "array") : // 如：fun()
+                        (p && p.tokenType === "TK_IDEN" && l.tokenType !== "VTK_COMMA") ?
+                            this.genValue([], "array").arrayPush(lv) : // 如：fun(2)
+                            lv; // 如：fun(1,2,3) 或 2+((4))
                     break;
                 case "VTK_ARRAY": // []结点
                     tv = this.genValue([], "array");
@@ -188,11 +186,9 @@ export default class Calc {
                     tv = lv.subscript(rv);
                     break;
                 case "VTK_FUNCTION": // Fn()结点
-                    if (p && p.tokenType === "TK_DOT" && p.childs[0] !== t) { // 有显式调用者
-                        tv = lv.hashItem(rv);
-                    } else { // 没有显式调用者
-                        tv = lv.hashItem(rv).getFunctionValue(null);
-                    }
+                    tv = (p && p.tokenType === "TK_DOT" && p.childs[0] !== t) ?
+                        lv.hashItem(rv) : // 有显式调用者
+                        lv.hashItem(rv).getFunctionValue(null); // 没有显式调用者
                     break;
                 default:
                     break;

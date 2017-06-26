@@ -6,8 +6,9 @@
   "types": "expr.d.js",
   "scripts": {
     "start": "gulp",
-    "lint:ts": "gulp build:expr lint:ts",
+    "lint:expr": "gulp lint:expr",
     "build:expr": "gulp build:expr build:expr:min",
+    "lint:example": "gulp lint:example",
     "build:example": "gulp build:example",
     "build:docs": "gulp build:expr build:docs",
     "test": "gulp build:expr test:karma"

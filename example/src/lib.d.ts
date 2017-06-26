@@ -1,6 +1,6 @@
 declare module "*.tpl";
 
-interface JQueryEasyGridColumn {
+interface IJQueryEasyGridColumn {
     dataField?: string;
     sort?: "" | "desc" | "asc";
     text?: string;
@@ -8,15 +8,15 @@ interface JQueryEasyGridColumn {
     valueClass?: string;
     width?: number;
 }
-interface JQueryEasyGridData {
-    _children?: Array<JQueryEasyGridData>;
+interface IJQueryEasyGridData {
+    _children?: IJQueryEasyGridData[];
     _id?: number;
     [propName: string]: any;
 }
-interface JQueryEasyGridOptions {
-    columns?: Array<JQueryEasyGridColumn>;
+interface IJQueryEasyGridOptions {
+    columns?: IJQueryEasyGridColumn[];
     childrenField?: string;
-    data?: Array<JQueryEasyGridData>;
+    data?: IJQueryEasyGridData[];
     idField?: string;
     isAllowKeyboard?: boolean;
     isAllowMoveCol?: boolean;
@@ -24,20 +24,21 @@ interface JQueryEasyGridOptions {
     isAllowSort?: boolean;
     onSelectedChange?: (id: number) => void;
 }
-interface JQueryEasyGrid {
+interface IJQueryEasyGrid {
     $el: JQuery;
-    options: JQueryEasyGridOptions;
+    options: IJQueryEasyGridOptions;
     getSelectedId(): number;
     getSelectedField(): string;
-    selectRow(id: number, isSilent?: boolean): JQueryEasyGrid;
-    selectCol(dataField: string, isSilent?: boolean): JQueryEasyGrid;
-    showFocusCell(): JQueryEasyGrid;
-    loadData(data: Array<JQueryEasyGridData>): JQueryEasyGrid;
-    beginEdit(): JQueryEasyGrid;
-    endEdit(): JQueryEasyGrid;
+    selectRow(id: number, isSilent?: boolean): IJQueryEasyGrid;
+    selectCol(dataField: string, isSilent?: boolean): IJQueryEasyGrid;
+    showFocusCell(): IJQueryEasyGrid;
+    loadData(data: IJQueryEasyGridData[]): IJQueryEasyGrid;
+    beginEdit(): IJQueryEasyGrid;
+    endEdit(): IJQueryEasyGrid;
     getValue(id: number, dataField: string): any;
-    setValue(id: number, dataField: string, value: any): JQueryEasyGrid;
+    setValue(id: number, dataField: string, value: any): IJQueryEasyGrid;
 }
+// tslint:disable-next-line:interface-name
 interface JQuery {
-    easygrid(options?: JQueryEasyGridOptions): JQueryEasyGrid;
+    easygrid(options?: IJQueryEasyGridOptions): IJQueryEasyGrid;
 }

@@ -38,12 +38,8 @@ export function parserValue(v: string, type: string): any {
     if (_.isEmpty(v)) {
         value = null;
     } else if (type === "date") {
-        let m = moment(v);
-        if (m.isValid()) {
-            value = m.toDate();
-        } else {
-            value = NaN;
-        }
+        const m = moment(v);
+        value = (m.isValid()) ? m.toDate() : NaN;
     } else {
         try {
             value = JSON.parse(v);
@@ -65,11 +61,11 @@ export enum ShowFocusType {
 }
 
 function doShowFocus(container: JQuery, selected: JQuery, outerFn: string, scrollFn: string, pos: number): void {
-    let containerHeight = container[outerFn]();
-    let selectedHeight = selected[outerFn]();
-    let positionBottom = pos + selectedHeight;
+    const containerHeight = container[outerFn]();
+    const selectedHeight = selected[outerFn]();
+    const positionBottom = pos + selectedHeight;
     if (pos >= 0 || (positionBottom <= containerHeight)) {
-        let start = container[scrollFn]();
+        const start = container[scrollFn]();
         if (selectedHeight > containerHeight) {
             if (pos > 0) {
                 container[scrollFn](start + pos);
@@ -88,7 +84,7 @@ function doShowFocus(container: JQuery, selected: JQuery, outerFn: string, scrol
 
 export function showFocus(container: JQuery, selected: JQuery, type: ShowFocusType): void {
     if (container && selected && selected.length > 0) {
-        let position = selected.position();
+        const position = selected.position();
 
         if (type === ShowFocusType.Height || type === ShowFocusType.HeightAndWidth) {
             doShowFocus(container, selected, "outerHeight", "scrollTop", position.top);

@@ -1,12 +1,12 @@
+import $ from "jquery";
 import image_prompt_svg_tpl from "../../images/prompt.svg.tpl";
 import image_result_svg_tpl from "../../images/result.svg.tpl";
 import image_warning_svg_tpl from "../../images/warning.svg.tpl";
-import { ShowFocusType, formatValue, getValueType, showFocus } from "../../scripts/common";
+import { formatValue, getValueType, showFocus, ShowFocusType } from "../../scripts/common";
 import hotkey from "../../scripts/hotkey";
 import View from "../../scripts/view";
 import "./result.scss";
 import result_tpl from "./result.tpl";
-import $ from "jquery";
 
 enum ObjectPrefixType {
     None,
@@ -17,7 +17,7 @@ enum ObjectPrefixType {
 interface IResultItems {
     [id: number]: {
         itemLine: string,
-        itemValue: Value
+        itemValue: Value,
     };
 }
 
@@ -31,12 +31,12 @@ class Result extends View {
             itemValue: value,
         };
 
-        let lineRow = "<div class='result-row' data-id='" + this.itemId +
+        const lineRow = "<div class='result-row' data-id='" + this.itemId +
             "'><div class='result-line-prompt'>" +
             image_prompt_svg_tpl + "</div><div class='result-line-content'>" + line + "</div></div>";
         this.$rows.append(lineRow);
 
-        let v = this.genValue(value);
+        const v = this.genValue(value);
         let vCls = "";
         let vSvg = "";
         if (value.errorMsg) {
@@ -45,7 +45,7 @@ class Result extends View {
         } else {
             vSvg = image_result_svg_tpl;
         }
-        let valueRow = "<div class='result-row" + vCls + "' data-id='" + this.itemId +
+        const valueRow = "<div class='result-row" + vCls + "' data-id='" + this.itemId +
             "'><div class='result-value-prompt'>" +
             vSvg + "</div><div class='result-value-content'>" + v + "</div></div>";
         this.$rows.append(valueRow);
@@ -66,7 +66,7 @@ class Result extends View {
 
         if (emptyHeight === 0) {
             // 焦点显示
-            let focusCell = this.$(".result-row.selected");
+            const focusCell = this.$(".result-row.selected");
             showFocus(this.$el, focusCell, ShowFocusType.Height);
         }
 
@@ -91,10 +91,10 @@ class Result extends View {
         this.itemId = 0;
         this.className = "result-view";
         this.events = {
+            "click .result-empty": this.doClickEmpty,
             "click .result-row": this.doClickRow,
             "click .result-row-warning": this.doClickRow,
             "click .result-value": this.doClickValue,
-            "click .result-empty": this.doClickEmpty,
         };
     }
     protected initialize(): void {
@@ -139,9 +139,9 @@ class Result extends View {
     }
     private initHotkey(): Result {
         hotkey.bindView(this, ["up", "down", "left", "right"], ((me) => (e, combo) => {
-            let item = me.$rows.children(".selected");
+            const item = me.$rows.children(".selected");
             if (combo === "up") {
-                let newItem = item.prev();
+                const newItem = item.prev();
                 if (newItem.length > 0) {
                     item.removeClass("selected");
                     newItem.addClass("selected");
@@ -149,7 +149,7 @@ class Result extends View {
                     me.refresh();
                 }
             } else if (combo === "down") {
-                let newItem = item.next();
+                const newItem = item.next();
                 if (newItem.length > 0) {
                     item.removeClass("selected");
                     newItem.addClass("selected");
@@ -157,10 +157,10 @@ class Result extends View {
                     me.refresh();
                 }
             } else if (combo === "left") {
-                let rootVlaue = item.find(".result-value:first");
+                const rootVlaue = item.find(".result-value:first");
                 this.collapsedValue(rootVlaue);
             } else if (combo === "right") {
-                let rootVlaue = item.find(".result-value:first");
+                const rootVlaue = item.find(".result-value:first");
                 this.expandedValue(rootVlaue);
             }
             e.stopPropagation();
@@ -181,26 +181,16 @@ class Result extends View {
             v = "<div class='result-value'>" + value.errorMsg + "</div>";
         } else {
             v = value.toValue();
-            if (value.type === "array") {
-                v = "<ul>" + this.genArrayValue(v, ObjectPrefixType.None) + "</ul>";
-            } else if (value.type === "object") {
-                v = "<ul>" + this.genObjectValue(v, ObjectPrefixType.None) + "</ul>";
-            } else {
-                v = "<div class='result-value'>" + this.genJSONValue(v) + "</div>";
-            }
+            v = (value.type === "array") ? "<ul>" + this.genArrayValue(v, ObjectPrefixType.None) + "</ul>" :
+                (value.type === "object") ? "<ul>" + this.genObjectValue(v, ObjectPrefixType.None) + "</ul>" :
+                "<div class='result-value'>" + this.genJSONValue(v) + "</div>";
         }
         return v;
     }
     private getValuePrefixClass(op: ObjectPrefixType): string {
-        let prefixCls = "";
-        if (op === ObjectPrefixType.Array) {
-            prefixCls = "array";
-        } else if (op === ObjectPrefixType.Object) {
-            prefixCls = "object";
-        } else {
-            prefixCls = "none";
-        }
-        return prefixCls;
+        return (op === ObjectPrefixType.Array) ? "array" :
+            (op === ObjectPrefixType.Object) ? "object" :
+            "none";
     }
     private getValuePrefix(
         v: any,
@@ -208,7 +198,7 @@ class Result extends View {
         op: ObjectPrefixType,
         prefix?: string|number,
         hasChild?: boolean): string {
-        let collapsed = hasChild ? " collapsed" : " nochild";
+        const collapsed = hasChild ? " collapsed" : " nochild";
         let r = "<li class='result-prefix-" + this.getValuePrefixClass(op) +
             "'><div class='result-value" + collapsed + "'>";
         if (op === ObjectPrefixType.Array) {
@@ -216,8 +206,8 @@ class Result extends View {
         }
         r += "<span class='result-value-expand'><div class='result-value-expand-icon'></div></span>";
         if (op === ObjectPrefixType.Object) {
-            let vType = getValueType(v);
-            let vTypeIcon = vType[0].toUpperCase();
+            const vType = getValueType(v);
+            const vTypeIcon = vType[0].toUpperCase();
             r += "<span class='result-style-icon result-style-icon-" + vType + "'>" + vTypeIcon + "</span>";
             r += "<span class='result-style-prop'>" + prefix + "</span>: ";
         }
@@ -231,10 +221,10 @@ class Result extends View {
     }
     private genArrayValue(v: any, op: ObjectPrefixType, prefix?: string|number): string {
         let r = "";
-        let hasChild = v.length > 0;
+        const hasChild = v.length > 0;
         for (let i = 0; i < v.length; i++) {
-            let value = v[i];
-            let t = getValueType(value);
+            const value = v[i];
+            const t = getValueType(value);
             if (t === "array") {
                 r += this.genArrayValue(value, ObjectPrefixType.Array, i);
             } else if (t === "object") {
@@ -252,18 +242,18 @@ class Result extends View {
     private genObjectValue(v: any, op: ObjectPrefixType, prefix?: string|number): string {
         let r = "";
         let hasChild = false;
-        for (let key in v) {
+        for (const key in v) {
             if (v.hasOwnProperty(key)) {
                 hasChild = true;
-                let value = v[key];
-                let t = getValueType(value);
+                const value = v[key];
+                const t = getValueType(value);
                 if (t === "array") {
                     r += this.genArrayValue(value, ObjectPrefixType.Object, key);
                 } else if (t === "object") {
                     r += this.genObjectValue(value, ObjectPrefixType.Object, key);
                 } else {
-                    let vType = getValueType(value);
-                    let vTypeIcon = vType[0].toUpperCase();
+                    const vType = getValueType(value);
+                    const vTypeIcon = vType[0].toUpperCase();
                     r += "<li class='result-prefix-" + this.getValuePrefixClass(ObjectPrefixType.Object) +
                         "'><div class='result-value nochild'><span class='result-value-expand'></span>" +
                         "<span class='result-style-icon result-style-icon-" + vType + "'>" + vTypeIcon + "</span>" +
@@ -277,21 +267,21 @@ class Result extends View {
     }
     private genJSONValue(v: any): string {
         let r;
-        let t = getValueType(v);
+        const t = getValueType(v);
         switch (t) {
             case "array":
                 r = "[";
-                for (let i = 0; i < v.length; i++) {
+                for (const item of v) {
                     if (r !== "[") {
                         r += ", ";
                     }
-                    r += this.genJSONValue(v[i]);
+                    r += this.genJSONValue(item);
                 }
                 r += "]";
                 break;
             case "object":
                 r = "{";
-                for (let key in v) {
+                for (const key in v) {
                     if (v.hasOwnProperty(key)) {
                         if (r !== "{") {
                             r += ", ";

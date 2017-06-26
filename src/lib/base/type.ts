@@ -86,16 +86,10 @@ export default class Type {
         return this.genType("boolean");
     }
     public multiply(et) {
-        let t;
-        if (this.type === "null" && et.type === "null") {
-            t = this.genType("null");
-        } else if ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
-            (et.type === "number" || et.type === "null" || et.type === "undefined")) {
-            t = this.genType("number");
-        } else {
-            t = this.genErrorType(format(locale.getLocale().MSG_EX_MULTIPLY, this.type, et.type));
-        }
-        return t;
+        return (this.type === "null" && et.type === "null") ? this.genType("null") :
+            ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
+                (et.type === "number" || et.type === "null" || et.type === "undefined")) ? this.genType("number") :
+                this.genErrorType(format(locale.getLocale().MSG_EX_MULTIPLY, this.type, et.type));
     }
     public divide(et) {
         let t;
@@ -103,11 +97,9 @@ export default class Type {
             t = this.genType("null");
         } else if ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
             (et.type === "number" || et.type === "undefined")) {
-            if (et.hasData() && (et.data === "null" || et.type === "number" && Number(et.data) === 0)) {
-                t = this.genErrorType(format(locale.getLocale().MSG_EX_DIVIDE_N, et.info));
-            } else {
-                t = this.genType("number");
-            }
+            t = (et.hasData() && (et.data === "null" || et.type === "number" && Number(et.data) === 0)) ?
+                this.genErrorType(format(locale.getLocale().MSG_EX_DIVIDE_N, et.info)) :
+                this.genType("number");
         } else {
             t = this.genErrorType(format(locale.getLocale().MSG_EX_DIVIDE, this.type, et.type));
         }
@@ -119,53 +111,39 @@ export default class Type {
             t = this.genType("null");
         } else if ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
             (et.type === "number" || et.type === "undefined")) {
-            if (et.hasData() && (et.data === "null" || et.type === "number" && Number(et.data) === 0)) {
-                t = this.genErrorType(format(locale.getLocale().MSG_EX_REMAINDER_N, et.info));
-            } else {
-                t = this.genType("number");
-            }
+            t = (et.hasData() && (et.data === "null" || et.type === "number" && Number(et.data) === 0)) ?
+                this.genErrorType(format(locale.getLocale().MSG_EX_REMAINDER_N, et.info)) :
+                this.genType("number");
         } else {
             t = this.genErrorType(format(locale.getLocale().MSG_EX_REMAINDER, this.type, et.type));
         }
         return t;
     }
     public add(et) {
-        let t;
-        if (this.type === "undefined" && et.type === "undefined") {
-            t = this.genType("undefined");
-        } else if (this.type === "null" && et.type === "null") {
-            t = this.genType("null");
-        } else if ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
-            (et.type === "number" || et.type === "null" || et.type === "undefined")) {
-            t = this.genType("number");
-        } else if ((this.type === "string" || this.type === "number" || this.type === "null" ||
-            this.type === "undefined") &&
-            (et.type === "string" || et.type === "number" || et.type === "null" || et.type === "undefined")) {
-            t = this.genType("string");
-        } else if ((this.type === "array" || this.type === "null" || this.type === "undefined") &&
-            (et.type === "array" || et.type === "null" || et.type === "undefined")) {
-            t = this.genType("array");
-        } else {
-            t = this.genErrorType(format(locale.getLocale().MSG_EX_ADD, this.type, et.type));
-        }
-        return t;
+        return (this.type === "undefined" && et.type === "undefined") ? this.genType("undefined") :
+            (this.type === "null" && et.type === "null") ? this.genType("null") :
+                ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
+                    (et.type === "number" || et.type === "null" || et.type === "undefined")) ? this.genType("number") :
+                    ((this.type === "string" || this.type === "number" || this.type === "null" ||
+                        this.type === "undefined") && (et.type === "string" || et.type === "number" ||
+                            et.type === "null" || et.type === "undefined")) ? this.genType("string") :
+                        ((this.type === "array" || this.type === "null" || this.type === "undefined") &&
+                            (et.type === "array" || et.type === "null" ||
+                                et.type === "undefined")) ? this.genType("array") :
+                            this.genErrorType(format(locale.getLocale().MSG_EX_ADD, this.type, et.type));
     }
     public subtract(et) {
-        let t;
-        if (this.type === "undefined" && et.type === "undefined") {
-            t = this.genType("undefined");
-        } else if (this.type === "null" && et.type === "null") {
-            t = this.genType("null");
-        } else if ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
-            (et.type === "number" || et.type === "null" || et.type === "undefined")) {
-            t = this.genType("number");
-        } else if ((this.type === "array" || this.type === "null" || this.type === "undefined") &&
-            (et.type === "array" || et.type === "null" || et.type === "undefined")) {
-            t = this.genType("array");
-        } else {
-            t = this.genErrorType(format(locale.getLocale().MSG_EX_SUBTRACT, this.type, et.type));
-        }
-        return t;
+        return (this.type === "undefined" && et.type === "undefined") ?
+            this.genType("undefined") :
+            (this.type === "null" && et.type === "null") ?
+                this.genType("null") :
+                ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
+                    (et.type === "number" || et.type === "null" || et.type === "undefined")) ?
+                    this.genType("number") :
+                    ((this.type === "array" || this.type === "null" || this.type === "undefined") &&
+                        (et.type === "array" || et.type === "null" || et.type === "undefined")) ?
+                        this.genType("array") :
+                        this.genErrorType(format(locale.getLocale().MSG_EX_SUBTRACT, this.type, et.type));
     }
     public equal(et, op) {
         let t;
@@ -201,52 +179,39 @@ export default class Type {
         }
     }
     public and(et) {
-        let t;
-        if (this.type === "undefined" || et.type === "undefined" || this.type === "null" || et.type === "null" ||
-            (this.type === "boolean" && et.type === "boolean")) {
-            t = this.genType("boolean");
-        } else {
-            t = this.genErrorType(format(locale.getLocale().MSG_EX_AND, this.type, et.type));
-        }
-        return t;
+        return (this.type === "undefined" || et.type === "undefined" || this.type === "null" || et.type === "null" ||
+            (this.type === "boolean" && et.type === "boolean")) ?
+            this.genType("boolean") :
+            this.genErrorType(format(locale.getLocale().MSG_EX_AND, this.type, et.type));
     }
     public or(et) {
-        let t;
-        if (this.type === "undefined" || et.type === "undefined" || this.type === "null" || et.type === "null" ||
-            (this.type === "boolean" && et.type === "boolean")) {
-            t = this.genType("boolean");
-        } else {
-            t = this.genErrorType(format(locale.getLocale().MSG_EX_OR, this.type, et.type));
-        }
-        return t;
+        return (this.type === "undefined" || et.type === "undefined" || this.type === "null" || et.type === "null" ||
+            (this.type === "boolean" && et.type === "boolean")) ?
+            this.genType("boolean") :
+            this.genErrorType(format(locale.getLocale().MSG_EX_OR, this.type, et.type));
     }
     public subscript(et) {
         let t;
-        let i;
-        if (et.type === "array") {
-            i = et.info[0];
-        } else {
-            i = et.info;
-        }
+        const i = (et.type === "array") ?
+            et.info[0] :
+            et.info;
         if (this.type === "string" || this.type === "array") {
             if (i === "number") {
-                if (this.type === "array" && this.entity) {
-                    t = this.context.getEntityType(this);
-                } else if (this.type === "string") {
-                    t = this.genType("string");
-                } else {
-                    t = this.genType("undefined");
-                }
+                t = (this.type === "array" && this.entity) ?
+                    this.context.getEntityType(this) :
+                    (this.type === "string") ?
+                        this.genType("string") :
+                        this.genType("undefined");
             } else {
                 t = this.genErrorType(format(locale.getLocale().MSG_EX_SUBSCRIPT_T, i));
             }
         } else if (this.type === "object") {
             t = this.genType("string", "string", i);
             t = t.getVariableType(this);
-        } else if (this.type === "undefined") {
-            t = this.genType("undefined");
         } else {
-            t = this.genErrorType(format(locale.getLocale().MSG_EX_SUBSCRIPT, this.type));
+            t = (this.type === "undefined") ?
+                this.genType("undefined") :
+                this.genErrorType(format(locale.getLocale().MSG_EX_SUBSCRIPT, this.type));
         }
         return t;
     }

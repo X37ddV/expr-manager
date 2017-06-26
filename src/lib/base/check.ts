@@ -183,10 +183,10 @@ export default class Check {
                         tt = (p && p.tokenType === "TK_IDEN") ?
                             this.genType("array", [], []) :
                             this.genType("undefined");
-                    } else if (p && p.tokenType === "TK_IDEN" && l.tokenType !== "VTK_COMMA") {
-                        tt = this.genType("array", [], []).arrayPush(lt); // 如：fun(2)
                     } else {
-                        tt = lt; // 如：fun(1,2,3) 或 2+((4))
+                        tt = (p && p.tokenType === "TK_IDEN" && l.tokenType !== "VTK_COMMA") ?
+                            this.genType("array", [], []).arrayPush(lt) : // 如：fun(2)
+                            lt; // 如：fun(1,2,3) 或 2+((4))
                     }
                     break;
                 case "VTK_ARRAY": // []结点
@@ -213,11 +213,9 @@ export default class Check {
                     tt = lt.subscript(rt);
                     break;
                 case "VTK_FUNCTION": // Fn()结点
-                    if (p && p.tokenType === "TK_DOT" && p.childs[0] !== t) {// 有显式调用者
-                        tt = lt.hashItem(rt);
-                    } else {// 没有显式调用者
-                        tt = lt.hashItem(rt).getFunctionType(null);
-                    }
+                    tt = (p && p.tokenType === "TK_DOT" && p.childs[0] !== t) ?
+                        lt.hashItem(rt) : // 有显式调用者
+                        lt.hashItem(rt).getFunctionType(null); // 没有显式调用者
                     break;
                 default:
                     break;

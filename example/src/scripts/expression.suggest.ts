@@ -9,7 +9,7 @@ function exprSuggestGetExprContinuously(line: string, pos: number): string {
         let prev = line[p];
         if (prev !== "}") {
             p = p - t.length;
-            let iden = exprSuggestGetExprIden(line, p);
+            const iden = exprSuggestGetExprIden(line, p);
             if (iden) {
                 t = iden + t;
                 p = p - iden.length;
@@ -37,8 +37,8 @@ function exprSuggestGetExprBrackets(line: string, pos: number): string {
     // 获取括号匹配
     let str = "";
     let n = 0;
-    let r = line[pos];
-    let l = r === "]" ? "[" : r === "}" ? "{" : r === ")" ? "(" : "";
+    const r = line[pos];
+    const l = r === "]" ? "[" : r === "}" ? "{" : r === ")" ? "(" : "";
     if (l) {
         let c;
         while (pos >= 0) {
@@ -136,7 +136,7 @@ function exprSuggestInString(line: string, pos: number): boolean {
 function exprSuggestGetInput(line: string, pos: number): string {
     // 获取输入文本
     let str = "";
-    let reg = /[\w,_,$]/;
+    const reg = /[\w,_,$]/;
     if (line[pos] === undefined || !reg.test(line[pos])) {
         pos--;
         str = exprSuggestGetExprIden(line, pos);
@@ -144,9 +144,9 @@ function exprSuggestGetInput(line: string, pos: number): string {
     return str;
 }
 
-function exprSuggestGetPropertyName(object: Object): Array<string> {
-    let r = [];
-    for (let name in object) {
+function exprSuggestGetPropertyName(object: object): string[] {
+    const r = [];
+    for (const name in object) {
         if (object.hasOwnProperty(name)) {
             r.push(name);
         }
@@ -154,21 +154,19 @@ function exprSuggestGetPropertyName(object: Object): Array<string> {
     return r;
 }
 
-interface IExprSuggestInfoCalcExpr {
-    (line: string): Value;
-};
+type IExprSuggestInfoCalcExpr = (line: string) => Value;
 
 interface IExprSuggestInfo {
     calcExpr: IExprSuggestInfoCalcExpr;
-    constants: Object;
-    fields: Object;
-    childs: Object;
-    funcs: Object;
-};
+    constants: object;
+    fields: object;
+    childs: object;
+    funcs: object;
+}
 
 export interface IExprSuggestResult {
     inputValue: string;
-    suggestList: Array<string>;
+    suggestList: string[];
 }
 
 export function exprSuggest(line: string, pos: number, info: IExprSuggestInfo): IExprSuggestResult {
@@ -198,7 +196,7 @@ export function exprSuggest(line: string, pos: number, info: IExprSuggestInfo): 
         }));
     } else if (r) {
         // 准备: 根据计算结果类型
-        let v = info.calcExpr(r);
+        const v = info.calcExpr(r);
         if (v && !v.errorMsg) {
             if (v.type !== "undefined" && v.type !== "null") {
                 suggest = suggest.concat(exprSuggestGetPropertyName(info.funcs[v.type]));
@@ -211,7 +209,7 @@ export function exprSuggest(line: string, pos: number, info: IExprSuggestInfo): 
     }
 
     // 根据输入内容过滤、去重、排序
-    suggest = _.sortBy(_.uniq(_.filter(suggest, (i => n => s.startsWith(n, i))(input))));
+    suggest = _.sortBy(_.uniq(_.filter(suggest, ((i) => (n) => s.startsWith(n, i))(input))));
     if (suggest.length === 1 && suggest[0] === input) {
         suggest = [];
     }

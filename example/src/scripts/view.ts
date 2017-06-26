@@ -1,12 +1,10 @@
 import $ from "jquery";
 import _ from "underscore";
 
-interface IListener {
-    (eventObject: JQueryEventObject, ...args: any[]): any;
-}
+type IListener = (eventObject: JQueryEventObject, ...args: any[]) => any;
 
 interface IEventsHash {
-    [selector: string]: string | { (eventObject: JQueryEventObject): void };
+    [selector: string]: string | ((eventObject: JQueryEventObject) => void);
 }
 
 interface IViewOptions {
@@ -65,7 +63,7 @@ class View {
             }
         }
         this.undelegateEvents();
-        for (let key in events) {
+        for (const key in events) {
             if (events.hasOwnProperty(key)) {
                 let method = events[key];
                 if (!_.isFunction(method)) {
@@ -74,8 +72,8 @@ class View {
                 if (!method) {
                     continue;
                 }
-                let match = key.match(delegateEventSplitter);
-                this.delegate(match[1], match[2], _.bind(<Function> method, this));
+                const match = key.match(delegateEventSplitter);
+                this.delegate(match[1], match[2], _.bind(method as (() => void), this));
             }
         }
         return this;
@@ -94,19 +92,19 @@ class View {
         this.$el.off(eventName + ".delegateEvents" + this.cid, selector, listener);
         return this;
     }
-    public on(eventName: string | Object, callback: Function, context?: any): View {
+    public on(eventName: string | object, callback: () => void, context?: any): View {
         return internalOn(this, eventName, callback, context, undefined);
     }
-    public listenTo(object: any, name: string | Object, callback: Function): View {
+    public listenTo(object: any, name: string | object, callback: () => void): View {
         if (!object) {
             return this;
         }
-        let id = object.privListenId || (object.privListenId = _.uniqueId("l"));
-        let tmpListeningTo = this.privListeningTo || (this.privListeningTo = {});
+        const id = object.privListenId || (object.privListenId = _.uniqueId("l"));
+        const tmpListeningTo = this.privListeningTo || (this.privListeningTo = {});
         let tmpListening = tmpListeningTo[id];
 
         if (!tmpListening) {
-            let thisId = this.privListenId || (this.privListenId = _.uniqueId("l"));
+            const thisId = this.privListenId || (this.privListenId = _.uniqueId("l"));
             tmpListening = tmpListeningTo[id] = {
                 count: 0,
                 id: thisId,
@@ -119,7 +117,7 @@ class View {
         internalOn(object, name, callback, this, tmpListening);
         return this;
     }
-    public off(name?: string, callback?: Function, context?: any): View {
+    public off(name?: string, callback?: () => void, context?: any): View {
         if (!this.privEvents) {
             return this;
         }
@@ -130,15 +128,15 @@ class View {
         this.privEvents = eventsApi(offApi, this.privEvents, name, callback, opts);
         return this;
     }
-    public stopListening(object?: any, name?: string, callback?: Function): View {
-        let listeningTo = this.privListeningTo;
+    public stopListening(object?: any, name?: string, callback?: () => void): View {
+        const listeningTo = this.privListeningTo;
         if (!listeningTo) {
             return this;
         }
-        let ids = object ? [object.privListenId] : _.keys(listeningTo);
+        const ids = object ? [object.privListenId] : _.keys(listeningTo);
 
-        for (let i = 0; i < ids.length; i++) {
-            let listening = listeningTo[ids[i]];
+        for (const id of ids) {
+            const listening = listeningTo[id];
 
             if (!listening) {
                 break;
@@ -148,23 +146,23 @@ class View {
 
         return this;
     }
-    public once(name: string, callback: Function, context?: any): View {
-        let events = eventsApi(onceMap, {}, name, callback, _.bind(this.off, this));
+    public once(name: string, callback: () => void, context?: any): View {
+        const events = eventsApi(onceMap, {}, name, callback, _.bind(this.off, this));
         if (typeof name === "string" && context == null) {
             callback = void 0;
         }
         return this.on(events, callback, context);
     }
-    public listenToOnce(object: any, name: string, callback: Function): View {
-        let events = eventsApi(onceMap, {}, name, callback, _.bind(this.stopListening, this, object));
+    public listenToOnce(object: any, name: string, callback: () => void): View {
+        const events = eventsApi(onceMap, {}, name, callback, _.bind(this.stopListening, this, object));
         return this.listenTo(object, events, undefined);
     }
     public trigger(eventName: string, ...args: any[]): View {
         if (!this.privEvents) {
             return this;
         }
-        let length = Math.max(0, arguments.length - 1);
-        let opts = Array(length);
+        const length = Math.max(0, arguments.length - 1);
+        const opts = Array(length);
         for (let i = 0; i < length; i++) {
             opts[i] = arguments[i + 1];
         }
@@ -185,12 +183,12 @@ class View {
     }
     private _ensureElement(): void {
         if (!this.el) {
-            let attrs = _.extend({}, _.result(this, "attributes"));
+            const attrs = _.extend({}, _.result(this, "attributes"));
             if (this.id) {
                 attrs.id = _.result(this, "id");
             }
             if (this.className) {
-                attrs["class"] = _.result(this, "className");
+                attrs.class = _.result(this, "className");
             }
             this.setElement(this._createElement(_.result(this, "tagName")));
             this._setAttributes(attrs);
@@ -203,11 +201,16 @@ class View {
     }
 }
 
-let delegateEventSplitter: RegExp = /^(\S+)\s*(.*)$/;
-let viewOptions: Array<string> = ["el", "id", "attributes", "className", "tagName", "events"];
-let eventSplitter: RegExp = /\s+/;
+const delegateEventSplitter: RegExp = /^(\S+)\s*(.*)$/;
+const viewOptions: string[] = ["el", "id", "attributes", "className", "tagName", "events"];
+const eventSplitter: RegExp = /\s+/;
 
-let eventsApi = (iteratee: Function, events: Object, name: string | Object, callback: Function, opts: any): Object => {
+const eventsApi = (
+    iteratee: (events: object, name: string, callback: () => void, options: any) => object,
+    events: object,
+    name: string | object,
+    callback: () => void,
+    opts: any): object => {
     let i = 0;
     let names;
     if (name && typeof name === "object") {
@@ -217,22 +220,22 @@ let eventsApi = (iteratee: Function, events: Object, name: string | Object, call
         for (names = _.keys(name); i < names.length; i++) {
             events = eventsApi(iteratee, events, names[i], name[names[i]], opts);
         }
-    } else if (name && eventSplitter.test(<string> name)) {
-        for (names = (<string> name).split(eventSplitter); i < names.length; i++) {
+    } else if (name && eventSplitter.test(name as string)) {
+        for (names = (name as string).split(eventSplitter); i < names.length; i++) {
             events = iteratee(events, names[i], callback, opts);
         }
     } else {
-        events = iteratee(events, name, callback, opts);
+        events = iteratee(events, name as string, callback, opts);
     }
     return events;
 };
 
-let onApi = (events: Object, name: string, callback: Function, options: any): Object => {
+const onApi = (events: object, name: string, callback: () => void, options: any): object => {
     if (callback) {
-        let handlers = events[name] || (events[name] = []);
-        let context = options.context;
-        let ctx = options.ctx;
-        let listening = options.listening;
+        const handlers = events[name] || (events[name] = []);
+        const context = options.context;
+        const ctx = options.ctx;
+        const listening = options.listening;
         if (listening) {
             listening.count++;
         }
@@ -247,17 +250,17 @@ let onApi = (events: Object, name: string, callback: Function, options: any): Ob
     return events;
 };
 
-let offApi = (events: Object, name: string, callback: Function, options: any): Object => {
+const offApi = (events: object, name: string, callback: () => void, options: any): object => {
     if (!events) {
         return;
     }
     let i = 0;
     let listening;
-    let context = options.context;
-    let listeners = options.listeners;
+    const context = options.context;
+    const listeners = options.listeners;
 
     if (!name && !callback && !context) {
-        let ids = _.keys(listeners);
+        const ids = _.keys(listeners);
         for (; i < ids.length; i++) {
             listening = listeners[ids[i]];
             delete listeners[listening.id];
@@ -266,17 +269,16 @@ let offApi = (events: Object, name: string, callback: Function, options: any): O
         return;
     }
 
-    let names = name ? [name] : _.keys(events);
+    const names = name ? [name] : _.keys(events);
     for (; i < names.length; i++) {
         name = names[i];
-        let handlers = events[name];
+        const handlers = events[name];
 
         if (!handlers) {
             break;
         }
-        let remaining = [];
-        for (let j = 0; j < handlers.length; j++) {
-            let handler = handlers[j];
+        const remaining = [];
+        for (const handler of handlers) {
             if (
                 callback && callback !== handler.callback &&
                 callback !== handler.callback._callback ||
@@ -301,13 +303,13 @@ let offApi = (events: Object, name: string, callback: Function, options: any): O
     return events;
 };
 
-let triggerEvents = (events: Array<any>, args: Array<any>): void => {
+const triggerEvents = (events: any[], args: any[]): void => {
     let ev;
     let i = -1;
-    let l = events.length;
-    let a1 = args[0];
-    let a2 = args[1];
-    let a3 = args[2];
+    const l = events.length;
+    const a1 = args[0];
+    const a2 = args[1];
+    const a3 = args[2];
     switch (args.length) {
         case 0:
             while (++i < l) {
@@ -338,9 +340,9 @@ let triggerEvents = (events: Array<any>, args: Array<any>): void => {
     return;
 };
 
-let triggerApi = (objEvents: any, name: string, callback: Function, args: Array<any>): Object => {
+const triggerApi = (objEvents: any, name: string, callback: () => void, args: any[]): object => {
     if (objEvents) {
-        let events = objEvents[name];
+        const events = objEvents[name];
         let allEvents = objEvents.all;
         if (events && allEvents) {
             allEvents = allEvents.slice();
@@ -355,7 +357,7 @@ let triggerApi = (objEvents: any, name: string, callback: Function, args: Array<
     return objEvents;
 };
 
-let internalOn = (obj: any, name: string | Object, callback: Function, context: Object, listening: any): any => {
+const internalOn = (obj: any, name: string | object, callback: () => void, context: object, listening: any): any => {
     let opts;
     opts = {};
     opts.context = context;
@@ -364,14 +366,14 @@ let internalOn = (obj: any, name: string | Object, callback: Function, context: 
     obj.privEvents = eventsApi(onApi, obj.privEvents || {}, name, callback, opts);
 
     if (listening) {
-        let listeners = obj.privListeners || (obj.privListeners = {});
+        const listeners = obj.privListeners || (obj.privListeners = {});
         listeners[listening.id] = listening;
     }
 
     return obj;
 };
 
-let onceMap = (map: Object, name: string, callback: Function, offer: Function) => {
+const onceMap = (map: object, name: string, callback: () => void, offer: (name: string, once: any) => void) => {
     if (callback) {
         let once;
         once = map[name] = _.once(() => {

@@ -10,7 +10,7 @@ interface IExprItem {
 }
 
 export default class Context implements IContext {
-    private exprList: Array<IExprItem> = [];
+    private exprList: IExprItem[] = [];
     public genValue(value, type?, entity?, errorMsg?, parentObj?) {
         // 生成ExprValue对象
         return new Value(this, value, type, entity, errorMsg, parentObj);

@@ -1,3 +1,4 @@
+import _ from "underscore";
 import image_add_svg_tpl from "../../images/add.svg.tpl";
 import image_remove_svg_tpl from "../../images/remove.svg.tpl";
 import image_setting_svg_tpl from "../../images/setting.svg.tpl";
@@ -10,7 +11,6 @@ import { IconColor, IconName } from "../icon/icon";
 import Setting from "../setting/setting";
 import "./main.scss";
 import main_tpl from "./main.tpl";
-import _ from "underscore";
 
 class Main extends View {
     private expression: Expression;
@@ -60,16 +60,16 @@ class Main extends View {
     protected preinitialize(): void {
         this.className = "main-view";
         this.events = {
+            "click .act-add": this.doClickAdd,
+            "click .act-center": this.doClickCenter,
+            "click .act-left": this.doClickLeft,
+            "click .act-remove": this.doClickRemove,
+            "click .act-right": this.doClickRight,
+            "click .act-setting": this.doClickSetting,
             "dblclick .main-split": this.doDblClickSplit,
             "mousedown .main-split": this.doMousedown,
             "mousemove ": this.doMousemove,
             "mouseup ": this.doMouseup,
-            "click .act-left": this.doClickLeft,
-            "click .act-center": this.doClickCenter,
-            "click .act-right": this.doClickRight,
-            "click .act-setting": this.doClickSetting,
-            "click .act-add": this.doClickAdd,
-            "click .act-remove": this.doClickRemove,
         };
     }
     protected initialize(): void {
@@ -198,7 +198,7 @@ class Main extends View {
         } else {
             this.currentSize = size;
             if (this.isHorizontal()) {
-                let endWidth = Math.max(size, this.defaultSize);
+                const endWidth = Math.max(size, this.defaultSize);
                 this.$data.css("right", endWidth);
                 this.$split.css("right", endWidth - 2);
                 this.$console.width(endWidth);
@@ -206,7 +206,7 @@ class Main extends View {
                 this.$split.css("bottom", 0);
                 this.$console.height("auto");
             } else {
-                let endHeight = Math.max(size, this.defaultSize);
+                const endHeight = Math.max(size, this.defaultSize);
                 this.$data.css("bottom", endHeight);
                 this.$split.css("bottom", endHeight - 28);
                 this.$console.height(endHeight);

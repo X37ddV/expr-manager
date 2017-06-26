@@ -1,10 +1,10 @@
+import _ from "underscore";
 import image_close_svg_tpl from "../../images/close.svg.tpl";
 import Expression from "../../scripts/expression";
 import hotkey from "../../scripts/hotkey";
 import View from "../../scripts/view";
 import "./setting.scss";
 import setting_tpl from "./setting.tpl";
-import _ from "underscore";
 
 class Setting extends View {
     private expression: Expression;
@@ -41,8 +41,8 @@ class Setting extends View {
         this.className = "setting-view";
         this.events = {
             "click .setting-close": this.doClickClose,
-            "click .setting-p1-action-cancel": this.doClickP1Cancel,
             "click .setting-p1-action-apply": this.doClickP1Apply,
+            "click .setting-p1-action-cancel": this.doClickP1Cancel,
         };
     }
     protected initialize(): void {
@@ -55,7 +55,7 @@ class Setting extends View {
         return this.doClickClose();
     }
     protected doClickP1Apply(): Setting {
-        let errMsg = this.applyExprs();
+        const errMsg = this.applyExprs();
         if (errMsg) {
             this.$errorMsg.text(errMsg);
         } else {
@@ -79,15 +79,15 @@ class Setting extends View {
     }
     private eachFields(callback: (type: "F" | "E", tableName, fieldName, field, id) => void): void {
         for (let i = 0; i < this.expression.length(); i++) {
-            let fields = this.expression.getFields_T(i);
-            for (let fieldName in fields) {
+            const fields = this.expression.getFields_T(i);
+            for (const fieldName in fields) {
                 if (fields.hasOwnProperty(fieldName)) {
-                    let field = fields[fieldName];
-                    let f = fieldName[0];
+                    const field = fields[fieldName];
+                    const f = fieldName[0];
                     if (f === "F" || f === "E") {
-                        let tName = this.expression.getTableName_T(i).split(".");
-                        let tableName = tName[tName.length - 1];
-                        let inputId = "setting" + tableName + fieldName;
+                        const tName = this.expression.getTableName_T(i).split(".");
+                        const tableName = tName[tName.length - 1];
+                        const inputId = "setting" + tableName + fieldName;
                         callback.call(this, f, tableName, fieldName, field, inputId);
                     }
                 }
@@ -102,7 +102,7 @@ class Setting extends View {
             let value;
             let propName;
             let property;
-            let wrap = "<div class='setting-p1-item'><label for='" + id + "'>" +
+            const wrap = "<div class='setting-p1-item'><label for='" + id + "'>" +
                 tableName + "." + fieldName + "(" + field.type[0].toUpperCase() +
                 "):</label><input id='" + id + "' type='text'/></div>";
             if (type === "F") {
@@ -130,26 +130,26 @@ class Setting extends View {
     }
     private loadExprs(): Setting {
         this.$errorMsg.text("");
-        for (let id in this.exprMap) {
+        for (const id in this.exprMap) {
             if (this.exprMap.hasOwnProperty(id)) {
-                let item = this.exprMap[id];
+                const item = this.exprMap[id];
                 this.$("#" + id).val(item.expr);
             }
         }
         return this;
     }
     private applyExprs(): string {
-        for (let id in this.exprMap) {
+        for (const id in this.exprMap) {
             if (this.exprMap.hasOwnProperty(id)) {
-                let item = this.exprMap[id];
+                const item = this.exprMap[id];
                 item.field[item.prop] = this.$("#" + id).val();
             }
         }
-        let errMsg = this.expression.checkExpression();
+        const errMsg = this.expression.checkExpression();
         if (errMsg) {
-            for (let id in this.exprMap) {
+            for (const id in this.exprMap) {
                 if (this.exprMap.hasOwnProperty(id)) {
-                    let item = this.exprMap[id];
+                    const item = this.exprMap[id];
                     item.field[item.prop] = item.expr;
                 }
             }
