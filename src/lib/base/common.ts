@@ -3,6 +3,27 @@ import { IToken } from "./interface";
 // 内部公共函数
 // ----------
 
+// 获取**值**类型
+export function getValueType(v: any): string {
+    return v === null ? "null" : // 兼容IE8
+        Object.prototype.toString.call(v).replace("[object ", "").replace("]", "").toLowerCase();
+}
+// 是否为**字符串**
+export function isString(v: any): boolean {
+    return getValueType(v) === "string";
+}
+// 是否为**数字**
+export function isNumber(v: any): boolean {
+    return getValueType(v) === "number";
+}
+// 是否为**对象**
+export function isObject(v: any): boolean {
+    return getValueType(v) === "object";
+}
+// 是否为**数组**
+export function isArray(v: any): boolean {
+    return getValueType(v) === "array";
+}
 // 判断**tokenType**是否包含在**tokenTypes**中
 export function hasToken(tokenTypes: string, tokenType: string): boolean {
     return (tokenTypes + ",").indexOf(tokenType + ",") >= 0;
@@ -43,9 +64,9 @@ export function isFunctionToken(t: IToken, name: string): boolean {
     return t && t.tokenType === "VTK_COMMA" && // 自身为，结点
         t.parent && t.parent.tokenType === "VTK_PAREN" && // 父节点为()
         t.parent.parent && t.parent.parent.tokenType === "TK_IDEN" && // 祖父结点为abc标识符结点
-        t.parent.parent.tokenValue === name; // 函数名为name
+        t.parent.parent.tokenValue === name;
 }
-// 遍历语法树
+// 遍历**语法树**
 export function eachToken(token: IToken, fn: (token: IToken) => boolean, scope): boolean {
     let r = true;
     if (token.childs) { // 若有孩子节点, 先遍历孩子节点, 深度优先遍历
@@ -62,41 +83,19 @@ export function eachToken(token: IToken, fn: (token: IToken) => boolean, scope):
 export function format(str: string, ...values: string[]): string {
     return str.replace(/\{(\d+)\}/g, (m, i) => values[i]);
 }
-export function isArray(v: any): boolean {
-    return getValueType(v) === "array";
-}
-export function isString(v: any): boolean {
-    return getValueType(v) === "string";
-}
-export function isObject(v: any): boolean {
-    return getValueType(v) === "object";
-}
-export function isNumber(v: any): boolean {
-    return getValueType(v) === "number";
-}
-// 得到value的数据类型
-export function getValueType(value: any): string {
-    if (value === null) { // 兼容IE8，IE8下为[object Object]
-        return "null";
-    } else {
-        return Object.prototype.toString.call(value).replace("[object ", "").replace("]", "").toLowerCase();
-    }
-}
-// 比较数组
+// 比较**数组**是否相等
 function compareArray(farr: any, sarr: any, isKey: boolean): boolean {
-    let r = true;
-    if (farr.length !== sarr.length) {
-        r = false;
-    } else {
+    let r = farr.length === sarr.length;
+    if (r) {
         for (let i = 0; i < farr.length; i++) {
-            if (isKey === true) {
+            if (isKey === true) { // 查找是否存在
                 if (sarr.indexOf(farr[i]) === -1) {
-                    r = false; // 查找是否存在
+                    r = false;
                     break;
                 }
-            } else {
+            } else { // 数组元素递归比较是否相等
                 if (!compare(farr[i], sarr[i])) {
-                    r = false; // 数组元素递归比较是否相等
+                    r = false;
                     break;
                 }
             }
@@ -104,7 +103,7 @@ function compareArray(farr: any, sarr: any, isKey: boolean): boolean {
     }
     return r;
 }
-// 比较对象
+// 比较**对象**是否相等
 function compareObject(fobj: any, sobj: any): boolean {
     const f = [];
     const s = [];
@@ -131,38 +130,38 @@ function compareObject(fobj: any, sobj: any): boolean {
     }
     return r;
 }
+// 比较**值**是否相等
 export function compare(fobj: any, sobj: any): boolean {
-    // 比较两个对象或数组是否相等
+    let r;
     if (fobj !== null && sobj !== null && fobj !== undefined && sobj !== undefined) {
         const ftype = typeof (fobj);
         const stype = typeof (sobj);
         if (ftype === stype) {
             if (ftype === "object") { // 都是复合类型
-                if (fobj.constructor === Date && sobj.constructor === Date) { // 日期对象
-                    return fobj.valueOf() === sobj.valueOf();
-                } else if (fobj.constructor === Array && sobj.constructor === Array) { // 数组
-                    return compareArray(fobj, sobj, false);
-                } else if (fobj.constructor !== Array && sobj.constructor !== Array) { // 都不是数组
-                    return compareObject(fobj, sobj);
-                }
-                return false;
+                r = fobj.constructor === Date && sobj.constructor === Date ? fobj.valueOf() === sobj.valueOf() :
+                    fobj.constructor === Array && sobj.constructor === Array ? compareArray(fobj, sobj, false) :
+                    fobj.constructor !== Array && sobj.constructor !== Array ? compareObject(fobj, sobj) :
+                    false;
+            } else { // 都是简单类型
+                r = fobj === sobj;
             }
-            return fobj === sobj; // 都是简单类型
+        } else {
+            r = false;
         }
-        return false;
     } else {
-        return fobj === sobj;
+        r = fobj === sobj;
     }
+    return r;
 }
+// 遍历对象c中的属性, 将属性键值对依次添加到对象o中
 export function merger(o: object, c: object): object {
-    // 遍历对象c中的属性, 将属性键值对依次添加到对象o中
     if (isObject(o) && isObject(c)) {
         for (const p in c) {
             if (c.hasOwnProperty(p)) {
-                if (o[p] && isObject(o[p])) {
-                    merger(o[p], c[p]); // 嵌套, 可以扩充该对象的子对象
-                } else {
-                    o[p] = c[p]; // 添加新属性, 或覆盖原有属性值(同名属性类型不为object)
+                if (o[p] && isObject(o[p])) { // 嵌套, 可以扩充该对象的子对象
+                    merger(o[p], c[p]);
+                } else { // 添加新属性, 或覆盖原有属性值(同名属性类型不为object)
+                    o[p] = c[p];
                 }
             }
         }

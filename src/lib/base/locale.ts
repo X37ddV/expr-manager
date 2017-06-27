@@ -72,10 +72,14 @@ interface IFunctionConfig {
     };
 }
 
+// 多语言处理
+// ----------
+
 class Locale {
     public localeName: string = "zh-cn";
     private locales: object = {};
     private functions: object = {};
+    // 定义多语言
     public defineLocale(name: string, config: ILocaleConfig): void {
         if (config !== null) {
             this.locales[name] = merger(this.locales[name] || {}, config);
@@ -84,9 +88,11 @@ class Locale {
         }
         return;
     }
+    // 获取多语言
     public getLocale(name?: string): ILocaleConfig {
         return this.locales[name || this.localeName];
     }
+    // 定义函数描述
     public defineFunction(name: string, config: IFunctionConfig): void {
         if (config !== null) {
             this.functions[name] = merger(this.functions[name] || {}, config);
@@ -95,6 +101,7 @@ class Locale {
         }
         return;
     }
+    // 获取函数描述
     public getFunction(name?: string): IFunctionConfig {
         return this.functions[name || this.localeName];
     }

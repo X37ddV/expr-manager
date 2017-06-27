@@ -1,157 +1,123 @@
 import { isNumber } from "../lib/base/common";
 
-// Number
+// 数值函数
+// ----------
+
+// 转换数字类型为字符串
 const funcNumberToString = {
     fn: (context, source) => {
-        /// <summary>转换数字类型为字符串</summary>
-        /// <param name="source" type="Number"></param>
-        /// <returns type="Object">字符串</returns>
         return context.genValue(source.toValue() + "");
     },
     p: [],
     r: "string",
 };
+// 获取数的绝对值
 const funcNumberAbs = {
     fn: (context, source) => {
-        /// <summary>获取数的绝对值</summary>
-        /// <param name="source" type="Number"></param>
-        /// <returns type="Object">绝对值</returns>
         return source.abs();
     },
     p: [],
     r: "number",
 };
+// 对数进行向上取整
 const funcNumberCeil = {
     fn: (context, source) => {
-        /// <summary>对数进行向上取整</summary>
-        /// <param name="source" type="Number"></param>
-        /// <returns type="Object">数值</returns>
         return source.ceil();
     },
     p: [],
     r: "number",
 };
+// 对数进行向下取整
 const funcNumberFloor = {
     fn: (context, source) => {
-        /// <summary>对数进行向下取整</summary>
-        /// <param name="source" type="Number"></param>
-        /// <returns type="Object">数值</returns>
         return source.floor();
     },
     p: [],
     r: "number",
 };
+// 获取数的余弦
 const funcNumberCos = {
     fn: (context, source) => {
-        /// <summary>获取数的余弦</summary>
-        /// <param name="source" type="Number"></param>
-        /// <returns type="Object">余弦</returns>
         return source.cos();
     },
     p: [],
     r: "number",
 };
+// 获取 e 的指数
 const funcNumberExp = {
     fn: (context, source) => {
-        /// <summary>获取 e 的指数</summary>
-        /// <param name="source" type="Number"></param>
-        /// <returns type="Object">指数</returns>
         return source.exp();
     },
     p: [],
     r: "number",
 };
+// 获取数的自然对数（底为 e）
 const funcNumberLn = {
     fn: (context, source) => {
-        /// <summary>获取数的自然对数（底为 e）</summary>
-        /// <param name="source" type="Number"></param>
-        /// <returns type="Object">自然对数</returns>
         return source.ln();
     },
     p: [],
     r: "number",
 };
+// 获取数的指定底数的对数
 const funcNumberLog = {
     fn: (context, source, base) => {
-        /// <summary>获取数的指定底数的对数</summary>
-        /// <param name="source" type="Number"></param>
-        /// <param name="base" type="Number">底数</param>
-        /// <returns type="Object">对数</returns>
         return source.log(base);
     },
     p: ["number"],
     r: "number",
 };
+// 获取数的指定指数的次幂
 const funcNumberPower = {
     fn: (context, source, exponent) => {
-        /// <summary>获取数的指定指数的次幂</summary>
-        /// <param name="source" type="Number"></param>
-        /// <param name="exponent" type="Number">指数</param>
-        /// <returns type="Object">次幂</returns>
         return source.power(exponent);
     },
     p: ["number"],
     r: "number",
 };
+// 根据保留的小数位数对数四舍五入
 const funcNumberRound = {
     fn: (context, source, scale) => {
-        /// <summary>根据保留的小数位数对数四舍五入</summary>
-        /// <param name="source" type="Number"></param>
-        /// <param name="scale" type="Number">保留小数位数</param>
-        /// <returns type="Object">数值</returns>
         return source.round(scale);
     },
     p: ["number"],
     r: "number",
 };
+// 获取数的正弦
 const funcNumberSin = {
     fn: (context, source) => {
-        /// <summary>获取数的正弦</summary>
-        /// <param name="source" type="Number"></param>
-        /// <returns type="Object">正弦</returns>
         return source.sin();
     },
     p: [],
     r: "number",
 };
+// 获取数的平方根
 const funcNumberSqrt = {
     fn: (context, source) => {
-        /// <summary>获取数的平方根</summary>
-        /// <param name="source" type="Number"></param>
-        /// <returns type="Object">平方根</returns>
         return source.sqrt();
     },
     p: [],
     r: "number",
 };
+// 获取树的正切值
 const funcNumberTan = {
     fn: (context, source) => {
-        /// <summary>获取树的正切值</summary>
-        /// <param name="source" type="Number"></param>
-        /// <returns type="Object">正切值</returns>
         return source.tan();
     },
     p: [],
     r: "number",
 };
+// 根据保留的小数位数对数进行截断
 const funcNumberTrunc = {
     fn: (context, source, scale) => {
-        /// <summary>根据保留的小数位数对数进行截断</summary>
-        /// <param name="source" type="Number"></param>
-        /// <param name="scale" type="Number">保留小数位数</param>
-        /// <returns type="Object">数值</returns>
         return source.trunc(scale);
     },
     p: ["number"],
     r: "number",
 };
+// 获取人民币大写
 const funcNumberToRMB = {
     fn: (context, source, rmb, big) => {
-        /// <summary>获取人民币大写</summary>
-        /// <param name="source" type="Number"></param>
-        /// <param name="rmb" type="Boolean">是否人民币(默认true)</param>
-        /// <param name="big" type="Boolean">是否大写(默认true)</param>
-        /// <returns type="Object">人民币大写</returns>
         const conversion = (num, isRMB, isBig) => {
             const cn = (isBig ? "零壹贰叁肆伍陆柒捌玖" : "零一二三四五六七八九").split("");
             const cq = (isBig ? "拾佰仟" : "十百千").split(""); cq.unshift("");
@@ -170,7 +136,7 @@ const funcNumberToRMB = {
             }
             x = x.reverse();
 
-            // 处理整数部分
+            // - 处理整数部分
             let c = "";
             let i = 0;
             let t = [];
@@ -178,11 +144,12 @@ const funcNumberToRMB = {
             while (i < x.length) {
                 t.push(x[i++]);
                 if (t.length === 4 || i === x.length) {
-                    // 从个位数起以每四位数为一小节
+                    // + 从个位数起以每四位数为一小节
                     for (let j = 0; j < t.length; j++) {
                         const n = Number(t[j]);
                         if (n === 0) {
-                            // 1. 避免 "零" 的重覆出现; 2. 个位数的 0 不必转成 "零"
+                            // 1. 避免 "零" 的重覆出现;
+                            // 2. 个位数的 0 不必转成 "零"
                             if (!inZero && j !== 0) {
                                 c = cn[0] + c;
                             }
@@ -192,7 +159,7 @@ const funcNumberToRMB = {
                             inZero = false;
                         }
                     }
-                    // 加上该小节的位数
+                    // + 加上该小节的位数
                     if (c.length === 0) {
                         if (v.length > 0 && v.split("")[0] !== cn[0]) {
                             v = cn[0] + v;
@@ -205,13 +172,13 @@ const funcNumberToRMB = {
                 }
             }
 
-            // 处理小数部分
+            // - 处理小数部分
             if (y.length > 0) {
                 v += cd;
                 for (let k = 0; k < y.length; k++) {
                     const m = Number(y[k]);
                     if (isRMB) {
-                        // 避免小数点后 "零" 的重覆出现
+                        // + 避免小数点后 "零" 的重覆出现
                         if ((m !== 0) || (v.substring(v.length - 1) !== cn[0]) || (k > 2)) {
                             v += cn[m];
                         }
@@ -223,7 +190,7 @@ const funcNumberToRMB = {
                     }
                 }
             } else {
-                // 处理无小数部分时整数部分的结尾
+                // + 处理无小数部分时整数部分的结尾
                 if (v.length === 0) {
                     v = cn[0];
                 }
@@ -232,17 +199,17 @@ const funcNumberToRMB = {
                 }
             }
 
-            // 其他例外状况的处理, 非人民币则将 "壹拾" 或 "一十" 改为 "拾" 或 "十"
+            // - 其他例外状况的处理, 非人民币则将 "壹拾" 或 "一十" 改为 "拾" 或 "十"
             if (!isRMB && v.substring(0, 2) === cn[1] + cq[1]) {
                 v = v.substring(1);
             }
 
-            // 没有整数部分 且 有小数部分
+            // - 没有整数部分 且 有小数部分
             if (v.split("")[0] === cd) {
                 v = isRMB ? v.substring(1) : cn[0] + v;
             }
 
-            // 是否为负数
+            // - 是否为负数
             if (isNegative) {
                 v = cf + v;
             }
@@ -256,6 +223,7 @@ const funcNumberToRMB = {
     p: ["boolean?", "boolean?"],
     r: "string",
 };
+// 数值函数列表
 export default {
     Abs: funcNumberAbs,
     Ceil: funcNumberCeil,

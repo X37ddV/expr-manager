@@ -37,6 +37,17 @@ var typescriptConfig = {
     isolatedModules: false,
     allowSyntheticDefaultImports: true
 };
+var rollupHideComments = function(options) {
+    if ( options === void 0 ) options = {};
+
+	return {
+		name: "hidecomments",
+
+		transformBundle: function transformBundle(code) {
+			return code.replace(/\s\/\/\/\s.*/g, "");
+		}
+	};
+};
 
 gulp.task("lint:expr", () =>
     gulp.src(path.join(rootPath, "src", "**", "*.ts"))
@@ -64,6 +75,7 @@ gulp.task("build:expr", function() {
         plugins: [
             rollupJson(),
             rollupTypescript(typescriptConfig),
+            rollupHideComments(),
         ],
         external: ["decimal.js", "moment"],
     }).then(function (bundle) {

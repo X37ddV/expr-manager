@@ -2,6 +2,9 @@ import locale from "../base/locale";
 import { format } from "./common";
 import { IContext } from "./interface";
 
+// 类型
+// ----------
+
 export default class Type {
     private context: IContext;
     private type;
@@ -10,6 +13,7 @@ export default class Type {
     private entity;
     private depends;
     private errorMsg;
+    // 类型构造函数
     constructor(context: IContext, type, info, data, entity, depends, errorMsg) {
         this.context = context;
         this.type = type || "undefined";
@@ -19,38 +23,39 @@ export default class Type {
         this.depends = depends || null;
         this.errorMsg = errorMsg || "";
     }
+    // 生成类型对象
     public genType(type, info?, data?, entity?, depends?, errorMsg?) {
-        /// <summary>生成ExprType对象</summary>
         return new Type(this.context, type, info, data, entity, depends, errorMsg);
     }
+    // 生成错误类型对象
     public genErrorType(errorMsg) {
-        /// <summary>有错误时，生成对应的ExprType对象</summary>
         return this.genType(undefined, undefined, undefined, undefined, undefined, errorMsg);
     }
+    // 该类型对象是否包含了数据
     public hasData() {
-        /// <summary>该ExprType对象是否包含了数据</summary>
         return this.data !== undefined;
     }
+    // 得到类型值
     public toValue() {
-        /// <summary>得到ExprType对象的type值</summary>
         return this.type;
     }
+    // 追加数组元素
     public arrayPush(et) {
-        /// <summary>将et放入this数组末尾(ev为数组时将被视为一个元素)</summary>
         if (this.type === "array") {
-            this.info.push(et.info); // info存储数组元素的类型
-            this.data.push(et.data); // data存储数组元素的值
+            this.info.push(et.info); /// info存储数组元素的类型
+            this.data.push(et.data); /// data存储数组元素的值
         }
         return this;
     }
+    // 连接数组元素
     public arrayConcat(et) {
-        /// <summary>将et数组中的元素挨个放入this数组末尾</summary>
         if (this.type === "array" && et.type === "array") {
-            this.info = this.info.concat(et.info); // info存储数组元素的类型
-            this.data = this.data.concat(et.data); // data存储数组元素的值
+            this.info = this.info.concat(et.info); /// info存储数组元素的类型
+            this.data = this.data.concat(et.data); /// data存储数组元素的值
         }
         return this;
     }
+    // 设置对象属性
     public objectSetProperty(et) {
         if (this.type === "object") {
             const h = et.info;
@@ -60,6 +65,7 @@ export default class Type {
         }
         return this;
     }
+    // 批量设置对象属性
     public objectSetProperties(et) {
         if (this.type === "object" && et.type === "array") {
             for (const item of et.info) {
@@ -71,26 +77,29 @@ export default class Type {
         }
         return this;
     }
+    // 取正/负值
     public negative(op) {
-        /// <summary>取正/负值</summary>
         let t;
         if (this.type === "null" || this.type === "undefined" || this.type === "number") {
             t = this.genType("number");
-        } else { // 该运算数类型无法进行取正/负运算
+        } else { /// 该运算数类型无法进行取正/负运算
             t = op === "-" ? locale.getLocale().MSG_EX_NEGATIVE : locale.getLocale().MSG_EX_POSITIVE;
             t = this.genErrorType(format(t, this.type));
         }
         return t;
     }
+    // 非运算
     public not() {
         return this.genType("boolean");
     }
+    // 乘法
     public multiply(et) {
         return (this.type === "null" && et.type === "null") ? this.genType("null") :
             ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
                 (et.type === "number" || et.type === "null" || et.type === "undefined")) ? this.genType("number") :
                 this.genErrorType(format(locale.getLocale().MSG_EX_MULTIPLY, this.type, et.type));
     }
+    // 除法
     public divide(et) {
         let t;
         if (this.type === "null" && et.type === "null") {
@@ -105,6 +114,7 @@ export default class Type {
         }
         return t;
     }
+    // 求余
     public remainder(et) {
         let t;
         if (this.type === "null" && et.type === "null") {
@@ -119,6 +129,7 @@ export default class Type {
         }
         return t;
     }
+    // 加法
     public add(et) {
         return (this.type === "undefined" && et.type === "undefined") ? this.genType("undefined") :
             (this.type === "null" && et.type === "null") ? this.genType("null") :
@@ -132,6 +143,7 @@ export default class Type {
                                 et.type === "undefined")) ? this.genType("array") :
                             this.genErrorType(format(locale.getLocale().MSG_EX_ADD, this.type, et.type));
     }
+    // 减法
     public subtract(et) {
         return (this.type === "undefined" && et.type === "undefined") ?
             this.genType("undefined") :
@@ -145,6 +157,7 @@ export default class Type {
                         this.genType("array") :
                         this.genErrorType(format(locale.getLocale().MSG_EX_SUBTRACT, this.type, et.type));
     }
+    // 等于
     public equal(et, op) {
         let t;
         const b = op === "==";
@@ -157,6 +170,7 @@ export default class Type {
         }
         return t;
     }
+    // 比较运算
     public compare(et, op) {
         if (op === "==" || op === "!=") {
             return this.equal(et, op);
@@ -178,18 +192,21 @@ export default class Type {
             return t;
         }
     }
+    // 与运算
     public and(et) {
         return (this.type === "undefined" || et.type === "undefined" || this.type === "null" || et.type === "null" ||
             (this.type === "boolean" && et.type === "boolean")) ?
             this.genType("boolean") :
             this.genErrorType(format(locale.getLocale().MSG_EX_AND, this.type, et.type));
     }
+    // 或运算
     public or(et) {
         return (this.type === "undefined" || et.type === "undefined" || this.type === "null" || et.type === "null" ||
             (this.type === "boolean" && et.type === "boolean")) ?
             this.genType("boolean") :
             this.genErrorType(format(locale.getLocale().MSG_EX_OR, this.type, et.type));
     }
+    // 下标运算
     public subscript(et) {
         let t;
         const i = (et.type === "array") ?
@@ -215,16 +232,16 @@ export default class Type {
         }
         return t;
     }
+    // 获取{key:...,value:...}键值对对象
     public hashItem(et) {
-        /// <summary>得到{key:...,value:...}键值对对象</summary>
         return this.genType("object", { key: this.data, value: et.info }, { key: this.data, value: et.data });
     }
+    // 获取变量值类型对象
     public getVariableType(et) {
         return this.context.getVariableType(this.data, et);
     }
+    // 获取函数返回结果类型对象
     public getFunctionType(et) {
-        /// <summary>得到函数执行结果的ExprType对象</summary>
-        /// <param name="ev">函数调用者</param>
         return this.context.getFunctionType(this.info.key, et, this.info.value, this.data.value);
     }
 }

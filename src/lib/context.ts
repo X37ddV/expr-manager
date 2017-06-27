@@ -5,13 +5,16 @@ import Context from "./base/context";
 import locale from "./base/locale";
 import ExprCurrent from "./current";
 
+// 表达式上下文
+// ----------
+
 export default class ExprContext extends Context {
-    private exprContext: ExprCurrent = new ExprCurrent(); // 计算环境堆栈
-    private pageContext = { $C: {} };              // 页面上下文
-    private dataContext;                           // 数据上下文
-    private contextVariables = [];                 // 用于存储环境变量
-    private data;                                  // 全部数据
-    private functions = {};                        // 函数列表
+    private exprContext: ExprCurrent = new ExprCurrent(); /// 计算环境堆栈
+    private pageContext = { $C: {} };              /// 页面上下文
+    private dataContext;                           /// 数据上下文
+    private contextVariables = [];                 /// 用于存储环境变量
+    private data;                                  /// 全部数据
+    private functions = {};                        /// 函数列表
     private fieldName;
     private fieldDisplayName;
     private fieldValue;

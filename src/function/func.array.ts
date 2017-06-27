@@ -1,7 +1,10 @@
 import { compare } from "../lib/base/common";
 
+// 集合私有函数
+// ----------
+
+// 分别将source中每个值作为计算环境求出expr的值
 function doEachCollection(source, expr, fn) {
-    /// <summary>分别将source中每个值作为计算环境求出expr的值</summary>
     let r;
     let msg = "";
     if (source.isEntity()) { // source为实体数据，如Root().E1[0].Entity1.Sum("ID")中的Root().E1[0].Entity1
@@ -19,8 +22,7 @@ function doEachCollection(source, expr, fn) {
             }
         }
         const map = source.entity.map;
-        for (let i = 0; i < map.length; i++) {
-            // 遍历map，计算将每一个map元素作为实体计算环境时expr的值
+        for (let i = 0; i < map.length; i++) { // 遍历map，计算将每一个map元素作为实体计算环境时expr的值
             r = this.calcEntityExpr(expr, source.entity.name, map[i]);
             msg = r.errorMsg;
             if (msg === "") {
@@ -53,22 +55,22 @@ function doEachCollection(source, expr, fn) {
             }
         }
     }
-    return msg; // 返回出错信息
+    return msg;
 }
+// 将source中求出的值经过fn处理后最终的结果
 function doCompCollection(source, expr, fn) {
-    /// <summary>将source中求出的值经过fn处理后最终的结果</summary>
     let r;
     let msg;
     msg = doEachCollection.call(this, source, expr, (a) => { // a为分别将source中每个值作为计算环境求出expr的值
         if (r) { // 从第二个计算数开始，与结果值r做fn运算
-            const tmp = fn.call(this, r, a); // 相加，比较大小...
+            const tmp = fn.call(this, r, a);
             if (tmp.errorMsg) { // r,a两计算数运算出错，如：[1,2,[3]].Sum()
                 return tmp.errorMsg;
-            } else {
-                r = tmp; // 存储中间结果，如Max运算中，r始终存储fn函数返回的最大值
+            } else { // 存储中间结果，如Max运算中，r始终存储fn函数返回的最大值
+                r = tmp;
             }
-        } else {
-            r = a; // a为第一个计算数，直接赋给结果值r
+        } else { // a为第一个计算数，直接赋给结果值r
+            r = a;
         }
     });
     if (msg !== "") {
@@ -80,26 +82,23 @@ function doCompCollection(source, expr, fn) {
     return r;
 }
 
-// Array
+// 集合函数
+// ----------
+
+// 获取集合元素个数
 const funcArrayCount = {
     e: "value",
     fn: (context, source) => {
-        /// <summary>获取集合元素个数</summary>
-        /// <param name="source" type="Array"></param>
-        /// <returns type="Object">个数</returns>
         const r = source.toValue().length;
         return context.genValue(r, "", null, "");
     },
     p: [],
     r: "number",
 };
+// 获取集合元素的合计值
 const funcArraySum = {
     e: "value",
     fn: (context, source, expr) => {
-        /// <summary>获取集合元素的合计值</summary>
-        /// <param name="source" type="Array"></param>
-        /// <param name="expr" type="String">表达式</param>
-        /// <returns type="Object">合计值</returns>
         expr = expr || "$0";
         const r = doCompCollection.call(context, source, expr, (a, b) => {
             return a.add(b);
@@ -109,13 +108,10 @@ const funcArraySum = {
     p: ["expr?"],
     r: "undefined",
 };
+// 获取集合元素的最大值
 const funcArrayMax = {
     e: "value",
     fn: (context, source, expr) => {
-        /// <summary>获取集合元素的最大值</summary>
-        /// <param name="source" type="Array"></param>
-        /// <param name="expr" type="String">表达式</param>
-        /// <returns type="Object">最大值</returns>
         expr = expr || "$0";
         const r = doCompCollection.call(context, source, expr, (a, b) => {
             let v = a.compare(b, ">");
@@ -129,13 +125,10 @@ const funcArrayMax = {
     p: ["expr?"],
     r: "undefined",
 };
+// 获取集合元素的最小值
 const funcArrayMin = {
     e: "value",
     fn: (context, source, expr) => {
-        /// <summary>获取集合元素的最小值</summary>
-        /// <param name="source" type="Array"></param>
-        /// <param name="expr" type="String">表达式</param>
-        /// <returns type="Object">最小值</returns>
         expr = expr || "$0";
         const r = doCompCollection.call(context, source, expr, (a, b) => {
             let v = a.compare(b, "<");
@@ -149,13 +142,10 @@ const funcArrayMin = {
     p: ["expr?"],
     r: "undefined",
 };
+// 获取集合元素的平均值
 const funcArrayAverage = {
     e: "value",
     fn: (context, source, expr) => {
-        /// <summary>获取集合元素的平均值</summary>
-        /// <param name="source" type="Array"></param>
-        /// <param name="expr" type="String">表达式</param>
-        /// <returns type="Object">平均值</returns>
         expr = expr || "$0";
         let r = doCompCollection.call(context, source, expr, (a, b) => {
             return a.add(b);
@@ -173,13 +163,10 @@ const funcArrayAverage = {
     p: ["expr?"],
     r: "number",
 };
+// 获取集合中唯一元素的集合
 const funcArrayDistinct = {
     e: "data",
     fn: (context, source, expr) => {
-        /// <summary>获取集合中唯一元素的集合</summary>
-        /// <param name="source" type="Array"></param>
-        /// <param name="expr" type="String">表达式</param>
-        /// <returns type="Object">集合</returns>
         expr = expr || "$0";
         let r = context.genValue([], "array");
         const arr = [];
@@ -216,13 +203,10 @@ const funcArrayDistinct = {
     p: ["expr?"],
     r: "array",
 };
+// 获取满足条件的元素集合
 const funcArrayWhere = {
     e: "data",
     fn: (context, source, expr) => {
-        /// <summary>获取满足条件的元素集合</summary>
-        /// <param name="source" type="Array"></param>
-        /// <param name="expr" type="String">条件表达式</param>
-        /// <returns type="Object">集合</returns>
         expr = expr || "true";
         let r = context.genValue([], "array");
         if (source.entity) {
@@ -246,6 +230,7 @@ const funcArrayWhere = {
     p: ["expr"],
     r: "array",
 };
+// 集合函数列表
 export default {
     Average: funcArrayAverage,
     Count: funcArrayCount,

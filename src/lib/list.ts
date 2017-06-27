@@ -68,7 +68,7 @@ export default class ExprList {
             entityName: entity,     // 实体名
             fullName: name,         // 全名
             propertyName: property, // 属性名
-            type: t,             // 新增、删除、修改
+            type: t,                // 新增、删除、修改
             updateMode: "Single",   // 更新模式 Single: 单挑记录修改
             updateTarget: "",       // 更新目标
         }];
