@@ -1,5 +1,8 @@
 import locale from "../lib/base/locale";
 
+// 多语言 - 中文
+// ----------
+
 locale.defineLocale("zh-cn", {
     // context
     MSG_EC_FUNC_E: "只有实体对象才可以调用 {0} 方法",
@@ -64,7 +67,7 @@ locale.defineLocale("zh-cn", {
     MSG_EX_SUBTRACT: "{0} 和 {1} 无法做减法运算",
     MSG_EX_TRUNC: "做截断运算时，保留小数位数不能为负数: {0}",
 });
-
+// 函数描述
 locale.defineFunction("zh-cn", {
     "FieldDisplayName": { fn: "获取当前字段别名", p: [], r: "字段别名（显示名称）" },
     "FieldName": { fn: "获取当前字段唯一标识", p: [], r: "字段唯一标识" },

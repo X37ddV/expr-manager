@@ -3559,27 +3559,30 @@ var Check = (function () {
     return Check;
 }());
 
+// 表达式游标
+// ----------
 var ExprCurrent = (function () {
     function ExprCurrent() {
         this.curr = [];
     }
+    // 设置数据游标
     ExprCurrent.prototype.setDataCursor = function (cursor) {
         this.dataCursor = cursor;
     };
+    // 向栈顶添加新的计算环境
     ExprCurrent.prototype.push = function (c) {
-       
         this.curr.unshift({ pIndex: 0, params: c });
     };
+    // 删除栈顶的计算环境
     ExprCurrent.prototype.pop = function () {
-       
         this.curr.shift();
     };
+    // 栈顶计算环境的params属性是否存在第index条记录
     ExprCurrent.prototype.isValid = function (index) {
-       
         return index >= 0 && this.curr.length > 0 && index < this.curr[0].params.length;
     };
+    // 栈顶计算环境的params属性的第index条记录是否为实体数据
     ExprCurrent.prototype.isEntityData = function (index) {
-       
         if (this.curr.length > 0) {
             var c = this.curr[0];
             c.pIndex = index || 0;
@@ -3589,14 +3592,14 @@ var ExprCurrent = (function () {
             return false;
         }
     };
+    // 得到栈顶计算环境的params属性的第index条记录存储的实体名
     ExprCurrent.prototype.getEntityName = function (index) {
-       
         return this.getData(index) || "";
     };
+    // 得到实体全名称entityName的访问游标
     ExprCurrent.prototype.getEntityDataCursor = function (entityName, index) {
-       
         var r = entityName ? this.dataCursor[entityName] : 0;
-        // 从计算环境中得到已经存好的访问游标，如：Root().E1[1].Entity1.Sum("ID")中的1
+       
         for (var i = 0; i < this.curr.length; i++) {
             var c = this.curr[i];
             if (i === 0) {
@@ -3610,8 +3613,8 @@ var ExprCurrent = (function () {
         }
         return r;
     };
+    // 得到栈顶计算环境的params属性的第index条记录存储的数据
     ExprCurrent.prototype.getData = function (index) {
-       
         var r;
         if (this.curr.length > 0) {
             var c = this.curr[0];
@@ -3634,18 +3637,23 @@ var ExprContext = (function (_super) {
         this.contextVariables = [];
         this.functions = {};
     }
+    // 设置数据游标
     ExprContext.prototype.setDataCursor = function (cursor) {
         this.exprContext.setDataCursor(cursor);
     };
+    // 设置页面上下文
     ExprContext.prototype.setPageContext = function (ctx) {
         this.pageContext.$C = ctx;
     };
+    // 设置数据上下文
     ExprContext.prototype.setDataContext = function (ctx) {
         this.dataContext = ctx;
     };
+    // 设置数据
     ExprContext.prototype.setData = function (d) {
         this.data = d;
     };
+    // 添加函数
     ExprContext.prototype.addFunction = function (func) {
         var gs;
         gs = {};
@@ -3669,26 +3677,25 @@ var ExprContext = (function (_super) {
         }
         return merger(this.functions, gs);
     };
+    // 获取函数
     ExprContext.prototype.getFunction = function () {
         return this.functions;
     };
+    // 获取IfNull函数名
     ExprContext.prototype.doGetIfNullName = function () {
         return "IfNull";
     };
+    // 获取IIf函数名
     ExprContext.prototype.doGetIIfName = function () {
         return "IIf";
     };
+    // 获取函数返回结果类型对象
     ExprContext.prototype.doGetFunctionType = function (name, source, paramType, paramData) {
-       
-       
-       
-       
-       
         var r;
         var t = (source !== null) ?
             (source.entity ? source.entity.type : source.type) :
-            ""; // 无显式调用者，全局函数
-        var ft = this.getFuncType(t, name, paramType); // 类型t的name函数
+            "";
+        var ft = this.getFuncType(t, name, paramType);
         if (ft === null) {
             r = this.genErrorType(format(locale.getLocale().MSG_EC_FUNC_T, t, name));
         }
@@ -3758,32 +3765,30 @@ var ExprContext = (function (_super) {
                     if (depends.length === 0) {
                         depends = null;
                     }
-                    r = this.genType(ft.r, ft.r, undefined, entity, depends); // 函数返回的ExprType对象
+                    r = this.genType(ft.r, ft.r, undefined, entity, depends);
                 }
             }
         }
         return r;
     };
+    // 获取函数返回值
     ExprContext.prototype.doGetFunctionValue = function (name, source, paramValue) {
-       
-       
-       
-       
         var t = (source !== null) ?
             (source.entity ? source.entity.type : source.type) :
-            ""; // 无显式调用者，全局函数
-        var p = [source].concat(paramValue); // 实参数组
-        var pt = []; // 各个实参类型组成的数组
+            "";
+        var p = [source].concat(paramValue);
+        var pt = [];
         for (var _i = 0, paramValue_1 = paramValue; _i < paramValue_1.length; _i++) {
             var item = paramValue_1[_i];
             pt.push(getValueType(item));
         }
-        var f = this.getFunc(t, name, pt); // 类型t的name函数
+        var f = this.getFunc(t, name, pt);
         var r = f ?
             f.fn.apply(this, [this].concat(p)) :
-            this.genErrorValue(format(locale.getLocale().MSG_EC_FUNC_P, t, name)); // 没有该函数或参数不匹配
+            this.genErrorValue(format(locale.getLocale().MSG_EC_FUNC_P, t, name));
         return r;
     };
+    // 获取变量类型对象
     ExprContext.prototype.doGetVariableType = function (name, source) {
         var r;
         var pIndex;
@@ -3797,7 +3802,7 @@ var ExprContext = (function (_super) {
                 pIndex = Number(pIndex);
                 if (!isNaN(pIndex)) {
                     if (this.exprContext.isValid(pIndex)) {
-                        name = ""; // 为了区分合法的$0,$1...与一般属性名a,b...，它们的处理方式不一样
+                        name = "";
                     }
                     else {
                         r = this.genErrorType(format(locale.getLocale().MSG_EC_VARI_N, name));
@@ -3849,8 +3854,8 @@ var ExprContext = (function (_super) {
         }
         return r;
     };
+    // 获取变量值
     ExprContext.prototype.doGetVariableValue = function (name, source) {
-       
         var r;
         var pIndex;
         pIndex = 0;
@@ -3863,7 +3868,7 @@ var ExprContext = (function (_super) {
                 pIndex = Number(pIndex);
                 if (!isNaN(pIndex)) {
                     if (this.exprContext.isValid(pIndex)) {
-                        name = ""; // 为了区分合法的$0,$1...与一般属性名a,b...，它们的处理方式不一样
+                        name = "";
                     }
                     else {
                         r = this.genErrorValue(format(locale.getLocale().MSG_EC_VARI_N, name));
@@ -3875,7 +3880,7 @@ var ExprContext = (function (_super) {
             }
         }
         if (!r) {
-            var value = void 0; // 包含了name等属性的js对象
+            var value = void 0;
             if (this.exprContext.isEntityData(pIndex)) {
                 var entity = void 0;
                 var parentObj = void 0;
@@ -3887,13 +3892,14 @@ var ExprContext = (function (_super) {
                     else {
                         value = (entity.field !== "" || name === "") ?
                             this.getEntityData(entity.name, pIndex) :
-                            this.getEntityData(this.getParentName(entity.name), pIndex); // name为当前信息默认实体E1的子实体,Entity1
+                            this.getEntityData(this.getParentName(entity.name), pIndex);
                     }
                     parentObj = null;
                 }
                 else {
                     value = source.toValue();
-                    if (source.entity && !(source.entity.type === "object" && source.entity.field !== "")) {
+                    if (source.entity &&
+                        !(source.entity.type === "object" && source.entity.field !== "")) {
                         entity = this.genEntityInfo(this.getPropertyName(source.entity.fullName, name));
                         if (!entity) {
                             r = this.genErrorValue(format(locale.getLocale().MSG_EC_PROP_N, name));
@@ -3908,7 +3914,7 @@ var ExprContext = (function (_super) {
                 }
                 if (!r) {
                     if (value) {
-                        // source==null时，$0,$1...被视为特殊的访问标记，并不是取对象属性，而是取整个对象
+                       
                         if (!(source === null && name === "")) {
                             value = value[name];
                         }
@@ -3927,7 +3933,7 @@ var ExprContext = (function (_super) {
                         if (r && r.type === "array" && r.entity) {
                             r.entity.map = [];
                             for (var i = 0; i < value.length; i++) {
-                                r.entity.map.push(i); // map存放该实体数组有效的访问下标
+                                r.entity.map.push(i);
                             }
                         }
                     }
@@ -3958,13 +3964,14 @@ var ExprContext = (function (_super) {
         }
         return r;
     };
+    // 获取实体类型对象
     ExprContext.prototype.doGetEntityType = function (source) {
         var e = this.genEntityInfo(source.entity, "object");
         var t = this.genType("object", "object", undefined, e, [e.fullName]);
         return t;
     };
+    // 获取实体值，根据游标索引
     ExprContext.prototype.doGetEntityValue = function (source, index) {
-       
         var v = source.toValue()[index];
         var e = this.genEntityInfo(source.entity, "object");
         e.recNo = source.entity.map[index];
@@ -3972,10 +3979,8 @@ var ExprContext = (function (_super) {
         var r = this.genValue(v, getValueType(v), e, "", parentObj);
         return r;
     };
+    // 获取实体信息
     ExprContext.prototype.genEntityInfo = function (fullName, type) {
-       
-       
-       
         if (getValueType(fullName) === "object") {
             fullName = fullName.fullName;
         }
@@ -3984,9 +3989,9 @@ var ExprContext = (function (_super) {
         var dataType;
         if (fullName !== "") {
             var p = fullName.split(".");
-            var x = p[0]; // "E1"
+            var x = p[0];
             var c = this.dataContext;
-            var t = c[x]; // dataContext["E1"]
+            var t = c[x];
             if (t) {
                 name.push(x);
                 for (var i = 1; i < p.length; i++) {
@@ -4000,7 +4005,7 @@ var ExprContext = (function (_super) {
                         if (f !== "") {
                             f += ".";
                         }
-                        f += x; // 实体出现"x.y"形式的属性名
+                        f += x;
                         if (t.fields && t.fields[f]) {
                             field.push(x);
                             dataType = t.fields[f].type;
@@ -4030,14 +4035,14 @@ var ExprContext = (function (_super) {
         }
         return r;
     };
+    // 获取根数据值
     ExprContext.prototype.getRootValue = function () {
-       
         var entity = this.genEntityInfo("", "object");
         entity.recNo = 0;
         return this.genValue(this.data, "object", entity, "");
     };
+    // 获取父实体值
     ExprContext.prototype.getParentValue = function (source) {
-       
         var r;
         if (this.exprContext.isEntityData()) {
             var entity = void 0;
@@ -4058,7 +4063,7 @@ var ExprContext = (function (_super) {
             if (!r) {
                 entity = this.genEntityInfo(this.getParentName(entity), "object");
                 entity.recNo = this.exprContext.getEntityDataCursor(entity.name);
-                var value = this.getEntityData(entity.name); // 取父实体对象
+                var value = this.getEntityData(entity.name);
                 r = this.genValue(value, "", entity);
             }
         }
@@ -4067,8 +4072,8 @@ var ExprContext = (function (_super) {
         }
         return r;
     };
+    // 获取实体数据，根据游标索引
     ExprContext.prototype.getEntityData = function (entityName, index) {
-       
         var d = this.data;
         if (entityName !== "") {
             var p = entityName.split(".");
@@ -4076,9 +4081,9 @@ var ExprContext = (function (_super) {
             for (var _i = 0, p_1 = p; _i < p_1.length; _i++) {
                 var prop = p_1[_i];
                 cp.push(prop);
-                d = d[prop]; // data[E1],得到实体数组
+                d = d[prop];
                 var cursor = this.exprContext.getEntityDataCursor(cp.join("."), index);
-                d = d[cursor]; // 得到实体数组中第cursor条实体记录
+                d = d[cursor];
                 if (d === undefined) {
                     break;
                 }
@@ -4086,14 +4091,12 @@ var ExprContext = (function (_super) {
         }
         return d;
     };
+    // 根据索引获取数据
     ExprContext.prototype.getData = function (index) {
-       
         return this.exprContext.getData(index);
     };
+    // 获取父名称
     ExprContext.prototype.getParentName = function (name) {
-       
-       
-       
         var p = name.split(".");
         var r;
         if (p.length > 0) {
@@ -4105,16 +4108,14 @@ var ExprContext = (function (_super) {
         }
         return r;
     };
+    // 获取实体属性全名称
     ExprContext.prototype.getPropertyName = function (name, prop) {
-       
-       
-       
         return (name && prop) ?
             (name + "." + prop) :
             (name ? name : prop);
     };
+    // 获取当前实体的索引号，没有实体返回-1
     ExprContext.prototype.getRecNo = function (source) {
-       
         var r;
         if (this.exprContext.isEntityData()) {
             var entity = void 0;
@@ -4126,7 +4127,7 @@ var ExprContext = (function (_super) {
             else {
                 r = (source.entity && source.entity.field === "") ?
                     this.genValue(source.entity.recNo) :
-                    this.genErrorValue(format(locale.getLocale().MSG_EC_FUNC_E, "RecNo")); // {x:1}.RecNo()
+                    this.genErrorValue(format(locale.getLocale().MSG_EC_FUNC_E, "RecNo"));
             }
         }
         else {
@@ -4134,17 +4135,20 @@ var ExprContext = (function (_super) {
         }
         return r;
     };
+    // 设置字段名
     ExprContext.prototype.setFieldName = function (value) { this.fieldName = value; };
+    // 获取字段名
     ExprContext.prototype.getFieldName = function () { return this.fieldName || ""; };
+    // 设置字段显示名称
     ExprContext.prototype.setFieldDisplayName = function (value) { this.fieldDisplayName = value; };
+    // 获取字段显示名称
     ExprContext.prototype.getFieldDisplayName = function () { return this.fieldDisplayName || ""; };
+    // 设置字段值
     ExprContext.prototype.setFieldValue = function (value) { this.fieldValue = value; };
+    // 获取字段值
     ExprContext.prototype.getFieldValue = function () { return this.fieldValue || null; };
+    // 检测参数类型数组是否匹配
     ExprContext.prototype.findParams = function (ps, p) {
-       
-       
-       
-       
         var r = [];
         var pt = [];
         var pl = ps.length;
@@ -4175,11 +4179,8 @@ var ExprContext = (function (_super) {
         }
         return r;
     };
+    // 获取参数个数和类型都匹配的函数
     ExprContext.prototype.getFunc = function (type, name, params) {
-       
-       
-       
-       
         var r;
         if (type === "undefined") {
             var f = void 0;
@@ -4203,11 +4204,8 @@ var ExprContext = (function (_super) {
         }
         return r;
     };
+    // 获取参数个数和类型都匹配的函数的返回值类型
     ExprContext.prototype.getFuncType = function (type, name, params) {
-       
-       
-       
-       
         var r = null;
         var fn = this.getFunc(type, name, params);
         if (getValueType(fn) === "array") {
@@ -4237,6 +4235,7 @@ var ExprContext = (function (_super) {
         }
         return r;
     };
+    // 获取上下文变量值
     ExprContext.prototype.getContextVariableValue = function (key) {
         var r;
         var v = this.contextVariables;
@@ -4248,26 +4247,28 @@ var ExprContext = (function (_super) {
         }
         return this.genValue(r);
     };
+    // 上下文变量压栈
     ExprContext.prototype.pushContextVariables = function (v) {
         this.contextVariables.push(v);
     };
+    // 上下文变量出栈
     ExprContext.prototype.popContextVariables = function () {
         this.contextVariables.pop();
     };
+    // 计算表达式
     ExprContext.prototype._calcExpr = function (expr, curr) {
-       
         if (curr.length > 0) {
             this.exprContext.push(curr);
         }
         var e = new Calc();
-        var r = e.calc(expr, this); // 调用计算器对象对表达式进行分析和计算
+        var r = e.calc(expr, this);
         if (curr.length > 0) {
             this.exprContext.pop();
         }
         return r;
     };
+    // 在实体计算环境下计算表达式的值
     ExprContext.prototype.calcEntityExpr = function (expr, entityName, cursor) {
-       
         var c = [];
         var i = 1;
         while (i < arguments.length) {
@@ -4280,8 +4281,8 @@ var ExprContext = (function (_super) {
         }
         return this._calcExpr(expr, c);
     };
+    // 在数据计算环境下计算表达式的值
     ExprContext.prototype.calcDataExpr = function (expr, data) {
-       
         var c = [];
         var i = 1;
         while (i < arguments.length) {
@@ -4293,8 +4294,8 @@ var ExprContext = (function (_super) {
         }
         return this._calcExpr(expr, c);
     };
+    // 计算表达式的依赖关系
     ExprContext.prototype.calcDependencies = function (expr, curr) {
-       
         if (curr.length > 0) {
             this.exprContext.push(curr);
         }
@@ -4305,8 +4306,8 @@ var ExprContext = (function (_super) {
         }
         return r;
     };
+    // 在实体计算环境下计算表达式的依赖关系
     ExprContext.prototype.calcEntityDependencies = function (expr, entityName) {
-       
         var c = [];
         var i = 1;
         while (i < arguments.length) {
@@ -4318,8 +4319,8 @@ var ExprContext = (function (_super) {
         }
         return this.calcDependencies(expr, c);
     };
+    // 在数据计算环境下计算表达式的依赖关系
     ExprContext.prototype.calcDataDependencies = function (expr) {
-       
         var c = [];
         var i = 1;
         while (i < arguments.length) {
@@ -4330,21 +4331,23 @@ var ExprContext = (function (_super) {
         }
         return this.calcDependencies(expr, c);
     };
+    // 向栈顶添加新的计算环境
     ExprContext.prototype.pushEntityCurrent = function (entityName, cursor) {
-       
         this.exprContext.push([{
                 current: entityName,
                 cursor: (cursor),
                 isEntityData: true,
             }]);
     };
+    // 删除栈顶的计算环境
     ExprContext.prototype.popEntityCurrent = function () {
-       
         this.exprContext.pop();
     };
     return ExprContext;
 }(Context));
 
+// 表达式列表
+// ----------
 var ExprList = (function () {
     function ExprList() {
         this.list = [];
@@ -4436,7 +4439,7 @@ var ExprList = (function () {
     };
     ExprList.prototype._doGetMode = function (updateList, l) {
         var modeList = [];
-        // 计算字段表达式的依赖更新模式
+       
         if (updateList && l && l.dependencies) {
             for (var _i = 0, _a = updateList.length; _i < _a.length; _i++) {
                 var updateItem = _a[_i];
@@ -4445,10 +4448,10 @@ var ExprList = (function () {
                     if (updateItem.fullName === dependency) {
                         var commonAncestry = true;
                         var isSubChange = false;
-                        // 找到依赖的变化字段
+                       
                         if (updateItem.type === "U") {
-                            // 如果该字段是更新
-                            var isDependEntity = false; // 表达式是否依赖了实体
+                           
+                            var isDependEntity = false;
                             for (var _d = 0, _e = l.dependencies; _d < _e.length; _d++) {
                                 var depend = _e[_d];
                                 isDependEntity = (updateItem.fullName.indexOf(depend + ".") === 0);
@@ -4457,7 +4460,7 @@ var ExprList = (function () {
                                 }
                             }
                             if (updateItem.entityName === l.entityName) {
-                                // 同级更新
+                               
                                 if (isDependEntity) {
                                     modeList.push({ updateMode: "All" });
                                 }
@@ -4466,7 +4469,7 @@ var ExprList = (function () {
                                 }
                             }
                             else if (l.entityName.indexOf(updateItem.entityName + ".") === 0) {
-                                // 上级更新
+                               
                                 if (isDependEntity) {
                                     modeList.push({ updateMode: "All" });
                                 }
@@ -4478,57 +4481,57 @@ var ExprList = (function () {
                                 }
                             }
                             else if (updateItem.entityName.indexOf(l.entityName + ".") === 0) {
-                                // 下级更新
+                               
                                 modeList.push({ updateMode: "Single" });
                                 isSubChange = true;
                             }
                             else {
-                                // 外部更新
+                               
                                 modeList.push({ updateMode: "All" });
                                 commonAncestry = false;
                             }
                         }
                         else if (updateItem.type === "R") {
-                            // 如果该记录是删除
+                           
                             if (updateItem.entityName === l.entityName) {
-                                // 同级删除
+                               
                                 modeList.push({ updateMode: "All" });
                             }
                             else if (l.entityName.indexOf(updateItem.entityName + ".") === 0) {
-                                // 上级删除
+                               
                                 modeList.push({
                                     updateMode: "BranchDelete",
                                     updateTarget: this._doGetUpdateTarget(updateItem.entityName, l.entityName),
                                 });
                             }
                             else if (updateItem.entityName.indexOf(l.entityName + ".") === 0) {
-                                // 下级删除
+                               
                                 modeList.push({ updateMode: "Single" });
                                 isSubChange = true;
                             }
                             else {
-                                // 外部删除
+                               
                                 modeList.push({ updateMode: "All" });
                                 commonAncestry = false;
                             }
                         }
                         else {
-                            // 如果该记录是添加或加载
+                           
                             if (updateItem.entityName === l.entityName) {
-                                // 同级添加
+                               
                                 modeList.push({ updateMode: "All" });
                             }
                             else if (l.entityName.indexOf(updateItem.entityName + ".") === 0) {
-                                // 上级添加
+                               
                                 modeList.push({ updateMode: "All" });
                             }
                             else if (updateItem.entityName.indexOf(l.entityName + ".") === 0) {
-                                // 下级添加
+                               
                                 modeList.push({ updateMode: "Single" });
                                 isSubChange = true;
                             }
                             else {
-                                // 外部添加
+                               
                                 modeList.push({ updateMode: "All" });
                                 commonAncestry = false;
                             }
@@ -4540,7 +4543,7 @@ var ExprList = (function () {
                 }
             }
         }
-        // 合并字段表达式的依赖更新模式
+       
         var a = "Single";
         var at = "";
         var b;
@@ -4574,14 +4577,14 @@ var ExprList = (function () {
         p.push(m[p.length]);
         return p.join(".");
     };
+    // 重置表达式列表对象
     ExprList.prototype.reset = function () {
-       
         this.list = [];
         this.cache = {};
         this.sorted = false;
     };
+    // 添加表达式
     ExprList.prototype.add = function (expr, entityName, propertyName, types, callback, scope) {
-       
         this.cache = {};
         this.sorted = false;
         var index = -1;
@@ -4605,19 +4608,20 @@ var ExprList = (function () {
             });
         }
     };
+    // 删除表达式
     ExprList.prototype.remove = function (expr, entityName, propertyName, types, callback, scope) {
-       
         this.cache = {};
         this.sorted = false;
         for (var i = 0; i < this.list.length; i++) {
             var item = this.list[i];
             if (item.expr === expr && item.entityName === entityName && item.propertyName === propertyName &&
                 item.types === types && item.callback === callback && item.scope === scope) {
-                this.list.splice(i, 1); // 删除匹配的项
+                this.list.splice(i, 1);
                 break;
             }
         }
     };
+    // 检查和排序表达式列表
     ExprList.prototype.checkAndSort = function (dependCallback) {
         this.cache = {};
         this.sorted = true;
@@ -4637,7 +4641,7 @@ var ExprList = (function () {
             }
         }
         if (msg === "") {
-            // 按依赖关系排序
+           
             var fillList_1 = [];
             var newList_1 = [];
             var findItem_1 = function (list, item) {
@@ -4709,6 +4713,8 @@ var ExprList = (function () {
     return ExprList;
 }());
 
+// 多语言 - 中文
+// ----------
 locale.defineLocale("zh-cn", {
     // context
     MSG_EC_FUNC_E: "只有实体对象才可以调用 {0} 方法",
@@ -4773,6 +4779,7 @@ locale.defineLocale("zh-cn", {
     MSG_EX_SUBTRACT: "{0} 和 {1} 无法做减法运算",
     MSG_EX_TRUNC: "做截断运算时，保留小数位数不能为负数: {0}",
 });
+// 函数描述
 locale.defineFunction("zh-cn", {
     "FieldDisplayName": { fn: "获取当前字段别名", p: [], r: "字段别名（显示名称）" },
     "FieldName": { fn: "获取当前字段唯一标识", p: [], r: "字段唯一标识" },
@@ -4853,50 +4860,51 @@ locale.defineFunction("zh-cn", {
     "string.Upper": { fn: "转换字符串为大写", p: [], r: "大写字符串" },
 });
 
+// 表达式管理器
+// ----------
 var ExprManager = (function () {
+    // 构造函数
     function ExprManager() {
         this.exprContext = new ExprContext();
         this.exprList = new ExprList();
         this.addFunction(func);
     }
+    // 注册函数
     ExprManager.prototype.addFunction = function (funcs) {
-       
-       
-       
-       
         return this.exprContext.addFunction(funcs);
     };
+    // 获取函数列表对象
     ExprManager.prototype.getFunction = function () {
-       
-       
         return this.exprContext.getFunction();
     };
+    // 获取表达式列表对象
     ExprManager.prototype.getExpressionList = function () {
-       
         return this.exprList;
     };
+    // 检查和排序表达式列表
     ExprManager.prototype.checkAndSort = function () {
         return this.exprList.checkAndSort((function (context) { return function (expr, entityName) {
             return context.calcEntityDependencies(expr, entityName);
         }; })(this.exprContext));
     };
+    // 添加表达式
     ExprManager.prototype.addExpression = function (expr, entityName, propertyName, types, callback, scope) {
        
-        // types = "L|A|U|R"
         this.exprList.add(expr, entityName, propertyName, types, callback, scope);
         return this;
     };
+    // 删除表达式
     ExprManager.prototype.removeExpression = function (expr, entityName, propertyName, types, callback, scope) {
        
-        // types = "L|A|U|R"
         this.exprList.remove(expr, entityName, propertyName, types, callback, scope);
         return this;
     };
+    // 重置表达式列表对象
     ExprManager.prototype.resetExpression = function () {
-       
         this.exprList.reset();
         return this;
     };
+    // 计算表达式
     ExprManager.prototype.calcExpression = function (type, info) {
         var list;
         switch (type) {
@@ -4922,20 +4930,20 @@ var ExprManager = (function () {
         }
         return this;
     };
+    // 初始化
     ExprManager.prototype.init = function (data, dataContext, context) {
-       
         this.exprContext.setData(data);
         this.exprContext.setDataContext(dataContext);
         this.exprContext.setPageContext(context || {});
         return this;
     };
+    // 计算表达式的依赖关系
     ExprManager.prototype.calcDependencies = function (expr, entityName) {
-       
         return this.exprContext.calcEntityDependencies(expr, entityName);
     };
+    // 计算表达式的值
     ExprManager.prototype.calcExpr = function (expr, entityName, dataCursor, field) {
-        // 计算表达式expr的值
-        // field = {FieldDisplayName: "", FieldName: "", FieldValue: ""}
+       
         this.exprContext.setDataCursor(dataCursor);
         if (field) {
             this.exprContext.pushContextVariables(field);
@@ -4946,7 +4954,7 @@ var ExprManager = (function () {
         }
         return r;
     };
-    // 计算表达式expr的值
+    // 计算表达式的值
     ExprManager.prototype.calc = function (expr, data) {
         return this.exprContext.calcDataExpr(expr, data);
     };

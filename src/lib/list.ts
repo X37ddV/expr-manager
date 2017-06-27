@@ -1,6 +1,9 @@
 import { format } from "./base/common";
 import locale from "./base/locale";
 
+// 表达式列表
+// ----------
+
 export default class ExprList {
     private list = [];
     private cache = {};
@@ -65,19 +68,19 @@ export default class ExprList {
     }
     public _doUpdateMode(r, t, name, entity, property) {
         const updateList = [{
-            entityName: entity,     // 实体名
-            fullName: name,         // 全名
-            propertyName: property, // 属性名
-            type: t,                // 新增、删除、修改
-            updateMode: "Single",   // 更新模式 Single: 单挑记录修改
-            updateTarget: "",       // 更新目标
+            entityName: entity,     /// 实体名
+            fullName: name,         /// 全名
+            propertyName: property, /// 属性名
+            type: t,                /// 新增、删除、修改
+            updateMode: "Single",   /// 更新模式 Single: 单挑记录修改
+            updateTarget: "",       /// 更新目标
         }];
         for (const item of r) {
             this._doGetMode(updateList, item);
             updateList.push({
-                entityName: item.entityName,     // 实体名
-                fullName: item.fullName,         // 全名
-                propertyName: item.propertyName, // 属性名
+                entityName: item.entityName,     /// 实体名
+                fullName: item.fullName,         /// 全名
+                propertyName: item.propertyName, /// 属性名
                 type: "U",
                 updateMode: item.updateMode,
                 updateTarget: item.updateTarget,
@@ -86,34 +89,32 @@ export default class ExprList {
     }
     public _doGetMode(updateList, l) {
         const modeList = [];
-        // 计算字段表达式的依赖更新模式
+        /// 计算字段表达式的依赖更新模式
         if (updateList && l && l.dependencies) {
             for (const updateItem of updateList.length) {
                 for (const dependency of l.dependencies) {
                     if (updateItem.fullName === dependency) {
                         let commonAncestry = true;
                         let isSubChange = false;
-                        // 找到依赖的变化字段
+                        /// 找到依赖的变化字段
                         if (updateItem.type === "U") {
-                            // 如果该字段是更新
-
-                            let isDependEntity = false; // 表达式是否依赖了实体
+                            /// 如果该字段是更新
+                            let isDependEntity = false; /// 表达式是否依赖了实体
                             for (const depend of l.dependencies) {
                                 isDependEntity = (updateItem.fullName.indexOf(depend + ".") === 0);
                                 if (isDependEntity) {
                                     break;
                                 }
                             }
-
                             if (updateItem.entityName === l.entityName) {
-                                // 同级更新
+                                /// 同级更新
                                 if (isDependEntity) {
                                     modeList.push({ updateMode: "All" });
                                 } else {
                                     modeList.push({ updateMode: "Single" });
                                 }
                             } else if (l.entityName.indexOf(updateItem.entityName + ".") === 0) {
-                                // 上级更新
+                                /// 上级更新
                                 if (isDependEntity) {
                                     modeList.push({ updateMode: "All" });
                                 } else {
@@ -123,48 +124,48 @@ export default class ExprList {
                                     });
                                 }
                             } else if (updateItem.entityName.indexOf(l.entityName + ".") === 0) {
-                                // 下级更新
+                                /// 下级更新
                                 modeList.push({ updateMode: "Single" });
                                 isSubChange = true;
                             } else {
-                                // 外部更新
+                                /// 外部更新
                                 modeList.push({ updateMode: "All" });
                                 commonAncestry = false;
                             }
                         } else if (updateItem.type === "R") {
-                            // 如果该记录是删除
+                            /// 如果该记录是删除
                             if (updateItem.entityName === l.entityName) {
-                                // 同级删除
+                                /// 同级删除
                                 modeList.push({ updateMode: "All" });
                             } else if (l.entityName.indexOf(updateItem.entityName + ".") === 0) {
-                                // 上级删除
+                                /// 上级删除
                                 modeList.push({
                                     updateMode: "BranchDelete",
                                     updateTarget: this._doGetUpdateTarget(updateItem.entityName, l.entityName),
                                 });
                             } else if (updateItem.entityName.indexOf(l.entityName + ".") === 0) {
-                                // 下级删除
+                                /// 下级删除
                                 modeList.push({ updateMode: "Single" });
                                 isSubChange = true;
                             } else {
-                                // 外部删除
+                                /// 外部删除
                                 modeList.push({ updateMode: "All" });
                                 commonAncestry = false;
                             }
                         } else {
-                            // 如果该记录是添加或加载
+                            /// 如果该记录是添加或加载
                             if (updateItem.entityName === l.entityName) {
-                                // 同级添加
+                                /// 同级添加
                                 modeList.push({ updateMode: "All" });
                             } else if (l.entityName.indexOf(updateItem.entityName + ".") === 0) {
-                                // 上级添加
+                                /// 上级添加
                                 modeList.push({ updateMode: "All" });
                             } else if (updateItem.entityName.indexOf(l.entityName + ".") === 0) {
-                                // 下级添加
+                                /// 下级添加
                                 modeList.push({ updateMode: "Single" });
                                 isSubChange = true;
                             } else {
-                                // 外部添加
+                                /// 外部添加
                                 modeList.push({ updateMode: "All" });
                                 commonAncestry = false;
                             }
@@ -176,7 +177,7 @@ export default class ExprList {
                 }
             }
         }
-        // 合并字段表达式的依赖更新模式
+        /// 合并字段表达式的依赖更新模式
         let a = "Single";
         let at = "";
         let b;
@@ -192,7 +193,7 @@ export default class ExprList {
                 a = b;
                 at = bt;
             } else if (a === "BranchDelete" || b === "Single") {
-                // nothing
+                /// nothing
             } else if (b === "All") {
                 a = b;
                 at = bt;
@@ -207,14 +208,14 @@ export default class ExprList {
         p.push(m[p.length]);
         return p.join(".");
     }
+    // 重置表达式列表对象
     public reset() {
-        /// <summary>重置表达式列表对象</summary>
         this.list = [];
         this.cache = {};
         this.sorted = false;
     }
+    // 添加表达式
     public add(expr, entityName, propertyName, types, callback, scope) {
-        /// <summary>添加表达式</summary>
         this.cache = {};
         this.sorted = false;
         let index = -1;
@@ -226,7 +227,7 @@ export default class ExprList {
                 break;
             }
         }
-        if (index === -1) { // 如果缓存里没有，则添加
+        if (index === -1) { /// 如果缓存里没有，则添加
             this.list.push({
                 callback: (callback),
                 entityName: entityName || "",
@@ -238,25 +239,26 @@ export default class ExprList {
             });
         }
     }
+    // 删除表达式
     public remove(expr, entityName, propertyName, types, callback, scope) {
-        /// <summary>删除表达式</summary>
         this.cache = {};
         this.sorted = false;
         for (let i = 0; i < this.list.length; i++) {
             const item = this.list[i];
             if (item.expr === expr && item.entityName === entityName && item.propertyName === propertyName &&
                 item.types === types && item.callback === callback && item.scope === scope) {
-                this.list.splice(i, 1); // 删除匹配的项
+                this.list.splice(i, 1); /// 删除匹配的项
                 break;
             }
         }
     }
+    // 检查和排序表达式列表
     public checkAndSort(dependCallback) {
         this.cache = {};
         this.sorted = true;
         let msg = "";
         for (const item of this.list) {
-            if (!item.dependencies && dependCallback) { // 计算该组测试用例中每个表达式的依赖关系
+            if (!item.dependencies && dependCallback) { /// 计算该组测试用例中每个表达式的依赖关系
                 const d = dependCallback(item.expr, item.entityName);
                 msg = d.errorMsg;
                 if (msg === "") {
@@ -269,7 +271,7 @@ export default class ExprList {
         }
 
         if (msg === "") {
-            // 按依赖关系排序
+            /// 按依赖关系排序
             const fillList = [];
             const newList = [];
             const findItem = (list, item) => {

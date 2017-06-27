@@ -18,18 +18,23 @@ export default class ExprContext extends Context {
     private fieldName;
     private fieldDisplayName;
     private fieldValue;
+    // 设置数据游标
     public setDataCursor(cursor) {
         this.exprContext.setDataCursor(cursor);
     }
+    // 设置页面上下文
     public setPageContext(ctx) {
         this.pageContext.$C = ctx;
     }
+    // 设置数据上下文
     public setDataContext(ctx) {
         this.dataContext = ctx;
     }
+    // 设置数据
     public setData(d) {
         this.data = d;
     }
+    // 添加函数
     public addFunction(func) {
         let gs;
         gs = {};
@@ -53,33 +58,32 @@ export default class ExprContext extends Context {
         }
         return merger(this.functions, gs);
     }
+    // 获取函数
     public getFunction() {
         return this.functions;
     }
+    // 获取IfNull函数名
     public doGetIfNullName() {
         return "IfNull";
     }
+    // 获取IIf函数名
     public doGetIIfName() {
         return "IIf";
     }
+    // 获取函数返回结果类型对象
     public doGetFunctionType(name, source, paramType, paramData) {
-        /// <summary>得到函数source.name(paramValue)执行结果的ExprType对象</summary>
-        /// <param name="name" type="String">函数名</param>
-        /// <param name="source">函数调用者</param>
-        /// <param name="paramType" type="Array">各个实参类型组成的数组</param>
-        /// <param name="paramValue" type="Array">实参数组</param>
         let r;
-        const t = (source !== null) ? // 调用者类型，如"string","number","array","object"
-            (source.entity ? source.entity.type : source.type) : // 有显式调用者
-            ""; // 无显式调用者，全局函数
-        const ft = this.getFuncType(t, name, paramType); // 类型t的name函数
+        const t = (source !== null) ? /// 调用者类型，如"string","number","array","object"
+            (source.entity ? source.entity.type : source.type) : /// 有显式调用者
+            ""; /// 无显式调用者，全局函数
+        const ft = this.getFuncType(t, name, paramType); /// 类型t的name函数
         if (ft === null) {
             r = this.genErrorType(format(locale.getLocale().MSG_EC_FUNC_T, t, name));
         } else {
             let depends = [];
             if (ft.p) {
                 const pd = paramData;
-                for (let i = 0; i < ft.p.length; i++) { // 参数中含有子表达式，先求出子表达式的依赖关系
+                for (let i = 0; i < ft.p.length; i++) { /// 参数中含有子表达式，先求出子表达式的依赖关系
                     if (ft.p[i] === "expr" && paramType[i] === "string" && getValueType(pd[i]) === "string") {
                         const dr = (source && source.entity) ?
                             this.calcEntityDependencies(pd[i], source.entity.fullName) :
@@ -102,13 +106,13 @@ export default class ExprContext extends Context {
                         type = "object";
                         break;
                     case "parent":
-                        if (source === null) { // Paren()
+                        if (source === null) { /// Paren()
                             entity = this.getParentName(this.exprContext.getEntityName());
                             type = "object";
-                        } else if (source.entity) { // Root().E1[0].Parent()
+                        } else if (source.entity) { /// Root().E1[0].Parent()
                             entity = this.getParentName(source.entity.fullName);
                             type = "object";
-                        } else { // {x:1}.Parent()
+                        } else { /// {x:1}.Parent()
                             r = this.genErrorType(format(locale.getLocale().MSG_EC_FUNC_E, "Parent"));
                         }
                         break;
@@ -121,7 +125,7 @@ export default class ExprContext extends Context {
                             n = source.entity.fullName;
                         }
                         if (n !== null) {
-                            if (ft.e === "data") { // 返回值为实体数据
+                            if (ft.e === "data") { /// 返回值为实体数据
                                 entity = n;
                             }
                             depends.push(n);
@@ -137,48 +141,46 @@ export default class ExprContext extends Context {
                     if (depends.length === 0) {
                         depends = null;
                     }
-                    r = this.genType(ft.r, ft.r, undefined, entity, depends); // 函数返回的ExprType对象
+                    r = this.genType(ft.r, ft.r, undefined, entity, depends); /// 函数返回的ExprType对象
                 }
             }
         }
         return r;
     }
+    // 获取函数返回值
     public doGetFunctionValue(name, source, paramValue) {
-        /// <summary>得到函数source.name(paramValue)执行结果</summary>
-        /// <param name="name" type="String">函数名</param>
-        /// <param name="source">函数调用者</param>
-        /// <param name="paramValue" type="Array">实参数组</param>
-        const t = (source !== null) ? // 调用者类型，如"string","number","array","object"
-            (source.entity ? source.entity.type : source.type) : // 有显式调用者
-            ""; // 无显式调用者，全局函数
-        const p = [source].concat(paramValue);  // 实参数组
-        const pt = []; // 各个实参类型组成的数组
+        const t = (source !== null) ? /// 调用者类型，如"string","number","array","object"
+            (source.entity ? source.entity.type : source.type) : /// 有显式调用者
+            ""; /// 无显式调用者，全局函数
+        const p = [source].concat(paramValue); /// 实参数组
+        const pt = []; /// 各个实参类型组成的数组
         for (const item of paramValue) {
             pt.push(getValueType(item));
         }
-        const f = this.getFunc(t, name, pt); // 类型t的name函数
+        const f = this.getFunc(t, name, pt); /// 类型t的name函数
         const r = f ?
             f.fn.apply(this, [this].concat(p)) :
-            this.genErrorValue(format(locale.getLocale().MSG_EC_FUNC_P, t, name)); // 没有该函数或参数不匹配
+            this.genErrorValue(format(locale.getLocale().MSG_EC_FUNC_P, t, name)); /// 没有该函数或参数不匹配
         return r;
     }
+    // 获取变量类型对象
     public doGetVariableType(name, source) {
         let r;
         let pIndex;
         pIndex = 0;
         if (source === null && name.split("")[0] === "$") {
             pIndex = name.substr(1);
-            if (pIndex === "C") { // name为$C
+            if (pIndex === "C") { /// name为$C
                 r = this.genType(getValueType(this.pageContext.$C));
             } else {
                 pIndex = Number(pIndex);
-                if (!isNaN(pIndex)) { // name为$0,$1,$2...
+                if (!isNaN(pIndex)) { /// name为$0,$1,$2...
                     if (this.exprContext.isValid(pIndex)) {
-                        name = ""; // 为了区分合法的$0,$1...与一般属性名a,b...，它们的处理方式不一样
-                    } else { // 参数不存在
+                        name = ""; /// 为了区分合法的$0,$1...与一般属性名a,b...，它们的处理方式不一样
+                    } else { /// 参数不存在
                         r = this.genErrorType(format(locale.getLocale().MSG_EC_VARI_N, name));
                     }
-                } else { // 参数索引不存在
+                } else { /// 参数索引不存在
                     r = this.genErrorType(format(locale.getLocale().MSG_EC_VARI_I, name));
                 }
             }
@@ -218,65 +220,66 @@ export default class ExprContext extends Context {
         }
         return r;
     }
+    // 获取变量值
     public doGetVariableValue(name, source) {
-        /// <summary>得到对象source的name属性值</summary>
         let r;
         let pIndex;
         pIndex = 0;
         if (source === null && name.split("")[0] === "$") {
             pIndex = name.substr(1);
-            if (pIndex === "C") { // name为$C
+            if (pIndex === "C") { /// name为$C
                 r = this.genValue(this.pageContext.$C);
             } else {
                 pIndex = Number(pIndex);
-                if (!isNaN(pIndex)) { // name为$0,$1,$2...
+                if (!isNaN(pIndex)) { /// name为$0,$1,$2...
                     if (this.exprContext.isValid(pIndex)) {
-                        name = ""; // 为了区分合法的$0,$1...与一般属性名a,b...，它们的处理方式不一样
-                    } else { // 参数不存在
+                        name = ""; /// 为了区分合法的$0,$1...与一般属性名a,b...，它们的处理方式不一样
+                    } else { /// 参数不存在
                         r = this.genErrorValue(format(locale.getLocale().MSG_EC_VARI_N, name));
                     }
-                } else { // 参数索引不存在
+                } else { /// 参数索引不存在
                     r = this.genErrorValue(format(locale.getLocale().MSG_EC_VARI_I, name));
                 }
             }
         }
         if (!r) {
-            let value; // 包含了name等属性的js对象
-            if (this.exprContext.isEntityData(pIndex)) { // 当前表达式处于实体数据环境
+            let value; /// 包含了name等属性的js对象
+            if (this.exprContext.isEntityData(pIndex)) { /// 当前表达式处于实体数据环境
                 let entity;
                 let parentObj;
-                if (source === null) { // P1 a $0
+                if (source === null) { /// P1 a $0
                     entity = this.genEntityInfo(this.getPropertyName(this.exprContext.getEntityName(pIndex), name));
                     if (!entity) {
                         r = this.genErrorValue(format(locale.getLocale().MSG_EC_PROP_N, name));
                     } else {
                         value = (entity.field !== "" || name === "") ?
-                            this.getEntityData(entity.name, pIndex) : // name为当前信息默认实体E1的属性，如：P1 或name==$0,$1...
-                            this.getEntityData(this.getParentName(entity.name), pIndex); // name为当前信息默认实体E1的子实体,Entity1
+                            this.getEntityData(entity.name, pIndex) : /// name为当前信息默认实体E1的属性，如：P1 或name==$0,$1...
+                            this.getEntityData(this.getParentName(entity.name), pIndex); /// name为当前信息默认实体E1的子实体,Entity1
                     }
                     parentObj = null;
                 } else {
                     value = source.toValue();
-                    if (source.entity && !(source.entity.type === "object" && source.entity.field !== "")) {// Root().E1
+                    if (source.entity &&
+                        !(source.entity.type === "object" && source.entity.field !== "")) { /// Root().E1
                         entity = this.genEntityInfo(this.getPropertyName(source.entity.fullName, name));
                         if (!entity) {
                             r = this.genErrorValue(format(locale.getLocale().MSG_EC_PROP_N, name));
-                        } else if (entity.field === "") { // name为子实体字段
+                        } else if (entity.field === "") { /// name为子实体字段
                             parentObj = source;
                         }
-                    } else { // {x:1,y:2}.x ，访问不存在的属性是不会报错
+                    } else { /// {x:1,y:2}.x ，访问不存在的属性是不会报错
                         entity = null;
                     }
                 }
                 if (!r) {
                     if (value) {
-                        // source==null时，$0,$1...被视为特殊的访问标记，并不是取对象属性，而是取整个对象
+                        /// source==null时，$0,$1...被视为特殊的访问标记，并不是取对象属性，而是取整个对象
                         if (!(source === null && name === "")) {
                             value = value[name];
                         }
-                        if (value === undefined) { // 数据中不包含name属性值，但上下文中包含name的类型定义
+                        if (value === undefined) { /// 数据中不包含name属性值，但上下文中包含name的类型定义
                             value = null;
-                            if (entity) { // 给value赋值为entity.type类型的默认值
+                            if (entity) { /// 给value赋值为entity.type类型的默认值
                                 if (entity.type === "object") {
                                     value = {};
                                 } else if (entity.type === "array") {
@@ -288,14 +291,14 @@ export default class ExprContext extends Context {
                         if (r && r.type === "array" && r.entity) {
                             r.entity.map = [];
                             for (let i = 0; i < value.length; i++) {
-                                r.entity.map.push(i); // map存放该实体数组有效的访问下标
+                                r.entity.map.push(i); /// map存放该实体数组有效的访问下标
                             }
                         }
                     } else {
                         r = this.genErrorValue(format(locale.getLocale().MSG_EC_PROP_E, value, name));
                     }
                 }
-            } else { // 当前表达式处于普通数据环境
+            } else { /// 当前表达式处于普通数据环境
                 value = (source === null) ?
                     this.getData(pIndex) :
                     value = source.toValue();
@@ -306,7 +309,7 @@ export default class ExprContext extends Context {
                         case "string":
                             value = value[name];
                             break;
-                        default: // 无法获取属性
+                        default: /// 无法获取属性
                             r = this.genErrorValue(format(locale.getLocale().MSG_EC_PROP_E, value, name));
                     }
                 }
@@ -317,13 +320,14 @@ export default class ExprContext extends Context {
         }
         return r;
     }
+    // 获取实体类型对象
     public doGetEntityType(source) {
         const e = this.genEntityInfo(source.entity, "object");
         const t = this.genType("object", "object", undefined, e, [e.fullName]);
         return t;
     }
+    // 获取实体值，根据游标索引
     public doGetEntityValue(source, index) {
-        /// <summary>从实体数组source中取出第index条实体记录</summary>
         const v = source.toValue()[index];
         const e = this.genEntityInfo(source.entity, "object");
         e.recNo = source.entity.map[index];
@@ -331,10 +335,8 @@ export default class ExprContext extends Context {
         const r = this.genValue(v, getValueType(v), e, "", parentObj);
         return r;
     }
+    // 获取实体信息
     public genEntityInfo(fullName, type?) {
-        /// <summary>得到实体信息，null表示该实体不存在</summary>
-        /// <param name="fullName" type="String">实体全名称</param>
-        /// <param name="type" type="String">提前确定实体类型</param>
         if (getValueType(fullName) === "object") {
             fullName = fullName.fullName;
         }
@@ -343,26 +345,26 @@ export default class ExprContext extends Context {
         let dataType;
         if (fullName !== "") {
             const p = fullName.split(".");
-            let x = p[0]; // "E1"
+            let x = p[0]; /// "E1"
             const c = this.dataContext;
-            let t = c[x]; // dataContext["E1"]
+            let t = c[x]; /// dataContext["E1"]
             if (t) {
                 name.push(x);
                 for (let i = 1; i < p.length; i++) {
                     x = p[i];
-                    if (t.childs && t.childs[x] && field.length === 0) { // x为t的子实体，如：E1.Entity1
+                    if (t.childs && t.childs[x] && field.length === 0) { /// x为t的子实体，如：E1.Entity1
                         name.push(x);
                         t = t.childs[x];
-                    } else { // x为t的属性，如：E1.P1
+                    } else { /// x为t的属性，如：E1.P1
                         let f = field.join(".");
                         if (f !== "") {
                             f += ".";
                         }
-                        f += x; // 实体出现"x.y"形式的属性名
+                        f += x; /// 实体出现"x.y"形式的属性名
                         if (t.fields && t.fields[f]) {
                             field.push(x);
                             dataType = t.fields[f].type;
-                        } else { // 无法识别x，如：E1.a
+                        } else { /// 无法识别x，如：E1.a
                             break;
                         }
                     }
@@ -376,42 +378,42 @@ export default class ExprContext extends Context {
             recNo: -1,
             type: dataType,
         };
-        if (r.name === r.fullName) { // 该fullName指向实体数据
+        if (r.name === r.fullName) { /// 该fullName指向实体数据
             r.type = "array";
-        } else if (r.name + "." + r.field !== r.fullName) { // 该fullName中有无法识别的部分
+        } else if (r.name + "." + r.field !== r.fullName) { /// 该fullName中有无法识别的部分
             r = null;
         }
-        if (r && type) { // 提前确定的实体类型
+        if (r && type) { /// 提前确定的实体类型
             r.type = type;
         }
         return r;
     }
+    // 获取根数据值
     public getRootValue() {
-        /// <summary>得到data封装而成的ExprValue对象</summary>
         const entity = this.genEntityInfo("", "object");
         entity.recNo = 0;
         return this.genValue(this.data, "object", entity, "");
     }
+    // 获取父实体值
     public getParentValue(source) {
-        /// <summary>得到当前实体的父实体封装而成的ExprValue对象</summary>
         let r;
         if (this.exprContext.isEntityData()) {
             let entity;
-            if (source === null) { // Parent()
+            if (source === null) { /// Parent()
                 entity = this.exprContext.getEntityName();
             } else if (source.entity && source.entity.field === "") {
-                if (source.parentObj) { // Root().Parent() , Entity1[1].NewEntity1[2].Parent()
+                if (source.parentObj) { /// Root().Parent() , Entity1[1].NewEntity1[2].Parent()
                     r = source.parentObj;
-                } else { // Root().E1.Sum("Entity1[0].Parent().ID")
+                } else { /// Root().E1.Sum("Entity1[0].Parent().ID")
                     entity = source.entity.fullName;
                 }
-            } else { // {x:1}.Parent()
+            } else { /// {x:1}.Parent()
                 r = this.genErrorValue(format(locale.getLocale().MSG_EC_FUNC_E, "Parent"));
             }
             if (!r) {
                 entity = this.genEntityInfo(this.getParentName(entity), "object");
                 entity.recNo = this.exprContext.getEntityDataCursor(entity.name);
-                const value = this.getEntityData(entity.name); // 取父实体对象
+                const value = this.getEntityData(entity.name); /// 取父实体对象
                 r = this.genValue(value, "", entity);
             }
         } else {
@@ -419,17 +421,17 @@ export default class ExprContext extends Context {
         }
         return r;
     }
+    // 获取实体数据，根据游标索引
     public getEntityData(entityName, index?) {
-        /// <summary>得到实体全名称entityName数组的第index个实体对象</summary>
         let d = this.data;
         if (entityName !== "") {
             const p = entityName.split(".");
             const cp = [];
             for (const prop of p) {
                 cp.push(prop);
-                d = d[prop]; // data[E1],得到实体数组
+                d = d[prop]; /// data[E1],得到实体数组
                 const cursor = this.exprContext.getEntityDataCursor(cp.join("."), index);
-                d = d[cursor]; // 得到实体数组中第cursor条实体记录
+                d = d[cursor]; /// 得到实体数组中第cursor条实体记录
                 if (d === undefined) {
                     break;
                 }
@@ -437,14 +439,12 @@ export default class ExprContext extends Context {
         }
         return d;
     }
+    // 根据索引获取数据
     public getData(index) {
-        /// <summary>得到当前信息的第0条记录的params属性的第index条记录的数据</summary>
         return this.exprContext.getData(index);
     }
+    // 获取父名称
     public getParentName(name) {
-        /// <summary>获取父名称</summary>
-        /// <param name="name" type="String">名称</param>
-        /// <returns type="String"></returns>
         const p = name.split(".");
         let r;
         if (p.length > 0) {
@@ -455,44 +455,45 @@ export default class ExprContext extends Context {
         }
         return r;
     }
+    // 获取实体属性全名称
     public getPropertyName(name, prop) {
-        /// <summary>获取实体属性全名称</summary>
-        /// <param name="name" type="String">实体名</param>
-        /// <param name="prop" type="String">属性名</param>
         return (name && prop) ?
             (name + "." + prop) :
             (name ? name : prop);
     }
+    // 获取当前实体的索引号，没有实体返回-1
     public getRecNo(source) {
-        /// <summary>获取当前实体的索引号，没有实体返回-1</summary>
         let r;
         if (this.exprContext.isEntityData()) {
             let entity;
-            if (source === null) { // RecNo()
+            if (source === null) { /// RecNo()
                 entity = this.exprContext.getEntityName();
                 const value = this.exprContext.getEntityDataCursor(entity);
                 r = this.genValue(value);
             } else {
                 r = (source.entity && source.entity.field === "") ?
-                    this.genValue(source.entity.recNo) : // Root().E1[0].Entity1[3].RecNo()
-                    this.genErrorValue(format(locale.getLocale().MSG_EC_FUNC_E, "RecNo")); // {x:1}.RecNo()
+                    this.genValue(source.entity.recNo) : /// Root().E1[0].Entity1[3].RecNo()
+                    this.genErrorValue(format(locale.getLocale().MSG_EC_FUNC_E, "RecNo")); /// {x:1}.RecNo()
             }
         } else {
             r = this.genValue(-1);
         }
         return r;
     }
+    // 设置字段名
     public setFieldName(value) { this.fieldName = value; }
+    // 获取字段名
     public getFieldName() { return this.fieldName || ""; }
+    // 设置字段显示名称
     public setFieldDisplayName(value) { this.fieldDisplayName = value; }
+    // 获取字段显示名称
     public getFieldDisplayName() { return this.fieldDisplayName || ""; }
+    // 设置字段值
     public setFieldValue(value) { this.fieldValue = value; }
+    // 获取字段值
     public getFieldValue() { return this.fieldValue || null; }
+    // 检测参数类型数组是否匹配
     public findParams(ps, p) {
-        /// <summary>检测参数类型数组是否匹配</summary>
-        /// <param name="t" type="string">类型</param>
-        /// <param name="ps" type="Array">形参的数组，尾部带?表示可选参数</param>
-        /// <param name="p" type="Array">当前调用的实参数组</param>
         let r = [];
         const pt = [];
         let pl = ps.length;
@@ -509,7 +510,7 @@ export default class ExprContext extends Context {
         }
         let b = p.length >= pl && p.length <= pt.length;
         if (b) {
-            for (let j = 0; j < r.length; j++) { // 参数类型比较
+            for (let j = 0; j < r.length; j++) { /// 参数类型比较
                 b = r[j] === "undefined" || p[j] === "undefined" || p[j] === "null" ||
                 r[j] === p[j] || r[j] === "expr" && p[j] === "string" || r[j] === "array" &&
                 r[j] === getValueType(p[j]) || r[j] === "object" && r[j] === getValueType(p[j]);
@@ -523,11 +524,8 @@ export default class ExprContext extends Context {
         }
         return r;
     }
+    // 获取参数个数和类型都匹配的函数
     public getFunc(type, name, params) {
-        /// <summary>找到参数个数和类型都匹配的函数</summary>
-        /// <param name="type" type="String">调用者类型，如"string","number"</param>
-        /// <param name="name" type="String">函数名</param>
-        /// <param name="params" type="Array">实参类型数组</param>
         let r;
         if (type === "undefined") {
             let f;
@@ -548,14 +546,10 @@ export default class ExprContext extends Context {
                 r = null;
             }
         }
-
         return r;
     }
+    // 获取参数个数和类型都匹配的函数的返回值类型
     public getFuncType(type, name, params) {
-        /// <summary>得到参数个数和类型都匹配的函数的返回值类型</summary>
-        /// <param name="type" type="String">调用者类型，如"string","number"</param>
-        /// <param name="name" type="String">函数名</param>
-        /// <param name="params" type="Array">实参类型数组</param>
         let r = null;
         const fn = this.getFunc(type, name, params);
         if (getValueType(fn) === "array") {
@@ -582,6 +576,7 @@ export default class ExprContext extends Context {
         }
         return r;
     }
+    // 获取上下文变量值
     public getContextVariableValue(key) {
         let r;
         const v = this.contextVariables;
@@ -593,28 +588,30 @@ export default class ExprContext extends Context {
         }
         return this.genValue(r);
     }
+    // 上下文变量压栈
     public pushContextVariables(v) {
         this.contextVariables.push(v);
     }
+    // 上下文变量出栈
     public popContextVariables() {
         this.contextVariables.pop();
     }
+    // 计算表达式
     public _calcExpr(expr, curr) {
-        /// <summary>计算表达式expr的值</summary>
         if (curr.length > 0) {
             this.exprContext.push(curr);
         }
 
         const e = new Calc();
-        const r = e.calc(expr, this); // 调用计算器对象对表达式进行分析和计算
+        const r = e.calc(expr, this); /// 调用计算器对象对表达式进行分析和计算
 
         if (curr.length > 0) {
             this.exprContext.pop();
         }
         return r;
     }
+    // 在实体计算环境下计算表达式的值
     public calcEntityExpr(expr, entityName, cursor) {
-        /// <summary>在实体计算环境下计算表达式expr的值</summary>
         const c = [];
         let i = 1;
         while (i < arguments.length) {
@@ -627,8 +624,8 @@ export default class ExprContext extends Context {
         }
         return this._calcExpr(expr, c);
     }
+    // 在数据计算环境下计算表达式的值
     public calcDataExpr(expr, data) {
-        /// <summary>在数据计算环境下计算表达式expr的值</summary>
         const c = [];
         let i = 1;
         while (i < arguments.length) {
@@ -640,8 +637,8 @@ export default class ExprContext extends Context {
         }
         return this._calcExpr(expr, c);
     }
+    // 计算表达式的依赖关系
     public calcDependencies(expr, curr) {
-        /// <summary>计算表达式expr的依赖关系</summary>
         if (curr.length > 0) {
             this.exprContext.push(curr);
         }
@@ -654,8 +651,8 @@ export default class ExprContext extends Context {
         }
         return r;
     }
+    // 在实体计算环境下计算表达式的依赖关系
     public calcEntityDependencies(expr, entityName?) {
-        /// <summary>在实体计算环境下计算表达式expr的依赖关系</summary>
         const c = [];
         let i = 1;
         while (i < arguments.length) {
@@ -667,8 +664,8 @@ export default class ExprContext extends Context {
         }
         return this.calcDependencies(expr, c);
     }
+    // 在数据计算环境下计算表达式的依赖关系
     public calcDataDependencies(expr) {
-        /// <summary>在数据计算环境下计算表达式expr的依赖关系</summary>
         const c = [];
         let i = 1;
         while (i < arguments.length) {
@@ -679,16 +676,16 @@ export default class ExprContext extends Context {
         }
         return this.calcDependencies(expr, c);
     }
+    // 向栈顶添加新的计算环境
     public pushEntityCurrent(entityName, cursor) {
-        /// <summary>向栈顶添加新的计算环境</summary>
         this.exprContext.push([{
             current: entityName,
             cursor: (cursor),
             isEntityData: true,
         }]);
     }
+    // 删除栈顶的计算环境
     public popEntityCurrent() {
-        /// <summary>删除栈顶的计算环境</summary>
         this.exprContext.pop();
     }
 }

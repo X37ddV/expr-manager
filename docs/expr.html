@@ -6934,45 +6934,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
         <span class="hljs-keyword">return</span> msg;
     };
     <span class="hljs-keyword">return</span> Check;
-}());
-
-<span class="hljs-keyword">var</span> ExprCurrent = (<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
-    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">ExprCurrent</span>(<span class="hljs-params"></span>) </span>{
-        <span class="hljs-keyword">this</span>.curr = [];
-    }
-    ExprCurrent.prototype.setDataCursor = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">cursor</span>) </span>{
-        <span class="hljs-keyword">this</span>.dataCursor = cursor;
-    };
-    ExprCurrent.prototype.push = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">c</span>) </span>{
-       
-        <span class="hljs-keyword">this</span>.curr.unshift({ <span class="hljs-attr">pIndex</span>: <span class="hljs-number">0</span>, <span class="hljs-attr">params</span>: c });
-    };
-    ExprCurrent.prototype.pop = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
-       
-        <span class="hljs-keyword">this</span>.curr.shift();
-    };
-    ExprCurrent.prototype.isValid = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">index</span>) </span>{
-       
-        <span class="hljs-keyword">return</span> index &gt;= <span class="hljs-number">0</span> &amp;&amp; <span class="hljs-keyword">this</span>.curr.length &gt; <span class="hljs-number">0</span> &amp;&amp; index &lt; <span class="hljs-keyword">this</span>.curr[<span class="hljs-number">0</span>].params.length;
-    };
-    ExprCurrent.prototype.isEntityData = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">index</span>) </span>{
-       
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.curr.length &gt; <span class="hljs-number">0</span>) {
-            <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.curr[<span class="hljs-number">0</span>];
-            c.pIndex = index || <span class="hljs-number">0</span>;
-            <span class="hljs-keyword">return</span> c.params[c.pIndex].isEntityData;
-        }
-        <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-        }
-    };
-    ExprCurrent.prototype.getEntityName = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">index</span>) </span>{
-       
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.getData(index) || <span class="hljs-string">""</span>;
-    };
-    ExprCurrent.prototype.getEntityDataCursor = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">entityName, index</span>) </span>{
-       
-        <span class="hljs-keyword">var</span> r = entityName ? <span class="hljs-keyword">this</span>.dataCursor[entityName] : <span class="hljs-number">0</span>;</pre></div></div>
+}());</pre></div></div>
             
         </li>
         
@@ -6983,11 +6945,153 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-258">&#182;</a>
               </div>
-              <p>从计算环境中得到已经存好的访问游标，如：Root().E1[1].Entity1.Sum(“ID”)中的1</p>
+              <h2 id="-">表达式游标</h2>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.curr.length; i++) {
+        </li>
+        
+        
+        <li id="section-259">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-259">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> ExprCurrent = (<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">ExprCurrent</span>(<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">this</span>.curr = [];
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-260">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-260">&#182;</a>
+              </div>
+              <p>设置数据游标</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprCurrent.prototype.setDataCursor = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">cursor</span>) </span>{
+        <span class="hljs-keyword">this</span>.dataCursor = cursor;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-261">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-261">&#182;</a>
+              </div>
+              <p>向栈顶添加新的计算环境</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprCurrent.prototype.push = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">c</span>) </span>{
+        <span class="hljs-keyword">this</span>.curr.unshift({ <span class="hljs-attr">pIndex</span>: <span class="hljs-number">0</span>, <span class="hljs-attr">params</span>: c });
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-262">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-262">&#182;</a>
+              </div>
+              <p>删除栈顶的计算环境</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprCurrent.prototype.pop = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">this</span>.curr.shift();
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-263">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-263">&#182;</a>
+              </div>
+              <p>栈顶计算环境的params属性是否存在第index条记录</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprCurrent.prototype.isValid = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">index</span>) </span>{
+        <span class="hljs-keyword">return</span> index &gt;= <span class="hljs-number">0</span> &amp;&amp; <span class="hljs-keyword">this</span>.curr.length &gt; <span class="hljs-number">0</span> &amp;&amp; index &lt; <span class="hljs-keyword">this</span>.curr[<span class="hljs-number">0</span>].params.length;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-264">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-264">&#182;</a>
+              </div>
+              <p>栈顶计算环境的params属性的第index条记录是否为实体数据</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprCurrent.prototype.isEntityData = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">index</span>) </span>{
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.curr.length &gt; <span class="hljs-number">0</span>) {
+            <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.curr[<span class="hljs-number">0</span>];
+            c.pIndex = index || <span class="hljs-number">0</span>;
+            <span class="hljs-keyword">return</span> c.params[c.pIndex].isEntityData;
+        }
+        <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+        }
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-265">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-265">&#182;</a>
+              </div>
+              <p>得到栈顶计算环境的params属性的第index条记录存储的实体名</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprCurrent.prototype.getEntityName = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">index</span>) </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.getData(index) || <span class="hljs-string">""</span>;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-266">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-266">&#182;</a>
+              </div>
+              <p>得到实体全名称entityName的访问游标</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprCurrent.prototype.getEntityDataCursor = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">entityName, index</span>) </span>{
+        <span class="hljs-keyword">var</span> r = entityName ? <span class="hljs-keyword">this</span>.dataCursor[entityName] : <span class="hljs-number">0</span>;
+       
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.curr.length; i++) {
             <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.curr[i];
             <span class="hljs-keyword">if</span> (i === <span class="hljs-number">0</span>) {
                 c.pIndex = index || <span class="hljs-number">0</span>;
@@ -6999,9 +7103,22 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             }
         }
         <span class="hljs-keyword">return</span> r;
-    };
-    ExprCurrent.prototype.getData = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">index</span>) </span>{
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-267">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-267">&#182;</a>
+              </div>
+              <p>得到栈顶计算环境的params属性的第index条记录存储的数据</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprCurrent.prototype.getData = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">index</span>) </span>{
         <span class="hljs-keyword">var</span> r;
         <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.curr.length &gt; <span class="hljs-number">0</span>) {
             <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.curr[<span class="hljs-number">0</span>];
@@ -7016,11 +7133,11 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
         </li>
         
         
-        <li id="section-259">
+        <li id="section-268">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-259">&#182;</a>
+                <a class="pilcrow" href="#section-268">&#182;</a>
               </div>
               <h2 id="-">表达式上下文</h2>
 
@@ -7029,11 +7146,11 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
         </li>
         
         
-        <li id="section-260">
+        <li id="section-269">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-260">&#182;</a>
+                <a class="pilcrow" href="#section-269">&#182;</a>
               </div>
               
             </div>
@@ -7046,20 +7163,90 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
         <span class="hljs-keyword">this</span>.pageContext = { <span class="hljs-attr">$C</span>: {} };
         <span class="hljs-keyword">this</span>.contextVariables = [];
         <span class="hljs-keyword">this</span>.functions = {};
-    }
-    ExprContext.prototype.setDataCursor = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">cursor</span>) </span>{
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-270">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-270">&#182;</a>
+              </div>
+              <p>设置数据游标</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.setDataCursor = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">cursor</span>) </span>{
         <span class="hljs-keyword">this</span>.exprContext.setDataCursor(cursor);
-    };
-    ExprContext.prototype.setPageContext = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">ctx</span>) </span>{
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-271">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-271">&#182;</a>
+              </div>
+              <p>设置页面上下文</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.setPageContext = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">ctx</span>) </span>{
         <span class="hljs-keyword">this</span>.pageContext.$C = ctx;
-    };
-    ExprContext.prototype.setDataContext = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">ctx</span>) </span>{
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-272">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-272">&#182;</a>
+              </div>
+              <p>设置数据上下文</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.setDataContext = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">ctx</span>) </span>{
         <span class="hljs-keyword">this</span>.dataContext = ctx;
-    };
-    ExprContext.prototype.setData = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">d</span>) </span>{
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-273">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-273">&#182;</a>
+              </div>
+              <p>设置数据</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.setData = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">d</span>) </span>{
         <span class="hljs-keyword">this</span>.data = d;
-    };
-    ExprContext.prototype.addFunction = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">func</span>) </span>{
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-274">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-274">&#182;</a>
+              </div>
+              <p>添加函数</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.addFunction = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">func</span>) </span>{
         <span class="hljs-keyword">var</span> gs;
         gs = {};
         gs[<span class="hljs-string">""</span>] = func._ || {};
@@ -7081,27 +7268,78 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             }
         }
         <span class="hljs-keyword">return</span> merger(<span class="hljs-keyword">this</span>.functions, gs);
-    };
-    ExprContext.prototype.getFunction = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-275">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-275">&#182;</a>
+              </div>
+              <p>获取函数</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.getFunction = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.functions;
-    };
-    ExprContext.prototype.doGetIfNullName = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-276">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-276">&#182;</a>
+              </div>
+              <p>获取IfNull函数名</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.doGetIfNullName = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
         <span class="hljs-keyword">return</span> <span class="hljs-string">"IfNull"</span>;
-    };
-    ExprContext.prototype.doGetIIfName = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-277">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-277">&#182;</a>
+              </div>
+              <p>获取IIf函数名</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.doGetIIfName = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
         <span class="hljs-keyword">return</span> <span class="hljs-string">"IIf"</span>;
-    };
-    ExprContext.prototype.doGetFunctionType = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name, source, paramType, paramData</span>) </span>{
-       
-       
-       
-       
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-278">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-278">&#182;</a>
+              </div>
+              <p>获取函数返回结果类型对象</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.doGetFunctionType = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name, source, paramType, paramData</span>) </span>{
         <span class="hljs-keyword">var</span> r;
         <span class="hljs-keyword">var</span> t = (source !== <span class="hljs-literal">null</span>) ?
             (source.entity ? source.entity.type : source.type) :
-            <span class="hljs-string">""</span>; <span class="hljs-comment">// 无显式调用者，全局函数</span>
-        <span class="hljs-keyword">var</span> ft = <span class="hljs-keyword">this</span>.getFuncType(t, name, paramType); <span class="hljs-comment">// 类型t的name函数</span>
+            <span class="hljs-string">""</span>;
+        <span class="hljs-keyword">var</span> ft = <span class="hljs-keyword">this</span>.getFuncType(t, name, paramType);
         <span class="hljs-keyword">if</span> (ft === <span class="hljs-literal">null</span>) {
             r = <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EC_FUNC_T, t, name));
         }
@@ -7171,33 +7409,57 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                     <span class="hljs-keyword">if</span> (depends.length === <span class="hljs-number">0</span>) {
                         depends = <span class="hljs-literal">null</span>;
                     }
-                    r = <span class="hljs-keyword">this</span>.genType(ft.r, ft.r, <span class="hljs-literal">undefined</span>, entity, depends); <span class="hljs-comment">// 函数返回的ExprType对象</span>
+                    r = <span class="hljs-keyword">this</span>.genType(ft.r, ft.r, <span class="hljs-literal">undefined</span>, entity, depends);
                 }
             }
         }
         <span class="hljs-keyword">return</span> r;
-    };
-    ExprContext.prototype.doGetFunctionValue = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name, source, paramValue</span>) </span>{
-       
-       
-       
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-279">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-279">&#182;</a>
+              </div>
+              <p>获取函数返回值</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.doGetFunctionValue = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name, source, paramValue</span>) </span>{
         <span class="hljs-keyword">var</span> t = (source !== <span class="hljs-literal">null</span>) ?
             (source.entity ? source.entity.type : source.type) :
-            <span class="hljs-string">""</span>; <span class="hljs-comment">// 无显式调用者，全局函数</span>
-        <span class="hljs-keyword">var</span> p = [source].concat(paramValue); <span class="hljs-comment">// 实参数组</span>
-        <span class="hljs-keyword">var</span> pt = []; <span class="hljs-comment">// 各个实参类型组成的数组</span>
+            <span class="hljs-string">""</span>;
+        <span class="hljs-keyword">var</span> p = [source].concat(paramValue);
+        <span class="hljs-keyword">var</span> pt = [];
         <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _i = <span class="hljs-number">0</span>, paramValue_1 = paramValue; _i &lt; paramValue_1.length; _i++) {
             <span class="hljs-keyword">var</span> item = paramValue_1[_i];
             pt.push(getValueType(item));
         }
-        <span class="hljs-keyword">var</span> f = <span class="hljs-keyword">this</span>.getFunc(t, name, pt); <span class="hljs-comment">// 类型t的name函数</span>
+        <span class="hljs-keyword">var</span> f = <span class="hljs-keyword">this</span>.getFunc(t, name, pt);
         <span class="hljs-keyword">var</span> r = f ?
             f.fn.apply(<span class="hljs-keyword">this</span>, [<span class="hljs-keyword">this</span>].concat(p)) :
-            <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EC_FUNC_P, t, name)); <span class="hljs-comment">// 没有该函数或参数不匹配</span>
+            <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EC_FUNC_P, t, name));
         <span class="hljs-keyword">return</span> r;
-    };
-    ExprContext.prototype.doGetVariableType = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name, source</span>) </span>{
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-280">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-280">&#182;</a>
+              </div>
+              <p>获取变量类型对象</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.doGetVariableType = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name, source</span>) </span>{
         <span class="hljs-keyword">var</span> r;
         <span class="hljs-keyword">var</span> pIndex;
         pIndex = <span class="hljs-number">0</span>;
@@ -7210,7 +7472,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                 pIndex = <span class="hljs-built_in">Number</span>(pIndex);
                 <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">isNaN</span>(pIndex)) {
                     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.exprContext.isValid(pIndex)) {
-                        name = <span class="hljs-string">""</span>; <span class="hljs-comment">// 为了区分合法的$0,$1...与一般属性名a,b...，它们的处理方式不一样</span>
+                        name = <span class="hljs-string">""</span>;
                     }
                     <span class="hljs-keyword">else</span> {
                         r = <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EC_VARI_N, name));
@@ -7261,9 +7523,22 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             }
         }
         <span class="hljs-keyword">return</span> r;
-    };
-    ExprContext.prototype.doGetVariableValue = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name, source</span>) </span>{
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-281">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-281">&#182;</a>
+              </div>
+              <p>获取变量值</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.doGetVariableValue = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name, source</span>) </span>{
         <span class="hljs-keyword">var</span> r;
         <span class="hljs-keyword">var</span> pIndex;
         pIndex = <span class="hljs-number">0</span>;
@@ -7276,7 +7551,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                 pIndex = <span class="hljs-built_in">Number</span>(pIndex);
                 <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">isNaN</span>(pIndex)) {
                     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.exprContext.isValid(pIndex)) {
-                        name = <span class="hljs-string">""</span>; <span class="hljs-comment">// 为了区分合法的$0,$1...与一般属性名a,b...，它们的处理方式不一样</span>
+                        name = <span class="hljs-string">""</span>;
                     }
                     <span class="hljs-keyword">else</span> {
                         r = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EC_VARI_N, name));
@@ -7288,7 +7563,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             }
         }
         <span class="hljs-keyword">if</span> (!r) {
-            <span class="hljs-keyword">var</span> value = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>; <span class="hljs-comment">// 包含了name等属性的js对象</span>
+            <span class="hljs-keyword">var</span> value = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>;
             <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.exprContext.isEntityData(pIndex)) {
                 <span class="hljs-keyword">var</span> entity = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>;
                 <span class="hljs-keyword">var</span> parentObj = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>;
@@ -7300,13 +7575,14 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                     <span class="hljs-keyword">else</span> {
                         value = (entity.field !== <span class="hljs-string">""</span> || name === <span class="hljs-string">""</span>) ?
                             <span class="hljs-keyword">this</span>.getEntityData(entity.name, pIndex) :
-                            <span class="hljs-keyword">this</span>.getEntityData(<span class="hljs-keyword">this</span>.getParentName(entity.name), pIndex); <span class="hljs-comment">// name为当前信息默认实体E1的子实体,Entity1</span>
+                            <span class="hljs-keyword">this</span>.getEntityData(<span class="hljs-keyword">this</span>.getParentName(entity.name), pIndex);
                     }
                     parentObj = <span class="hljs-literal">null</span>;
                 }
                 <span class="hljs-keyword">else</span> {
                     value = source.toValue();
-                    <span class="hljs-keyword">if</span> (source.entity &amp;&amp; !(source.entity.type === <span class="hljs-string">"object"</span> &amp;&amp; source.entity.field !== <span class="hljs-string">""</span>)) {
+                    <span class="hljs-keyword">if</span> (source.entity &amp;&amp;
+                        !(source.entity.type === <span class="hljs-string">"object"</span> &amp;&amp; source.entity.field !== <span class="hljs-string">""</span>)) {
                         entity = <span class="hljs-keyword">this</span>.genEntityInfo(<span class="hljs-keyword">this</span>.getPropertyName(source.entity.fullName, name));
                         <span class="hljs-keyword">if</span> (!entity) {
                             r = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EC_PROP_N, name));
@@ -7320,22 +7596,9 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                     }
                 }
                 <span class="hljs-keyword">if</span> (!r) {
-                    <span class="hljs-keyword">if</span> (value) {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-261">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-261">&#182;</a>
-              </div>
-              <p>source==null时，$0,$1…被视为特殊的访问标记，并不是取对象属性，而是取整个对象</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">if</span> (!(source === <span class="hljs-literal">null</span> &amp;&amp; name === <span class="hljs-string">""</span>)) {
+                    <span class="hljs-keyword">if</span> (value) {
+                       
+                        <span class="hljs-keyword">if</span> (!(source === <span class="hljs-literal">null</span> &amp;&amp; name === <span class="hljs-string">""</span>)) {
                             value = value[name];
                         }
                         <span class="hljs-keyword">if</span> (value === <span class="hljs-literal">undefined</span>) {
@@ -7353,7 +7616,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                         <span class="hljs-keyword">if</span> (r &amp;&amp; r.type === <span class="hljs-string">"array"</span> &amp;&amp; r.entity) {
                             r.entity.map = [];
                             <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; value.length; i++) {
-                                r.entity.map.push(i); <span class="hljs-comment">// map存放该实体数组有效的访问下标</span>
+                                r.entity.map.push(i);
                             }
                         }
                     }
@@ -7383,25 +7646,63 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             }
         }
         <span class="hljs-keyword">return</span> r;
-    };
-    ExprContext.prototype.doGetEntityType = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">source</span>) </span>{
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-282">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-282">&#182;</a>
+              </div>
+              <p>获取实体类型对象</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.doGetEntityType = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">source</span>) </span>{
         <span class="hljs-keyword">var</span> e = <span class="hljs-keyword">this</span>.genEntityInfo(source.entity, <span class="hljs-string">"object"</span>);
         <span class="hljs-keyword">var</span> t = <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"object"</span>, <span class="hljs-string">"object"</span>, <span class="hljs-literal">undefined</span>, e, [e.fullName]);
         <span class="hljs-keyword">return</span> t;
-    };
-    ExprContext.prototype.doGetEntityValue = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">source, index</span>) </span>{
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-283">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-283">&#182;</a>
+              </div>
+              <p>获取实体值，根据游标索引</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.doGetEntityValue = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">source, index</span>) </span>{
         <span class="hljs-keyword">var</span> v = source.toValue()[index];
         <span class="hljs-keyword">var</span> e = <span class="hljs-keyword">this</span>.genEntityInfo(source.entity, <span class="hljs-string">"object"</span>);
         e.recNo = source.entity.map[index];
         <span class="hljs-keyword">var</span> parentObj = source.parentObj;
         <span class="hljs-keyword">var</span> r = <span class="hljs-keyword">this</span>.genValue(v, getValueType(v), e, <span class="hljs-string">""</span>, parentObj);
         <span class="hljs-keyword">return</span> r;
-    };
-    ExprContext.prototype.genEntityInfo = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">fullName, type</span>) </span>{
-       
-       
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-284">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-284">&#182;</a>
+              </div>
+              <p>获取实体信息</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.genEntityInfo = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">fullName, type</span>) </span>{
         <span class="hljs-keyword">if</span> (getValueType(fullName) === <span class="hljs-string">"object"</span>) {
             fullName = fullName.fullName;
         }
@@ -7410,9 +7711,9 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
         <span class="hljs-keyword">var</span> dataType;
         <span class="hljs-keyword">if</span> (fullName !== <span class="hljs-string">""</span>) {
             <span class="hljs-keyword">var</span> p = fullName.split(<span class="hljs-string">"."</span>);
-            <span class="hljs-keyword">var</span> x = p[<span class="hljs-number">0</span>]; <span class="hljs-comment">// "E1"</span>
+            <span class="hljs-keyword">var</span> x = p[<span class="hljs-number">0</span>];
             <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.dataContext;
-            <span class="hljs-keyword">var</span> t = c[x]; <span class="hljs-comment">// dataContext["E1"]</span>
+            <span class="hljs-keyword">var</span> t = c[x];
             <span class="hljs-keyword">if</span> (t) {
                 name.push(x);
                 <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">1</span>; i &lt; p.length; i++) {
@@ -7426,7 +7727,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                         <span class="hljs-keyword">if</span> (f !== <span class="hljs-string">""</span>) {
                             f += <span class="hljs-string">"."</span>;
                         }
-                        f += x; <span class="hljs-comment">// 实体出现"x.y"形式的属性名</span>
+                        f += x;
                         <span class="hljs-keyword">if</span> (t.fields &amp;&amp; t.fields[f]) {
                             field.push(x);
                             dataType = t.fields[f].type;
@@ -7455,15 +7756,41 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             r.type = type;
         }
         <span class="hljs-keyword">return</span> r;
-    };
-    ExprContext.prototype.getRootValue = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-285">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-285">&#182;</a>
+              </div>
+              <p>获取根数据值</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.getRootValue = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
         <span class="hljs-keyword">var</span> entity = <span class="hljs-keyword">this</span>.genEntityInfo(<span class="hljs-string">""</span>, <span class="hljs-string">"object"</span>);
         entity.recNo = <span class="hljs-number">0</span>;
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.genValue(<span class="hljs-keyword">this</span>.data, <span class="hljs-string">"object"</span>, entity, <span class="hljs-string">""</span>);
-    };
-    ExprContext.prototype.getParentValue = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">source</span>) </span>{
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-286">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-286">&#182;</a>
+              </div>
+              <p>获取父实体值</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.getParentValue = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">source</span>) </span>{
         <span class="hljs-keyword">var</span> r;
         <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.exprContext.isEntityData()) {
             <span class="hljs-keyword">var</span> entity = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>;
@@ -7484,7 +7811,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             <span class="hljs-keyword">if</span> (!r) {
                 entity = <span class="hljs-keyword">this</span>.genEntityInfo(<span class="hljs-keyword">this</span>.getParentName(entity), <span class="hljs-string">"object"</span>);
                 entity.recNo = <span class="hljs-keyword">this</span>.exprContext.getEntityDataCursor(entity.name);
-                <span class="hljs-keyword">var</span> value = <span class="hljs-keyword">this</span>.getEntityData(entity.name); <span class="hljs-comment">// 取父实体对象</span>
+                <span class="hljs-keyword">var</span> value = <span class="hljs-keyword">this</span>.getEntityData(entity.name);
                 r = <span class="hljs-keyword">this</span>.genValue(value, <span class="hljs-string">""</span>, entity);
             }
         }
@@ -7492,9 +7819,22 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             r = <span class="hljs-keyword">this</span>.genValue(<span class="hljs-literal">null</span>);
         }
         <span class="hljs-keyword">return</span> r;
-    };
-    ExprContext.prototype.getEntityData = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">entityName, index</span>) </span>{
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-287">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-287">&#182;</a>
+              </div>
+              <p>获取实体数据，根据游标索引</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.getEntityData = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">entityName, index</span>) </span>{
         <span class="hljs-keyword">var</span> d = <span class="hljs-keyword">this</span>.data;
         <span class="hljs-keyword">if</span> (entityName !== <span class="hljs-string">""</span>) {
             <span class="hljs-keyword">var</span> p = entityName.split(<span class="hljs-string">"."</span>);
@@ -7502,24 +7842,48 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _i = <span class="hljs-number">0</span>, p_1 = p; _i &lt; p_1.length; _i++) {
                 <span class="hljs-keyword">var</span> prop = p_1[_i];
                 cp.push(prop);
-                d = d[prop]; <span class="hljs-comment">// data[E1],得到实体数组</span>
+                d = d[prop];
                 <span class="hljs-keyword">var</span> cursor = <span class="hljs-keyword">this</span>.exprContext.getEntityDataCursor(cp.join(<span class="hljs-string">"."</span>), index);
-                d = d[cursor]; <span class="hljs-comment">// 得到实体数组中第cursor条实体记录</span>
+                d = d[cursor];
                 <span class="hljs-keyword">if</span> (d === <span class="hljs-literal">undefined</span>) {
                     <span class="hljs-keyword">break</span>;
                 }
             }
         }
         <span class="hljs-keyword">return</span> d;
-    };
-    ExprContext.prototype.getData = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">index</span>) </span>{
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-288">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-288">&#182;</a>
+              </div>
+              <p>根据索引获取数据</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.getData = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">index</span>) </span>{
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.exprContext.getData(index);
-    };
-    ExprContext.prototype.getParentName = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name</span>) </span>{
-       
-       
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-289">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-289">&#182;</a>
+              </div>
+              <p>获取父名称</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.getParentName = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name</span>) </span>{
         <span class="hljs-keyword">var</span> p = name.split(<span class="hljs-string">"."</span>);
         <span class="hljs-keyword">var</span> r;
         <span class="hljs-keyword">if</span> (p.length &gt; <span class="hljs-number">0</span>) {
@@ -7530,17 +7894,41 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             r = <span class="hljs-string">""</span>;
         }
         <span class="hljs-keyword">return</span> r;
-    };
-    ExprContext.prototype.getPropertyName = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name, prop</span>) </span>{
-       
-       
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-290">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-290">&#182;</a>
+              </div>
+              <p>获取实体属性全名称</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.getPropertyName = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name, prop</span>) </span>{
         <span class="hljs-keyword">return</span> (name &amp;&amp; prop) ?
             (name + <span class="hljs-string">"."</span> + prop) :
             (name ? name : prop);
-    };
-    ExprContext.prototype.getRecNo = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">source</span>) </span>{
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-291">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-291">&#182;</a>
+              </div>
+              <p>获取当前实体的索引号，没有实体返回-1</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.getRecNo = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">source</span>) </span>{
         <span class="hljs-keyword">var</span> r;
         <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.exprContext.isEntityData()) {
             <span class="hljs-keyword">var</span> entity = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>;
@@ -7552,25 +7940,119 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             <span class="hljs-keyword">else</span> {
                 r = (source.entity &amp;&amp; source.entity.field === <span class="hljs-string">""</span>) ?
                     <span class="hljs-keyword">this</span>.genValue(source.entity.recNo) :
-                    <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EC_FUNC_E, <span class="hljs-string">"RecNo"</span>)); <span class="hljs-comment">// {x:1}.RecNo()</span>
+                    <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EC_FUNC_E, <span class="hljs-string">"RecNo"</span>));
             }
         }
         <span class="hljs-keyword">else</span> {
             r = <span class="hljs-keyword">this</span>.genValue(<span class="hljs-number">-1</span>);
         }
         <span class="hljs-keyword">return</span> r;
-    };
-    ExprContext.prototype.setFieldName = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">value</span>) </span>{ <span class="hljs-keyword">this</span>.fieldName = value; };
-    ExprContext.prototype.getFieldName = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{ <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.fieldName || <span class="hljs-string">""</span>; };
-    ExprContext.prototype.setFieldDisplayName = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">value</span>) </span>{ <span class="hljs-keyword">this</span>.fieldDisplayName = value; };
-    ExprContext.prototype.getFieldDisplayName = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{ <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.fieldDisplayName || <span class="hljs-string">""</span>; };
-    ExprContext.prototype.setFieldValue = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">value</span>) </span>{ <span class="hljs-keyword">this</span>.fieldValue = value; };
-    ExprContext.prototype.getFieldValue = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{ <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.fieldValue || <span class="hljs-literal">null</span>; };
-    ExprContext.prototype.findParams = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">ps, p</span>) </span>{
-       
-       
-       
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-292">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-292">&#182;</a>
+              </div>
+              <p>设置字段名</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.setFieldName = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">value</span>) </span>{ <span class="hljs-keyword">this</span>.fieldName = value; };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-293">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-293">&#182;</a>
+              </div>
+              <p>获取字段名</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.getFieldName = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{ <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.fieldName || <span class="hljs-string">""</span>; };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-294">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-294">&#182;</a>
+              </div>
+              <p>设置字段显示名称</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.setFieldDisplayName = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">value</span>) </span>{ <span class="hljs-keyword">this</span>.fieldDisplayName = value; };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-295">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-295">&#182;</a>
+              </div>
+              <p>获取字段显示名称</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.getFieldDisplayName = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{ <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.fieldDisplayName || <span class="hljs-string">""</span>; };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-296">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-296">&#182;</a>
+              </div>
+              <p>设置字段值</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.setFieldValue = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">value</span>) </span>{ <span class="hljs-keyword">this</span>.fieldValue = value; };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-297">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-297">&#182;</a>
+              </div>
+              <p>获取字段值</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.getFieldValue = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{ <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.fieldValue || <span class="hljs-literal">null</span>; };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-298">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-298">&#182;</a>
+              </div>
+              <p>检测参数类型数组是否匹配</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.findParams = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">ps, p</span>) </span>{
         <span class="hljs-keyword">var</span> r = [];
         <span class="hljs-keyword">var</span> pt = [];
         <span class="hljs-keyword">var</span> pl = ps.length;
@@ -7600,12 +8082,22 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             r = <span class="hljs-literal">null</span>;
         }
         <span class="hljs-keyword">return</span> r;
-    };
-    ExprContext.prototype.getFunc = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">type, name, params</span>) </span>{
-       
-       
-       
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-299">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-299">&#182;</a>
+              </div>
+              <p>获取参数个数和类型都匹配的函数</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.getFunc = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">type, name, params</span>) </span>{
         <span class="hljs-keyword">var</span> r;
         <span class="hljs-keyword">if</span> (type === <span class="hljs-string">"undefined"</span>) {
             <span class="hljs-keyword">var</span> f = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>;
@@ -7628,12 +8120,22 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             }
         }
         <span class="hljs-keyword">return</span> r;
-    };
-    ExprContext.prototype.getFuncType = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">type, name, params</span>) </span>{
-       
-       
-       
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-300">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-300">&#182;</a>
+              </div>
+              <p>获取参数个数和类型都匹配的函数的返回值类型</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.getFuncType = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">type, name, params</span>) </span>{
         <span class="hljs-keyword">var</span> r = <span class="hljs-literal">null</span>;
         <span class="hljs-keyword">var</span> fn = <span class="hljs-keyword">this</span>.getFunc(type, name, params);
         <span class="hljs-keyword">if</span> (getValueType(fn) === <span class="hljs-string">"array"</span>) {
@@ -7662,8 +8164,22 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             };
         }
         <span class="hljs-keyword">return</span> r;
-    };
-    ExprContext.prototype.getContextVariableValue = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">key</span>) </span>{
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-301">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-301">&#182;</a>
+              </div>
+              <p>获取上下文变量值</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.getContextVariableValue = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">key</span>) </span>{
         <span class="hljs-keyword">var</span> r;
         <span class="hljs-keyword">var</span> v = <span class="hljs-keyword">this</span>.contextVariables;
         <span class="hljs-keyword">if</span> (v.length &gt; <span class="hljs-number">0</span>) {
@@ -7673,27 +8189,81 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             r = <span class="hljs-literal">null</span>;
         }
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.genValue(r);
-    };
-    ExprContext.prototype.pushContextVariables = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">v</span>) </span>{
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-302">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-302">&#182;</a>
+              </div>
+              <p>上下文变量压栈</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.pushContextVariables = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">v</span>) </span>{
         <span class="hljs-keyword">this</span>.contextVariables.push(v);
-    };
-    ExprContext.prototype.popContextVariables = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-303">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-303">&#182;</a>
+              </div>
+              <p>上下文变量出栈</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.popContextVariables = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
         <span class="hljs-keyword">this</span>.contextVariables.pop();
-    };
-    ExprContext.prototype._calcExpr = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, curr</span>) </span>{
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-304">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-304">&#182;</a>
+              </div>
+              <p>计算表达式</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype._calcExpr = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, curr</span>) </span>{
         <span class="hljs-keyword">if</span> (curr.length &gt; <span class="hljs-number">0</span>) {
             <span class="hljs-keyword">this</span>.exprContext.push(curr);
         }
         <span class="hljs-keyword">var</span> e = <span class="hljs-keyword">new</span> Calc();
-        <span class="hljs-keyword">var</span> r = e.calc(expr, <span class="hljs-keyword">this</span>); <span class="hljs-comment">// 调用计算器对象对表达式进行分析和计算</span>
+        <span class="hljs-keyword">var</span> r = e.calc(expr, <span class="hljs-keyword">this</span>);
         <span class="hljs-keyword">if</span> (curr.length &gt; <span class="hljs-number">0</span>) {
             <span class="hljs-keyword">this</span>.exprContext.pop();
         }
         <span class="hljs-keyword">return</span> r;
-    };
-    ExprContext.prototype.calcEntityExpr = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, entityName, cursor</span>) </span>{
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-305">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-305">&#182;</a>
+              </div>
+              <p>在实体计算环境下计算表达式的值</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.calcEntityExpr = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, entityName, cursor</span>) </span>{
         <span class="hljs-keyword">var</span> c = [];
         <span class="hljs-keyword">var</span> i = <span class="hljs-number">1</span>;
         <span class="hljs-keyword">while</span> (i &lt; <span class="hljs-built_in">arguments</span>.length) {
@@ -7705,9 +8275,22 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             i += <span class="hljs-number">2</span>;
         }
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._calcExpr(expr, c);
-    };
-    ExprContext.prototype.calcDataExpr = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, data</span>) </span>{
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-306">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-306">&#182;</a>
+              </div>
+              <p>在数据计算环境下计算表达式的值</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.calcDataExpr = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, data</span>) </span>{
         <span class="hljs-keyword">var</span> c = [];
         <span class="hljs-keyword">var</span> i = <span class="hljs-number">1</span>;
         <span class="hljs-keyword">while</span> (i &lt; <span class="hljs-built_in">arguments</span>.length) {
@@ -7718,9 +8301,22 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             i++;
         }
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._calcExpr(expr, c);
-    };
-    ExprContext.prototype.calcDependencies = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, curr</span>) </span>{
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-307">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-307">&#182;</a>
+              </div>
+              <p>计算表达式的依赖关系</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.calcDependencies = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, curr</span>) </span>{
         <span class="hljs-keyword">if</span> (curr.length &gt; <span class="hljs-number">0</span>) {
             <span class="hljs-keyword">this</span>.exprContext.push(curr);
         }
@@ -7730,9 +8326,22 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             <span class="hljs-keyword">this</span>.exprContext.pop();
         }
         <span class="hljs-keyword">return</span> r;
-    };
-    ExprContext.prototype.calcEntityDependencies = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, entityName</span>) </span>{
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-308">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-308">&#182;</a>
+              </div>
+              <p>在实体计算环境下计算表达式的依赖关系</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.calcEntityDependencies = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, entityName</span>) </span>{
         <span class="hljs-keyword">var</span> c = [];
         <span class="hljs-keyword">var</span> i = <span class="hljs-number">1</span>;
         <span class="hljs-keyword">while</span> (i &lt; <span class="hljs-built_in">arguments</span>.length) {
@@ -7743,9 +8352,22 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             i++;
         }
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.calcDependencies(expr, c);
-    };
-    ExprContext.prototype.calcDataDependencies = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr</span>) </span>{
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-309">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-309">&#182;</a>
+              </div>
+              <p>在数据计算环境下计算表达式的依赖关系</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.calcDataDependencies = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr</span>) </span>{
         <span class="hljs-keyword">var</span> c = [];
         <span class="hljs-keyword">var</span> i = <span class="hljs-number">1</span>;
         <span class="hljs-keyword">while</span> (i &lt; <span class="hljs-built_in">arguments</span>.length) {
@@ -7755,23 +8377,74 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
             i++;
         }
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.calcDependencies(expr, c);
-    };
-    ExprContext.prototype.pushEntityCurrent = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">entityName, cursor</span>) </span>{
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-310">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-310">&#182;</a>
+              </div>
+              <p>向栈顶添加新的计算环境</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.pushEntityCurrent = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">entityName, cursor</span>) </span>{
         <span class="hljs-keyword">this</span>.exprContext.push([{
                 <span class="hljs-attr">current</span>: entityName,
                 <span class="hljs-attr">cursor</span>: (cursor),
                 <span class="hljs-attr">isEntityData</span>: <span class="hljs-literal">true</span>,
             }]);
-    };
-    ExprContext.prototype.popEntityCurrent = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-311">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-311">&#182;</a>
+              </div>
+              <p>删除栈顶的计算环境</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.popEntityCurrent = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
         <span class="hljs-keyword">this</span>.exprContext.pop();
     };
     <span class="hljs-keyword">return</span> ExprContext;
-}(Context));
+}(Context));</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-312">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-312">&#182;</a>
+              </div>
+              <h2 id="-">表达式列表</h2>
 
-<span class="hljs-keyword">var</span> ExprList = (<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-313">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-313">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> ExprList = (<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
     <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">ExprList</span>(<span class="hljs-params"></span>) </span>{
         <span class="hljs-keyword">this</span>.list = [];
         <span class="hljs-keyword">this</span>.cache = {};
@@ -7861,59 +8534,20 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
         }
     };
     ExprList.prototype._doGetMode = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">updateList, l</span>) </span>{
-        <span class="hljs-keyword">var</span> modeList = [];</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-262">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-262">&#182;</a>
-              </div>
-              <p>计算字段表达式的依赖更新模式</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> (updateList &amp;&amp; l &amp;&amp; l.dependencies) {
+        <span class="hljs-keyword">var</span> modeList = [];
+       
+        <span class="hljs-keyword">if</span> (updateList &amp;&amp; l &amp;&amp; l.dependencies) {
             <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _i = <span class="hljs-number">0</span>, _a = updateList.length; _i &lt; _a.length; _i++) {
                 <span class="hljs-keyword">var</span> updateItem = _a[_i];
                 <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _b = <span class="hljs-number">0</span>, _c = l.dependencies; _b &lt; _c.length; _b++) {
                     <span class="hljs-keyword">var</span> dependency = _c[_b];
                     <span class="hljs-keyword">if</span> (updateItem.fullName === dependency) {
                         <span class="hljs-keyword">var</span> commonAncestry = <span class="hljs-literal">true</span>;
-                        <span class="hljs-keyword">var</span> isSubChange = <span class="hljs-literal">false</span>;</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-263">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-263">&#182;</a>
-              </div>
-              <p>找到依赖的变化字段</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">if</span> (updateItem.type === <span class="hljs-string">"U"</span>) {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-264">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-264">&#182;</a>
-              </div>
-              <p>如果该字段是更新</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                            <span class="hljs-keyword">var</span> isDependEntity = <span class="hljs-literal">false</span>; <span class="hljs-comment">// 表达式是否依赖了实体</span>
+                        <span class="hljs-keyword">var</span> isSubChange = <span class="hljs-literal">false</span>;
+                       
+                        <span class="hljs-keyword">if</span> (updateItem.type === <span class="hljs-string">"U"</span>) {
+                           
+                            <span class="hljs-keyword">var</span> isDependEntity = <span class="hljs-literal">false</span>;
                             <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _d = <span class="hljs-number">0</span>, _e = l.dependencies; _d &lt; _e.length; _d++) {
                                 <span class="hljs-keyword">var</span> depend = _e[_d];
                                 isDependEntity = (updateItem.fullName.indexOf(depend + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>);
@@ -7921,44 +8555,18 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                                     <span class="hljs-keyword">break</span>;
                                 }
                             }
-                            <span class="hljs-keyword">if</span> (updateItem.entityName === l.entityName) {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-265">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-265">&#182;</a>
-              </div>
-              <p>同级更新</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                                <span class="hljs-keyword">if</span> (isDependEntity) {
+                            <span class="hljs-keyword">if</span> (updateItem.entityName === l.entityName) {
+                               
+                                <span class="hljs-keyword">if</span> (isDependEntity) {
                                     modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"All"</span> });
                                 }
                                 <span class="hljs-keyword">else</span> {
                                     modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"Single"</span> });
                                 }
                             }
-                            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (l.entityName.indexOf(updateItem.entityName + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>) {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-266">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-266">&#182;</a>
-              </div>
-              <p>上级更新</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                                <span class="hljs-keyword">if</span> (isDependEntity) {
+                            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (l.entityName.indexOf(updateItem.entityName + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>) {
+                               
+                                <span class="hljs-keyword">if</span> (isDependEntity) {
                                     modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"All"</span> });
                                 }
                                 <span class="hljs-keyword">else</span> {
@@ -7968,215 +8576,59 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                                     });
                                 }
                             }
-                            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (updateItem.entityName.indexOf(l.entityName + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>) {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-267">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-267">&#182;</a>
-              </div>
-              <p>下级更新</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                                modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"Single"</span> });
+                            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (updateItem.entityName.indexOf(l.entityName + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>) {
+                               
+                                modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"Single"</span> });
                                 isSubChange = <span class="hljs-literal">true</span>;
                             }
-                            <span class="hljs-keyword">else</span> {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-268">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-268">&#182;</a>
-              </div>
-              <p>外部更新</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                                modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"All"</span> });
+                            <span class="hljs-keyword">else</span> {
+                               
+                                modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"All"</span> });
                                 commonAncestry = <span class="hljs-literal">false</span>;
                             }
                         }
-                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (updateItem.type === <span class="hljs-string">"R"</span>) {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-269">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-269">&#182;</a>
-              </div>
-              <p>如果该记录是删除</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                            <span class="hljs-keyword">if</span> (updateItem.entityName === l.entityName) {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-270">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-270">&#182;</a>
-              </div>
-              <p>同级删除</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                                modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"All"</span> });
+                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (updateItem.type === <span class="hljs-string">"R"</span>) {
+                           
+                            <span class="hljs-keyword">if</span> (updateItem.entityName === l.entityName) {
+                               
+                                modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"All"</span> });
                             }
-                            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (l.entityName.indexOf(updateItem.entityName + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>) {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-271">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-271">&#182;</a>
-              </div>
-              <p>上级删除</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                                modeList.push({
+                            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (l.entityName.indexOf(updateItem.entityName + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>) {
+                               
+                                modeList.push({
                                     <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"BranchDelete"</span>,
                                     <span class="hljs-attr">updateTarget</span>: <span class="hljs-keyword">this</span>._doGetUpdateTarget(updateItem.entityName, l.entityName),
                                 });
                             }
-                            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (updateItem.entityName.indexOf(l.entityName + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>) {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-272">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-272">&#182;</a>
-              </div>
-              <p>下级删除</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                                modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"Single"</span> });
+                            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (updateItem.entityName.indexOf(l.entityName + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>) {
+                               
+                                modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"Single"</span> });
                                 isSubChange = <span class="hljs-literal">true</span>;
                             }
-                            <span class="hljs-keyword">else</span> {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-273">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-273">&#182;</a>
-              </div>
-              <p>外部删除</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                                modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"All"</span> });
+                            <span class="hljs-keyword">else</span> {
+                               
+                                modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"All"</span> });
                                 commonAncestry = <span class="hljs-literal">false</span>;
                             }
                         }
-                        <span class="hljs-keyword">else</span> {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-274">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-274">&#182;</a>
-              </div>
-              <p>如果该记录是添加或加载</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                            <span class="hljs-keyword">if</span> (updateItem.entityName === l.entityName) {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-275">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-275">&#182;</a>
-              </div>
-              <p>同级添加</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                                modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"All"</span> });
+                        <span class="hljs-keyword">else</span> {
+                           
+                            <span class="hljs-keyword">if</span> (updateItem.entityName === l.entityName) {
+                               
+                                modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"All"</span> });
                             }
-                            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (l.entityName.indexOf(updateItem.entityName + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>) {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-276">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-276">&#182;</a>
-              </div>
-              <p>上级添加</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                                modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"All"</span> });
+                            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (l.entityName.indexOf(updateItem.entityName + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>) {
+                               
+                                modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"All"</span> });
                             }
-                            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (updateItem.entityName.indexOf(l.entityName + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>) {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-277">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-277">&#182;</a>
-              </div>
-              <p>下级添加</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                                modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"Single"</span> });
+                            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (updateItem.entityName.indexOf(l.entityName + <span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>) {
+                               
+                                modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"Single"</span> });
                                 isSubChange = <span class="hljs-literal">true</span>;
                             }
-                            <span class="hljs-keyword">else</span> {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-278">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-278">&#182;</a>
-              </div>
-              <p>外部添加</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                                modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"All"</span> });
+                            <span class="hljs-keyword">else</span> {
+                               
+                                modeList.push({ <span class="hljs-attr">updateMode</span>: <span class="hljs-string">"All"</span> });
                                 commonAncestry = <span class="hljs-literal">false</span>;
                             }
                         }
@@ -8186,22 +8638,9 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                     }
                 }
             }
-        }</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-279">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-279">&#182;</a>
-              </div>
-              <p>合并字段表达式的依赖更新模式</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> a = <span class="hljs-string">"Single"</span>;
+        }
+       
+        <span class="hljs-keyword">var</span> a = <span class="hljs-string">"Single"</span>;
         <span class="hljs-keyword">var</span> at = <span class="hljs-string">""</span>;
         <span class="hljs-keyword">var</span> b;
         <span class="hljs-keyword">var</span> bt;
@@ -8233,15 +8672,41 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
         <span class="hljs-keyword">var</span> m = me.split(<span class="hljs-string">"."</span>);
         p.push(m[p.length]);
         <span class="hljs-keyword">return</span> p.join(<span class="hljs-string">"."</span>);
-    };
-    ExprList.prototype.reset = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-314">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-314">&#182;</a>
+              </div>
+              <p>重置表达式列表对象</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprList.prototype.reset = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
         <span class="hljs-keyword">this</span>.list = [];
         <span class="hljs-keyword">this</span>.cache = {};
         <span class="hljs-keyword">this</span>.sorted = <span class="hljs-literal">false</span>;
-    };
-    ExprList.prototype.add = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, entityName, propertyName, types, callback, scope</span>) </span>{
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-315">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-315">&#182;</a>
+              </div>
+              <p>添加表达式</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprList.prototype.add = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, entityName, propertyName, types, callback, scope</span>) </span>{
         <span class="hljs-keyword">this</span>.cache = {};
         <span class="hljs-keyword">this</span>.sorted = <span class="hljs-literal">false</span>;
         <span class="hljs-keyword">var</span> index = <span class="hljs-number">-1</span>;
@@ -8264,21 +8729,48 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                 <span class="hljs-attr">types</span>: (types),
             });
         }
-    };
-    ExprList.prototype.remove = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, entityName, propertyName, types, callback, scope</span>) </span>{
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-316">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-316">&#182;</a>
+              </div>
+              <p>删除表达式</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprList.prototype.remove = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, entityName, propertyName, types, callback, scope</span>) </span>{
         <span class="hljs-keyword">this</span>.cache = {};
         <span class="hljs-keyword">this</span>.sorted = <span class="hljs-literal">false</span>;
         <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.list.length; i++) {
             <span class="hljs-keyword">var</span> item = <span class="hljs-keyword">this</span>.list[i];
             <span class="hljs-keyword">if</span> (item.expr === expr &amp;&amp; item.entityName === entityName &amp;&amp; item.propertyName === propertyName &amp;&amp;
                 item.types === types &amp;&amp; item.callback === callback &amp;&amp; item.scope === scope) {
-                <span class="hljs-keyword">this</span>.list.splice(i, <span class="hljs-number">1</span>); <span class="hljs-comment">// 删除匹配的项</span>
+                <span class="hljs-keyword">this</span>.list.splice(i, <span class="hljs-number">1</span>);
                 <span class="hljs-keyword">break</span>;
             }
         }
-    };
-    ExprList.prototype.checkAndSort = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">dependCallback</span>) </span>{
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-317">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-317">&#182;</a>
+              </div>
+              <p>检查和排序表达式列表</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprList.prototype.checkAndSort = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">dependCallback</span>) </span>{
         <span class="hljs-keyword">this</span>.cache = {};
         <span class="hljs-keyword">this</span>.sorted = <span class="hljs-literal">true</span>;
         <span class="hljs-keyword">var</span> msg = <span class="hljs-string">""</span>;
@@ -8296,22 +8788,9 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
                 }
             }
         }
-        <span class="hljs-keyword">if</span> (msg === <span class="hljs-string">""</span>) {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-280">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-280">&#182;</a>
-              </div>
-              <p>按依赖关系排序</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">var</span> fillList_1 = [];
+        <span class="hljs-keyword">if</span> (msg === <span class="hljs-string">""</span>) {
+           
+            <span class="hljs-keyword">var</span> fillList_1 = [];
             <span class="hljs-keyword">var</span> newList_1 = [];
             <span class="hljs-keyword">var</span> findItem_1 = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">list, item</span>) </span>{
                 <span class="hljs-keyword">var</span> r = <span class="hljs-literal">false</span>;
@@ -8380,18 +8859,43 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._getExprs(entityName, <span class="hljs-string">""</span>, <span class="hljs-string">"R"</span>);
     };
     <span class="hljs-keyword">return</span> ExprList;
-}());
-
-locale.defineLocale(<span class="hljs-string">"zh-cn"</span>, {</pre></div></div>
+}());</pre></div></div>
             
         </li>
         
         
-        <li id="section-281">
+        <li id="section-318">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-281">&#182;</a>
+                <a class="pilcrow" href="#section-318">&#182;</a>
+              </div>
+              <h2 id="-">多语言 - 中文</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-319">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-319">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>locale.defineLocale(<span class="hljs-string">"zh-cn"</span>, {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-320">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-320">&#182;</a>
               </div>
               <p>context</p>
 
@@ -8408,11 +8912,11 @@ locale.defineLocale(<span class="hljs-string">"zh-cn"</span>, {</pre></div></div
         </li>
         
         
-        <li id="section-282">
+        <li id="section-321">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-282">&#182;</a>
+                <a class="pilcrow" href="#section-321">&#182;</a>
               </div>
               <p>funtion</p>
 
@@ -8423,11 +8927,11 @@ locale.defineLocale(<span class="hljs-string">"zh-cn"</span>, {</pre></div></div
         </li>
         
         
-        <li id="section-283">
+        <li id="section-322">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-283">&#182;</a>
+                <a class="pilcrow" href="#section-322">&#182;</a>
               </div>
               <p>lexer</p>
 
@@ -8441,11 +8945,11 @@ locale.defineLocale(<span class="hljs-string">"zh-cn"</span>, {</pre></div></div
         </li>
         
         
-        <li id="section-284">
+        <li id="section-323">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-284">&#182;</a>
+                <a class="pilcrow" href="#section-323">&#182;</a>
               </div>
               <p>parser</p>
 
@@ -8470,11 +8974,11 @@ locale.defineLocale(<span class="hljs-string">"zh-cn"</span>, {</pre></div></div
         </li>
         
         
-        <li id="section-285">
+        <li id="section-324">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-285">&#182;</a>
+                <a class="pilcrow" href="#section-324">&#182;</a>
               </div>
               <p>list</p>
 
@@ -8485,11 +8989,11 @@ locale.defineLocale(<span class="hljs-string">"zh-cn"</span>, {</pre></div></div
         </li>
         
         
-        <li id="section-286">
+        <li id="section-325">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-286">&#182;</a>
+                <a class="pilcrow" href="#section-325">&#182;</a>
               </div>
               <p>type &amp; value</p>
 
@@ -8523,8 +9027,22 @@ locale.defineLocale(<span class="hljs-string">"zh-cn"</span>, {</pre></div></div
     <span class="hljs-attr">MSG_EX_SUBSCRIPT_U</span>: <span class="hljs-string">"{0} 下标越界: {1}"</span>,
     <span class="hljs-attr">MSG_EX_SUBTRACT</span>: <span class="hljs-string">"{0} 和 {1} 无法做减法运算"</span>,
     <span class="hljs-attr">MSG_EX_TRUNC</span>: <span class="hljs-string">"做截断运算时，保留小数位数不能为负数: {0}"</span>,
-});
-locale.defineFunction(<span class="hljs-string">"zh-cn"</span>, {
+});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-326">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-326">&#182;</a>
+              </div>
+              <p>函数描述</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>locale.defineFunction(<span class="hljs-string">"zh-cn"</span>, {
     <span class="hljs-string">"FieldDisplayName"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取当前字段别名"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"字段别名（显示名称）"</span> },
     <span class="hljs-string">"FieldName"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取当前字段唯一标识"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"字段唯一标识"</span> },
     <span class="hljs-string">"FieldValue"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取当前字段值"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"字段值"</span> },
@@ -8602,77 +9120,194 @@ locale.defineFunction(<span class="hljs-string">"zh-cn"</span>, {
     <span class="hljs-string">"string.TrimLeft"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"去除字符串左端空格"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"字符串"</span> },
     <span class="hljs-string">"string.TrimRight"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"去除字符串右端空格"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"字符串"</span> },
     <span class="hljs-string">"string.Upper"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"转换字符串为大写"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"大写字符串"</span> },
-});
+});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-327">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-327">&#182;</a>
+              </div>
+              <h2 id="-">表达式管理器</h2>
 
-<span class="hljs-keyword">var</span> ExprManager = (<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
-    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">ExprManager</span>(<span class="hljs-params"></span>) </span>{
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-328">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-328">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> ExprManager = (<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-329">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-329">&#182;</a>
+              </div>
+              <p>构造函数</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">ExprManager</span>(<span class="hljs-params"></span>) </span>{
         <span class="hljs-keyword">this</span>.exprContext = <span class="hljs-keyword">new</span> ExprContext();
         <span class="hljs-keyword">this</span>.exprList = <span class="hljs-keyword">new</span> ExprList();
         <span class="hljs-keyword">this</span>.addFunction(func);
-    }
-    ExprManager.prototype.addFunction = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">funcs</span>) </span>{
-       
-       
-       
-       
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-330">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-330">&#182;</a>
+              </div>
+              <p>注册函数</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.addFunction = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">funcs</span>) </span>{
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.exprContext.addFunction(funcs);
-    };
-    ExprManager.prototype.getFunction = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
-       
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-331">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-331">&#182;</a>
+              </div>
+              <p>获取函数列表对象</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.getFunction = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.exprContext.getFunction();
-    };
-    ExprManager.prototype.getExpressionList = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
-       
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-332">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-332">&#182;</a>
+              </div>
+              <p>获取表达式列表对象</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.getExpressionList = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.exprList;
-    };
-    ExprManager.prototype.checkAndSort = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-333">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-333">&#182;</a>
+              </div>
+              <p>检查和排序表达式列表</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.checkAndSort = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.exprList.checkAndSort((<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">context</span>) </span>{ <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, entityName</span>) </span>{
             <span class="hljs-keyword">return</span> context.calcEntityDependencies(expr, entityName);
         }; })(<span class="hljs-keyword">this</span>.exprContext));
-    };
-    ExprManager.prototype.addExpression = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, entityName, propertyName, types, callback, scope</span>) </span>{</pre></div></div>
+    };</pre></div></div>
             
         </li>
         
         
-        <li id="section-287">
+        <li id="section-334">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-287">&#182;</a>
+                <a class="pilcrow" href="#section-334">&#182;</a>
               </div>
-              <p>types = “L|A|U|R”</p>
+              <p>添加表达式</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">this</span>.exprList.add(expr, entityName, propertyName, types, callback, scope);
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-    };
-    ExprManager.prototype.removeExpression = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, entityName, propertyName, types, callback, scope</span>) </span>{</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-288">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-288">&#182;</a>
-              </div>
-              <p>types = “L|A|U|R”</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">this</span>.exprList.remove(expr, entityName, propertyName, types, callback, scope);
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-    };
-    ExprManager.prototype.resetExpression = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.addExpression = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, entityName, propertyName, types, callback, scope</span>) </span>{
        
+        <span class="hljs-keyword">this</span>.exprList.add(expr, entityName, propertyName, types, callback, scope);
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-335">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-335">&#182;</a>
+              </div>
+              <p>删除表达式</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.removeExpression = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, entityName, propertyName, types, callback, scope</span>) </span>{
+       
+        <span class="hljs-keyword">this</span>.exprList.remove(expr, entityName, propertyName, types, callback, scope);
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-336">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-336">&#182;</a>
+              </div>
+              <p>重置表达式列表对象</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.resetExpression = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
         <span class="hljs-keyword">this</span>.exprList.reset();
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-    };
-    ExprManager.prototype.calcExpression = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">type, info</span>) </span>{
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-337">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-337">&#182;</a>
+              </div>
+              <p>计算表达式</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.calcExpression = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">type, info</span>) </span>{
         <span class="hljs-keyword">var</span> list;
         <span class="hljs-keyword">switch</span> (type) {
             <span class="hljs-keyword">case</span> <span class="hljs-string">"load"</span>:
@@ -8696,35 +9331,61 @@ locale.defineFunction(<span class="hljs-string">"zh-cn"</span>, {
             item.callback.call(item.scope, type, info);
         }
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-    };
-    ExprManager.prototype.init = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">data, dataContext, context</span>) </span>{
-       
-        <span class="hljs-keyword">this</span>.exprContext.setData(data);
-        <span class="hljs-keyword">this</span>.exprContext.setDataContext(dataContext);
-        <span class="hljs-keyword">this</span>.exprContext.setPageContext(context || {});
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-    };
-    ExprManager.prototype.calcDependencies = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, entityName</span>) </span>{
-       
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.exprContext.calcEntityDependencies(expr, entityName);
-    };
-    ExprManager.prototype.calcExpr = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, entityName, dataCursor, field</span>) </span>{</pre></div></div>
+    };</pre></div></div>
             
         </li>
         
         
-        <li id="section-289">
+        <li id="section-338">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-289">&#182;</a>
+                <a class="pilcrow" href="#section-338">&#182;</a>
               </div>
-              <p>计算表达式expr的值
-field = {FieldDisplayName: “”, FieldName: “”, FieldValue: “”}</p>
+              <p>初始化</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">this</span>.exprContext.setDataCursor(dataCursor);
+            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.init = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">data, dataContext, context</span>) </span>{
+        <span class="hljs-keyword">this</span>.exprContext.setData(data);
+        <span class="hljs-keyword">this</span>.exprContext.setDataContext(dataContext);
+        <span class="hljs-keyword">this</span>.exprContext.setPageContext(context || {});
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-339">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-339">&#182;</a>
+              </div>
+              <p>计算表达式的依赖关系</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.calcDependencies = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, entityName</span>) </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.exprContext.calcEntityDependencies(expr, entityName);
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-340">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-340">&#182;</a>
+              </div>
+              <p>计算表达式的值</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.calcExpr = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, entityName, dataCursor, field</span>) </span>{
+       
+        <span class="hljs-keyword">this</span>.exprContext.setDataCursor(dataCursor);
         <span class="hljs-keyword">if</span> (field) {
             <span class="hljs-keyword">this</span>.exprContext.pushContextVariables(field);
         }
@@ -8738,13 +9399,13 @@ field = {FieldDisplayName: “”, FieldName: “”, FieldValue: “”}</p>
         </li>
         
         
-        <li id="section-290">
+        <li id="section-341">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-290">&#182;</a>
+                <a class="pilcrow" href="#section-341">&#182;</a>
               </div>
-              <p>计算表达式expr的值</p>
+              <p>计算表达式的值</p>
 
             </div>
             
