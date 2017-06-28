@@ -1,5 +1,7 @@
-# expr
+# ExprManager
 
-项目构建中
+# 安装
+	npm install
+
 
 ![](docs/preview.gif)

@@ -3006,55 +3006,56 @@ var Value = (function () {
     return Value;
 }());
 
+// 上下文基类
+// ----------
 var Context = (function () {
     function Context() {
         this.exprList = [];
     }
+    // 生成ExprValue对象
     Context.prototype.genValue = function (value, type, entity, errorMsg, parentObj) {
-        // 生成ExprValue对象
         return new Value(this, value, type, entity, errorMsg, parentObj);
     };
+    // 有错误时，生成对应的ExprValue对象
     Context.prototype.genErrorValue = function (errorMsg) {
-        // 有错误时，生成对应的ExprValue对象
         return this.genValue(undefined, undefined, undefined, errorMsg, undefined);
     };
+    // 生成ExprType对象
     Context.prototype.genType = function (type, info, data, entity, depends, errorMsg) {
-        // 生成ExprType对象
         return new Type(this, type, info, data, entity, depends, errorMsg);
     };
+    // 有错误时，生成对应的ExprType对象
     Context.prototype.genErrorType = function (errorMsg) {
-        // 有错误时，生成对应的ExprType对象
         return this.genType(undefined, undefined, undefined, undefined, undefined, errorMsg);
     };
+    // 得到函数source.name(paramValue)返回值的ExprType对象
     Context.prototype.getFunctionType = function (name, source, paramType, paramData) {
-        // 得到函数source.name(paramValue)返回值的ExprType对象
         return this.doGetFunctionType(name, source, paramType, paramData);
     };
+    // 得到函数source.name(paramValue)执行结果
     Context.prototype.getFunctionValue = function (name, source, paramValue) {
-        // 得到函数source.name(paramValue)执行结果
         return this.doGetFunctionValue(name, source, paramValue);
     };
+    // 得到变量类型
     Context.prototype.getVariableType = function (name, source) {
-        // 得到变量类型
         return this.doGetVariableType(name, source);
     };
+    // 得到对象source的name属性值
     Context.prototype.getVariableValue = function (name, source) {
-        // 得到对象source的name属性值
         return this.doGetVariableValue(name, source);
     };
+    // 得到实体类型
     Context.prototype.getEntityType = function (source) {
-        // 得到实体类型
         return this.doGetEntityType(source);
     };
+    // 从实体数组source中取出第index条实体记录
     Context.prototype.getEntityValue = function (source, index) {
-        // 从实体数组source中取出第index条实体记录
         return this.doGetEntityValue(source, index);
     };
+    // 得到解析信息
     Context.prototype.getParserInfo = function (expr) {
-       
-       
-        expr = expr.trim(); // 去除表达式两端无效空格
-        var index = -1; // 查找当前上下文的exprList列表
+        expr = expr.trim();
+        var index = -1;
         for (var i = 0; i < this.exprList.length; i++) {
             if (this.exprList[i].text === expr) {
                 index = i;
@@ -3067,20 +3068,20 @@ var Context = (function () {
         }
         else {
             var p = new Parser();
-            r = p.parser(expr); // return this;
+            r = p.parser(expr);
             this.exprList.push({
                 parser: r,
                 text: expr,
             });
         }
-        return r; // 返回ExprParser对象
+        return r;
     };
+    // 是否为IfNull(1,2)函数形式的","结点
     Context.prototype.isIfNullToken = function (token) {
-       
         return isFunctionToken(token, this.doGetIfNullName());
     };
+    // 是否为IIf(true,1,2)函数形式的","结点
     Context.prototype.isIIfToken = function (token) {
-       
         return isFunctionToken(token, this.doGetIIfName());
     };
     Context.prototype.doGetIfNullName = function () { return ""; };
@@ -3106,37 +3107,36 @@ var Context = (function () {
     return Context;
 }());
 
+// 表达式计算
+// ----------
 var Calc = (function () {
     function Calc() {
         this.context = null;
         this.values = {};
     }
+    // 生成ExprValue对象
     Calc.prototype.genValue = function (value, type, entity, errorMsg, parentObj) {
-       
         return new Value(this.context, value, type, entity, errorMsg, parentObj);
     };
+    // 有错误时，生成对应的ExprValue对象
     Calc.prototype.genErrorValue = function (errorMsg) {
-       
         return this.genValue(undefined, undefined, undefined, errorMsg, undefined);
     };
+    // 根据token结点ID返回对应的ExprValue对象
     Calc.prototype.getValue = function (tokenId) {
-       
         return this.values[tokenId];
     };
+    // 设置某token结点ID对应的ExprValue对象
     Calc.prototype.setValue = function (tokenId, v) {
-       
         this.values[tokenId] = v;
     };
+    // 对表达式进行语法分析和数值计算
     Calc.prototype.calc = function (expr, context) {
-       
-       
-       
-       
         this.context = context || new Context();
         var r;
-        var p = this.context.getParserInfo(expr); // 在context数据上下文中对expr进行语法分析
+        var p = this.context.getParserInfo(expr);
         if (p.errorMsg === "") {
-            var msg = this.doCalc(p.rootToken); // 将表达式按照既定规则运算
+            var msg = this.doCalc(p.rootToken);
             if (msg === "") {
                 r = this.getValue(p.rootToken.id);
                 r.tokens = p.tokens;
@@ -3151,10 +3151,8 @@ var Calc = (function () {
         }
         return r;
     };
+    // 对表达式进行数值计算
     Calc.prototype.doCalc = function (rootToken) {
-       
-       
-       
         var t = rootToken;
         var p = t.parent;
         var msg = "";
@@ -3164,8 +3162,8 @@ var Calc = (function () {
         var lv;
         var rv;
         if (t.childs) {
-            var isIfNull = this.context.isIfNullToken(t); // 是否为IfNull(1,2)函数形式的","结点
-            var isIIf = this.context.isIIfToken(t); // 是否为IIf(true,1,2)函数形式的","结点
+            var isIfNull = this.context.isIfNullToken(t);
+            var isIIf = this.context.isIIfToken(t);
             for (var i = 0; i < t.childs.length; i++) {
                 msg = this.doCalc(t.childs[i]);
                 if (msg !== "") {
@@ -3173,7 +3171,7 @@ var Calc = (function () {
                 }
                 else if (i === 0) {
                     l = t.childs[0];
-                    lv = this.getValue(l.id); // 左运算数
+                    lv = this.getValue(l.id);
                     if (isIfNull && lv.toValue() !== null) {
                         break;
                     }
@@ -3187,7 +3185,7 @@ var Calc = (function () {
                 }
                 else if (i === 1) {
                     r = t.childs[1];
-                    rv = this.getValue(r.id); // 右运算数
+                    rv = this.getValue(r.id);
                     if (isIIf) {
                         break;
                     }
@@ -3245,12 +3243,12 @@ var Calc = (function () {
                     tv = lv.or(rv);
                     break;
                 case "TK_COLON":
-                    tv = lv.hashItem(rv); // tv为键值对对象
+                    tv = lv.hashItem(rv);
                     break;
                 case "TK_DOT":
                     switch (r.tokenType) {
                         case "VTK_FUNCTION":
-                            tv = rv.getFunctionValue(lv); // 调用者为lv
+                            tv = rv.getFunctionValue(lv);
                             break;
                         case "TK_IDEN":
                             tv = rv.getVariableValue(lv);
@@ -3264,7 +3262,7 @@ var Calc = (function () {
                     for (var _i = 0, _a = t.childs; _i < _a.length; _i++) {
                         var item = _a[_i];
                         lv = this.getValue(item.id);
-                        tv.arrayPush(lv); // lv为(1,2)或{x:1,y:2}中，的子节点
+                        tv.arrayPush(lv);
                     }
                     break;
                 case "VTK_PAREN":
@@ -3272,7 +3270,7 @@ var Calc = (function () {
                         this.genValue([], "array") :
                         (p && p.tokenType === "TK_IDEN" && l.tokenType !== "VTK_COMMA") ?
                             this.genValue([], "array").arrayPush(lv) :
-                            lv; // 如：fun(1,2,3) 或 2+((4))
+                            lv;
                     break;
                 case "VTK_ARRAY":
                     tv = this.genValue([], "array");
@@ -3289,10 +3287,10 @@ var Calc = (function () {
                     tv = this.genValue({}, "object");
                     if (t.childs.length > 0) {
                         if (l.tokenType === "VTK_COMMA") {
-                            tv.objectSetProperties(lv); // 如：{x:1,y:2}
+                            tv.objectSetProperties(lv);
                         }
                         else {
-                            tv.objectSetProperty(lv); // 如：{x:1}
+                            tv.objectSetProperty(lv);
                         }
                     }
                     break;
@@ -3302,14 +3300,14 @@ var Calc = (function () {
                 case "VTK_FUNCTION":
                     tv = (p && p.tokenType === "TK_DOT" && p.childs[0] !== t) ?
                         lv.hashItem(rv) :
-                        lv.hashItem(rv).getFunctionValue(null); // 没有显式调用者
+                        lv.hashItem(rv).getFunctionValue(null);
                     break;
                 default:
                     break;
             }
             msg = tv.errorMsg;
             if (msg === "") {
-                this.setValue(t.id, tv); // 设置某token结点ID对应的ExprValue对象
+                this.setValue(t.id, tv);
             }
         }
         return msg;
@@ -3317,40 +3315,39 @@ var Calc = (function () {
     return Calc;
 }());
 
+// 表达式检查
+// ----------
 var Check = (function () {
     function Check() {
         this.context = null;
         this.types = {};
     }
+    // 生成ExprType对象
     Check.prototype.genType = function (type, info, data, entity, depends, errorMsg) {
-       
         return new Type(this.context, type, info, data, entity, depends, errorMsg);
     };
+    // 有错误时，生成对应的ExprType对象
     Check.prototype.genErrorType = function (errorMsg) {
-       
         return this.genType(undefined, undefined, undefined, undefined, undefined, errorMsg);
     };
+    // 根据token结点ID返回对应ExprType对象
     Check.prototype.getType = function (tokenId) {
-       
         return this.types[tokenId];
     };
+    // 设置某token结点ID对应的ExprType对象
     Check.prototype.setType = function (tokenId, t) {
-       
         this.types[tokenId] = t;
     };
+    // 对表达式进行语法分析和依赖关系计算
     Check.prototype.check = function (expr, context) {
         var _this = this;
-       
-       
-       
-       
-        this.context = context || new Context(); // TODO 是否允许context不存在？
+        this.context = context || new Context();
         var r;
-        var p = this.context.getParserInfo(expr); // 在context数据上下文中对expr进行语法分析
+        var p = this.context.getParserInfo(expr);
         if (p.errorMsg === "") {
-            var msg = this.doCheck(p.rootToken); // 检查表达式运算关系正确性
+            var msg = this.doCheck(p.rootToken);
             if (msg === "") {
-                r = this.getType(p.rootToken.id); // 返回根节点对应的ExprType对象
+                r = this.getType(p.rootToken.id);
                 r.tokens = p.tokens;
                 r.rootToken = p.rootToken;
                 var ds_1 = [];
@@ -3403,18 +3400,16 @@ var Check = (function () {
         }
         return r;
     };
+    // 检查表达式运算关系正确性
     Check.prototype.doCheck = function (rootToken) {
-       
-       
-       
         var t = rootToken;
         var p = t.parent;
         var msg = "";
         var l;
-        var r; // 语法树上的结点
+        var r;
         var tt = null;
         var lt;
-        var rt; // 语法树结点对应的ExprType对象
+        var rt;
         if (t.childs) {
             for (var i = 0; i < t.childs.length; i++) {
                 msg = this.doCheck(t.childs[i]);
@@ -3423,11 +3418,11 @@ var Check = (function () {
                 }
                 else if (i === 0) {
                     l = t.childs[0];
-                    lt = this.getType(l.id); // 左运算数
+                    lt = this.getType(l.id);
                 }
                 else if (i === 1) {
                     r = t.childs[1];
-                    rt = this.getType(r.id); // 右运算数
+                    rt = this.getType(r.id);
                 }
             }
         }
@@ -3482,12 +3477,12 @@ var Check = (function () {
                     tt = lt.or(rt);
                     break;
                 case "TK_COLON":
-                    tt = lt.hashItem(rt); // tt为键值对对象
+                    tt = lt.hashItem(rt);
                     break;
                 case "TK_DOT":
                     switch (r.tokenType) {
                         case "VTK_FUNCTION":
-                            tt = rt.getFunctionType(lt); // 调用者为lt
+                            tt = rt.getFunctionType(lt);
                             break;
                         case "TK_IDEN":
                             tt = rt.getVariableType(lt);
@@ -3501,7 +3496,7 @@ var Check = (function () {
                     for (var _i = 0, _a = t.childs; _i < _a.length; _i++) {
                         var item = _a[_i];
                         lt = this.getType(item.id);
-                        tt.arrayPush(lt); // lt为(1,2)或[x:1,y:2]中，的子节点
+                        tt.arrayPush(lt);
                     }
                     break;
                 case "VTK_PAREN":
@@ -3513,7 +3508,7 @@ var Check = (function () {
                     else {
                         tt = (p && p.tokenType === "TK_IDEN" && l.tokenType !== "VTK_COMMA") ?
                             this.genType("array", [], []).arrayPush(lt) :
-                            lt; // 如：fun(1,2,3) 或 2+((4))
+                            lt;
                     }
                     break;
                 case "VTK_ARRAY":
@@ -3531,10 +3526,10 @@ var Check = (function () {
                     tt = this.genType("object", {}, {});
                     if (t.childs.length > 0) {
                         if (l.tokenType === "VTK_COMMA") {
-                            tt.objectSetProperties(lt); // 如：{x:1,y:2}
+                            tt.objectSetProperties(lt);
                         }
                         else {
-                            tt.objectSetProperty(lt); // 如：{x:1}
+                            tt.objectSetProperty(lt);
                         }
                     }
                     break;
@@ -3544,14 +3539,14 @@ var Check = (function () {
                 case "VTK_FUNCTION":
                     tt = (p && p.tokenType === "TK_DOT" && p.childs[0] !== t) ?
                         lt.hashItem(rt) :
-                        lt.hashItem(rt).getFunctionType(null); // 没有显式调用者
+                        lt.hashItem(rt).getFunctionType(null);
                     break;
                 default:
                     break;
             }
             msg = tt.errorMsg;
             if (msg === "") {
-                this.setType(t.id, tt); // 设置某token结点ID对应的ExprType对象
+                this.setType(t.id, tt);
             }
         }
         return msg;
