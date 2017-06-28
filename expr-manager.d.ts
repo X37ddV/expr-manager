@@ -18,18 +18,18 @@ declare class Value {
     type: string;
 }
 
-declare class expr {
+declare class ExprManager {
     constructor();
-    init(data, dataContext, context): expr;
+    init(data, dataContext, context): ExprManager;
     calcExpr(expr, entityName, dataCursor, field): Value;
     getFunction(): any; // todo: 
-    addExpression(expr, entityName, propertyName, types, callback, scope): expr;
-    removeExpression(expr, entityName, propertyName, types, callback, scope): expr;
-    resetExpression(): expr;
+    addExpression(expr, entityName, propertyName, types, callback, scope): ExprManager;
+    removeExpression(expr, entityName, propertyName, types, callback, scope): ExprManager;
+    resetExpression(): ExprManager;
     checkAndSort(): string;
-    calcExpression(type, info): expr;
+    calcExpression(type, info): ExprManager;
 }
 
-declare module "expr" {
-    export = expr;
+declare module "expr-manager" {
+    export = ExprManager;
 }

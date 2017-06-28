@@ -1,33 +1,33 @@
 {
-  "name": "expr",
+  "name": "expr-manager",
   "version": "0.0.1",
   "description": "表达式解析及计算",
-  "main": "expr.js",
-  "types": "expr.d.js",
+  "main": "expr-manager.js",
+  "types": "expr-manager.d.js",
   "scripts": {
     "start": "gulp",
-    "lint:expr": "gulp lint:expr",
-    "build:expr": "gulp build:expr build:expr:min",
+    "lint:expr-manager": "gulp lint:expr-manager",
+    "build:expr-manager": "gulp build:expr-manager build:expr-manager:min",
     "lint:example": "gulp lint:example",
     "build:example": "gulp build:example",
-    "build:docs": "gulp build:expr build:docs",
-    "test": "gulp build:expr test:karma"
+    "build:docs": "gulp build:expr-manager build:docs",
+    "test": "gulp build:expr-manager test:karma"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/X37ddV/expr.git"
+    "url": "git+https://github.com/X37ddV/expr-manager.git"
   },
   "keywords": [
-    "expr",
+    "expr-manager",
     "javascript",
     "typescript"
   ],
   "author": "X37ddV <X37ddV@iCloud.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/X37ddV/expr/issues"
+    "url": "https://github.com/X37ddV/expr-manager/issues"
   },
-  "homepage": "https://github.com/X37ddV/expr#readme",
+  "homepage": "https://github.com/X37ddV/expr-manager#readme",
   "dependencies": {
     "@types/decimal.js": "^0.0.29",
     "@types/moment": "^2.13.0",

@@ -1,0 +1,30 @@
+@import '../../styles/colors';
+
+$shape-disabled-color: $color-text-600;
+$shape-enabled-color: $color-primary;
+
+.shape-view {
+  border-style: solid;
+  border-width: 1px;
+  position: relative;
+
+  &.shape-color-disabled {
+    border-color: $shape-disabled-color;
+
+    .shape-item {
+      background-color: $shape-disabled-color;
+    }
+  }
+
+  &.shape-color-enabled {
+    border-color: $shape-enabled-color;
+
+    .shape-item {
+      background-color: $shape-enabled-color;
+    }
+  }
+}
+
+.shape-item {
+  position: absolute;
+}

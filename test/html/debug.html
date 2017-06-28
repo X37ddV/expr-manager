@@ -1,21 +1,30 @@
 ﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <style type="text/css">
         body {
             font-size: 12px;
-            font-family: Courier,monospace;
+            font-family: Courier, monospace;
         }
-        #demoData div.collapsed table{/*实体前的+号*/
+
+            /*实体前的+号*/
+        #demoData div.collapsed table {
             display: none;
         }
-        #demoData tr.collapsed + tr{/*记录前的+号*/
+
+            /*记录前的+号*/
+        #demoData tr.collapsed+tr {
             display: none;
         }
-        .nav, .tokenNav, .rowNav {
+
+        .nav,
+        .tokenNav,
+        .rowNav {
             cursor: pointer;
         }
+
         table {
             border-spacing: 0px;
         }
@@ -24,7 +33,7 @@
     <script src="../../node_modules/jquery/dist/jquery.js"></script>
     <script src="../../node_modules/moment/moment.js"></script>
     <script src="../../node_modules/decimal.js/decimal.js"></script>
-    <script type="text/javascript" src="../../expr.js"></script>
+    <script type="text/javascript" src="../../expr-manager.js"></script>
     <script type="text/javascript" src="../data/test_data.js"></script>
     <script type="text/javascript">
         function encode(v) {
@@ -33,7 +42,7 @@
         function htmlEncode(v) {
             return $('<div/>').text(v).html();
         }
-        window.ExprManager = new expr();
+        window.ExprManager = new window["expr-manager"]();
     </script>
     <!-- 解析表达式 -->
     <script type="text/javascript">
@@ -154,13 +163,13 @@
             var fn = function (entityName, entityData, entityContext, level) {
                 var fieldLength = 1; // 该实体普通数据字段个数
                 // 生成折叠标记，记录实体名
-                var h = "<div class='collapsed' style='margin-left:"+level*20+"px;'><span class='nav'>+</span>&nbsp;<span style='font-weight:bold;'>" + entityName + "</span><br/>";
+                var h = "<div class='collapsed' style='margin-left:" + level * 20 + "px;'><span class='nav'>+</span>&nbsp;<span style='font-weight:bold;'>" + entityName + "</span><br/>";
                 // 生成表头
                 h += "<table width='100%'><thead><tr><th style='background-color: #E3E3E3;width:10px;'>&nbsp;</th>";
                 for (var fieldName in entityContext.fields) {
                     fieldLength++;
                     h += "<th style='background-color: " + colors[fieldLength % 2] + "'>" + fieldName + "(<span style='font-size:xx-middle;color:red;'>" +
-                            entityContext.fields[fieldName].type.split("")[0].toUpperCase() + "</span>)</th>";
+                        entityContext.fields[fieldName].type.split("")[0].toUpperCase() + "</span>)</th>";
                 }
                 h += "</tr></thead><tbody>";
                 // 遍历该实体的每条记录
@@ -183,9 +192,9 @@
                     }
                     if (subEntityNames.length != 0) {
                         h += "<tr class='collapsed'><td><span class='rowNav'>+</span></td>" + recordHtml +
-                        "</tr><tr><td colspan='" + fieldLength + "'>";
+                            "</tr><tr><td colspan='" + fieldLength + "'>";
                         for (var j = 0; j < subEntityDatas.length; j++) {
-                            h += fn(subEntityNames[j], subEntityDatas[j], subEntityContexts[j], level+1);
+                            h += fn(subEntityNames[j], subEntityDatas[j], subEntityContexts[j], level + 1);
                         }
                         h += "</td></tr>";
                     } else {
@@ -258,7 +267,7 @@
             showDemoData("demoData", window.data, window.dataContext);
             showDemoContext("demoContext", window.context);
             showFunction("funcList");
-            
+
             $("#btnCalc").on("click", function () {
                 calculate();
             });
@@ -301,6 +310,7 @@
         });
     </script>
 </head>
+
 <body>
     <fieldset>
         <legend>Test</legend>
@@ -361,8 +371,7 @@
     <fieldset>
         <legend>Upgrade</legend>
         <ul>
-            <li>【新】函数调用方式模仿Linq，例如：Entity1.Where("ID>102").Sum("P1")【旧】函数调用方式为“平板”式，例如：Sum("Entity1",
-                "P1", "ID>102")</li>
+            <li>【新】函数调用方式模仿Linq，例如：Entity1.Where("ID>102").Sum("P1")【旧】函数调用方式为“平板”式，例如：Sum("Entity1", "P1", "ID>102")</li>
             <li>【新】支持对象，例如：{en:"English",zh_CN:"中文简体",zh_TW:"中文繁體"}</li>
             <li>【新】支持集合，例如：[1,2]</li>
             <li>【新】集合加减运算：[1,2]+[3]、[1,2]-[2]</li>
@@ -416,4 +425,5 @@
         </ul>
     </fieldset>
 </body>
+
 </html>

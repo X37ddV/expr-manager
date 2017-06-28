@@ -14,8 +14,8 @@ var fs = require('fs'),
 var rootPath = __dirname;
 var version = JSON.parse(fs.readFileSync(path.join(rootPath, 'package.json'))).version || '';
 var rollupBanner =
-    "//     expr.js " + version + "\n" +
-    "//     https://github.com/X37ddV/expr\n" +
+    "//     expr-manager.js " + version + "\n" +
+    "//     https://github.com/X37ddV/expr-manager\n" +
     "//     (c) 2016-2017 X37ddV\n" +
     "//     Released under the MIT License.\n",
     rollupIntro =
@@ -49,7 +49,7 @@ var rollupHideComments = function(options) {
 	};
 };
 
-gulp.task("lint:expr", () =>
+gulp.task("lint:expr-manager", () =>
     gulp.src(path.join(rootPath, "src", "**", "*.ts"))
         .pipe(gulpTSLint({
             formatter: "prose"
@@ -69,9 +69,9 @@ gulp.task("lint:example", () =>
         }))
 );
 
-gulp.task("build:expr", function() {
+gulp.task("build:expr-manager", function() {
     return rollup.rollup({
-        entry: path.join(rootPath, "src", "expr.ts"),
+        entry: path.join(rootPath, "src", "expr-manager.ts"),
         plugins: [
             rollupJson(),
             rollupTypescript(typescriptConfig),
@@ -81,8 +81,8 @@ gulp.task("build:expr", function() {
     }).then(function (bundle) {
       bundle.write({
         format: "umd",
-        moduleName: "expr",
-        dest: path.join(rootPath, "expr.js"),
+        moduleName: "expr-manager",
+        dest: path.join(rootPath, "expr-manager.js"),
         globals: {
             "decimal.js": "Decimal",
             "moment": "moment",
@@ -94,9 +94,9 @@ gulp.task("build:expr", function() {
     })
 });
 
-gulp.task("build:expr:min", function() {
+gulp.task("build:expr-manager:min", function() {
     return rollup.rollup({
-        entry: path.join(rootPath, "src", "expr.ts"),
+        entry: path.join(rootPath, "src", "expr-manager.ts"),
         plugins: [
             rollupJson(),
             rollupTypescript(typescriptConfig),
@@ -106,8 +106,8 @@ gulp.task("build:expr:min", function() {
     }).then(function (bundle) {
       bundle.write({
         format: "umd",
-        moduleName: "expr",
-        dest: path.join(rootPath, "expr.min.js"),
+        moduleName: "expr-manager",
+        dest: path.join(rootPath, "expr-manager.min.js"),
         globals: {
             "decimal.js": "Decimal",
             "moment": "moment",
@@ -129,7 +129,7 @@ gulp.task("build:example", function() {
             rollupJson(),
             rollupTypescript(typescriptConfig)
         ],
-        external: ["jquery", "underscore", "underscore.string", "mousetrap", "decimal.js", "moment", "expr"],
+        external: ["jquery", "underscore", "underscore.string", "mousetrap", "decimal.js", "moment", "expr-manager"],
     }).then(function (bundle) {
         bundle.write({
             format: "umd",
@@ -141,7 +141,7 @@ gulp.task("build:example", function() {
                 "mousetrap": "Mousetrap",
                 "decimal.js": "Decimal",
                 "moment": "moment",
-                "expr": "expr",
+                "expr-manager": "expr-manager",
             }
         });
     })
@@ -149,7 +149,7 @@ gulp.task("build:example", function() {
 
 gulp.task("build:docs", function() {
     docco.document({
-        args: ["expr.js"],
+        args: ["expr-manager.js"],
         layout: "parallel",
         output: "docs",
         template: null,
@@ -167,11 +167,11 @@ gulp.task("test:karma", function(done) {
         files: [
             path.join(rootPath, "node_modules", "moment", "moment.js"),
             path.join(rootPath, "node_modules", "decimal.js", "decimal.js"),
-            path.join(rootPath, "expr.js"),
+            path.join(rootPath, "expr-manager.js"),
             path.join(rootPath, "test", "data", "test_data.js"),
             path.join(rootPath, "test", "data", "test_dependencies.js"),
             path.join(rootPath, "test", "data", "test_expressions.js"),
-            path.join(rootPath, "test", "expr.spec.js"),
+            path.join(rootPath, "test", "expr-manager.spec.js"),
         ],
         exclude: [],
         preprocessors: {},
@@ -186,4 +186,4 @@ gulp.task("test:karma", function(done) {
     }, done).start();
 });
 
-gulp.task("default", ["lint:expr", "lint:example", "build:expr", "build:expr:min", "build:example", "build:docs", "test:karma"]);
+gulp.task("default", ["lint:expr-manager", "lint:example", "build:expr-manager", "build:expr-manager:min", "build:example", "build:docs", "test:karma"]);

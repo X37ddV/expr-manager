@@ -92,7 +92,7 @@ class View {
         this.$el.off(eventName + ".delegateEvents" + this.cid, selector, listener);
         return this;
     }
-    public on(eventName: string | object, callback: () => void, context?: any): View {
+    public on(eventName: string | object, callback: (...args) => void, context?: any): View {
         return internalOn(this, eventName, callback, context, undefined);
     }
     public listenTo(object: any, name: string | object, callback: () => void): View {

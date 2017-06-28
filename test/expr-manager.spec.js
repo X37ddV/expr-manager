@@ -1,9 +1,11 @@
-describe("表达式测试", function(){
-    var expr = new window.expr();
+var ExprManger = window['expr-manager'];
+
+describe("表达式测试", function () {
+    var expr = new ExprManger();
     expr.init(window.data, window.dataContext, window.context);
     for (var j = 0; j < window.demoExpr.length; j++) {
         var demo = window.demoExpr[j];
-        it(demo.title, function() {
+        it(demo.title, function () {
             for (var i = 0; i < demo.exprs.length; i++) {
                 var e = demo.exprs[i][0];
                 var k = demo.exprs[i][1]; // 预期值 undefined为不校验或校验为错误
@@ -16,8 +18,9 @@ describe("表达式测试", function(){
         })
     }
 });
-describe("依赖关系测试", function() {
-    var expr = new window.expr();
+
+describe("依赖关系测试", function () {
+    var expr = new ExprManger();
     expr.init(window.data, window.dataContext, window.context);
     for (var m = 0; m < window.demoDependencies.length; m++) {
         var demoDepend = window.demoDependencies[m];
@@ -58,7 +61,7 @@ describe("依赖关系测试", function() {
                 for (var p = 0; p < list.length; p++) {
                     pList.push(list[p].fullName);
                 }
-                it(demoDepend.title, function() {
+                it(demoDepend.title, function () {
                     expect(pList.join("|")).toEqual(c.r);
                 });
             }

@@ -6,17 +6,17 @@ import Expression from "../../scripts/expression";
 import View from "../../scripts/view";
 import Console from "../console/console";
 import Data from "../data/data";
-import Icon from "../icon/icon";
-import { IconColor, IconName } from "../icon/icon";
 import Setting from "../setting/setting";
+import Shape from "../shape/shape";
+import { ShapeColor, ShapeName } from "../shape/shape";
 import "./main.scss";
 import main_tpl from "./main.tpl";
 
 class Main extends View {
     private expression: Expression;
-    private iconLeft: Icon;
-    private iconCenter: Icon;
-    private iconRight: Icon;
+    private shapeLeft: Shape;
+    private shapeCenter: Shape;
+    private shapeRight: Shape;
     private dataView: Data;
     private consoleView: Console;
     private settingView: Setting;
@@ -36,23 +36,23 @@ class Main extends View {
         }
 
         if (this.$el.hasClass("layout-horizontal")) {
-            this.iconCenter.setName(IconName.ICON_NAME_LAYOUT_VERTICAL);
-            this.iconLeft.setName(IconName.ICON_NAME_AREA_LEFT);
-            this.iconRight.setName(IconName.ICON_NAME_AREA_RIGHT);
+            this.shapeCenter.setName(ShapeName.SHAPE_NAME_LAYOUT_VERTICAL);
+            this.shapeLeft.setName(ShapeName.SHAPE_NAME_AREA_LEFT);
+            this.shapeRight.setName(ShapeName.SHAPE_NAME_AREA_RIGHT);
         } else {
-            this.iconCenter.setName(IconName.ICON_NAME_LAYOUT_HORIZONTAL);
-            this.iconLeft.setName(IconName.ICON_NAME_AREA_TOP);
-            this.iconRight.setName(IconName.ICON_NAME_AREA_BOTTOM);
+            this.shapeCenter.setName(ShapeName.SHAPE_NAME_LAYOUT_HORIZONTAL);
+            this.shapeLeft.setName(ShapeName.SHAPE_NAME_AREA_TOP);
+            this.shapeRight.setName(ShapeName.SHAPE_NAME_AREA_BOTTOM);
         }
         if (this.$el.hasClass("hide-data")) {
-            this.iconLeft.setColor(IconColor.ICON_COLOR_DISABLED);
-            this.iconRight.setColor(IconColor.ICON_COLOR_ENABLED);
+            this.shapeLeft.setColor(ShapeColor.SHAPE_COLOR_DISABLED);
+            this.shapeRight.setColor(ShapeColor.SHAPE_COLOR_ENABLED);
         } else if (this.$el.hasClass("hide-console")) {
-            this.iconLeft.setColor(IconColor.ICON_COLOR_ENABLED);
-            this.iconRight.setColor(IconColor.ICON_COLOR_DISABLED);
+            this.shapeLeft.setColor(ShapeColor.SHAPE_COLOR_ENABLED);
+            this.shapeRight.setColor(ShapeColor.SHAPE_COLOR_DISABLED);
         } else {
-            this.iconLeft.setColor(IconColor.ICON_COLOR_ENABLED);
-            this.iconRight.setColor(IconColor.ICON_COLOR_ENABLED);
+            this.shapeLeft.setColor(ShapeColor.SHAPE_COLOR_ENABLED);
+            this.shapeRight.setColor(ShapeColor.SHAPE_COLOR_ENABLED);
         }
         this.consoleView.refresh(isInit);
         return this;
@@ -156,13 +156,13 @@ class Main extends View {
         this.$console = this.$(".main-console");
         this.$split = this.$(".main-split");
 
-        this.iconLeft = new Icon();
-        this.iconCenter = new Icon();
-        this.iconRight = new Icon();
+        this.shapeLeft = new Shape();
+        this.shapeCenter = new Shape();
+        this.shapeRight = new Shape();
 
-        this.iconLeft.$el.appendTo(this.$(".act-left"));
-        this.iconCenter.$el.appendTo(this.$(".act-center"));
-        this.iconRight.$el.appendTo(this.$(".act-right"));
+        this.shapeLeft.$el.appendTo(this.$(".act-left"));
+        this.shapeCenter.$el.appendTo(this.$(".act-center"));
+        this.shapeRight.$el.appendTo(this.$(".act-right"));
 
         this.dataView = new Data();
         this.dataView.setExpression(this.expression);

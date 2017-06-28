@@ -1,12 +1,12 @@
-//     expr.js 0.0.1
-//     https://github.com/X37ddV/expr
+//     expr-manager.js 0.0.1
+//     https://github.com/X37ddV/expr-manager
 //     (c) 2016-2017 X37ddV
 //     Released under the MIT License.
 
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('moment'), require('decimal.js')) :
 	typeof define === 'function' && define.amd ? define(['moment', 'decimal.js'], factory) :
-	(global.expr = factory(global.moment,global.Decimal));
+	(global['expr-manager'] = factory(global.moment,global.Decimal));
 }(this, (function (moment,Decimal) { 'use strict';
 
 // 依赖第三方库

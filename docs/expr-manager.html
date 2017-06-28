@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>expr.js</title>
+  <title>expr-manager.js</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -15,7 +15,7 @@
         
           <li id="title">
               <div class="annotation">
-                  <h1>expr.js</h1>
+                  <h1>expr-manager.js</h1>
               </div>
           </li>
         
@@ -27,8 +27,8 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <pre><code>expr.js <span class="hljs-number">0.0</span><span class="hljs-number">.1</span>
-https:<span class="hljs-comment">//github.com/X37ddV/expr</span>
+              <pre><code>expr-manager.js <span class="hljs-number">0.0</span><span class="hljs-number">.1</span>
+https:<span class="hljs-comment">//github.com/X37ddV/expr-manager</span>
 (c) <span class="hljs-number">2016</span><span class="hljs-number">-2017</span> X37ddV
 Released under the MIT License.
 </code></pre>
@@ -38,7 +38,7 @@ Released under the MIT License.
 (<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">global, factory</span>) </span>{
 	<span class="hljs-keyword">typeof</span> exports === <span class="hljs-string">'object'</span> &amp;&amp; <span class="hljs-keyword">typeof</span> <span class="hljs-built_in">module</span> !== <span class="hljs-string">'undefined'</span> ? <span class="hljs-built_in">module</span>.exports = factory(<span class="hljs-built_in">require</span>(<span class="hljs-string">'moment'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'decimal.js'</span>)) :
 	<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd ? define([<span class="hljs-string">'moment'</span>, <span class="hljs-string">'decimal.js'</span>], factory) :
-	(global.expr = factory(global.moment,global.Decimal));
+	(global[<span class="hljs-string">'expr-manager'</span>] = factory(global.moment,global.Decimal));
 }(<span class="hljs-keyword">this</span>, (<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">moment,Decimal</span>) </span>{ <span class="hljs-string">'use strict'</span>;</pre></div></div>
             
         </li>

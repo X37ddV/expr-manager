@@ -1,4 +1,4 @@
-import expr from "expr";
+import ExprManager from "expr-manager";
 import _ from "underscore";
 import context from "../configs/context";
 import tables from "../configs/tables";
@@ -14,7 +14,7 @@ export default class Expression {
     private currentNewId: number = -1;
     private currentTable: string = "";
     private currentField: string = "";
-    private expr: expr = new expr();
+    private exprManager: ExprManager = new ExprManager();
     constructor() {
         this.data = this.genData();
         this.nameList = [];
@@ -42,14 +42,14 @@ export default class Expression {
             me.fieldsMap[name] = fields || {};
             me.childsMap[name] = childs || {};
         })(this));
-        this.expr.init(this.data, tables, context);
+        this.exprManager.init(this.data, tables, context);
         this.dataLoad();
     }
     public length(): number {
         return this.nameList.length;
     }
     public calcExpr(line: string): Value {
-        return this.expr.calcExpr(line, this.currentTable, this.cursorMap, {
+        return this.exprManager.calcExpr(line, this.currentTable, this.cursorMap, {
             FieldDisplayName: this.currentField,  // TODO:
             FieldName: this.currentField,
             FieldValue: this.currentField,  // TODO:
@@ -98,24 +98,24 @@ export default class Expression {
             childs: this.childsMap[this.currentTable],
             constants: context,
             fields: this.fieldsMap[this.currentTable],
-            funcs: this.expr.getFunction(),
+            funcs: this.exprManager.getFunction(),
         });
     }
     public checkExpression(): string {
-        this.expr.resetExpression();
+        this.exprManager.resetExpression();
         this.eachTables(tables, ((me) => (name, fields, childs) => {
             for (const fieldName in fields) {
                 if (fields.hasOwnProperty(fieldName)) {
                     const field = fields[fieldName];
                     if (field.expr) {
-                        me.expr.addExpression(field.expr, name, fieldName, "L|A|U|R", me.doCalcExpr, me);
+                        me.exprManager.addExpression(field.expr, name, fieldName, "L|A|U|R", me.doCalcExpr, me);
                     } else if (field.defaultExpr) {
-                        me.expr.addExpression(field.defaultExpr, name, fieldName, "A", me.doCalcExpr, me);
+                        me.exprManager.addExpression(field.defaultExpr, name, fieldName, "A", me.doCalcExpr, me);
                     }
                 }
             }
         })(this));
-        return this.expr.checkAndSort();
+        return this.exprManager.checkAndSort();
     }
     public dataLoad(): Expression {
         const msg = this.checkExpression();
@@ -125,7 +125,7 @@ export default class Expression {
                     entityName: name,
                     propertyName: null,
                 };
-                me.expr.calcExpression("load", info);
+                me.exprManager.calcExpression("load", info);
             })(this));
         } else {
             window.console.error(msg);
@@ -141,7 +141,7 @@ export default class Expression {
             entityName: name,
             propertyName: null,
         };
-        this.expr.calcExpression("add", info);
+        this.exprManager.calcExpression("add", info);
         return this;
     }
     public dataUpdate(n: number, fieldName: string, value: any): Expression {
@@ -154,7 +154,7 @@ export default class Expression {
                 entityName: name,
                 propertyName: fieldName,
             };
-            this.expr.calcExpression("update", info);
+            this.exprManager.calcExpression("update", info);
         }
         return this;
     }
@@ -171,7 +171,7 @@ export default class Expression {
                 entityName: name,
                 propertyName: null,
             };
-            this.expr.calcExpression("remove", info);
+            this.exprManager.calcExpression("remove", info);
         }
         return this;
     }
@@ -278,7 +278,7 @@ export default class Expression {
             return r;
         }
         const r = {
-            TGroups: genGroups(this.expr.getFunction()),
+            TGroups: genGroups(this.exprManager.getFunction()),
         };
         return r;
     }
@@ -340,7 +340,7 @@ export default class Expression {
         const cursor = _.clone(dataCursor);
         const entityName = exprInfo.entityName;
         const calcExprAndSetValue = (record) => {
-            const value = this.expr.calcExpr(exprStr, entityName, cursor, {
+            const value = this.exprManager.calcExpr(exprStr, entityName, cursor, {
                 FieldDisplayName: "",  // TODO:
                 FieldName: exprInfo.propertyName,
                 FieldValue: "",  // TODO:

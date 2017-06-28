@@ -1,12 +1,12 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('jquery'), require('underscore'), require('expr'), require('underscore.string'), require('moment'), require('mousetrap')) :
-	typeof define === 'function' && define.amd ? define(['jquery', 'underscore', 'expr', 'underscore.string', 'moment', 'mousetrap'], factory) :
-	(factory(global.jQuery,global._,global.expr,global.s,global.moment,global.Mousetrap));
-}(this, (function ($,_,expr,s,moment,Mousetrap) { 'use strict';
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('jquery'), require('underscore'), require('expr-manager'), require('underscore.string'), require('moment'), require('mousetrap')) :
+	typeof define === 'function' && define.amd ? define(['jquery', 'underscore', 'expr-manager', 'underscore.string', 'moment', 'mousetrap'], factory) :
+	(factory(global.jQuery,global._,global['expr-manager'],global.s,global.moment,global.Mousetrap));
+}(this, (function ($,_,ExprManager,s,moment,Mousetrap) { 'use strict';
 
 $ = 'default' in $ ? $['default'] : $;
 _ = 'default' in _ ? _['default'] : _;
-expr = 'default' in expr ? expr['default'] : expr;
+ExprManager = 'default' in ExprManager ? ExprManager['default'] : ExprManager;
 s = 'default' in s ? s['default'] : s;
 moment = 'default' in moment ? moment['default'] : moment;
 Mousetrap = 'default' in Mousetrap ? Mousetrap['default'] : Mousetrap;
@@ -618,7 +618,7 @@ var Expression = (function () {
         this.currentNewId = -1;
         this.currentTable = "";
         this.currentField = "";
-        this.expr = new expr();
+        this.exprManager = new ExprManager();
         this.data = this.genData();
         this.nameList = [];
         this.primaryKeyMap = {};
@@ -645,14 +645,14 @@ var Expression = (function () {
             me.fieldsMap[name] = fields || {};
             me.childsMap[name] = childs || {};
         }; })(this));
-        this.expr.init(this.data, tables, context);
+        this.exprManager.init(this.data, tables, context);
         this.dataLoad();
     }
     Expression.prototype.length = function () {
         return this.nameList.length;
     };
     Expression.prototype.calcExpr = function (line) {
-        return this.expr.calcExpr(line, this.currentTable, this.cursorMap, {
+        return this.exprManager.calcExpr(line, this.currentTable, this.cursorMap, {
             FieldDisplayName: this.currentField,
             FieldName: this.currentField,
             FieldValue: this.currentField,
@@ -701,25 +701,25 @@ var Expression = (function () {
             childs: this.childsMap[this.currentTable],
             constants: context,
             fields: this.fieldsMap[this.currentTable],
-            funcs: this.expr.getFunction(),
+            funcs: this.exprManager.getFunction(),
         });
     };
     Expression.prototype.checkExpression = function () {
-        this.expr.resetExpression();
+        this.exprManager.resetExpression();
         this.eachTables(tables, (function (me) { return function (name, fields, childs) {
             for (var fieldName in fields) {
                 if (fields.hasOwnProperty(fieldName)) {
                     var field = fields[fieldName];
                     if (field.expr) {
-                        me.expr.addExpression(field.expr, name, fieldName, "L|A|U|R", me.doCalcExpr, me);
+                        me.exprManager.addExpression(field.expr, name, fieldName, "L|A|U|R", me.doCalcExpr, me);
                     }
                     else if (field.defaultExpr) {
-                        me.expr.addExpression(field.defaultExpr, name, fieldName, "A", me.doCalcExpr, me);
+                        me.exprManager.addExpression(field.defaultExpr, name, fieldName, "A", me.doCalcExpr, me);
                     }
                 }
             }
         }; })(this));
-        return this.expr.checkAndSort();
+        return this.exprManager.checkAndSort();
     };
     Expression.prototype.dataLoad = function () {
         var msg = this.checkExpression();
@@ -729,7 +729,7 @@ var Expression = (function () {
                     entityName: name,
                     propertyName: null,
                 };
-                me.expr.calcExpression("load", info);
+                me.exprManager.calcExpression("load", info);
             }; })(this));
         }
         else {
@@ -746,7 +746,7 @@ var Expression = (function () {
             entityName: name,
             propertyName: null,
         };
-        this.expr.calcExpression("add", info);
+        this.exprManager.calcExpression("add", info);
         return this;
     };
     Expression.prototype.dataUpdate = function (n, fieldName, value) {
@@ -759,7 +759,7 @@ var Expression = (function () {
                 entityName: name,
                 propertyName: fieldName,
             };
-            this.expr.calcExpression("update", info);
+            this.exprManager.calcExpression("update", info);
         }
         return this;
     };
@@ -776,7 +776,7 @@ var Expression = (function () {
                 entityName: name,
                 propertyName: null,
             };
-            this.expr.calcExpression("remove", info);
+            this.exprManager.calcExpression("remove", info);
         }
         return this;
     };
@@ -884,7 +884,7 @@ var Expression = (function () {
             return r;
         }
         var r = {
-            TGroups: genGroups(this.expr.getFunction()),
+            TGroups: genGroups(this.exprManager.getFunction()),
         };
         return r;
     };
@@ -948,7 +948,7 @@ var Expression = (function () {
         var cursor = _.clone(dataCursor);
         var entityName = exprInfo.entityName;
         var calcExprAndSetValue = function (record) {
-            var value = _this.expr.calcExpr(exprStr, entityName, cursor, {
+            var value = _this.exprManager.calcExpr(exprStr, entityName, cursor, {
                 FieldDisplayName: "",
                 FieldName: exprInfo.propertyName,
                 FieldValue: "",
@@ -997,120 +997,6 @@ var Expression = (function () {
 var image_prompt_svg_tpl = "<svg width=\"11\" height=\"11\" viewBox=\"0 0 1024 1024\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n    <path fill=\"#272636\" d=\"M348.93824 961.816576c-31.985664 0-63.977472-12.214272-88.409088-36.624384-48.8448-48.83456-48.8448-128.01536 0-176.83456l236.833792-236.84096L260.529152 274.690048c-48.8448-48.835584-48.8448-128.014336 0-176.841728 48.84992-48.821248 127.997952-48.821248 176.84992 0l325.251072 325.24288c23.45472 23.463936 36.622336 55.258112 36.622336 88.425472 0 33.159168-13.166592 64.960512-36.622336 88.424448L437.379072 925.192192C412.951552 949.602304 380.96896 961.816576 348.93824 961.816576z\"></path>\n</svg>";
 
 var image_trash_svg_tpl = "<svg width=\"17\" height=\"17\" viewBox=\"0 0 1024 1024\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n    <path fill=\"#000\" d=\"M173.942611 173.061544l677.733649 0 0 35.670407L173.942611 208.731952 173.942611 173.061544zM691.160449 957.805392 334.458421 957.805392c-19.318998 0-35.670407-6.315846-49.043996-18.957771-13.383822-12.58462-20.812001-29.306466-22.295795-50.157353l-53.505611-695.568852 35.670407-4.461615 53.505611 695.568852c2.967588 25.311479 14.857383 37.905308 35.670407 37.905308l356.702028 0c20.802792 0 32.692586-12.593829 35.670407-37.905308l53.504588-695.568852 35.670407 4.461615-53.504588 695.568852c-1.483794 19.318998-9.293667 35.670407-23.409153 49.043996C724.975603 951.108876 708.995653 957.805392 691.160449 957.805392zM673.325245 190.896748l-35.670407 0 0-53.505611c0-23.741727-11.889795-35.670407-35.670407-35.670407L423.63444 101.720729c-23.780613 0-35.670407 11.927657-35.670407 35.670407l0 53.505611-35.670407 0 0-53.505611c0-20.812001 6.687306-37.905308 20.060895-51.27992 13.383822-13.373589 30.466895-20.060895 51.27992-20.060895l178.351014 0c20.802792 0 37.896098 6.687306 51.27992 20.060895 13.373589 13.373589 20.060895 30.466895 20.060895 51.27992L673.326269 190.896748zM405.799236 280.071743l17.835204 570.72345-35.670407 0L370.128829 280.071743 405.799236 280.071743zM494.974231 280.071743l35.670407 0 0 570.72345-35.670407 0L494.974231 280.071743zM619.820658 280.071743l35.670407 0-17.835204 570.72345-35.670407 0L619.820658 280.071743z\"></path>\n</svg>";
-
-var icon_tpl = "<div class=\"icon-item\"></div>";
-
-var Icon = (function (_super) {
-    __extends(Icon, _super);
-    function Icon() {
-        _super.apply(this, arguments);
-    }
-    Icon.prototype.setName = function (name) {
-        var css = { bottom: "", display: "", height: "", left: "", right: "", top: "", width: "" };
-        switch (name) {
-            case IconName.ICON_NAME_AREA_LEFT:
-                css.top = "1px";
-                css.bottom = "1px";
-                css.left = "1px";
-                css.width = "2px";
-                break;
-            case IconName.ICON_NAME_AREA_RIGHT:
-                css.top = "1px";
-                css.right = "1px";
-                css.bottom = "1px";
-                css.width = "2px";
-                break;
-            case IconName.ICON_NAME_AREA_TOP:
-                css.top = "1px";
-                css.right = "1px";
-                css.left = "1px";
-                css.height = "2px";
-                break;
-            case IconName.ICON_NAME_AREA_BOTTOM:
-                css.right = "1px";
-                css.bottom = "1px";
-                css.left = "1px";
-                css.height = "2px";
-                break;
-            case IconName.ICON_NAME_LAYOUT_HORIZONTAL:
-                css.top = "0px";
-                css.right = "33%";
-                css.bottom = "0px";
-                css.width = "1px";
-                break;
-            case IconName.ICON_NAME_LAYOUT_VERTICAL:
-                css.right = "0px";
-                css.bottom = "33%";
-                css.left = "0px";
-                css.height = "1px";
-                break;
-            default:
-                css.display = "none";
-                break;
-        }
-        this.$item.css(css);
-        return this;
-    };
-    Icon.prototype.setColor = function (color) {
-        color = color === undefined ? IconColor.ICON_COLOR_ENABLED : color;
-        switch (color) {
-            case IconColor.ICON_COLOR_DISABLED:
-                this.$el.css({ borderColor: "" });
-                this.$item.css({ backgroundColor: "" });
-                this.$el.removeClass("icon-color-enabled").addClass("icon-color-disabled");
-                break;
-            case IconColor.ICON_COLOR_ENABLED:
-                this.$el.css({ borderColor: "" });
-                this.$item.css({ backgroundColor: "" });
-                this.$el.removeClass("icon-color-disabled").addClass("icon-color-enabled");
-                break;
-            default:
-                if (color) {
-                    this.$el.css({ borderColor: color });
-                    this.$item.css({ backgroundColor: color });
-                    this.$el.removeClass("icon-color-disabled").removeClass("icon-color-enabled");
-                }
-                break;
-        }
-        return this;
-    };
-    Icon.prototype.setWidth = function (width) {
-        this.$el.width(width || 16);
-        return this;
-    };
-    Icon.prototype.setHeight = function (height) {
-        this.$el.height(height || 12);
-        return this;
-    };
-    Icon.prototype.preinitialize = function () {
-        this.className = "icon-view";
-    };
-    Icon.prototype.initialize = function (opts) {
-        opts = opts || {};
-        this.$el.html(icon_tpl);
-        this.$item = this.$(".icon-item");
-        opts.attributes = opts.attributes || {};
-        this.setName(opts.attributes.name);
-        this.setColor(opts.attributes.color);
-        this.setWidth(opts.attributes.width);
-        this.setHeight(opts.attributes.height);
-    };
-    return Icon;
-}(View));
-var IconColor;
-(function (IconColor) {
-    IconColor[IconColor["ICON_COLOR_DISABLED"] = 0] = "ICON_COLOR_DISABLED";
-    IconColor[IconColor["ICON_COLOR_ENABLED"] = 1] = "ICON_COLOR_ENABLED";
-})(IconColor || (IconColor = {}));
-var IconName;
-(function (IconName) {
-    IconName[IconName["ICON_NAME_AREA_BOTTOM"] = 0] = "ICON_NAME_AREA_BOTTOM";
-    IconName[IconName["ICON_NAME_AREA_LEFT"] = 1] = "ICON_NAME_AREA_LEFT";
-    IconName[IconName["ICON_NAME_AREA_RIGHT"] = 2] = "ICON_NAME_AREA_RIGHT";
-    IconName[IconName["ICON_NAME_AREA_TOP"] = 3] = "ICON_NAME_AREA_TOP";
-    IconName[IconName["ICON_NAME_LAYOUT_HORIZONTAL"] = 4] = "ICON_NAME_LAYOUT_HORIZONTAL";
-    IconName[IconName["ICON_NAME_LAYOUT_VERTICAL"] = 5] = "ICON_NAME_LAYOUT_VERTICAL";
-})(IconName || (IconName = {}));
 
 var image_result_svg_tpl = "<svg width=\"11\" height=\"11\" viewBox=\"0 0 1024 1024\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n    <path fill=\"#272636\" d=\"M674.208768 61.232128c31.985664 0 63.978496 12.214272 88.410112 36.624384 48.845824 48.835584 48.845824 128.016384 0 176.835584L525.784064 511.532032l236.833792 236.827648c48.845824 48.83456 48.845824 128.014336 0 176.841728-48.84992 48.821248-127.997952 48.821248-176.84992 0l-325.251072-325.24288c-23.45472-23.463936-36.622336-55.258112-36.622336-88.425472 0-33.159168 13.166592-64.960512 36.622336-88.424448l325.251072-325.25312C610.195456 73.445376 642.178048 61.232128 674.208768 61.232128z\"></path>\n    <circle fill=\"#272636\" cx=\"899\" cy=\"511.532032\" r=\"125\" stroke=\"black\" stroke-width=\"0\"/>\n</svg>";
 
@@ -1622,6 +1508,120 @@ var Result = (function (_super) {
     };
     return Result;
 }(View));
+
+var shape_tpl = "<div class=\"shape-item\"></div>";
+
+var Shape = (function (_super) {
+    __extends(Shape, _super);
+    function Shape() {
+        _super.apply(this, arguments);
+    }
+    Shape.prototype.setName = function (name) {
+        var css = { bottom: "", display: "", height: "", left: "", right: "", top: "", width: "" };
+        switch (name) {
+            case ShapeName.SHAPE_NAME_AREA_LEFT:
+                css.top = "1px";
+                css.bottom = "1px";
+                css.left = "1px";
+                css.width = "2px";
+                break;
+            case ShapeName.SHAPE_NAME_AREA_RIGHT:
+                css.top = "1px";
+                css.right = "1px";
+                css.bottom = "1px";
+                css.width = "2px";
+                break;
+            case ShapeName.SHAPE_NAME_AREA_TOP:
+                css.top = "1px";
+                css.right = "1px";
+                css.left = "1px";
+                css.height = "2px";
+                break;
+            case ShapeName.SHAPE_NAME_AREA_BOTTOM:
+                css.right = "1px";
+                css.bottom = "1px";
+                css.left = "1px";
+                css.height = "2px";
+                break;
+            case ShapeName.SHAPE_NAME_LAYOUT_HORIZONTAL:
+                css.top = "0px";
+                css.right = "33%";
+                css.bottom = "0px";
+                css.width = "1px";
+                break;
+            case ShapeName.SHAPE_NAME_LAYOUT_VERTICAL:
+                css.right = "0px";
+                css.bottom = "33%";
+                css.left = "0px";
+                css.height = "1px";
+                break;
+            default:
+                css.display = "none";
+                break;
+        }
+        this.$item.css(css);
+        return this;
+    };
+    Shape.prototype.setColor = function (color) {
+        color = color === undefined ? ShapeColor.SHAPE_COLOR_ENABLED : color;
+        switch (color) {
+            case ShapeColor.SHAPE_COLOR_DISABLED:
+                this.$el.css({ borderColor: "" });
+                this.$item.css({ backgroundColor: "" });
+                this.$el.removeClass("shape-color-enabled").addClass("shape-color-disabled");
+                break;
+            case ShapeColor.SHAPE_COLOR_ENABLED:
+                this.$el.css({ borderColor: "" });
+                this.$item.css({ backgroundColor: "" });
+                this.$el.removeClass("shape-color-disabled").addClass("shape-color-enabled");
+                break;
+            default:
+                if (color) {
+                    this.$el.css({ borderColor: color });
+                    this.$item.css({ backgroundColor: color });
+                    this.$el.removeClass("shape-color-disabled").removeClass("shape-color-enabled");
+                }
+                break;
+        }
+        return this;
+    };
+    Shape.prototype.setWidth = function (width) {
+        this.$el.width(width || 16);
+        return this;
+    };
+    Shape.prototype.setHeight = function (height) {
+        this.$el.height(height || 12);
+        return this;
+    };
+    Shape.prototype.preinitialize = function () {
+        this.className = "shape-view";
+    };
+    Shape.prototype.initialize = function (opts) {
+        opts = opts || {};
+        this.$el.html(shape_tpl);
+        this.$item = this.$(".shape-item");
+        opts.attributes = opts.attributes || {};
+        this.setName(opts.attributes.name);
+        this.setColor(opts.attributes.color);
+        this.setWidth(opts.attributes.width);
+        this.setHeight(opts.attributes.height);
+    };
+    return Shape;
+}(View));
+var ShapeColor;
+(function (ShapeColor) {
+    ShapeColor[ShapeColor["SHAPE_COLOR_DISABLED"] = 0] = "SHAPE_COLOR_DISABLED";
+    ShapeColor[ShapeColor["SHAPE_COLOR_ENABLED"] = 1] = "SHAPE_COLOR_ENABLED";
+})(ShapeColor || (ShapeColor = {}));
+var ShapeName;
+(function (ShapeName) {
+    ShapeName[ShapeName["SHAPE_NAME_AREA_BOTTOM"] = 0] = "SHAPE_NAME_AREA_BOTTOM";
+    ShapeName[ShapeName["SHAPE_NAME_AREA_LEFT"] = 1] = "SHAPE_NAME_AREA_LEFT";
+    ShapeName[ShapeName["SHAPE_NAME_AREA_RIGHT"] = 2] = "SHAPE_NAME_AREA_RIGHT";
+    ShapeName[ShapeName["SHAPE_NAME_AREA_TOP"] = 3] = "SHAPE_NAME_AREA_TOP";
+    ShapeName[ShapeName["SHAPE_NAME_LAYOUT_HORIZONTAL"] = 4] = "SHAPE_NAME_LAYOUT_HORIZONTAL";
+    ShapeName[ShapeName["SHAPE_NAME_LAYOUT_VERTICAL"] = 5] = "SHAPE_NAME_LAYOUT_VERTICAL";
+})(ShapeName || (ShapeName = {}));
 
 var syntax_tpl = "<div class=\"syntax-col\"></div>\n<div class=\"syntax-tree\"></div>";
 
@@ -2315,28 +2315,28 @@ var Console = (function (_super) {
     };
     Console.prototype.refresh = function (isInit) {
         if (this.$el.hasClass("layout-horizontal")) {
-            this.iconTerminalLeft.setName(IconName.ICON_NAME_AREA_LEFT);
-            this.iconTerminalRight.setName(IconName.ICON_NAME_AREA_RIGHT);
-            this.iconWatchLeft.setName(IconName.ICON_NAME_AREA_LEFT);
-            this.iconWatchRight.setName(IconName.ICON_NAME_AREA_RIGHT);
+            this.iconTerminalLeft.setName(ShapeName.SHAPE_NAME_AREA_LEFT);
+            this.iconTerminalRight.setName(ShapeName.SHAPE_NAME_AREA_RIGHT);
+            this.iconWatchLeft.setName(ShapeName.SHAPE_NAME_AREA_LEFT);
+            this.iconWatchRight.setName(ShapeName.SHAPE_NAME_AREA_RIGHT);
         }
         else {
-            this.iconTerminalLeft.setName(IconName.ICON_NAME_AREA_TOP);
-            this.iconTerminalRight.setName(IconName.ICON_NAME_AREA_BOTTOM);
-            this.iconWatchLeft.setName(IconName.ICON_NAME_AREA_TOP);
-            this.iconWatchRight.setName(IconName.ICON_NAME_AREA_BOTTOM);
+            this.iconTerminalLeft.setName(ShapeName.SHAPE_NAME_AREA_TOP);
+            this.iconTerminalRight.setName(ShapeName.SHAPE_NAME_AREA_BOTTOM);
+            this.iconWatchLeft.setName(ShapeName.SHAPE_NAME_AREA_TOP);
+            this.iconWatchRight.setName(ShapeName.SHAPE_NAME_AREA_BOTTOM);
         }
         if (this.$el.hasClass("hide-terminal")) {
-            this.iconWatchLeft.setColor(IconColor.ICON_COLOR_DISABLED);
-            this.iconWatchRight.setColor(IconColor.ICON_COLOR_ENABLED);
+            this.iconWatchLeft.setColor(ShapeColor.SHAPE_COLOR_DISABLED);
+            this.iconWatchRight.setColor(ShapeColor.SHAPE_COLOR_ENABLED);
         }
         else if (this.$el.hasClass("hide-watch")) {
-            this.iconTerminalLeft.setColor(IconColor.ICON_COLOR_ENABLED);
-            this.iconTerminalRight.setColor(IconColor.ICON_COLOR_DISABLED);
+            this.iconTerminalLeft.setColor(ShapeColor.SHAPE_COLOR_ENABLED);
+            this.iconTerminalRight.setColor(ShapeColor.SHAPE_COLOR_DISABLED);
         }
         else {
-            this.iconWatchLeft.setColor(IconColor.ICON_COLOR_ENABLED);
-            this.iconWatchRight.setColor(IconColor.ICON_COLOR_ENABLED);
+            this.iconWatchLeft.setColor(ShapeColor.SHAPE_COLOR_ENABLED);
+            this.iconWatchRight.setColor(ShapeColor.SHAPE_COLOR_ENABLED);
         }
         this.resultView.refresh();
         if (isInit) {
@@ -2399,12 +2399,12 @@ var Console = (function (_super) {
         this.$el.html(console_tpl);
         this.$(".console-terminal-clear").html(image_trash_svg_tpl);
         this.$(".console-watch-clear").html(image_trash_svg_tpl);
-        this.iconTerminalLeft = new Icon({ attributes: { height: 11, width: 11 } });
-        this.iconTerminalRight = new Icon({ attributes: { height: 11, width: 11 } });
+        this.iconTerminalLeft = new Shape({ attributes: { height: 11, width: 11 } });
+        this.iconTerminalRight = new Shape({ attributes: { height: 11, width: 11 } });
         this.iconTerminalLeft.$el.appendTo(this.$(".console-terminal-left"));
         this.iconTerminalRight.$el.appendTo(this.$(".console-terminal-right"));
-        this.iconWatchLeft = new Icon({ attributes: { height: 11, width: 11 } });
-        this.iconWatchRight = new Icon({ attributes: { height: 11, width: 11 } });
+        this.iconWatchLeft = new Shape({ attributes: { height: 11, width: 11 } });
+        this.iconWatchRight = new Shape({ attributes: { height: 11, width: 11 } });
         this.iconWatchLeft.$el.appendTo(this.$(".console-watch-left"));
         this.iconWatchRight.$el.appendTo(this.$(".console-watch-right"));
         return this;
@@ -2910,26 +2910,26 @@ var Main = (function (_super) {
             this.currentSize = this.defaultSize;
         }
         if (this.$el.hasClass("layout-horizontal")) {
-            this.iconCenter.setName(IconName.ICON_NAME_LAYOUT_VERTICAL);
-            this.iconLeft.setName(IconName.ICON_NAME_AREA_LEFT);
-            this.iconRight.setName(IconName.ICON_NAME_AREA_RIGHT);
+            this.shapeCenter.setName(ShapeName.SHAPE_NAME_LAYOUT_VERTICAL);
+            this.shapeLeft.setName(ShapeName.SHAPE_NAME_AREA_LEFT);
+            this.shapeRight.setName(ShapeName.SHAPE_NAME_AREA_RIGHT);
         }
         else {
-            this.iconCenter.setName(IconName.ICON_NAME_LAYOUT_HORIZONTAL);
-            this.iconLeft.setName(IconName.ICON_NAME_AREA_TOP);
-            this.iconRight.setName(IconName.ICON_NAME_AREA_BOTTOM);
+            this.shapeCenter.setName(ShapeName.SHAPE_NAME_LAYOUT_HORIZONTAL);
+            this.shapeLeft.setName(ShapeName.SHAPE_NAME_AREA_TOP);
+            this.shapeRight.setName(ShapeName.SHAPE_NAME_AREA_BOTTOM);
         }
         if (this.$el.hasClass("hide-data")) {
-            this.iconLeft.setColor(IconColor.ICON_COLOR_DISABLED);
-            this.iconRight.setColor(IconColor.ICON_COLOR_ENABLED);
+            this.shapeLeft.setColor(ShapeColor.SHAPE_COLOR_DISABLED);
+            this.shapeRight.setColor(ShapeColor.SHAPE_COLOR_ENABLED);
         }
         else if (this.$el.hasClass("hide-console")) {
-            this.iconLeft.setColor(IconColor.ICON_COLOR_ENABLED);
-            this.iconRight.setColor(IconColor.ICON_COLOR_DISABLED);
+            this.shapeLeft.setColor(ShapeColor.SHAPE_COLOR_ENABLED);
+            this.shapeRight.setColor(ShapeColor.SHAPE_COLOR_DISABLED);
         }
         else {
-            this.iconLeft.setColor(IconColor.ICON_COLOR_ENABLED);
-            this.iconRight.setColor(IconColor.ICON_COLOR_ENABLED);
+            this.shapeLeft.setColor(ShapeColor.SHAPE_COLOR_ENABLED);
+            this.shapeRight.setColor(ShapeColor.SHAPE_COLOR_ENABLED);
         }
         this.consoleView.refresh(isInit);
         return this;
@@ -3036,12 +3036,12 @@ var Main = (function (_super) {
         this.$data = this.$(".main-data");
         this.$console = this.$(".main-console");
         this.$split = this.$(".main-split");
-        this.iconLeft = new Icon();
-        this.iconCenter = new Icon();
-        this.iconRight = new Icon();
-        this.iconLeft.$el.appendTo(this.$(".act-left"));
-        this.iconCenter.$el.appendTo(this.$(".act-center"));
-        this.iconRight.$el.appendTo(this.$(".act-right"));
+        this.shapeLeft = new Shape();
+        this.shapeCenter = new Shape();
+        this.shapeRight = new Shape();
+        this.shapeLeft.$el.appendTo(this.$(".act-left"));
+        this.shapeCenter.$el.appendTo(this.$(".act-center"));
+        this.shapeRight.$el.appendTo(this.$(".act-right"));
         this.dataView = new Data();
         this.dataView.setExpression(this.expression);
         this.consoleView = new Console();

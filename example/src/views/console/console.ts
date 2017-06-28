@@ -2,9 +2,9 @@ import image_prompt_svg_tpl from "../../images/prompt.svg.tpl";
 import image_trash_svg_tpl from "../../images/trash.svg.tpl";
 import Expression from "../../scripts/expression";
 import View from "../../scripts/view";
-import { IconColor, IconName } from "../icon/icon";
-import Icon from "../icon/icon";
 import Result from "../result/result";
+import { ShapeColor, ShapeName } from "../shape/shape";
+import Shape from "../shape/shape";
 import Syntax from "../syntax/syntax";
 import Terminal from "../terminal/terminal";
 import "./console.scss";
@@ -12,10 +12,10 @@ import console_tpl from "./console.tpl";
 
 class Console extends View {
     private expression: Expression;
-    private iconTerminalLeft: Icon;
-    private iconTerminalRight: Icon;
-    private iconWatchLeft: Icon;
-    private iconWatchRight: Icon;
+    private iconTerminalLeft: Shape;
+    private iconTerminalRight: Shape;
+    private iconWatchLeft: Shape;
+    private iconWatchRight: Shape;
     private resultView: Result;
     private syntaxView: Syntax;
     private terminalView: Terminal;
@@ -26,25 +26,25 @@ class Console extends View {
     }
     public refresh(isInit?: boolean): Console {
         if (this.$el.hasClass("layout-horizontal")) {
-            this.iconTerminalLeft.setName(IconName.ICON_NAME_AREA_LEFT);
-            this.iconTerminalRight.setName(IconName.ICON_NAME_AREA_RIGHT);
-            this.iconWatchLeft.setName(IconName.ICON_NAME_AREA_LEFT);
-            this.iconWatchRight.setName(IconName.ICON_NAME_AREA_RIGHT);
+            this.iconTerminalLeft.setName(ShapeName.SHAPE_NAME_AREA_LEFT);
+            this.iconTerminalRight.setName(ShapeName.SHAPE_NAME_AREA_RIGHT);
+            this.iconWatchLeft.setName(ShapeName.SHAPE_NAME_AREA_LEFT);
+            this.iconWatchRight.setName(ShapeName.SHAPE_NAME_AREA_RIGHT);
         } else {
-            this.iconTerminalLeft.setName(IconName.ICON_NAME_AREA_TOP);
-            this.iconTerminalRight.setName(IconName.ICON_NAME_AREA_BOTTOM);
-            this.iconWatchLeft.setName(IconName.ICON_NAME_AREA_TOP);
-            this.iconWatchRight.setName(IconName.ICON_NAME_AREA_BOTTOM);
+            this.iconTerminalLeft.setName(ShapeName.SHAPE_NAME_AREA_TOP);
+            this.iconTerminalRight.setName(ShapeName.SHAPE_NAME_AREA_BOTTOM);
+            this.iconWatchLeft.setName(ShapeName.SHAPE_NAME_AREA_TOP);
+            this.iconWatchRight.setName(ShapeName.SHAPE_NAME_AREA_BOTTOM);
         }
         if (this.$el.hasClass("hide-terminal")) {
-            this.iconWatchLeft.setColor(IconColor.ICON_COLOR_DISABLED);
-            this.iconWatchRight.setColor(IconColor.ICON_COLOR_ENABLED);
+            this.iconWatchLeft.setColor(ShapeColor.SHAPE_COLOR_DISABLED);
+            this.iconWatchRight.setColor(ShapeColor.SHAPE_COLOR_ENABLED);
         } else if (this.$el.hasClass("hide-watch")) {
-            this.iconTerminalLeft.setColor(IconColor.ICON_COLOR_ENABLED);
-            this.iconTerminalRight.setColor(IconColor.ICON_COLOR_DISABLED);
+            this.iconTerminalLeft.setColor(ShapeColor.SHAPE_COLOR_ENABLED);
+            this.iconTerminalRight.setColor(ShapeColor.SHAPE_COLOR_DISABLED);
         } else {
-            this.iconWatchLeft.setColor(IconColor.ICON_COLOR_ENABLED);
-            this.iconWatchRight.setColor(IconColor.ICON_COLOR_ENABLED);
+            this.iconWatchLeft.setColor(ShapeColor.SHAPE_COLOR_ENABLED);
+            this.iconWatchRight.setColor(ShapeColor.SHAPE_COLOR_ENABLED);
         }
         this.resultView.refresh();
         if (isInit) {
@@ -107,13 +107,13 @@ class Console extends View {
         this.$(".console-terminal-clear").html(image_trash_svg_tpl);
         this.$(".console-watch-clear").html(image_trash_svg_tpl);
 
-        this.iconTerminalLeft = new Icon({ attributes: { height: 11, width: 11 } });
-        this.iconTerminalRight = new Icon({ attributes: { height: 11, width: 11 } });
+        this.iconTerminalLeft = new Shape({ attributes: { height: 11, width: 11 } });
+        this.iconTerminalRight = new Shape({ attributes: { height: 11, width: 11 } });
         this.iconTerminalLeft.$el.appendTo(this.$(".console-terminal-left"));
         this.iconTerminalRight.$el.appendTo(this.$(".console-terminal-right"));
 
-        this.iconWatchLeft = new Icon({ attributes: { height: 11, width: 11 } });
-        this.iconWatchRight = new Icon({ attributes: { height: 11, width: 11 } });
+        this.iconWatchLeft = new Shape({ attributes: { height: 11, width: 11 } });
+        this.iconWatchRight = new Shape({ attributes: { height: 11, width: 11 } });
         this.iconWatchLeft.$el.appendTo(this.$(".console-watch-left"));
         this.iconWatchRight.$el.appendTo(this.$(".console-watch-right"));
 

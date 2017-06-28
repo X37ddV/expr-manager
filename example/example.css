@@ -11,21 +11,6 @@
     font-family: Menlo, Monaco, 'Courier New', monospace;
     font-size: 11px;
     font-weight: normal; }
-.icon-view {
-  border-style: solid;
-  border-width: 1px;
-  position: relative; }
-  .icon-view.icon-color-disabled {
-    border-color: #757575; }
-    .icon-view.icon-color-disabled .icon-item {
-      background-color: #757575; }
-  .icon-view.icon-color-enabled {
-    border-color: #2196f3; }
-    .icon-view.icon-color-enabled .icon-item {
-      background-color: #2196f3; }
-
-.icon-item {
-  position: absolute; }
 .result-view {
   bottom: 0;
   cursor: default;
@@ -183,6 +168,21 @@
     .result-view .result-style-icon.result-style-icon-boolean {
       background-color: #bea6c9;
       border-color: #8d7798; }
+.shape-view {
+  border-style: solid;
+  border-width: 1px;
+  position: relative; }
+  .shape-view.shape-color-disabled {
+    border-color: #757575; }
+    .shape-view.shape-color-disabled .shape-item {
+      background-color: #757575; }
+  .shape-view.shape-color-enabled {
+    border-color: #2196f3; }
+    .shape-view.shape-color-enabled .shape-item {
+      background-color: #2196f3; }
+
+.shape-item {
+  position: absolute; }
 .syntax-view {
   bottom: 0;
   left: 0;
