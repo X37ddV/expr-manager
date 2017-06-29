@@ -1,0 +1,7 @@
+docs
+example
+src
+test
+gulpfile.js
+tsconfig.json
+tslint.json

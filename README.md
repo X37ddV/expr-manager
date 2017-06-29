@@ -10,7 +10,7 @@
 
 ## License
 
-Moment.js is freely distributable under the terms of the [MIT license](https://github.com/moment/moment/blob/develop/LICENSE).
+expr-manager.js is freely distributable under the terms of the [MIT license](https://github.com/X37ddV/expr-manager/blob/master/LICENSE).
 
 [license-image]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
 [license-url]: LICENSE

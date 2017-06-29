@@ -1,6 +1,6 @@
 {
   "name": "expr-manager",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "表达式解析及计算",
   "main": "expr-manager.js",
   "types": "expr-manager.d.js",
