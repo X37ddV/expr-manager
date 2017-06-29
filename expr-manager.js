@@ -1,4 +1,4 @@
-//     expr-manager.js 0.0.1
+//     expr-manager.js 0.0.2
 //     https://github.com/X37ddV/expr-manager
 //     (c) 2016-2017 X37ddV
 //     Released under the MIT License.
