@@ -10,6 +10,8 @@ interface ILocaleConfig {
     MSG_EC_VARI_N: string;
 
     MSG_EF_MODEL: string;
+    MSG_EF_STR_TO_DATE: string;
+    MSG_EF_STR_TO_NUM: string;
 
     MSG_EL_SYNTAX_ON: string;
     MSG_EL_SYNTAX_S: string;

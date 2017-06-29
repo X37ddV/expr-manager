@@ -1,8 +1,6 @@
-var ExprManger = window['expr-manager'];
-
 describe("表达式测试", function () {
-    var expr = new ExprManger();
-    expr.init(window.data, window.dataContext, window.context);
+    var exprManager = new window.ExprManager();
+    exprManager.init(window.data, window.dataContext, window.context);
     for (var j = 0; j < window.demoExpr.length; j++) {
         var demo = window.demoExpr[j];
         it(demo.title, function () {
@@ -10,7 +8,7 @@ describe("表达式测试", function () {
                 var e = demo.exprs[i][0];
                 var k = demo.exprs[i][1]; // 预期值 undefined为不校验或校验为错误
                 var d = demo.exprs[i][2] || ""; // 描述
-                var val = expr.calcExpr(e, "E1", window.dataCursor);
+                var val = exprManager.calcExpr(e, "E1", window.dataCursor);
                 var v = val.toValue();
                 v = v === undefined ? "undefined" : window.JSON.stringify(v);
                 expect(k).toEqual(v);
@@ -20,20 +18,20 @@ describe("表达式测试", function () {
 });
 
 describe("依赖关系测试", function () {
-    var expr = new ExprManger();
-    expr.init(window.data, window.dataContext, window.context);
+    var exprManager = new window.ExprManager();
+    exprManager.init(window.data, window.dataContext, window.context);
     for (var m = 0; m < window.demoDependencies.length; m++) {
         var demoDepend = window.demoDependencies[m];
-        var el = expr.getExpressionList();
-        expr.resetExpression(); // 重置表达式列表对象
+        var el = exprManager.getExpressionList();
+        exprManager.resetExpression(); // 重置表达式列表对象
         for (var i in demoDepend.dataSource) {
             var entity = demoDepend.dataSource[i];
             var e = entity.expr;
             var s = i.split(".");
             var p = s.pop();
-            expr.addExpression(e, s.join("."), p);
+            exprManager.addExpression(e, s.join("."), p);
         }
-        var msg = expr.checkAndSort();
+        var msg = exprManager.checkAndSort();
         if (msg == "") {
             for (var k = 0; k < demoDepend.testCase.length; k++) {
                 var c = demoDepend.testCase[k];

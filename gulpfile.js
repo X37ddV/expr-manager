@@ -81,7 +81,7 @@ gulp.task("build:expr-manager", function() {
     }).then(function (bundle) {
       bundle.write({
         format: "umd",
-        moduleName: "expr-manager",
+        moduleName: "ExprManager",
         dest: path.join(rootPath, "expr-manager.js"),
         globals: {
             "decimal.js": "Decimal",
@@ -106,7 +106,7 @@ gulp.task("build:expr-manager:min", function() {
     }).then(function (bundle) {
       bundle.write({
         format: "umd",
-        moduleName: "expr-manager",
+        moduleName: "ExprManager",
         dest: path.join(rootPath, "expr-manager.min.js"),
         globals: {
             "decimal.js": "Decimal",
@@ -141,7 +141,7 @@ gulp.task("build:example", function() {
                 "mousetrap": "Mousetrap",
                 "decimal.js": "Decimal",
                 "moment": "moment",
-                "expr-manager": "expr-manager",
+                "expr-manager": "ExprManager",
             }
         });
     })

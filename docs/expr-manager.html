@@ -38,7 +38,7 @@ Released under the MIT License.
 (<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">global, factory</span>) </span>{
 	<span class="hljs-keyword">typeof</span> exports === <span class="hljs-string">'object'</span> &amp;&amp; <span class="hljs-keyword">typeof</span> <span class="hljs-built_in">module</span> !== <span class="hljs-string">'undefined'</span> ? <span class="hljs-built_in">module</span>.exports = factory(<span class="hljs-built_in">require</span>(<span class="hljs-string">'moment'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'decimal.js'</span>)) :
 	<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd ? define([<span class="hljs-string">'moment'</span>, <span class="hljs-string">'decimal.js'</span>], factory) :
-	(global[<span class="hljs-string">'expr-manager'</span>] = factory(global.moment,global.Decimal));
+	(global.ExprManager = factory(global.moment,global.Decimal));
 }(<span class="hljs-keyword">this</span>, (<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">moment,Decimal</span>) </span>{ <span class="hljs-string">'use strict'</span>;</pre></div></div>
             
         </li>
@@ -2638,7 +2638,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
     <span class="hljs-attr">fn</span>: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">context, source</span>) </span>{
         <span class="hljs-keyword">var</span> n = <span class="hljs-built_in">Number</span>(source.toValue());
         <span class="hljs-keyword">return</span> <span class="hljs-built_in">isNaN</span>(n) ?
-            context.genErrorValue(source.toValue() + <span class="hljs-string">"无法被转换为数字"</span>) :
+            context.genErrorValue(format(locale.getLocale().MSG_EF_STR_TO_NUM, source.toValue())) :
             context.genValue(n);
     },
     <span class="hljs-attr">p</span>: [],
@@ -2665,7 +2665,7 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
         <span class="hljs-keyword">var</span> m = moment(s, fmt);
         <span class="hljs-keyword">return</span> m.isValid() ?
             context.genValue(m.toDate()) :
-            context.genErrorValue(s + <span class="hljs-string">" 无法被 "</span> + fmt + <span class="hljs-string">" 格式化为日期时间"</span>);
+            context.genErrorValue(format(locale.getLocale().MSG_EF_STR_TO_NUM, s, fmt));
     },
     <span class="hljs-attr">p</span>: [<span class="hljs-string">"string?"</span>],
     <span class="hljs-attr">r</span>: <span class="hljs-string">"date"</span>,
@@ -9181,7 +9181,9 @@ Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    MSG_EF_MODEL: <span class="hljs-string">"\"{0}\" 不是合法的匹配模式"</span>,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    MSG_EF_MODEL: <span class="hljs-string">"\"{0}\" 不是合法的匹配模式"</span>,
+    <span class="hljs-attr">MSG_EF_STR_TO_DATE</span>: <span class="hljs-string">"\"{0}\" 无法被 \"{1}\" 格式化为日期时间"</span>,
+    <span class="hljs-attr">MSG_EF_STR_TO_NUM</span>: <span class="hljs-string">"\"{0}\" 无法被转换为数字"</span>,</pre></div></div>
             
         </li>
         

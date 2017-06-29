@@ -45,7 +45,7 @@
     <script type="text/javascript" src="../data/test_data.js"></script>
     <script type="text/javascript" src="../data/test_dependencies.js"></script>
     <script type="text/javascript">
-        window.ExprManager = new window["expr-manager"]();
+        window.exprManager = new window.ExprManager();
         function encode(v) {
             return v === undefined ? "undefined" : window.JSON.stringify(v);
         }
@@ -53,9 +53,8 @@
             return $('<div/>').text(v).html();
         }
         function doEval(expr) {
-            /// <summary>分析、计算表达式expr</summary>
-            /// <returns>计算结果或出错信息</returns>
-            return ExprManager.calcExpr(expr, "E1", window.dataCursor);
+            // 分析、计算表达式expr
+            return exprManager.calcExpr(expr, "E1", window.dataCursor);
         }
         // 全局变量-依赖
         window._DN = 0;  // 组
@@ -67,7 +66,7 @@
         function genDependDemo(depend) {
             window._DN++;
             var html = "";
-            var e = window.ExprManager,
+            var e = window.exprManager,
                 el = e.getExpressionList();
             e.resetExpression(); // 重置表达式列表对象
             for (var i in depend.dataSource) {
@@ -141,7 +140,7 @@
     </script>
     <script type="text/javascript">
         $(document).ready(function () {
-            window.ExprManager.init(window.data, window.dataContext, window.context);
+            window.exprManager.init(window.data, window.dataContext, window.context);
 
             // 依赖关系-计算
             var dBeginTime = new Date();

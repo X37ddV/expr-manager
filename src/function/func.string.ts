@@ -18,7 +18,7 @@ const funcStringToNumber = {
     fn: (context, source) => {
         const n = Number(source.toValue());
         return isNaN(n) ?
-            context.genErrorValue(source.toValue() + "无法被转换为数字") :
+            context.genErrorValue(format(locale.getLocale().MSG_EF_STR_TO_NUM, source.toValue())) :
             context.genValue(n);
     },
     p: [],
@@ -32,7 +32,7 @@ const funcStringToDate = {
         const m = moment(s, fmt);
         return m.isValid() ?
             context.genValue(m.toDate()) :
-            context.genErrorValue(s + " 无法被 " + fmt + " 格式化为日期时间");
+            context.genErrorValue(format(locale.getLocale().MSG_EF_STR_TO_NUM, s, fmt));
     },
     p: ["string?"],
     r: "date",

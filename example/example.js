@@ -1,7 +1,7 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('jquery'), require('underscore'), require('expr-manager'), require('underscore.string'), require('moment'), require('mousetrap')) :
 	typeof define === 'function' && define.amd ? define(['jquery', 'underscore', 'expr-manager', 'underscore.string', 'moment', 'mousetrap'], factory) :
-	(factory(global.jQuery,global._,global['expr-manager'],global.s,global.moment,global.Mousetrap));
+	(factory(global.jQuery,global._,global.ExprManager,global.s,global.moment,global.Mousetrap));
 }(this, (function ($,_,ExprManager,s,moment,Mousetrap) { 'use strict';
 
 $ = 'default' in $ ? $['default'] : $;

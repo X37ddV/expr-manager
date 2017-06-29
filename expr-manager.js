@@ -6,7 +6,7 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('moment'), require('decimal.js')) :
 	typeof define === 'function' && define.amd ? define(['moment', 'decimal.js'], factory) :
-	(global['expr-manager'] = factory(global.moment,global.Decimal));
+	(global.ExprManager = factory(global.moment,global.Decimal));
 }(this, (function (moment,Decimal) { 'use strict';
 
 // 依赖第三方库
@@ -1147,7 +1147,7 @@ var funcStringToNumber = {
     fn: function (context, source) {
         var n = Number(source.toValue());
         return isNaN(n) ?
-            context.genErrorValue(source.toValue() + "无法被转换为数字") :
+            context.genErrorValue(format(locale.getLocale().MSG_EF_STR_TO_NUM, source.toValue())) :
             context.genValue(n);
     },
     p: [],
@@ -1161,7 +1161,7 @@ var funcStringToDate = {
         var m = moment(s, fmt);
         return m.isValid() ?
             context.genValue(m.toDate()) :
-            context.genErrorValue(s + " 无法被 " + fmt + " 格式化为日期时间");
+            context.genErrorValue(format(locale.getLocale().MSG_EF_STR_TO_NUM, s, fmt));
     },
     p: ["string?"],
     r: "date",
@@ -4721,6 +4721,8 @@ locale.defineLocale("zh-cn", {
     MSG_EC_VARI_N: "参数不存在: {0}",
     // funtion
     MSG_EF_MODEL: "\"{0}\" 不是合法的匹配模式",
+    MSG_EF_STR_TO_DATE: "\"{0}\" 无法被 \"{1}\" 格式化为日期时间",
+    MSG_EF_STR_TO_NUM: "\"{0}\" 无法被转换为数字",
     // lexer
     MSG_EL_SYNTAX_ON: "{0} 不是合法的八进制数",
     MSG_EL_SYNTAX_S: "{0} 引号不匹配",

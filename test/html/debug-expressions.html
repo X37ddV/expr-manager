@@ -58,7 +58,7 @@
     <script type="text/javascript" src="../data/test_data.js"></script>
     <script type="text/javascript" src="../data/test_expressions.js"></script>
     <script type="text/javascript">
-        window.ExprManager = new window["expr-manager"]();
+        window.exprManager = new window.ExprManager();
         function encode(v) {
             return v === undefined ? "undefined" : window.JSON.stringify(v);
         }
@@ -66,9 +66,8 @@
             return $('<div/>').text(v).html();
         }
         function doEval(expr) {
-            /// <summary>分析、计算表达式expr</summary>
-            /// <returns>计算结果或出错信息</returns>
-            return ExprManager.calcExpr(expr, "E1", window.dataCursor);
+            // 分析、计算表达式expr
+            return exprManager.calcExpr(expr, "E1", window.dataCursor);
         }
         // 全局变量-表达式
         window._Y = 0;  // 正常
@@ -119,7 +118,7 @@
     </script>
     <script type="text/javascript">
         $(document).ready(function () {
-            window.ExprManager.init(window.data, window.dataContext, window.context);
+            window.exprManager.init(window.data, window.dataContext, window.context);
             // 计算表达式，生成fieldset
             var list = {}, fix = "div_"; var html = "";
             var beginTime = new Date();

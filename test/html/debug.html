@@ -8,13 +8,13 @@
             font-size: 12px;
             font-family: Courier, monospace;
         }
+        /*实体前的+号*/
 
-            /*实体前的+号*/
         #demoData div.collapsed table {
             display: none;
         }
+        /*记录前的+号*/
 
-            /*记录前的+号*/
         #demoData tr.collapsed+tr {
             display: none;
         }
@@ -36,21 +36,21 @@
     <script type="text/javascript" src="../../expr-manager.js"></script>
     <script type="text/javascript" src="../data/test_data.js"></script>
     <script type="text/javascript">
+        window.exprManager = new window.ExprManager();
         function encode(v) {
             return v === undefined ? "undefined" : window.JSON.stringify(v);
         }
         function htmlEncode(v) {
             return $('<div/>').text(v).html();
         }
-        window.ExprManager = new window["expr-manager"]();
     </script>
     <!-- 解析表达式 -->
     <script type="text/javascript">
         function getSyntaxTree(expr, v) {
-            /// <summary>用树状结构Html显示解析表达式所得的语法树</summary>
+            //用树状结构Html显示解析表达式所得的语法树
             var n = 0; // 递增，将tokenNav和对应的tokenDiv绑定起来
             var fn = function (input, level) {
-                /// <summary> 递归函数，深度优先遍历语法树</summary>
+                // 递归函数，深度优先遍历语法树
                 var s = "";
                 for (var i = 0; i < level; i++) {
                     s += "<span style='color:#ddd;'>&nbsp;</span>";
@@ -122,10 +122,10 @@
             return log.join("");
         }
         function calculate() {
-            /// <summary>分析、计算输入的表达式</summary>
+            //分析、计算输入的表达式
             var expr = document.getElementById("exprtext").value;
             var tree = document.getElementById("exprtree");
-            var value = ExprManager.calcExpr(expr, "E1", window.dataCursor);
+            var value = exprManager.calcExpr(expr, "E1", window.dataCursor);
             tree.innerHTML = getSyntaxTree(expr, value);
             // 展开和折叠token树
             $(".tokenNav").on("click", function () {
@@ -139,17 +139,17 @@
             });
         }
         function calculateDependencies() {
-            /// <summary>计算依赖关系</summary>
+            //计算依赖关系
             var expr = document.getElementById("exprtext").value;
             var tree = document.getElementById("exprtree");
-            var value = ExprManager.calcDependencies(expr, "E1");
+            var value = exprManager.calcDependencies(expr, "E1");
             tree.innerHTML = value.errorMsg + "<br/>" + (value.dependencies ? value.dependencies.join("<br/>") : "");
         }
     </script>
     <!-- 显示数据 -->
     <script type="text/javascript">
         function showDemoData(id, data, dataContext) {
-            /// <summary>显示演示数据</summary>
+            //显示演示数据
             var demoData = document.getElementById(id);
             var html = "";
             for (var entityName in data) { // 遍历data中的每个实体E1,E2 。。。,E1为数组
@@ -158,7 +158,7 @@
             demoData.innerHTML = html;
         }
         function genDemoData(entityName, entityData, entityContext) {
-            /// <summary>生成Html标签以显示演示数据</summary>
+            //生成Html标签以显示演示数据
             var colors = ['#E3E3E3', '#D3D3D3']; // 表头背景色，交替显示以区分各列
             var fn = function (entityName, entityData, entityContext, level) {
                 var fieldLength = 1; // 该实体普通数据字段个数
@@ -209,13 +209,13 @@
     <!-- 显示上下文变量 -->
     <script type="text/javascript">
         function showDemoContext(id, context) {
-            /// <summary>显示上下文变量</summary>
+            //显示上下文变量
             var demoContext = document.getElementById(id);
             var html = genDemoContext(context);
             demoContext.innerHTML = html;
         }
         function genDemoContext(context) {
-            /// <summary>生成Html标签以显示上下文变量</summary>
+            //生成Html标签以显示上下文变量
             var h = "";
             for (var i in context) {
                 h += "<b>" + i + ":</b><span>&nbsp;" + context[i] + "</span><br/>";
@@ -226,13 +226,13 @@
     <!-- 显示函数列表 -->
     <script type="text/javascript">
         function showFunction(id) {
-            /// <summary>显示函数列表</summary>
+            //显示函数列表
             var funcList = document.getElementById(id);
-            var html = genFuncList(window.SysFunctionComent ? window.SysFunctionComent : window.ExprManager.getFunction());
+            var html = genFuncList(window.SysFunctionComent ? window.SysFunctionComent : window.exprManager.getFunction());
             funcList.innerHTML = html;
         }
         function genFuncList(func) {
-            /// <summary>生成Html标签以显示func中的所有函数</summary>
+            //生成Html标签以显示func中的所有函数
             var h = "";
             for (var i in func) { // 遍历func包括的所有数据类型
                 var f = func[i];
@@ -263,7 +263,7 @@
     <!-- 为控件绑定事件 -->
     <script type="text/javascript">
         $(document).ready(function () {
-            window.ExprManager.init(window.data, window.dataContext, window.context);
+            window.exprManager.init(window.data, window.dataContext, window.context);
             showDemoData("demoData", window.data, window.dataContext);
             showDemoContext("demoContext", window.context);
             showFunction("funcList");
@@ -283,10 +283,10 @@
                 window.open("../index.html");
             });
             $("#btnDebugExpressions").on("click", function () {
-                window.open("debug_expressions.html");
+                window.open("debug-expressions.html");
             });
             $("#btnDebugDependencies").on("click", function () {
-                window.open("debug_dependencies.html");
+                window.open("debug-dependencies.html");
             });
             // 展开和折叠数据
             $(".nav").on("click", function () {
