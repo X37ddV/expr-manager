@@ -1,6 +1,6 @@
 {
   "name": "expr-manager",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Parse, validate, calc, and manage expression",
   "main": "expr-manager.js",
   "types": "expr-manager.d.js",
@@ -11,8 +11,8 @@
     "lint:example": "gulp lint:example",
     "build:example": "gulp build:example",
     "build:docs": "gulp build:expr-manager build:docs",
-    "test:all": "gulp build:expr-manager test:all",
-    "test": "gulp test",
+    "test": "gulp build:expr-manager test:all",
+    "travis": "gulp travis",
     "coveralls": "cat ./coverage/lcov/lcov.info | ./node_modules/.bin/coveralls"
   },
   "repository": {

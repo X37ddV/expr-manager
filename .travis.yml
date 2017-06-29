@@ -6,7 +6,7 @@ install:
   - npm install
 
 script:
-  - npm test
+  - npm run travis
 
 after_script:
   - npm run coveralls
