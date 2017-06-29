@@ -187,4 +187,5 @@ gulp.task("test:karma", function(done) {
 });
 
 gulp.task("default", ["lint:expr-manager", "lint:example", "build:expr-manager", "build:expr-manager:min", "build:example", "build:docs", "test:karma"]);
+gulp.task("build", ["build:expr-manager"]);
 gulp.task("test", ["lint:expr-manager", "lint:example"]);

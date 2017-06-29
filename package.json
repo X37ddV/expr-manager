@@ -11,6 +11,7 @@
     "lint:example": "gulp lint:example",
     "build:example": "gulp build:example",
     "build:docs": "gulp build:expr-manager build:docs",
+    "build": "gulp build",
     "test:karma": "gulp build:expr-manager test:karma",
     "test": "gulp test"
   },
