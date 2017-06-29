@@ -162,7 +162,7 @@ gulp.task("build:docs", function() {
 
 gulp.task("test:karma", function(done) {
     new karma.Server({
-        basePath: '',
+        basePath: "",
         frameworks: ["jasmine"],
         files: [
             path.join(rootPath, "node_modules", "moment", "moment.js"),
@@ -178,8 +178,8 @@ gulp.task("test:karma", function(done) {
         port: 9876,
         colors: true,
         logLevel: karma.config.LOG_INFO,
-        reporters: ['progress'],
-        browsers: ['Chrome', 'Safari'],
+        reporters: ["progress"],
+        browsers: ["PhantomJS"], //, "Chrome", "Safari"
         autoWatch: true,
         singleRun: true,
         concurrency: Infinity
@@ -188,4 +188,4 @@ gulp.task("test:karma", function(done) {
 
 gulp.task("default", ["lint:expr-manager", "lint:example", "build:expr-manager", "build:expr-manager:min", "build:example", "build:docs", "test:karma"]);
 gulp.task("build", ["build:expr-manager"]);
-gulp.task("test", ["lint:expr-manager", "lint:example"]);
+gulp.task("test", ["lint:expr-manager", "lint:example", "test:karma"]);
