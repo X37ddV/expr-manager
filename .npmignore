@@ -5,3 +5,4 @@ test
 gulpfile.js
 tsconfig.json
 tslint.json
+coverage
