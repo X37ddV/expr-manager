@@ -1,6 +1,6 @@
 # ExprManager
 
-[![NPM version][npm-version-image]][npm-url] [![NPM downloads][npm-downloads-image]][npm-url] [![MIT License][license-image]][license-url]
+[![NPM version][npm-version-image]][npm-url] [![NPM downloads][npm-downloads-image]][npm-url] [![MIT License][license-image]][license-url] [![Build Status][travis-image]][travis-url]
 
 # Installation
 	npm install expr-manager
@@ -18,3 +18,6 @@ expr-manager.js is freely distributable under the terms of the [MIT license](htt
 [npm-url]: https://npmjs.org/package/expr-manager
 [npm-version-image]: http://img.shields.io/npm/v/expr-manager.svg?style=flat
 [npm-downloads-image]: http://img.shields.io/npm/dm/expr-manager.svg?style=flat
+
+[travis-url]: https://travis-ci.org/X37ddV/expr-manager
+[travis-image]: http://img.shields.io/travis/X37ddV/expr-manager/develop.svg?style=flat

@@ -1,7 +1,7 @@
 {
   "name": "expr-manager",
   "version": "0.0.3",
-  "description": "表达式解析及计算",
+  "description": "Parse, validate, calc, and manage expression",
   "main": "expr-manager.js",
   "types": "expr-manager.d.js",
   "scripts": {
@@ -11,7 +11,8 @@
     "lint:example": "gulp lint:example",
     "build:example": "gulp build:example",
     "build:docs": "gulp build:expr-manager build:docs",
-    "test": "gulp build:expr-manager test:karma"
+    "test:karma": "gulp build:expr-manager test:karma",
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
@@ -19,8 +20,8 @@
   },
   "keywords": [
     "expr-manager",
-    "javascript",
-    "typescript"
+    "expr",
+    "calc"
   ],
   "author": "X37ddV <X37ddV@iCloud.com>",
   "license": "MIT",
