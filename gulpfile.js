@@ -39,15 +39,38 @@ var typescriptConfig = {
 };
 var rollupHideComments = function(options) {
     if ( options === void 0 ) options = {};
-
 	return {
 		name: "hidecomments",
-
 		transformBundle: function transformBundle(code) {
 			return code.replace(/\s\/\/\/\s.*/g, "");
 		}
-	};
+	}
 };
+var karmaStart = function(done, browsers) {
+    return new karma.Server({
+        basePath: "",
+        frameworks: ["jasmine"],
+        files: [
+            path.join(rootPath, "node_modules", "moment", "moment.js"),
+            path.join(rootPath, "node_modules", "decimal.js", "decimal.js"),
+            path.join(rootPath, "expr-manager.js"),
+            path.join(rootPath, "test", "data", "test_data.js"),
+            path.join(rootPath, "test", "data", "test_dependencies.js"),
+            path.join(rootPath, "test", "data", "test_expressions.js"),
+            path.join(rootPath, "test", "expr-manager.spec.js"),
+        ],
+        exclude: [],
+        preprocessors: {},
+        port: 9876,
+        colors: true,
+        logLevel: karma.config.LOG_INFO,
+        reporters: ["progress"],
+        browsers: browsers,
+        autoWatch: true,
+        singleRun: true,
+        concurrency: Infinity
+    }, done).start();
+}
 
 gulp.task("lint:expr-manager", () =>
     gulp.src(path.join(rootPath, "src", "**", "*.ts"))
@@ -160,32 +183,13 @@ gulp.task("build:docs", function() {
     });
 });
 
-gulp.task("test:karma", function(done) {
-    new karma.Server({
-        basePath: "",
-        frameworks: ["jasmine"],
-        files: [
-            path.join(rootPath, "node_modules", "moment", "moment.js"),
-            path.join(rootPath, "node_modules", "decimal.js", "decimal.js"),
-            path.join(rootPath, "expr-manager.js"),
-            path.join(rootPath, "test", "data", "test_data.js"),
-            path.join(rootPath, "test", "data", "test_dependencies.js"),
-            path.join(rootPath, "test", "data", "test_expressions.js"),
-            path.join(rootPath, "test", "expr-manager.spec.js"),
-        ],
-        exclude: [],
-        preprocessors: {},
-        port: 9876,
-        colors: true,
-        logLevel: karma.config.LOG_INFO,
-        reporters: ["progress"],
-        browsers: ["PhantomJS"], //, "Chrome", "Safari"
-        autoWatch: true,
-        singleRun: true,
-        concurrency: Infinity
-    }, done).start();
+gulp.task("test:phantomjs", function(done) {
+    karmaStart(done, ["PhantomJS"]);
 });
 
-gulp.task("default", ["lint:expr-manager", "lint:example", "build:expr-manager", "build:expr-manager:min", "build:example", "build:docs", "test:karma"]);
-gulp.task("build", ["build:expr-manager"]);
-gulp.task("test", ["lint:expr-manager", "lint:example", "test:karma"]);
+gulp.task("test:all", function(done) {
+    karmaStart(done, ["PhantomJS", "Chrome", "Safari"]);
+});
+
+gulp.task("default", ["lint:expr-manager", "lint:example", "build:expr-manager", "build:expr-manager:min", "build:example", "build:docs", "test:all"]);
+gulp.task("test", ["lint:expr-manager", "lint:example", "test:phantomjs"]);
