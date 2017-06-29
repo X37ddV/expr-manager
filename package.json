@@ -11,8 +11,9 @@
     "lint:example": "gulp lint:example",
     "build:example": "gulp build:example",
     "build:docs": "gulp build:expr-manager build:docs",
-    "test:karma": "gulp build:expr-manager test:all",
-    "test": "gulp test"
+    "test:all": "gulp build:expr-manager test:all",
+    "test": "gulp test",
+    "coveralls": "cat ./coverage/lcov/lcov.info | ./node_modules/.bin/coveralls"
   },
   "repository": {
     "type": "git",
@@ -47,6 +48,8 @@
     "jquery": "^3.2.1",
     "karma": "^1.7.0",
     "karma-chrome-launcher": "^2.1.1",
+    "karma-coverage": "^1.1.1",
+    "karma-coveralls": "^1.1.2",
     "karma-jasmine": "^1.1.0",
     "karma-phantomjs-launcher": "^1.0.4",
     "karma-safari-launcher": "^1.0.0",

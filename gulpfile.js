@@ -60,15 +60,25 @@ var karmaStart = function(done, browsers) {
             path.join(rootPath, "test", "expr-manager.spec.js"),
         ],
         exclude: [],
-        preprocessors: {},
+        preprocessors: {
+            "expr-manager.js": ["coverage"]
+        },
+        coverageReporter: {
+            dir: path.join(rootPath, "coverage"),
+            reporters: [
+                {type: "html"},
+                {type: "lcov", subdir: "lcov"}
+            ]
+        },
         port: 9876,
         colors: true,
         logLevel: karma.config.LOG_INFO,
-        reporters: ["progress"],
+        reporters: ["progress", "coverage"],
         browsers: browsers,
         autoWatch: true,
         singleRun: true,
-        concurrency: Infinity
+        concurrency: Infinity,
+        plugins: ['karma-*']
     }, done).start();
 }
 
