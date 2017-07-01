@@ -3,7 +3,5 @@ machine:
     version: 7
 
 test:
-  pre:
-    - npm install rollup-plugin-sass
   override:
     - npm run circle
