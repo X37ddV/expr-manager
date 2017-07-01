@@ -1,6 +1,6 @@
 {
   "name": "expr-manager",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Parse, validate, calc, and manage expression",
   "main": "expr-manager.js",
   "types": "expr-manager.d.js",
@@ -33,7 +33,6 @@
   "homepage": "https://github.com/X37ddV/expr-manager#readme",
   "dependencies": {
     "@types/decimal.js": "^0.0.29",
-    "@types/moment": "^2.13.0",
     "decimal.js": "^7.2.0",
     "moment": "^2.18.1"
   },
@@ -41,7 +40,7 @@
     "@types/jquery": "^2.0.47",
     "@types/mousetrap": "^1.5.34",
     "@types/underscore": "^1.8.1",
-    "@types/underscore.string": "0.0.30",
+    "@types/underscore.string": "^0.0.30",
     "docco": "^0.7.0",
     "gulp": "^3.9.1",
     "gulp-tslint": "^8.1.1",
