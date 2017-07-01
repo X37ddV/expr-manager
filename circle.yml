@@ -4,7 +4,6 @@ machine:
 
 test:
   pre:
-    - node --version
-    - npm --version
+    - npm install rollup-plugin-sass
   override:
     - npm run circle
