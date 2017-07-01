@@ -4,6 +4,7 @@ machine:
 
 test:
   pre:
-    - npm install
+    - node --version
+    - npm --version
   override:
     - npm run circle
