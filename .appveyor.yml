@@ -1,0 +1,12 @@
+branches:
+  only:
+    - master
+
+environment:
+  nodejs_version: stable
+
+install:
+  - npm install
+
+test_script:
+  - npm run appveyor

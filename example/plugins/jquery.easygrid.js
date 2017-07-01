@@ -37,7 +37,7 @@
 
 		return easyGrid;
 	};
-	
+
 	$.fn.easygrid.defaults = {
 	    isAllowRemoveCol: false,
         isAllowMoveCol: true,
@@ -108,7 +108,7 @@
 		};
 
 		//public helpers
-        
+
 		this.loadData = function(data) {
 			var rows = this.$rows;
 			if (data && data.length > 0) {
@@ -630,7 +630,7 @@
 		}
 
         // click
-        
+
         function getClickTarget(q, cls) {
             var r = null;
             if (q.hasClass(cls)) {
@@ -651,7 +651,7 @@
             } else {
                 return;
             }
-			
+
             // 单选
             target = getClickTarget(t, 'easygrid-content-value-radio');
             if (target) {
@@ -710,9 +710,9 @@
 				easygrid && easygrid.beginEdit();
             }
 		}
-		
+
 		// keyboard
-		
+
 		function keyboard(grid, cmd) {
 			var id = grid.getSelectedId();
 			var row = grid.$rows.find('.easygrid-content-row[data-id="' + id + '"]');
@@ -830,7 +830,7 @@
 		}
 
 		// rendering
-        
+
         function getNextId() {
             return _next_id--
         }
@@ -972,7 +972,7 @@
 				return false;
 			}
 		}
-		
+
 		// other
 
 		function log(message) {

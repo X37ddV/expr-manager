@@ -1,11 +1,11 @@
 # ExprManager
 
-[![NPM version][npm-version-image]][npm-url] [![NPM downloads][npm-downloads-image]][npm-url] [![MIT License][license-image]][license-url] [![Build Status][travis-image]][travis-url] [![Coverage Status][coverage-image]][coverage-rul]
+[![NPM version][npm-version-image]][npm-url] [![NPM downloads][npm-downloads-image]][npm-url] [![MIT License][license-image]][license-url] [![Build Status][travis-image]][travis-url] [![Coverage Status][coverage-image]][coverage-rul] [![Build status][appveyor-image]][appveyor-url]
 
-# Installation
+## Installation
 	npm install expr-manager
 
-# Example
+## Example
 ![](docs/preview.gif)
 
 ## License
@@ -24,3 +24,6 @@ expr-manager.js is freely distributable under the terms of the [MIT license](htt
 
 [coverage-rul]: https://coveralls.io/github/X37ddV/expr-manager?branch=master
 [coverage-image]: https://coveralls.io/repos/github/X37ddV/expr-manager/badge.svg?branch=master
+
+[appveyor-url]: https://ci.appveyor.com/project/X37ddV/expr-manager/branch/master
+[appveyor-image]: https://ci.appveyor.com/api/projects/status/cvtwkjnatev9rluq/branch/master?svg=true

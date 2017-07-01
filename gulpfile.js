@@ -203,3 +203,4 @@ gulp.task("test:all", function(done) {
 
 gulp.task("default", ["lint:expr-manager", "lint:example", "build:expr-manager", "build:expr-manager:min", "build:example", "build:docs", "test:all"]);
 gulp.task("travis", ["lint:expr-manager", "lint:example", "test:phantomjs"]);
+gulp.task("appveyor", ["lint:expr-manager", "lint:example", "test:phantomjs"]);
