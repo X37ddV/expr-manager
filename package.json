@@ -1,6 +1,6 @@
 {
   "name": "expr-manager",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Parse, validate, calc, and manage expression",
   "main": "expr-manager.js",
   "types": "expr-manager.d.js",
@@ -14,6 +14,7 @@
     "test": "gulp build:expr-manager test:all",
     "appveyor": "gulp appveyor",
     "travis": "gulp travis",
+    "circle": "gulp circle",
     "coveralls": "cat ./coverage/lcov/lcov.info | ./node_modules/.bin/coveralls"
   },
   "repository": {
@@ -32,11 +33,11 @@
   },
   "homepage": "https://github.com/X37ddV/expr-manager#readme",
   "dependencies": {
-    "@types/decimal.js": "^0.0.29",
     "decimal.js": "^7.2.0",
     "moment": "^2.18.1"
   },
   "devDependencies": {
+    "@types/decimal.js": "^0.0.29",
     "@types/jquery": "^2.0.47",
     "@types/mousetrap": "^1.5.34",
     "@types/underscore": "^1.8.1",

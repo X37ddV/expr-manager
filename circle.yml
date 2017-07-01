@@ -1,0 +1,9 @@
+machine:
+  node:
+    version: 7
+
+test:
+  pre:
+    - npm install
+  override:
+    - npm run circle

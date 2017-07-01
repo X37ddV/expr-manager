@@ -1,6 +1,6 @@
 # ExprManager
 
-[![NPM version][npm-version-image]][npm-url] [![NPM downloads][npm-downloads-image]][npm-url] [![MIT License][license-image]][license-url] [![Build Status][travis-image]][travis-url] [![Coverage Status][coverage-image]][coverage-rul] [![Build status][appveyor-image]][appveyor-url]
+[![NPM version][npm-version-image]][npm-url] [![NPM downloads][npm-downloads-image]][npm-url] [![MIT License][license-image]][license-url] [![Travis Status][travis-image]][travis-url] [![Appveyor status][appveyor-image]][appveyor-url] [![Circleci status][circleci-image]][circleci-url] [![Coverage Status][coverage-image]][coverage-rul]
 
 ## Installation
 	npm install expr-manager
@@ -22,8 +22,11 @@ expr-manager.js is freely distributable under the terms of the [MIT license](htt
 [travis-url]: https://travis-ci.org/X37ddV/expr-manager
 [travis-image]: https://api.travis-ci.org/shinnn/gulp-gh-pages.svg?branch=master
 
-[coverage-rul]: https://coveralls.io/github/X37ddV/expr-manager?branch=master
-[coverage-image]: https://coveralls.io/repos/github/X37ddV/expr-manager/badge.svg?branch=master
-
 [appveyor-url]: https://ci.appveyor.com/project/X37ddV/expr-manager/branch/master
 [appveyor-image]: https://ci.appveyor.com/api/projects/status/cvtwkjnatev9rluq/branch/master?svg=true
+
+[circleci-image]: https://img.shields.io/circleci/project/X37ddV/expr-manager/master.svg
+[circleci-url]: https://circleci.com/gh/X37ddV/expr-manager/tree/master
+
+[coverage-rul]: https://coveralls.io/github/X37ddV/expr-manager?branch=master
+[coverage-image]: https://coveralls.io/repos/github/X37ddV/expr-manager/badge.svg?branch=master
