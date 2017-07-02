@@ -1,5 +1,5 @@
 <div class="main-header">
-    <div class="main-header-title">EXPR.JS</div>
+    <div class="main-header-title">ExprManager</div>
     <div class="main-header-actions btn-group">
         <button type="button" class="act-add btn btn-default"></button>
         <button type="button" class="act-setting btn btn-default"></button>

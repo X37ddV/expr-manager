@@ -1,6 +1,6 @@
 {
   "name": "expr-manager",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Parse, validate, calc, and manage expression",
   "main": "expr-manager.js",
   "types": "expr-manager.d.js",
@@ -17,10 +17,7 @@
     "circle": "gulp circle",
     "coveralls": "cat ./coverage/lcov/lcov.info | ./node_modules/.bin/coveralls"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/X37ddV/expr-manager.git"
-  },
+  "repository": "git+https://github.com/X37ddV/expr-manager.git",
   "keywords": [
     "expr-manager",
     "expr",
@@ -67,5 +64,10 @@
     "typescript": "^2.4.1",
     "underscore": "^1.8.3",
     "underscore.string": "^3.3.4"
+  },
+  "directories": {
+    "doc": "docs",
+    "example": "example",
+    "test": "test"
   }
 }

@@ -198,7 +198,7 @@ gulp.task("test:phantomjs", function(done) {
 });
 
 gulp.task("test:all", function(done) {
-    karmaStart(done, ["PhantomJS", "Chrome", "Safari"]);
+    karmaStart(done, ["Safari", "Chrome", "PhantomJS"]);
 });
 
 gulp.task("default", ["lint:expr-manager", "lint:example", "build:expr-manager", "build:expr-manager:min", "build:example", "build:docs", "test:all"]);

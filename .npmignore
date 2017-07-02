@@ -6,3 +6,4 @@ gulpfile.js
 tsconfig.json
 tslint.json
 coverage
+circle.yml

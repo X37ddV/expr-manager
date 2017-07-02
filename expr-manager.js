@@ -1,4 +1,4 @@
-//     expr-manager.js 0.0.8
+//     expr-manager.js 0.0.9
 //     https://github.com/X37ddV/expr-manager
 //     (c) 2016-2017 X37ddV
 //     Released under the MIT License.
@@ -14,8 +14,8 @@
 // + **[decimal.js](https://github.com/MikeMcl/decimal.js 'An arbitrary-precision Decimal type for JavaScript')** 用于高精度计算<br />
 // + **[moment.js](http://momentjs.com 'Parse, validate, manipulate, and display dates in javascript')** 用于日期计算
 
-moment = 'default' in moment ? moment['default'] : moment;
-Decimal = 'default' in Decimal ? Decimal['default'] : Decimal;
+moment = moment && 'default' in moment ? moment['default'] : moment;
+Decimal = Decimal && 'default' in Decimal ? Decimal['default'] : Decimal;
 
 function __extends(d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];

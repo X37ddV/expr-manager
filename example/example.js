@@ -4,12 +4,12 @@
 	(factory(global.jQuery,global._,global.ExprManager,global.s,global.moment,global.Mousetrap));
 }(this, (function ($,_,ExprManager,s,moment,Mousetrap) { 'use strict';
 
-$ = 'default' in $ ? $['default'] : $;
-_ = 'default' in _ ? _['default'] : _;
-ExprManager = 'default' in ExprManager ? ExprManager['default'] : ExprManager;
-s = 'default' in s ? s['default'] : s;
-moment = 'default' in moment ? moment['default'] : moment;
-Mousetrap = 'default' in Mousetrap ? Mousetrap['default'] : Mousetrap;
+$ = $ && 'default' in $ ? $['default'] : $;
+_ = _ && 'default' in _ ? _['default'] : _;
+ExprManager = ExprManager && 'default' in ExprManager ? ExprManager['default'] : ExprManager;
+s = s && 'default' in s ? s['default'] : s;
+moment = moment && 'default' in moment ? moment['default'] : moment;
+Mousetrap = Mousetrap && 'default' in Mousetrap ? Mousetrap['default'] : Mousetrap;
 
 function __extends(d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -2896,7 +2896,7 @@ var Setting = (function (_super) {
     return Setting;
 }(View));
 
-var main_tpl = "<div class=\"main-header\">\n    <div class=\"main-header-title\">EXPR.JS</div>\n    <div class=\"main-header-actions btn-group\">\n        <button type=\"button\" class=\"act-add btn btn-default\"></button>\n        <button type=\"button\" class=\"act-setting btn btn-default\"></button>\n        <button type=\"button\" class=\"act-remove btn btn-default\"></button>\n    </div>\n    <div class=\"main-header-layouts btn-group\">\n        <button type=\"button\" class=\"act-left btn btn-default\"></button>\n        <button type=\"button\" class=\"act-center btn btn-default\"></button>\n        <button type=\"button\" class=\"act-right btn btn-default\"></button>\n    </div>\n</div>\n<div class=\"main-data\"></div>\n<div class=\"main-console\"></div>\n<div class=\"main-split\"></div>";
+var main_tpl = "<div class=\"main-header\">\n    <div class=\"main-header-title\">ExprManager</div>\n    <div class=\"main-header-actions btn-group\">\n        <button type=\"button\" class=\"act-add btn btn-default\"></button>\n        <button type=\"button\" class=\"act-setting btn btn-default\"></button>\n        <button type=\"button\" class=\"act-remove btn btn-default\"></button>\n    </div>\n    <div class=\"main-header-layouts btn-group\">\n        <button type=\"button\" class=\"act-left btn btn-default\"></button>\n        <button type=\"button\" class=\"act-center btn btn-default\"></button>\n        <button type=\"button\" class=\"act-right btn btn-default\"></button>\n    </div>\n</div>\n<div class=\"main-data\"></div>\n<div class=\"main-console\"></div>\n<div class=\"main-split\"></div>\n";
 
 var Main = (function (_super) {
     __extends(Main, _super);

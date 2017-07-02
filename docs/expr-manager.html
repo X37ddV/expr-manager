@@ -27,7 +27,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <pre><code>expr-manager.js <span class="hljs-number">0.0</span><span class="hljs-number">.8</span>
+              <pre><code>expr-manager.js <span class="hljs-number">0.0</span><span class="hljs-number">.9</span>
 https:<span class="hljs-comment">//github.com/X37ddV/expr-manager</span>
 (c) <span class="hljs-number">2016</span><span class="hljs-number">-2017</span> X37ddV
 Released under the MIT License.
@@ -71,8 +71,8 @@ Released under the MIT License.
             </div>
             
             <div class="content"><div class='highlight'><pre>
-moment = <span class="hljs-string">'default'</span> <span class="hljs-keyword">in</span> moment ? moment[<span class="hljs-string">'default'</span>] : moment;
-Decimal = <span class="hljs-string">'default'</span> <span class="hljs-keyword">in</span> Decimal ? Decimal[<span class="hljs-string">'default'</span>] : Decimal;
+moment = moment &amp;&amp; <span class="hljs-string">'default'</span> <span class="hljs-keyword">in</span> moment ? moment[<span class="hljs-string">'default'</span>] : moment;
+Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span class="hljs-keyword">in</span> Decimal ? Decimal[<span class="hljs-string">'default'</span>] : Decimal;
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__extends</span>(<span class="hljs-params">d, b</span>) </span>{
     <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> p <span class="hljs-keyword">in</span> b) <span class="hljs-keyword">if</span> (b.hasOwnProperty(p)) d[p] = b[p];
