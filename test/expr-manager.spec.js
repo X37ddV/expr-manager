@@ -11,14 +11,14 @@ describe("表达式测试", function () {
             var v = val.toValue();
             v = v === undefined ? "undefined" : window.JSON.stringify(v);
             if (typeof k == "string") {
-                it(demo.title + " - " + j  + " - " + i + " - " + e, (function (k, v) {
+                it(demo.title + " - " + j  + " - " + i + " - " + e, (function (k, v, i) {
                     return function() {
                         expect(k).toEqual(v)
                         if (i == 46) {
                             expect(v).toEqual(k)
                         }
                     }
-                })(k, v));
+                })(k, v, i));
             }
         }
     }
