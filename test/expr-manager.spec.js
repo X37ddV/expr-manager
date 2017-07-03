@@ -3,17 +3,21 @@ describe("表达式测试", function () {
     exprManager.init(window.data, window.dataContext, window.context);
     for (var j = 0; j < window.demoExpr.length; j++) {
         var demo = window.demoExpr[j];
-        it(demo.title, function () {
-            for (var i = 0; i < demo.exprs.length; i++) {
-                var e = demo.exprs[i][0];
-                var k = demo.exprs[i][1]; // 预期值 undefined为不校验或校验为错误
-                var d = demo.exprs[i][2] || ""; // 描述
-                var val = exprManager.calcExpr(e, "E1", window.dataCursor);
-                var v = val.toValue();
-                v = v === undefined ? "undefined" : window.JSON.stringify(v);
-                expect(k).toEqual(v);
+        it(demo.title, (function (exprManager, demo) {
+            return function() {
+                for (var i = 0; i < demo.exprs.length; i++) {
+                    var e = demo.exprs[i][0];
+                    var k = demo.exprs[i][1]; // 预期值 undefined为不校验或校验为错误
+                    var d = demo.exprs[i][2] || ""; // 描述
+                    var val = exprManager.calcExpr(e, "E1", window.dataCursor);
+                    var v = val.toValue();
+                    v = v === undefined ? "undefined" : window.JSON.stringify(v);
+                    if (typeof k == "string") {
+                        expect(k).toEqual(v)
+                    }
+                }
             }
-        })
+        })(exprManager, demo));
     }
 });
 
@@ -59,12 +63,24 @@ describe("依赖关系测试", function () {
                 for (var p = 0; p < list.length; p++) {
                     pList.push(list[p].fullName);
                 }
-                it(demoDepend.title, function () {
-                    expect(pList.join("|")).toEqual(c.r);
-                });
+                it(demoDepend.title, (function(pList, c){
+                    return function () {
+                        expect(pList.join("|")).toEqual(c.r);
+                    }
+                })(pList, c));
             }
         } else {
             expect(true).toEqual(false);
         }
     }
+});
+
+describe("接口测试", function () {
+    var exprManager = new window.ExprManager();
+    it("获取函数", (function(exprManager){
+        return function () {
+            var funcs = exprManager.getFunction();
+            expect(0).toEqual(0);
+        }
+    })(exprManager));
 });

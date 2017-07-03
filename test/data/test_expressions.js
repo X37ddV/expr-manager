@@ -103,13 +103,13 @@ var exprDataCalc = {
         ['Root().E1[RecNo()].P1', '"E1的第1条数据"'],
         ['Entity1[0].Parent().RecNo()', '0'],
     //
-        ['Parent().E1[0].ID + Parent().E2[0].ID'],
-        ['Parent().E1[0].Entity1[2].ID'],
-        ['Parent().E2[0].Entity1[2].P1'],
-        ['Parent().E1[0].Entity1[2].ID + Parent().E2[0].Entity1[2].P1'],
-        ['Parent().E1[0].Entity1[2].ID - Parent().E2[0].Entity1[2].P1'],
-        ['Parent().E1[0].Entity1[2].ID * Parent().E2[0].Entity1[2].P1'],
-        ['Parent().E1[0].Entity1[2].ID / Parent().E2[0].Entity1[2].P1'],
+        ['Parent().E1[0].ID + Parent().E2[0].ID', '32'],
+        ['Parent().E1[0].Entity1[2].ID', '103'],
+        ['Parent().E2[0].Entity1[2].P2', '12.23'],
+        ['Parent().E1[0].Entity1[2].ID + Parent().E2[0].Entity1[2].P2', '115.23'],
+        ['Parent().E1[0].Entity1[2].ID - Parent().E2[0].Entity1[2].P2', '90.77'],
+        ['Parent().E1[0].Entity1[2].ID * Parent().E2[0].Entity1[2].P2', '1259.69'],
+        ['Parent().E1[0].Entity1[2].ID / Parent().E2[0].Entity1[2].P2', '8.421913327882256'],
     //子实体、实体，多条数据
         ['Root().E1', cmpAE1],
         ['Entity1', cmpAE1Entity1],
@@ -158,7 +158,7 @@ var exprDataCalc = {
         ['Entity1.Average("ID").ToString()', '"102"'],
         ['Entity1.Average("P2")', '2.283333333333333'],
         ['Entity1.Average("ID")+""', 'undefined'], //10位,已改
-        ['Entity1.Average("ID")+Entity1.Min("ID")'],
+        ['Entity1.Average("ID")+Entity1.Min("ID")', '203'],
         ['Root().E1.Average("P1")', 'undefined'],
         ['Root().E1.Average("PN1")', '0'],
         ['Root().E1.Average("PU1")', '0'],
@@ -171,13 +171,13 @@ var exprDataCalc = {
         ['Entity2.Sum("P2")', '20.24'],
         ['Entity2.Sum("ID")', '403'],
         ['Entity1.Sum("ID")', '306'],
-        ['Root().E1.Sum("Entity1[0].Parent().ID")', 23],
+        ['Root().E1.Sum("Entity1[0].Parent().ID")', '23'],
         ['Entity1.Max("ID")', '103'],
         ['Entity1.Max("$0.ID")', '103'],
         ['Entity1.Max()', 'undefined'],
-        ['Entity1.Min("Parent().Parent().E1[0].Entity1[2].ID + Parent().Parent().E2[0].Entity1[2].P1")'],
+        ['Entity1.Min("Parent().Parent().E1[0].Entity1[2].ID + Parent().Parent().E2[0].Entity1[2].P2")', '115.23'],
         ['Entity1.Min("ID + P1")', 'undefined'],
-        ['Entity1.Min("ID + Root().E2[0].Entity1[0].P1")'],
+        ['Entity1.Min("ID + Root().E2[0].Entity1[0].P2")', '113.23'],
         ['Entity1.Min("Root().E1[0].Entity1[2].ID")', '103'],
         ['Entity1.Min("ID")', '101'],
         ['Entity1.Min()', 'undefined'],
@@ -187,7 +187,9 @@ var exprDataCalc = {
         ['Root().E1[1].Entity1.Distinct()[0].Parent()', cmpOE1_1],
         ['Entity1.Where("ID>102")', '[{"ID":103,"P1":"E1[0].Entity1第3条数据","P2":1.95,"P3":{"name":"item1","alias":{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}},"P4":[1,2,{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}],"P5":"' + datetime2 + '","P6":true,"PN1":null,"PN2":null,"PN3":null,"PN4":null,"PN5":null,"PN6":null}]'],
         ['Entity1.Distinct("P2")', '[{"ID":101,"P1":"E1[0].Entity1第1条数据","P2":1.95,"P3":{"name":"item1","alias":{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}},"P4":[1,2,{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}],"P5":"' + datetime2 + '","P6":true,"PN1":null,"PN2":null,"PN3":null,"PN4":null,"PN5":null,"PN6":null},{"ID":102,"P1":"E1[0].Entity1第2条数据","P2":2.95,"P3":{"name":"item1","alias":{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}},"P4":[1,2,{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}],"P5":"' + datetime2 + '","P6":true,"PN1":null,"PN2":null,"PN3":null,"PN4":null,"PN5":null,"PN6":null,"NewEntity1":[{"ID":101,"P1":"E1[0].Entity1[1].NewEntity1第1条数据","P2":1.95,"P3":{"name":"item1","alias":{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}},"P4":[1,2,{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}],"P5":"' + datetime2 + '","P6":true,"PN1":null,"PN2":null,"PN3":null,"PN4":null,"PN5":null,"PN6":null},{"ID":102,"P1":"E1[0].Entity1[1].NewEntity1第2条数据","P2":2.95,"P3":{"name":"item1","alias":{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}},"P4":[1,2,{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}],"P5":"' + datetime2 + '","P6":true,"PN1":null,"PN2":null,"PN3":null,"PN4":null,"PN5":null,"PN6":null},{"ID":103,"P1":"E1[0].Entity1[1].NewEntity1第3条数据","P2":3.95,"P3":{"name":"item1","alias":{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}},"P4":[1,2,{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}],"P5":"' + datetime2 + '","P6":true,"PN1":null,"PN2":null,"PN3":null,"PN4":null,"PN5":null,"PN6":null}]}]'],
-        ['Entity1.Count()+Entity1.Average("ID").ToString()+Entity1.Sum("P1")+Entity1.Max("ID").ToString()+Entity1.Min("ID").ToString()', 'undefined']
+        ['Entity1.Count()+Entity1.Average("ID").ToString()+Entity1.Sum("P1")+Entity1.Max("ID").ToString()+Entity1.Min("ID").ToString()', 'undefined'],
+        ['PropValue(P3, "alias")', '{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}'],
+        ['PropValue([{name:1},{name:2}], "name", "|")', '"1|2"']
     ]
 };
 var exprOperator = {
@@ -542,14 +544,14 @@ var exprNumber = {
         ['0.Sin()', '0'],
         ['(45*3.1415926535898/180).Tan()', '1.0000000000000033'],
         ['0.Tan()', '0'],
-        ['123.45.Exp()'],
+        ['123.45.Exp()', '4.10822093109669e+53'],
         ['1.Exp()', '2.718281828459045'],
         ['0.Exp()', '1'],
         ['123.45.Ln()', '4.8158362157911885'],
         ['2.Exp().Ln()', '2'],
         ['123.45.Sqrt()', '11.110805551354051'],
         ['4.Sqrt()', '2'],
-        ['123.45.Log(2)'],
+        ['123.45.Log(2)', '6.947783026255419'],
         ['100.Log(10)', '2'],
         ['100.Log(1)', 'undefined'], //
         ['100.Log(-10)', 'undefined'],
@@ -638,7 +640,7 @@ var exprNumber = {
         ['Entity1[0].P2.Ln().Trunc(15)', '0.667829372575655'],
         ['2.Exp().Ln()', '2'],
         ['Entity1[0].P2.Sqrt()', '1.396424004376894'],
-        ['Entity1[0].P2.Log(2)'],
+        ['Entity1[0].P2.Log(2)', '0.963474123974886'],
         ['Entity1[0].P2.Power(2)', '3.8025'],
 
         ['P2.Trunc(1)', '12345.6'],
@@ -751,7 +753,7 @@ var exprDate = {
         ['"1999-12-31 00:00:00".ToDate().DaysBetween("2000-01-01 11:59:59".ToDate())', '1'],
         ['"2000-01-01 11:59:59".ToDate().DaysBetween("1999-12-31 00:00:00".ToDate())', '-1'],
         ['Now().HoursBetween(Now().IncHour(6))', '6'],
-        ['"1999-12-31 12:59:59".ToDate().HoursBetween(Now().IncHour(6))'],
+        ['"1999-12-31 12:59:59".ToDate().HoursBetween(Now().IncHour(6))', '153463'],
 
         ['"1999-12-31 00:00:00".ToDate().MilliSecondsBetween("1999-12-31 00:00:00".ToDate().IncSecond(60))', '60000'],
         ['"1999-12-31 12:59:59".ToDate().MilliSecondsBetween("1999-12-31 12:59:59".ToDate())', '0'],
@@ -761,8 +763,8 @@ var exprDate = {
         ['"1999-12-31 23:59:59".ToDate().SecondsBetween("2000-01-01 00:00:00".ToDate())', '1'],
         ['Now().WeeksBetween(Now().IncWeek(2))', '2'],
         ['"2000-01-01 00:00:00".ToDate().WeeksBetween("2000-01-06 00:00:00".ToDate())', '0'],
-    //['Now().MonthsBetween(Now().IncMonth(1))', '1'], //30.4375 
-        ['"2000-01-01 00:00:00".ToDate().MonthsBetween("2000-01-01 00:00:00".ToDate().IncMonth(1))', '1'], //30.4375 
+    //['Now().MonthsBetween(Now().IncMonth(1))', '1'], //30.4375
+        ['"2000-01-01 00:00:00".ToDate().MonthsBetween("2000-01-01 00:00:00".ToDate().IncMonth(1))', '1'], //30.4375
         ['"2000-02-01 00:00:00".ToDate().MonthsBetween("2000-02-01 00:00:00".ToDate().IncMonth(1))', '1'],
         ['"2000-01-01 00:00:00".ToDate().MonthsBetween("2000-01-30 00:00:00".ToDate())', '0'],
         ['"2000-01-01 00:00:00".ToDate().MonthsBetween("2000-01-31 23:59:59".ToDate())', '0'],
@@ -1290,4 +1292,12 @@ var exprErr = {
     ]
 };
 
-window.demoExpr = [exprDataCalc, exprOperator, exprString, exprNumber, exprDate, exprBoolean, exprObject, exprArray, exprNull, exprErr];
+var exprTemp = {
+    title: "临时测试",
+    exprs: [
+       // ['PropValue([{name:1},{name:2}], "name", "|")', '"1|2"']
+    ]
+};
+// window.demoExpr = [exprTemp];
+
+window.demoExpr = [exprDataCalc, exprOperator, exprString, exprNumber, exprDate, exprBoolean, exprObject, exprArray, exprNull, exprErr, exprTemp];

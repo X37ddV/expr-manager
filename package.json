@@ -12,6 +12,7 @@
     "build:example": "gulp build:example",
     "build:docs": "gulp build:expr-manager build:docs",
     "test": "gulp build:expr-manager test:all",
+    "test:phantomjs": "gulp test:phantomjs",
     "appveyor": "gulp appveyor",
     "travis": "gulp travis",
     "circle": "gulp circle",
