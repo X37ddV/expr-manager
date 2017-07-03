@@ -753,7 +753,7 @@ var exprDate = {
         ['"1999-12-31 00:00:00".ToDate().DaysBetween("2000-01-01 11:59:59".ToDate())', '1'],
         ['"2000-01-01 11:59:59".ToDate().DaysBetween("1999-12-31 00:00:00".ToDate())', '-1'],
         ['Now().HoursBetween(Now().IncHour(6))', '6'],
-        ['"1999-12-31 12:59:59".ToDate().HoursBetween(Now().IncHour(6))', '153463'],
+        ['"1999-12-31 12:59:59".ToDate().HoursBetween("2017-07-05 15:22:59".ToDate().IncHour(6))', '153512'],
 
         ['"1999-12-31 00:00:00".ToDate().MilliSecondsBetween("1999-12-31 00:00:00".ToDate().IncSecond(60))', '60000'],
         ['"1999-12-31 12:59:59".ToDate().MilliSecondsBetween("1999-12-31 12:59:59".ToDate())', '0'],
