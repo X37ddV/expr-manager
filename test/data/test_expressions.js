@@ -5,6 +5,8 @@
 if (!window.dateTime) {
     window.dateTime = new Date();
 }
+var d1 = moment("1999-12-31T23:59:59").toDate().toString();
+var d2 = moment("1999-12-31T00:00:00").toDate().toString();
 var year = dateTime.getFullYear();
 var time1 = dateTime.toLocaleDateString();
 var time2 = dateTime.toLocaleTimeString();
@@ -702,8 +704,8 @@ var exprDate = {
         ['{"1999-12-31".ToDate():"1999-12-31".ToDate()}', 'undefined'],
         ['{a:"1999-12-31".ToDate(),b:"1999-12-31".ToDate(),c:0}', '{"a":"1999-12-31T00:00:00","b":"1999-12-31T00:00:00","c":0}'],
         ['\'"1999-12-31".ToDate()\'', '"\\"1999-12-31\\".ToDate()"'],
-        ['"1999-12-31".ToDate().ToString()', '"1999-12-31T00:00:00+08:00"'],
-        ['"1999-12-31".ToDate().ToString("")', '"1999-12-31T00:00:00+08:00"'],
+        ['"1999-12-31".ToDate().ToString()', '"' + d2 + '"'],
+        ['"1999-12-31".ToDate().ToString("")', '"' + d2 + '"'],
         ['IfNull(null,"1999-12-31".ToDate())', '"1999-12-31T00:00:00"'],
         ['IfNull("12".ToDate("D"),"1999-12-31".ToDate())', '"' + year + '-' + mon2 + '-12T00:00:00"'],
         ['IIf(true,"12".ToDate("D"), "1999-12-31".ToDate())', '"' + year + '-' + mon2 + '-12T00:00:00"'],
@@ -809,8 +811,8 @@ var exprDate = {
         ['{Root().E2[0].P5:Root().E2[0].P5}', 'undefined'],
         ['{a:Root().E2[0].P5,b:Root().E2[0].P5,c:0}', '{"a":"1999-12-31T23:59:59","b":"1999-12-31T23:59:59","c":0}'],
         ['\'Root().E2[0].P5\'', '"Root().E2[0].P5"'],
-        ['Root().E2[0].P5.ToString()', '"1999-12-31T23:59:59+08:00"'],
-        ['Root().E2[0].P5.ToString("")', '"1999-12-31T23:59:59+08:00"'],
+        ['Root().E2[0].P5.ToString()', '"' + d1 + '"'],
+        ['Root().E2[0].P5.ToString("")', '"' + d1 + '"'],
         ['IfNull(null,Root().E2[0].P5)', '"1999-12-31T23:59:59"'],
         ['IfNull("12",Root().E2[0].P5)', '"12"'],
         ['IIf(true,"12", Root().E2[0].P5)', '"12"'],
