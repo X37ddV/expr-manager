@@ -5,8 +5,8 @@
 if (!window.dateTime) {
     window.dateTime = new Date();
 }
-var d1 = moment("1999-12-31T23:59:59").toDate().toString();
-var d2 = moment("1999-12-31T00:00:00").toDate().toString();
+var d1 = moment("1999-12-31T23:59:59").format();
+var d2 = moment("1999-12-31T00:00:00").format();
 var year = dateTime.getFullYear();
 var time1 = dateTime.toLocaleDateString();
 var time2 = dateTime.toLocaleTimeString();
