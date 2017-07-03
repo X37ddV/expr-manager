@@ -1,6 +1,6 @@
 # ExprManager
 
-[![NPM version][npm-version-image]][npm-url] [![NPM downloads][npm-downloads-image]][npm-url] [![MIT License][license-image]][license-url] [![Travis Status][travis-image]][travis-url] [![Appveyor status][appveyor-image]][appveyor-url] [![Circleci status][circleci-image]][circleci-url] [![Coverage Status][coverage-image]][coverage-rul]
+[![NPM version][npm-version-image]][npm-url] [![NPM downloads][npm-downloads-image]][npm-url] [![MIT License][license-image]][license-url] [![Travis Status][travis-image]][travis-url] [![Appveyor status][appveyor-image]][appveyor-url] [![Circleci status][circleci-image]][circleci-url] [![Coverage Status][coverage-image]][coverage-url]
 
 ## Installation
 	npm install expr-manager
@@ -28,5 +28,5 @@ expr-manager.js is freely distributable under the terms of the [MIT license](htt
 [circleci-image]: https://img.shields.io/circleci/project/X37ddV/expr-manager/master.svg
 [circleci-url]: https://circleci.com/gh/X37ddV/expr-manager/tree/master
 
-[coverage-rul]: https://coveralls.io/github/X37ddV/expr-manager?branch=master
+[coverage-url]: https://coveralls.io/github/X37ddV/expr-manager?branch=master
 [coverage-image]: https://coveralls.io/repos/github/X37ddV/expr-manager/badge.svg?branch=master
