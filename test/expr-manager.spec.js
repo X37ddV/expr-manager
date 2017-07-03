@@ -11,7 +11,7 @@ describe("表达式测试", function () {
             var v = val.toValue();
             v = v === undefined ? "undefined" : window.JSON.stringify(v);
             if (typeof k == "string") {
-                it(demo.title, (function (k, v) {
+                it(demo.title + " - " + i + " - " + e, (function (k, v) {
                     return function() {
                         expect(k).toEqual(v)
                     }
