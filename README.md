@@ -9,14 +9,14 @@
 ```javascript
 var exprManager = new ExprManager();
 var data = {
-    Table0: [{
+    Table: [{
         Field0: 0,
         Field1: "Hello",
         Field2: {key: "i", value: 0},
         Field3: [0, 1],
         Field4: new Date(),
         Field5: false,
-        SubTable00: [{
+        SubTable: [{
             Field0: 0,
             Field1: "Wrold",
             Field2: {key: "j", value: 10},
@@ -27,7 +27,7 @@ var data = {
     }]
 };
 var dataContext = {
-    "Table0": {
+    "Table": {
         fields: {
             "Field0": { type: "number", primaryKey: true },
             "Field1": { type: "string" },
@@ -37,7 +37,7 @@ var dataContext = {
             "Field5": { type: "boolean" }
         },
         childs: {
-            "SubTable00": {
+            "SubTable": {
                 fields: {
                     "Field0": { type: "number", primaryKey: true },
                     "Field1": { type: "string" },
@@ -54,12 +54,13 @@ var context = {
     Field0: "!"
 };
 var dataCursor = {
-    "Table0": 0,
-    "Table0.SubTable00": 0
+    "Table": 0,
+    "Table.SubTable": 0
 };
 exprManager.init(data, dataContext, context);
-var v = exprManager.calcExpr("Field1 + ' ' + SubTable00[0].Field1 + $C.Field0", "Table0", dataCursor);
-console.log(v.toValue()); // Hello Wrold!
+var v = exprManager.calcExpr("Field1 + ' ' + SubTable[0].Field1 + $C.Field0", "Table", dataCursor);
+console.log(v.toValue());
+// => Hello Wrold!
 ```
 
 ## Example
