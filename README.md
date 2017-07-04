@@ -7,59 +7,59 @@
 
 ## Usage
 ```javascript
-    var exprManager = new ExprManager();
-    var data = {
-        Table0: [{
+var exprManager = new ExprManager();
+var data = {
+    Table0: [{
+        Field0: 0,
+        Field1: "Hello",
+        Field2: {key: "i", value: 0},
+        Field3: [0, 1],
+        Field4: new Date(),
+        Field5: false,
+        SubTable00: [{
             Field0: 0,
-            Field1: "Hello",
-            Field2: {key: "i", value: 0},
-            Field3: [0, 1],
+            Field1: "Wrold",
+            Field2: {key: "j", value: 10},
+            Field3: [2, 3],
             Field4: new Date(),
-            Field5: false,
-            SubTable00: [{
-                Field0: 0,
-                Field1: "Wrold",
-                Field2: {key: "j", value: 10},
-                Field3: [2, 3],
-                Field4: new Date(),
-                Field5: true
-            }]
+            Field5: true
         }]
-    };
-    var dataContext = {
-        "Table0": {
-            fields: {
-                "Field0": { type: "number", primaryKey: true },
-                "Field1": { type: "string" },
-                "Field2": { type: "object" },
-                "Field3": { type: "array" },
-                "Field4": { type: "date" },
-                "Field5": { type: "boolean" }
-            },
-            childs: {
-                "SubTable00": {
-                    fields: {
-                        "Field0": { type: "number", primaryKey: true },
-                        "Field1": { type: "string" },
-                        "Field2": { type: "object" },
-                        "Field3": { type: "array" },
-                        "Field4": { type: "date" },
-                        "Field5": { type: "boolean" }
-                    }
+    }]
+};
+var dataContext = {
+    "Table0": {
+        fields: {
+            "Field0": { type: "number", primaryKey: true },
+            "Field1": { type: "string" },
+            "Field2": { type: "object" },
+            "Field3": { type: "array" },
+            "Field4": { type: "date" },
+            "Field5": { type: "boolean" }
+        },
+        childs: {
+            "SubTable00": {
+                fields: {
+                    "Field0": { type: "number", primaryKey: true },
+                    "Field1": { type: "string" },
+                    "Field2": { type: "object" },
+                    "Field3": { type: "array" },
+                    "Field4": { type: "date" },
+                    "Field5": { type: "boolean" }
                 }
             }
         }
-    };
-    var context = {
-        Field0: "!"
-    };
-    var dataCursor = {
-        "Table0": 0,
-        "Table0.SubTable00": 0
-    };
-    exprManager.init(data, dataContext, context);
-    var v = exprManager.calcExpr("Field1 + ' ' + SubTable00[0].Field1 + $C.Field0", "Table0", dataCursor);
-    console.log(v.toValue()); // Hello Wrold!
+    }
+};
+var context = {
+    Field0: "!"
+};
+var dataCursor = {
+    "Table0": 0,
+    "Table0.SubTable00": 0
+};
+exprManager.init(data, dataContext, context);
+var v = exprManager.calcExpr("Field1 + ' ' + SubTable00[0].Field1 + $C.Field0", "Table0", dataCursor);
+console.log(v.toValue()); // Hello Wrold!
 ```
 
 ## Example
