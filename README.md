@@ -6,6 +6,7 @@
 	npm install expr-manager
 
 ## Usage
+```javascript
     var exprManager = new ExprManager();
     var data = {
         Table0: [{
@@ -59,6 +60,7 @@
     exprManager.init(data, dataContext, context);
     var v = exprManager.calcExpr("Field1 + ' ' + SubTable00[0].Field1 + $C.Field0", "Table0", dataCursor);
     console.log(v.toValue()); // Hello Wrold!
+```
 
 ## Example
 ![](docs/preview.gif)
