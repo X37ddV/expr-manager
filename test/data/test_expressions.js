@@ -1295,11 +1295,20 @@ var exprErr = {
 };
 
 var exprTemp = {
-    title: "临时测试",
+    title: "覆盖测试",
     exprs: [
-       // ['PropValue([{name:1},{name:2}], "name", "|")', '"1|2"']
+       ['PropValue([{name:1},{name:2}], "name", "|")', '"1|2"'],
+       ['PropValue([{name:1},{name:2}], "name")', '1'],
+       ['PropValue([{name:1},{name:2}], "type")', 'null'],
+       ['123.ToRMB(false, false)', '"一百二十三"'],
+       ['00002010.00100.ToRMB()', '"贰仟零壹拾元零壹厘"'],
+       ['FieldName()', 'null'],
+       ['FieldValue()', 'null'],
+       ['FieldDisplayName()', 'null'],
+       ['$C.userId', '"admin"'],
+       ['[1]+[2]', '[1,2]'],
+       ['Random() >= 0 && Random() <= 1', 'true']
     ]
 };
-// window.demoExpr = [exprTemp];
 
 window.demoExpr = [exprDataCalc, exprOperator, exprString, exprNumber, exprDate, exprBoolean, exprObject, exprArray, exprNull, exprErr, exprTemp];
