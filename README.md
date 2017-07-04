@@ -64,6 +64,9 @@ console.log(v.toValue());
 ```
 
 ## Example
+    npm install
+    npm start
+    open example/index.html
 ![](docs/preview.gif)
 
 ## License
