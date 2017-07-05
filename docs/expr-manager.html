@@ -27,7 +27,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <pre><code>expr-manager.js <span class="hljs-number">0.1</span><span class="hljs-number">.1</span>
+              <pre><code>expr-manager.js <span class="hljs-number">0.1</span><span class="hljs-number">.2</span>
 https:<span class="hljs-comment">//github.com/X37ddV/expr-manager</span>
 (c) <span class="hljs-number">2016</span><span class="hljs-number">-2017</span> X37ddV
 Released under the MIT License.
@@ -3175,7 +3175,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                     tValue = s[n++];
                     <span class="hljs-keyword">if</span> (n &lt; s.length &amp;&amp; s[n] === <span class="hljs-string">"="</span>) {
                         tValue += s[n++];
-                        tType = <span class="hljs-string">"TK_CO"</span>;
+                        tType = <span class="hljs-string">"TK_EO"</span>;
                     }
                     <span class="hljs-keyword">else</span> {
                         tType = <span class="hljs-string">"TK_NOT"</span>;
@@ -3192,6 +3192,16 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                     tType = <span class="hljs-string">"TK_CO"</span>;
                     <span class="hljs-keyword">break</span>;
                 <span class="hljs-keyword">case</span> <span class="hljs-string">"="</span>:
+                    tValue = s[n++];
+                    <span class="hljs-keyword">if</span> (n &lt; s.length &amp;&amp; s[n] === <span class="hljs-string">"="</span>) {
+                        tValue += s[n++];
+                        tType = <span class="hljs-string">"TK_EO"</span>;
+                    }
+                    <span class="hljs-keyword">else</span> {
+                        tType = <span class="hljs-string">"TK_UNKNOWN"</span>;
+                    }
+                    tText = tValue;
+                    <span class="hljs-keyword">break</span>;
                 <span class="hljs-keyword">case</span> <span class="hljs-string">"&amp;"</span>:
                 <span class="hljs-keyword">case</span> <span class="hljs-string">"|"</span>:
                     tValue = s[n++];
@@ -3437,7 +3447,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> tokens = (<span class="hljs-string">"TK_UNKNOWN,TK_STRING,TK_NUMBER,TK_BOOL,TK_NULL,TK_IDEN,TK_DOT,TK_LP,TK_LA,"</span> +
     <span class="hljs-string">"TK_LO,TK_RP,TK_RA,TK_RO,TK_UNARY,TK_NOT,TK_MULTI,TK_DIV,TK_MOD,TK_PLUS,TK_MINUS,"</span> +
-    <span class="hljs-string">"TK_CO,TK_AND,TK_OR,TK_COLON,TK_COMMA"</span>).split(<span class="hljs-string">","</span>);
+    <span class="hljs-string">"TK_CO,TK_EO,TK_AND,TK_OR,TK_COLON,TK_COMMA"</span>).split(<span class="hljs-string">","</span>);
 <span class="hljs-keyword">var</span> genTokenState = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">tks, opts</span>) </span>{
     <span class="hljs-keyword">var</span> r = {};
     tks.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">v, i</span>) </span>{ <span class="hljs-keyword">return</span> r[v] = opts[i] === <span class="hljs-string">"1"</span>; });
@@ -3457,7 +3467,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> RULE_BTOKENS = genTokenState(tokens, <span class="hljs-string">"0111110111000110000000000"</span>.split(<span class="hljs-string">""</span>));</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> RULE_BTOKENS = genTokenState(tokens, <span class="hljs-string">"01111101110001100000000000"</span>.split(<span class="hljs-string">""</span>));</pre></div></div>
             
         </li>
         
@@ -3472,7 +3482,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> RULE_ETOKENS = genTokenState(tokens, <span class="hljs-string">"0111110000111000000000000"</span>.split(<span class="hljs-string">""</span>));</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> RULE_ETOKENS = genTokenState(tokens, <span class="hljs-string">"01111100001110000000000000"</span>.split(<span class="hljs-string">""</span>));</pre></div></div>
             
         </li>
         
@@ -3491,31 +3501,32 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
     <span class="hljs-keyword">var</span> r = {};
     tks.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">v, i</span>) </span>{ <span class="hljs-keyword">return</span> r[v] = genTokenState(tks, opts[i].split(<span class="hljs-string">""</span>)); });
     <span class="hljs-keyword">return</span> r;
-})(tokens, (<span class="hljs-string">"0000000000000000000000000,"</span> +
-    <span class="hljs-string">"0000001010111001111111111,"</span> +
-    <span class="hljs-string">"0000001000111001111111111,"</span> +
-    <span class="hljs-string">"0000001000111001111111111,"</span> +
-    <span class="hljs-string">"0000000000111001111111111,"</span> +
-    <span class="hljs-string">"0000001110111001111111111,"</span> +
-    <span class="hljs-string">"0000010000000000000000000,"</span> +
-    <span class="hljs-string">"0111110111100110000000000,"</span> +
-    <span class="hljs-string">"0111110111010110000000000,"</span> +
-    <span class="hljs-string">"0111110000001000000000000,"</span> +
-    <span class="hljs-string">"0000001010111001111111101,"</span> +
-    <span class="hljs-string">"0000001010111001111111101,"</span> +
-    <span class="hljs-string">"0000001011111001111111101,"</span> +
-    <span class="hljs-string">"0111110111000110000000000,"</span> +
-    <span class="hljs-string">"0111110111000110000000000,"</span> +
-    <span class="hljs-string">"0111110111000110000000000,"</span> +
-    <span class="hljs-string">"0111110111000110000000000,"</span> +
-    <span class="hljs-string">"0111110111000110000000000,"</span> +
-    <span class="hljs-string">"0111110111000110000000000,"</span> +
-    <span class="hljs-string">"0111110111000110000000000,"</span> +
-    <span class="hljs-string">"0111110111000110000000000,"</span> +
-    <span class="hljs-string">"0111110111000110000000000,"</span> +
-    <span class="hljs-string">"0111110111000110000000000,"</span> +
-    <span class="hljs-string">"0111110111000110000000000,"</span> +
-    <span class="hljs-string">"0111110111000110000000000"</span>
+})(tokens, (<span class="hljs-string">"00000000000000000000000000,"</span> +
+    <span class="hljs-string">"00000010101110011111111111,"</span> +
+    <span class="hljs-string">"00000010001110011111111111,"</span> +
+    <span class="hljs-string">"00000010001110011111111111,"</span> +
+    <span class="hljs-string">"00000000001110011111111111,"</span> +
+    <span class="hljs-string">"00000011101110011111111111,"</span> +
+    <span class="hljs-string">"00000100000000000000000000,"</span> +
+    <span class="hljs-string">"01111101111001100000000000,"</span> +
+    <span class="hljs-string">"01111101110101100000000000,"</span> +
+    <span class="hljs-string">"01111100000010000000000000,"</span> +
+    <span class="hljs-string">"00000010101110011111111101,"</span> +
+    <span class="hljs-string">"00000010101110011111111101,"</span> +
+    <span class="hljs-string">"00000010111110011111111101,"</span> +
+    <span class="hljs-string">"01111101110001100000000000,"</span> +
+    <span class="hljs-string">"01111101110001100000000000,"</span> +
+    <span class="hljs-string">"01111101110001100000000000,"</span> +
+    <span class="hljs-string">"01111101110001100000000000,"</span> +
+    <span class="hljs-string">"01111101110001100000000000,"</span> +
+    <span class="hljs-string">"01111101110001100000000000,"</span> +
+    <span class="hljs-string">"01111101110001100000000000,"</span> +
+    <span class="hljs-string">"01111101110001100000000000,"</span> +
+    <span class="hljs-string">"01111101110001100000000000,"</span> +
+    <span class="hljs-string">"01111101110001100000000000,"</span> +
+    <span class="hljs-string">"01111101110001100000000000,"</span> +
+    <span class="hljs-string">"01111101110001100000000000,"</span> +
+    <span class="hljs-string">"01111101110001100000000000"</span>
 ).split(<span class="hljs-string">","</span>));</pre></div></div>
             
         </li>
@@ -3968,12 +3979,12 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                 <a class="pilcrow" href="#section-158">&#182;</a>
               </div>
               <ul>
-<li>处理 &lt; &lt;= &gt; &gt;= == != 比较运算符</li>
+<li>处理 &lt; &lt;= &gt; &gt;= 比较运算符</li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        p = <span class="hljs-keyword">this</span>.doParser_4(p, <span class="hljs-string">"TK_CO,TK_EO"</span>);</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        p = <span class="hljs-keyword">this</span>.doParser_4(p, <span class="hljs-string">"TK_CO"</span>);</pre></div></div>
             
         </li>
         
@@ -3983,6 +3994,23 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-159">&#182;</a>
+              </div>
+              <ul>
+<li>处理 == != 等于运算符</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        p = <span class="hljs-keyword">this</span>.doParser_4(p, <span class="hljs-string">"TK_EO"</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-160">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-160">&#182;</a>
               </div>
               <ul>
 <li>处理 &amp;&amp; 与运算</li>
@@ -3995,11 +4023,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-160">
+        <li id="section-161">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-160">&#182;</a>
+                <a class="pilcrow" href="#section-161">&#182;</a>
               </div>
               <ul>
 <li>处理 || 或运算</li>
@@ -4012,11 +4040,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-161">
+        <li id="section-162">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-161">&#182;</a>
+                <a class="pilcrow" href="#section-162">&#182;</a>
               </div>
               <ul>
 <li>处理 : 冒号</li>
@@ -4029,11 +4057,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-162">
+        <li id="section-163">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-162">&#182;</a>
+                <a class="pilcrow" href="#section-163">&#182;</a>
               </div>
               <ul>
 <li>处理 , 逗号</li>
@@ -4051,11 +4079,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-163">
+        <li id="section-164">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-163">&#182;</a>
+                <a class="pilcrow" href="#section-164">&#182;</a>
               </div>
               <p>检查语法错误</p>
 
@@ -4073,11 +4101,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-164">
+        <li id="section-165">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-164">&#182;</a>
+                <a class="pilcrow" href="#section-165">&#182;</a>
               </div>
               <ul>
 <li>点操作符检查</li>
@@ -4095,11 +4123,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-165">
+        <li id="section-166">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-165">&#182;</a>
+                <a class="pilcrow" href="#section-166">&#182;</a>
               </div>
               <ul>
 <li>冒号操作符检查</li>
@@ -4120,11 +4148,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-166">
+        <li id="section-167">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-166">&#182;</a>
+                <a class="pilcrow" href="#section-167">&#182;</a>
               </div>
               <ul>
 <li>逗号操作符检查</li>
@@ -4141,11 +4169,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-167">
+        <li id="section-168">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-167">&#182;</a>
+                <a class="pilcrow" href="#section-168">&#182;</a>
               </div>
               <ul>
 <li>小括号检查</li>
@@ -4167,11 +4195,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-168">
+        <li id="section-169">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-168">&#182;</a>
+                <a class="pilcrow" href="#section-169">&#182;</a>
               </div>
               <ul>
 <li>中括号检查</li>
@@ -4205,11 +4233,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-169">
+        <li id="section-170">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-169">&#182;</a>
+                <a class="pilcrow" href="#section-170">&#182;</a>
               </div>
               <ul>
 <li>大括号检查</li>
@@ -4252,11 +4280,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-170">
+        <li id="section-171">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-170">&#182;</a>
+                <a class="pilcrow" href="#section-171">&#182;</a>
               </div>
               <p>() [] {}，将括号中的多个token拿出来计算并生成虚Token插入到原来的Token数组中</p>
 
@@ -4315,11 +4343,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-171">
+        <li id="section-172">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-171">&#182;</a>
+                <a class="pilcrow" href="#section-172">&#182;</a>
               </div>
               <p>标识符与()相连构成函数</p>
 
@@ -4355,11 +4383,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-172">
+        <li id="section-173">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-172">&#182;</a>
+                <a class="pilcrow" href="#section-173">&#182;</a>
               </div>
               <p>处理 . [] 与标识符、string、()、[]、{}一起构成下标访问属性访问</p>
 
@@ -4413,11 +4441,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-173">
+        <li id="section-174">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-173">&#182;</a>
+                <a class="pilcrow" href="#section-174">&#182;</a>
               </div>
               <p>处理 + - ! 单目运算</p>
 
@@ -4449,11 +4477,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-174">
+        <li id="section-175">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-174">&#182;</a>
+                <a class="pilcrow" href="#section-175">&#182;</a>
               </div>
               <p>处理 1.* / % 2.+ - 3.&lt; &lt;= &gt; &gt;= == != 4.&amp;&amp; 5.|| 6.: 优先级</p>
 
@@ -4498,11 +4526,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-175">
+        <li id="section-176">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-175">&#182;</a>
+                <a class="pilcrow" href="#section-176">&#182;</a>
               </div>
               <p>处理 , 即对象字段分隔{a:1,b:’re’}或数组元素[1,2,3]，函数参数分隔符fun(a,b)</p>
 
@@ -4543,29 +4571,15 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-176">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-176">&#182;</a>
-              </div>
-              <h2 id="-">类型</h2>
-
-            </div>
-            
-        </li>
-        
-        
         <li id="section-177">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-177">&#182;</a>
               </div>
-              
+              <h2 id="-">类型</h2>
+
             </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> Type = (<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{</pre></div></div>
             
         </li>
         
@@ -4575,6 +4589,20 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-178">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> Type = (<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-179">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-179">&#182;</a>
               </div>
               <p>类型构造函数</p>
 
@@ -4593,11 +4621,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-179">
+        <li id="section-180">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-179">&#182;</a>
+                <a class="pilcrow" href="#section-180">&#182;</a>
               </div>
               <p>生成类型对象</p>
 
@@ -4610,11 +4638,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-180">
+        <li id="section-181">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-180">&#182;</a>
+                <a class="pilcrow" href="#section-181">&#182;</a>
               </div>
               <p>生成错误类型对象</p>
 
@@ -4627,11 +4655,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-181">
+        <li id="section-182">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-181">&#182;</a>
+                <a class="pilcrow" href="#section-182">&#182;</a>
               </div>
               <p>该类型对象是否包含了数据</p>
 
@@ -4644,11 +4672,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-182">
+        <li id="section-183">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-182">&#182;</a>
+                <a class="pilcrow" href="#section-183">&#182;</a>
               </div>
               <p>得到类型值</p>
 
@@ -4661,11 +4689,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-183">
+        <li id="section-184">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-183">&#182;</a>
+                <a class="pilcrow" href="#section-184">&#182;</a>
               </div>
               <p>追加数组元素</p>
 
@@ -4682,11 +4710,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-184">
+        <li id="section-185">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-184">&#182;</a>
+                <a class="pilcrow" href="#section-185">&#182;</a>
               </div>
               <p>连接数组元素</p>
 
@@ -4703,11 +4731,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-185">
+        <li id="section-186">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-185">&#182;</a>
+                <a class="pilcrow" href="#section-186">&#182;</a>
               </div>
               <p>设置对象属性</p>
 
@@ -4726,11 +4754,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-186">
+        <li id="section-187">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-186">&#182;</a>
+                <a class="pilcrow" href="#section-187">&#182;</a>
               </div>
               <p>批量设置对象属性</p>
 
@@ -4753,11 +4781,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-187">
+        <li id="section-188">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-187">&#182;</a>
+                <a class="pilcrow" href="#section-188">&#182;</a>
               </div>
               <p>取正/负值</p>
 
@@ -4778,11 +4806,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-188">
+        <li id="section-189">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-188">&#182;</a>
+                <a class="pilcrow" href="#section-189">&#182;</a>
               </div>
               <p>非运算</p>
 
@@ -4795,11 +4823,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-189">
+        <li id="section-190">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-189">&#182;</a>
+                <a class="pilcrow" href="#section-190">&#182;</a>
               </div>
               <p>乘法</p>
 
@@ -4815,11 +4843,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-190">
+        <li id="section-191">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-190">&#182;</a>
+                <a class="pilcrow" href="#section-191">&#182;</a>
               </div>
               <p>除法</p>
 
@@ -4845,11 +4873,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-191">
+        <li id="section-192">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-191">&#182;</a>
+                <a class="pilcrow" href="#section-192">&#182;</a>
               </div>
               <p>求余</p>
 
@@ -4875,11 +4903,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-192">
+        <li id="section-193">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-192">&#182;</a>
+                <a class="pilcrow" href="#section-193">&#182;</a>
               </div>
               <p>加法</p>
 
@@ -4902,11 +4930,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-193">
+        <li id="section-194">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-193">&#182;</a>
+                <a class="pilcrow" href="#section-194">&#182;</a>
               </div>
               <p>减法</p>
 
@@ -4929,11 +4957,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-194">
+        <li id="section-195">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-194">&#182;</a>
+                <a class="pilcrow" href="#section-195">&#182;</a>
               </div>
               <p>等于</p>
 
@@ -4956,11 +4984,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-195">
+        <li id="section-196">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-195">&#182;</a>
+                <a class="pilcrow" href="#section-196">&#182;</a>
               </div>
               <p>比较运算</p>
 
@@ -5001,11 +5029,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-196">
+        <li id="section-197">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-196">&#182;</a>
+                <a class="pilcrow" href="#section-197">&#182;</a>
               </div>
               <p>与运算</p>
 
@@ -5021,11 +5049,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-197">
+        <li id="section-198">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-197">&#182;</a>
+                <a class="pilcrow" href="#section-198">&#182;</a>
               </div>
               <p>或运算</p>
 
@@ -5041,11 +5069,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-198">
+        <li id="section-199">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-198">&#182;</a>
+                <a class="pilcrow" href="#section-199">&#182;</a>
               </div>
               <p>下标运算</p>
 
@@ -5083,11 +5111,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-199">
+        <li id="section-200">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-199">&#182;</a>
+                <a class="pilcrow" href="#section-200">&#182;</a>
               </div>
               <p>获取{key:…,value:…}键值对对象</p>
 
@@ -5100,11 +5128,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-200">
+        <li id="section-201">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-200">&#182;</a>
+                <a class="pilcrow" href="#section-201">&#182;</a>
               </div>
               <p>获取变量值类型对象</p>
 
@@ -5117,11 +5145,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-201">
+        <li id="section-202">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-201">&#182;</a>
+                <a class="pilcrow" href="#section-202">&#182;</a>
               </div>
               <p>获取函数返回结果类型对象</p>
 
@@ -5136,11 +5164,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-202">
+        <li id="section-203">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-202">&#182;</a>
+                <a class="pilcrow" href="#section-203">&#182;</a>
               </div>
               <p>大数据值计算对象</p>
 
@@ -5153,29 +5181,15 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-203">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-203">&#182;</a>
-              </div>
-              <h2 id="-">值</h2>
-
-            </div>
-            
-        </li>
-        
-        
         <li id="section-204">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-204">&#182;</a>
               </div>
-              
+              <h2 id="-">值</h2>
+
             </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> Value = (<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{</pre></div></div>
             
         </li>
         
@@ -5185,6 +5199,20 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-205">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> Value = (<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-206">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-206">&#182;</a>
               </div>
               <p>值构造函数</p>
 
@@ -5205,11 +5233,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-206">
+        <li id="section-207">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-206">&#182;</a>
+                <a class="pilcrow" href="#section-207">&#182;</a>
               </div>
               <p>生成值对象</p>
 
@@ -5222,11 +5250,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-207">
+        <li id="section-208">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-207">&#182;</a>
+                <a class="pilcrow" href="#section-208">&#182;</a>
               </div>
               <p>生成错误值对象</p>
 
@@ -5239,11 +5267,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-208">
+        <li id="section-209">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-208">&#182;</a>
+                <a class="pilcrow" href="#section-209">&#182;</a>
               </div>
               <p>得到值内容</p>
 
@@ -5256,11 +5284,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-209">
+        <li id="section-210">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-209">&#182;</a>
+                <a class="pilcrow" href="#section-210">&#182;</a>
               </div>
               <p>是否为实体</p>
 
@@ -5273,11 +5301,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-210">
+        <li id="section-211">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-210">&#182;</a>
+                <a class="pilcrow" href="#section-211">&#182;</a>
               </div>
               <p>追加数组元素</p>
 
@@ -5294,11 +5322,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-211">
+        <li id="section-212">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-211">&#182;</a>
+                <a class="pilcrow" href="#section-212">&#182;</a>
               </div>
               <p>连接数组元素</p>
 
@@ -5314,11 +5342,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-212">
+        <li id="section-213">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-212">&#182;</a>
+                <a class="pilcrow" href="#section-213">&#182;</a>
               </div>
               <p>设置对象属性</p>
 
@@ -5335,11 +5363,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-213">
+        <li id="section-214">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-213">&#182;</a>
+                <a class="pilcrow" href="#section-214">&#182;</a>
               </div>
               <p>批量设置对象属性</p>
 
@@ -5359,11 +5387,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-214">
+        <li id="section-215">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-214">&#182;</a>
+                <a class="pilcrow" href="#section-215">&#182;</a>
               </div>
               <p>取正/负值</p>
 
@@ -5388,11 +5416,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-215">
+        <li id="section-216">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-215">&#182;</a>
+                <a class="pilcrow" href="#section-216">&#182;</a>
               </div>
               <p>非运算</p>
 
@@ -5410,11 +5438,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-216">
+        <li id="section-217">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-216">&#182;</a>
+                <a class="pilcrow" href="#section-217">&#182;</a>
               </div>
               <p>乘法</p>
 
@@ -5439,11 +5467,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-217">
+        <li id="section-218">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-217">&#182;</a>
+                <a class="pilcrow" href="#section-218">&#182;</a>
               </div>
               <p>除法</p>
 
@@ -5471,11 +5499,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-218">
+        <li id="section-219">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-218">&#182;</a>
+                <a class="pilcrow" href="#section-219">&#182;</a>
               </div>
               <p>求余</p>
 
@@ -5503,11 +5531,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-219">
+        <li id="section-220">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-219">&#182;</a>
+                <a class="pilcrow" href="#section-220">&#182;</a>
               </div>
               <p>加法</p>
 
@@ -5546,11 +5574,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-220">
+        <li id="section-221">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-220">&#182;</a>
+                <a class="pilcrow" href="#section-221">&#182;</a>
               </div>
               <p>减法</p>
 
@@ -5598,11 +5626,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-221">
+        <li id="section-222">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-221">&#182;</a>
+                <a class="pilcrow" href="#section-222">&#182;</a>
               </div>
               <p>等于</p>
 
@@ -5639,11 +5667,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-222">
+        <li id="section-223">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-222">&#182;</a>
+                <a class="pilcrow" href="#section-223">&#182;</a>
               </div>
               <p>比较运算</p>
 
@@ -5740,11 +5768,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-223">
+        <li id="section-224">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-223">&#182;</a>
+                <a class="pilcrow" href="#section-224">&#182;</a>
               </div>
               <p>与运算</p>
 
@@ -5768,11 +5796,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-224">
+        <li id="section-225">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-224">&#182;</a>
+                <a class="pilcrow" href="#section-225">&#182;</a>
               </div>
               <p>或运算</p>
 
@@ -5796,11 +5824,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-225">
+        <li id="section-226">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-225">&#182;</a>
+                <a class="pilcrow" href="#section-226">&#182;</a>
               </div>
               <p>下标运算</p>
 
@@ -5851,11 +5879,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-226">
+        <li id="section-227">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-226">&#182;</a>
+                <a class="pilcrow" href="#section-227">&#182;</a>
               </div>
               <p>获取{key:…,value:…}键值对对象</p>
 
@@ -5868,11 +5896,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-227">
+        <li id="section-228">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-227">&#182;</a>
+                <a class="pilcrow" href="#section-228">&#182;</a>
               </div>
               <p>获取变量值</p>
 
@@ -5887,11 +5915,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-228">
+        <li id="section-229">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-228">&#182;</a>
+                <a class="pilcrow" href="#section-229">&#182;</a>
               </div>
               <p>获取函数返回结果值</p>
 
@@ -5907,11 +5935,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-229">
+        <li id="section-230">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-229">&#182;</a>
+                <a class="pilcrow" href="#section-230">&#182;</a>
               </div>
               <p>绝对值</p>
 
@@ -5925,11 +5953,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-230">
+        <li id="section-231">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-230">&#182;</a>
+                <a class="pilcrow" href="#section-231">&#182;</a>
               </div>
               <p>向上取整</p>
 
@@ -5943,11 +5971,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-231">
+        <li id="section-232">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-231">&#182;</a>
+                <a class="pilcrow" href="#section-232">&#182;</a>
               </div>
               <p>向下取整</p>
 
@@ -5961,11 +5989,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-232">
+        <li id="section-233">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-232">&#182;</a>
+                <a class="pilcrow" href="#section-233">&#182;</a>
               </div>
               <p>四舍五入保留scale位小数</p>
 
@@ -5987,11 +6015,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-233">
+        <li id="section-234">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-233">&#182;</a>
+                <a class="pilcrow" href="#section-234">&#182;</a>
               </div>
               <p>按精度截断数据</p>
 
@@ -6013,11 +6041,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-234">
+        <li id="section-235">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-234">&#182;</a>
+                <a class="pilcrow" href="#section-235">&#182;</a>
               </div>
               <p>获取数的余弦</p>
 
@@ -6033,11 +6061,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-235">
+        <li id="section-236">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-235">&#182;</a>
+                <a class="pilcrow" href="#section-236">&#182;</a>
               </div>
               <p>获取 e 的指数</p>
 
@@ -6052,11 +6080,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-236">
+        <li id="section-237">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-236">&#182;</a>
+                <a class="pilcrow" href="#section-237">&#182;</a>
               </div>
               <p>获取数的自然对数（底为 e）</p>
 
@@ -6078,11 +6106,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-237">
+        <li id="section-238">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-237">&#182;</a>
+                <a class="pilcrow" href="#section-238">&#182;</a>
               </div>
               <p>获取数的指定底数的对数</p>
 
@@ -6104,11 +6132,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-238">
+        <li id="section-239">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-238">&#182;</a>
+                <a class="pilcrow" href="#section-239">&#182;</a>
               </div>
               <p>获取数的指定指数的次幂</p>
 
@@ -6123,11 +6151,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-239">
+        <li id="section-240">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-239">&#182;</a>
+                <a class="pilcrow" href="#section-240">&#182;</a>
               </div>
               <p>获取数的正弦</p>
 
@@ -6143,11 +6171,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-240">
+        <li id="section-241">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-240">&#182;</a>
+                <a class="pilcrow" href="#section-241">&#182;</a>
               </div>
               <p>获取数的平方根</p>
 
@@ -6162,11 +6190,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-241">
+        <li id="section-242">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-241">&#182;</a>
+                <a class="pilcrow" href="#section-242">&#182;</a>
               </div>
               <p>获取树的正切值</p>
 
@@ -6184,11 +6212,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-242">
+        <li id="section-243">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-242">&#182;</a>
+                <a class="pilcrow" href="#section-243">&#182;</a>
               </div>
               <h2 id="-">上下文基类</h2>
 
@@ -6197,11 +6225,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-243">
+        <li id="section-244">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-243">&#182;</a>
+                <a class="pilcrow" href="#section-244">&#182;</a>
               </div>
               
             </div>
@@ -6214,11 +6242,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-244">
+        <li id="section-245">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-244">&#182;</a>
+                <a class="pilcrow" href="#section-245">&#182;</a>
               </div>
               <p>生成ExprValue对象</p>
 
@@ -6231,11 +6259,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-245">
+        <li id="section-246">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-245">&#182;</a>
+                <a class="pilcrow" href="#section-246">&#182;</a>
               </div>
               <p>有错误时，生成对应的ExprValue对象</p>
 
@@ -6248,11 +6276,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-246">
+        <li id="section-247">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-246">&#182;</a>
+                <a class="pilcrow" href="#section-247">&#182;</a>
               </div>
               <p>生成ExprType对象</p>
 
@@ -6265,11 +6293,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-247">
+        <li id="section-248">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-247">&#182;</a>
+                <a class="pilcrow" href="#section-248">&#182;</a>
               </div>
               <p>有错误时，生成对应的ExprType对象</p>
 
@@ -6282,11 +6310,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-248">
+        <li id="section-249">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-248">&#182;</a>
+                <a class="pilcrow" href="#section-249">&#182;</a>
               </div>
               <p>得到函数source.name(paramValue)返回值的ExprType对象</p>
 
@@ -6299,11 +6327,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-249">
+        <li id="section-250">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-249">&#182;</a>
+                <a class="pilcrow" href="#section-250">&#182;</a>
               </div>
               <p>得到函数source.name(paramValue)执行结果</p>
 
@@ -6316,11 +6344,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-250">
+        <li id="section-251">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-250">&#182;</a>
+                <a class="pilcrow" href="#section-251">&#182;</a>
               </div>
               <p>得到变量类型</p>
 
@@ -6333,11 +6361,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-251">
+        <li id="section-252">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-251">&#182;</a>
+                <a class="pilcrow" href="#section-252">&#182;</a>
               </div>
               <p>得到对象source的name属性值</p>
 
@@ -6350,11 +6378,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-252">
+        <li id="section-253">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-252">&#182;</a>
+                <a class="pilcrow" href="#section-253">&#182;</a>
               </div>
               <p>得到实体类型</p>
 
@@ -6367,11 +6395,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-253">
+        <li id="section-254">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-253">&#182;</a>
+                <a class="pilcrow" href="#section-254">&#182;</a>
               </div>
               <p>从实体数组source中取出第index条实体记录</p>
 
@@ -6384,11 +6412,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-254">
+        <li id="section-255">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-254">&#182;</a>
+                <a class="pilcrow" href="#section-255">&#182;</a>
               </div>
               <p>得到解析信息</p>
 
@@ -6421,11 +6449,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-255">
+        <li id="section-256">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-255">&#182;</a>
+                <a class="pilcrow" href="#section-256">&#182;</a>
               </div>
               <p>是否为IfNull(1,2)函数形式的”,”结点</p>
 
@@ -6438,11 +6466,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-256">
+        <li id="section-257">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-256">&#182;</a>
+                <a class="pilcrow" href="#section-257">&#182;</a>
               </div>
               <p>是否为IIf(true,1,2)函数形式的”,”结点</p>
 
@@ -6458,21 +6486,6 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-257">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-257">&#182;</a>
-              </div>
-              
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    };
-    Context.prototype.doGetVariableValue = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name, source</span>) </span>{</pre></div></div>
-            
-        </li>
-        
-        
         <li id="section-258">
             <div class="annotation">
               
@@ -6483,7 +6496,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    };
-    Context.prototype.doGetFunctionType = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name, source, paramType, paramData</span>) </span>{</pre></div></div>
+    Context.prototype.doGetVariableValue = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name, source</span>) </span>{</pre></div></div>
             
         </li>
         
@@ -6498,7 +6511,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    };
-    Context.prototype.doGetFunctionValue = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name, source, paramValue</span>) </span>{</pre></div></div>
+    Context.prototype.doGetFunctionType = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name, source, paramType, paramData</span>) </span>{</pre></div></div>
             
         </li>
         
@@ -6513,7 +6526,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    };
-    Context.prototype.doGetEntityType = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">source</span>) </span>{</pre></div></div>
+    Context.prototype.doGetFunctionValue = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name, source, paramValue</span>) </span>{</pre></div></div>
             
         </li>
         
@@ -6528,7 +6541,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    };
-    Context.prototype.doGetEntityValue = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">source, index</span>) </span>{</pre></div></div>
+    Context.prototype.doGetEntityType = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">source</span>) </span>{</pre></div></div>
             
         </li>
         
@@ -6543,8 +6556,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    };
-    <span class="hljs-keyword">return</span> Context;
-}());</pre></div></div>
+    Context.prototype.doGetEntityValue = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">source, index</span>) </span>{</pre></div></div>
             
         </li>
         
@@ -6555,9 +6567,12 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-263">&#182;</a>
               </div>
-              <h2 id="-">表达式计算</h2>
-
+              
             </div>
+            
+            <div class="content"><div class='highlight'><pre>    };
+    <span class="hljs-keyword">return</span> Context;
+}());</pre></div></div>
             
         </li>
         
@@ -6567,6 +6582,19 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-264">&#182;</a>
+              </div>
+              <h2 id="-">表达式计算</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-265">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-265">&#182;</a>
               </div>
               
             </div>
@@ -6580,11 +6608,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-265">
+        <li id="section-266">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-265">&#182;</a>
+                <a class="pilcrow" href="#section-266">&#182;</a>
               </div>
               <p>生成ExprValue对象</p>
 
@@ -6597,11 +6625,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-266">
+        <li id="section-267">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-266">&#182;</a>
+                <a class="pilcrow" href="#section-267">&#182;</a>
               </div>
               <p>有错误时，生成对应的ExprValue对象</p>
 
@@ -6614,11 +6642,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-267">
+        <li id="section-268">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-267">&#182;</a>
+                <a class="pilcrow" href="#section-268">&#182;</a>
               </div>
               <p>根据token结点ID返回对应的ExprValue对象</p>
 
@@ -6631,11 +6659,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-268">
+        <li id="section-269">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-268">&#182;</a>
+                <a class="pilcrow" href="#section-269">&#182;</a>
               </div>
               <p>设置某token结点ID对应的ExprValue对象</p>
 
@@ -6648,11 +6676,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-269">
+        <li id="section-270">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-269">&#182;</a>
+                <a class="pilcrow" href="#section-270">&#182;</a>
               </div>
               <p>对表达式进行语法分析和数值计算</p>
 
@@ -6682,11 +6710,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-270">
+        <li id="section-271">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-270">&#182;</a>
+                <a class="pilcrow" href="#section-271">&#182;</a>
               </div>
               <p>对表达式进行数值计算</p>
 
@@ -6774,6 +6802,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                     tv = lv.subtract(rv);
                     <span class="hljs-keyword">break</span>;
                 <span class="hljs-keyword">case</span> <span class="hljs-string">"TK_CO"</span>:
+                <span class="hljs-keyword">case</span> <span class="hljs-string">"TK_EO"</span>:
                     tv = lv.compare(rv, t.tokenValue);
                     <span class="hljs-keyword">break</span>;
                 <span class="hljs-keyword">case</span> <span class="hljs-string">"TK_AND"</span>:
@@ -6858,11 +6887,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-271">
+        <li id="section-272">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-271">&#182;</a>
+                <a class="pilcrow" href="#section-272">&#182;</a>
               </div>
               <h2 id="-">表达式检查</h2>
 
@@ -6871,11 +6900,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-272">
+        <li id="section-273">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-272">&#182;</a>
+                <a class="pilcrow" href="#section-273">&#182;</a>
               </div>
               
             </div>
@@ -6889,11 +6918,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-273">
+        <li id="section-274">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-273">&#182;</a>
+                <a class="pilcrow" href="#section-274">&#182;</a>
               </div>
               <p>生成ExprType对象</p>
 
@@ -6906,11 +6935,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-274">
+        <li id="section-275">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-274">&#182;</a>
+                <a class="pilcrow" href="#section-275">&#182;</a>
               </div>
               <p>有错误时，生成对应的ExprType对象</p>
 
@@ -6923,11 +6952,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-275">
+        <li id="section-276">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-275">&#182;</a>
+                <a class="pilcrow" href="#section-276">&#182;</a>
               </div>
               <p>根据token结点ID返回对应ExprType对象</p>
 
@@ -6940,11 +6969,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-276">
+        <li id="section-277">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-276">&#182;</a>
+                <a class="pilcrow" href="#section-277">&#182;</a>
               </div>
               <p>设置某token结点ID对应的ExprType对象</p>
 
@@ -6957,11 +6986,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-277">
+        <li id="section-278">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-277">&#182;</a>
+                <a class="pilcrow" href="#section-278">&#182;</a>
               </div>
               <p>对表达式进行语法分析和依赖关系计算</p>
 
@@ -7032,11 +7061,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-278">
+        <li id="section-279">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-278">&#182;</a>
+                <a class="pilcrow" href="#section-279">&#182;</a>
               </div>
               <p>检查表达式运算关系正确性</p>
 
@@ -7109,6 +7138,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                     tt = lt.subtract(rt);
                     <span class="hljs-keyword">break</span>;
                 <span class="hljs-keyword">case</span> <span class="hljs-string">"TK_CO"</span>:
+                <span class="hljs-keyword">case</span> <span class="hljs-string">"TK_EO"</span>:
                     tt = lt.compare(rt, t.tokenValue);
                     <span class="hljs-keyword">break</span>;
                 <span class="hljs-keyword">case</span> <span class="hljs-string">"TK_AND"</span>:
@@ -7198,11 +7228,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-279">
+        <li id="section-280">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-279">&#182;</a>
+                <a class="pilcrow" href="#section-280">&#182;</a>
               </div>
               <h2 id="-">表达式游标</h2>
 
@@ -7211,11 +7241,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-280">
+        <li id="section-281">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-280">&#182;</a>
+                <a class="pilcrow" href="#section-281">&#182;</a>
               </div>
               
             </div>
@@ -7228,11 +7258,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-281">
+        <li id="section-282">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-281">&#182;</a>
+                <a class="pilcrow" href="#section-282">&#182;</a>
               </div>
               <p>设置数据游标</p>
 
@@ -7245,11 +7275,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-282">
+        <li id="section-283">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-282">&#182;</a>
+                <a class="pilcrow" href="#section-283">&#182;</a>
               </div>
               <p>向栈顶添加新的计算环境</p>
 
@@ -7262,11 +7292,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-283">
+        <li id="section-284">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-283">&#182;</a>
+                <a class="pilcrow" href="#section-284">&#182;</a>
               </div>
               <p>删除栈顶的计算环境</p>
 
@@ -7279,11 +7309,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-284">
+        <li id="section-285">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-284">&#182;</a>
+                <a class="pilcrow" href="#section-285">&#182;</a>
               </div>
               <p>栈顶计算环境的params属性是否存在第index条记录</p>
 
@@ -7296,11 +7326,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-285">
+        <li id="section-286">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-285">&#182;</a>
+                <a class="pilcrow" href="#section-286">&#182;</a>
               </div>
               <p>栈顶计算环境的params属性的第index条记录是否为实体数据</p>
 
@@ -7320,11 +7350,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-286">
+        <li id="section-287">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-286">&#182;</a>
+                <a class="pilcrow" href="#section-287">&#182;</a>
               </div>
               <p>得到栈顶计算环境的params属性的第index条记录存储的实体名</p>
 
@@ -7337,11 +7367,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-287">
+        <li id="section-288">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-287">&#182;</a>
+                <a class="pilcrow" href="#section-288">&#182;</a>
               </div>
               <p>得到实体全名称entityName的访问游标</p>
 
@@ -7367,11 +7397,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-288">
+        <li id="section-289">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-288">&#182;</a>
+                <a class="pilcrow" href="#section-289">&#182;</a>
               </div>
               <p>得到栈顶计算环境的params属性的第index条记录存储的数据</p>
 
@@ -7392,11 +7422,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-289">
+        <li id="section-290">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-289">&#182;</a>
+                <a class="pilcrow" href="#section-290">&#182;</a>
               </div>
               <h2 id="-">表达式上下文</h2>
 
@@ -7405,11 +7435,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-290">
+        <li id="section-291">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-290">&#182;</a>
+                <a class="pilcrow" href="#section-291">&#182;</a>
               </div>
               
             </div>
@@ -7427,11 +7457,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-291">
+        <li id="section-292">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-291">&#182;</a>
+                <a class="pilcrow" href="#section-292">&#182;</a>
               </div>
               <p>设置数据游标</p>
 
@@ -7444,11 +7474,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-292">
+        <li id="section-293">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-292">&#182;</a>
+                <a class="pilcrow" href="#section-293">&#182;</a>
               </div>
               <p>设置页面上下文</p>
 
@@ -7461,11 +7491,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-293">
+        <li id="section-294">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-293">&#182;</a>
+                <a class="pilcrow" href="#section-294">&#182;</a>
               </div>
               <p>设置数据上下文</p>
 
@@ -7478,11 +7508,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-294">
+        <li id="section-295">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-294">&#182;</a>
+                <a class="pilcrow" href="#section-295">&#182;</a>
               </div>
               <p>设置数据</p>
 
@@ -7495,11 +7525,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-295">
+        <li id="section-296">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-295">&#182;</a>
+                <a class="pilcrow" href="#section-296">&#182;</a>
               </div>
               <p>添加函数</p>
 
@@ -7532,11 +7562,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-296">
+        <li id="section-297">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-296">&#182;</a>
+                <a class="pilcrow" href="#section-297">&#182;</a>
               </div>
               <p>获取函数</p>
 
@@ -7549,11 +7579,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-297">
+        <li id="section-298">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-297">&#182;</a>
+                <a class="pilcrow" href="#section-298">&#182;</a>
               </div>
               <p>获取IfNull函数名</p>
 
@@ -7566,11 +7596,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-298">
+        <li id="section-299">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-298">&#182;</a>
+                <a class="pilcrow" href="#section-299">&#182;</a>
               </div>
               <p>获取IIf函数名</p>
 
@@ -7583,11 +7613,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-299">
+        <li id="section-300">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-299">&#182;</a>
+                <a class="pilcrow" href="#section-300">&#182;</a>
               </div>
               <p>获取函数返回结果类型对象</p>
 
@@ -7678,11 +7708,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-300">
+        <li id="section-301">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-300">&#182;</a>
+                <a class="pilcrow" href="#section-301">&#182;</a>
               </div>
               <p>获取函数返回值</p>
 
@@ -7708,11 +7738,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-301">
+        <li id="section-302">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-301">&#182;</a>
+                <a class="pilcrow" href="#section-302">&#182;</a>
               </div>
               <p>获取变量类型对象</p>
 
@@ -7787,11 +7817,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-302">
+        <li id="section-303">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-302">&#182;</a>
+                <a class="pilcrow" href="#section-303">&#182;</a>
               </div>
               <p>获取变量值</p>
 
@@ -7910,11 +7940,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-303">
+        <li id="section-304">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-303">&#182;</a>
+                <a class="pilcrow" href="#section-304">&#182;</a>
               </div>
               <p>获取实体类型对象</p>
 
@@ -7929,11 +7959,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-304">
+        <li id="section-305">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-304">&#182;</a>
+                <a class="pilcrow" href="#section-305">&#182;</a>
               </div>
               <p>获取实体值，根据游标索引</p>
 
@@ -7951,11 +7981,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-305">
+        <li id="section-306">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-305">&#182;</a>
+                <a class="pilcrow" href="#section-306">&#182;</a>
               </div>
               <p>获取实体信息</p>
 
@@ -8020,11 +8050,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-306">
+        <li id="section-307">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-306">&#182;</a>
+                <a class="pilcrow" href="#section-307">&#182;</a>
               </div>
               <p>获取根数据值</p>
 
@@ -8039,11 +8069,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-307">
+        <li id="section-308">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-307">&#182;</a>
+                <a class="pilcrow" href="#section-308">&#182;</a>
               </div>
               <p>获取父实体值</p>
 
@@ -8083,11 +8113,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-308">
+        <li id="section-309">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-308">&#182;</a>
+                <a class="pilcrow" href="#section-309">&#182;</a>
               </div>
               <p>获取实体数据，根据游标索引</p>
 
@@ -8115,11 +8145,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-309">
+        <li id="section-310">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-309">&#182;</a>
+                <a class="pilcrow" href="#section-310">&#182;</a>
               </div>
               <p>根据索引获取数据</p>
 
@@ -8132,11 +8162,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-310">
+        <li id="section-311">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-310">&#182;</a>
+                <a class="pilcrow" href="#section-311">&#182;</a>
               </div>
               <p>获取父名称</p>
 
@@ -8158,11 +8188,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-311">
+        <li id="section-312">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-311">&#182;</a>
+                <a class="pilcrow" href="#section-312">&#182;</a>
               </div>
               <p>获取实体属性全名称</p>
 
@@ -8177,11 +8207,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-312">
+        <li id="section-313">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-312">&#182;</a>
+                <a class="pilcrow" href="#section-313">&#182;</a>
               </div>
               <p>获取当前实体的索引号，没有实体返回-1</p>
 
@@ -8211,11 +8241,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-313">
+        <li id="section-314">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-313">&#182;</a>
+                <a class="pilcrow" href="#section-314">&#182;</a>
               </div>
               <p>设置字段名</p>
 
@@ -8226,11 +8256,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-314">
+        <li id="section-315">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-314">&#182;</a>
+                <a class="pilcrow" href="#section-315">&#182;</a>
               </div>
               <p>获取字段名</p>
 
@@ -8241,11 +8271,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-315">
+        <li id="section-316">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-315">&#182;</a>
+                <a class="pilcrow" href="#section-316">&#182;</a>
               </div>
               <p>设置字段显示名称</p>
 
@@ -8256,11 +8286,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-316">
+        <li id="section-317">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-316">&#182;</a>
+                <a class="pilcrow" href="#section-317">&#182;</a>
               </div>
               <p>获取字段显示名称</p>
 
@@ -8271,11 +8301,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-317">
+        <li id="section-318">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-317">&#182;</a>
+                <a class="pilcrow" href="#section-318">&#182;</a>
               </div>
               <p>设置字段值</p>
 
@@ -8286,11 +8316,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-318">
+        <li id="section-319">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-318">&#182;</a>
+                <a class="pilcrow" href="#section-319">&#182;</a>
               </div>
               <p>获取字段值</p>
 
@@ -8301,11 +8331,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-319">
+        <li id="section-320">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-319">&#182;</a>
+                <a class="pilcrow" href="#section-320">&#182;</a>
               </div>
               <p>检测参数类型数组是否匹配</p>
 
@@ -8346,11 +8376,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-320">
+        <li id="section-321">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-320">&#182;</a>
+                <a class="pilcrow" href="#section-321">&#182;</a>
               </div>
               <p>获取参数个数和类型都匹配的函数</p>
 
@@ -8384,11 +8414,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-321">
+        <li id="section-322">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-321">&#182;</a>
+                <a class="pilcrow" href="#section-322">&#182;</a>
               </div>
               <p>获取参数个数和类型都匹配的函数的返回值类型</p>
 
@@ -8428,11 +8458,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-322">
+        <li id="section-323">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-322">&#182;</a>
+                <a class="pilcrow" href="#section-323">&#182;</a>
               </div>
               <p>获取上下文变量值</p>
 
@@ -8453,11 +8483,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-323">
+        <li id="section-324">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-323">&#182;</a>
+                <a class="pilcrow" href="#section-324">&#182;</a>
               </div>
               <p>上下文变量压栈</p>
 
@@ -8470,11 +8500,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-324">
+        <li id="section-325">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-324">&#182;</a>
+                <a class="pilcrow" href="#section-325">&#182;</a>
               </div>
               <p>上下文变量出栈</p>
 
@@ -8487,11 +8517,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-325">
+        <li id="section-326">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-325">&#182;</a>
+                <a class="pilcrow" href="#section-326">&#182;</a>
               </div>
               <p>计算表达式</p>
 
@@ -8512,11 +8542,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-326">
+        <li id="section-327">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-326">&#182;</a>
+                <a class="pilcrow" href="#section-327">&#182;</a>
               </div>
               <p>在实体计算环境下计算表达式的值</p>
 
@@ -8539,11 +8569,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-327">
+        <li id="section-328">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-327">&#182;</a>
+                <a class="pilcrow" href="#section-328">&#182;</a>
               </div>
               <p>在数据计算环境下计算表达式的值</p>
 
@@ -8565,11 +8595,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-328">
+        <li id="section-329">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-328">&#182;</a>
+                <a class="pilcrow" href="#section-329">&#182;</a>
               </div>
               <p>计算表达式的依赖关系</p>
 
@@ -8590,11 +8620,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-329">
+        <li id="section-330">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-329">&#182;</a>
+                <a class="pilcrow" href="#section-330">&#182;</a>
               </div>
               <p>在实体计算环境下计算表达式的依赖关系</p>
 
@@ -8616,11 +8646,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-330">
+        <li id="section-331">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-330">&#182;</a>
+                <a class="pilcrow" href="#section-331">&#182;</a>
               </div>
               <p>在数据计算环境下计算表达式的依赖关系</p>
 
@@ -8641,11 +8671,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-331">
+        <li id="section-332">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-331">&#182;</a>
+                <a class="pilcrow" href="#section-332">&#182;</a>
               </div>
               <p>向栈顶添加新的计算环境</p>
 
@@ -8662,11 +8692,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-332">
+        <li id="section-333">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-332">&#182;</a>
+                <a class="pilcrow" href="#section-333">&#182;</a>
               </div>
               <p>删除栈顶的计算环境</p>
 
@@ -8681,11 +8711,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-333">
+        <li id="section-334">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-333">&#182;</a>
+                <a class="pilcrow" href="#section-334">&#182;</a>
               </div>
               <h2 id="-">表达式列表</h2>
 
@@ -8694,11 +8724,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-334">
+        <li id="section-335">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-334">&#182;</a>
+                <a class="pilcrow" href="#section-335">&#182;</a>
               </div>
               
             </div>
@@ -8936,11 +8966,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-335">
+        <li id="section-336">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-335">&#182;</a>
+                <a class="pilcrow" href="#section-336">&#182;</a>
               </div>
               <p>重置表达式列表对象</p>
 
@@ -8955,11 +8985,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-336">
+        <li id="section-337">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-336">&#182;</a>
+                <a class="pilcrow" href="#section-337">&#182;</a>
               </div>
               <p>添加表达式</p>
 
@@ -8993,11 +9023,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-337">
+        <li id="section-338">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-337">&#182;</a>
+                <a class="pilcrow" href="#section-338">&#182;</a>
               </div>
               <p>删除表达式</p>
 
@@ -9019,11 +9049,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-338">
+        <li id="section-339">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-338">&#182;</a>
+                <a class="pilcrow" href="#section-339">&#182;</a>
               </div>
               <p>检查和排序表达式列表</p>
 
@@ -9123,29 +9153,15 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-339">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-339">&#182;</a>
-              </div>
-              <h2 id="-">多语言 - 中文</h2>
-
-            </div>
-            
-        </li>
-        
-        
         <li id="section-340">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-340">&#182;</a>
               </div>
-              
+              <h2 id="-">多语言 - 中文</h2>
+
             </div>
-            
-            <div class="content"><div class='highlight'><pre>locale.defineLocale(<span class="hljs-string">"zh-cn"</span>, {</pre></div></div>
             
         </li>
         
@@ -9155,6 +9171,20 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-341">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>locale.defineLocale(<span class="hljs-string">"zh-cn"</span>, {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-342">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-342">&#182;</a>
               </div>
               <p>context</p>
 
@@ -9171,11 +9201,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-342">
+        <li id="section-343">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-342">&#182;</a>
+                <a class="pilcrow" href="#section-343">&#182;</a>
               </div>
               <p>funtion</p>
 
@@ -9188,11 +9218,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-343">
+        <li id="section-344">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-343">&#182;</a>
+                <a class="pilcrow" href="#section-344">&#182;</a>
               </div>
               <p>lexer</p>
 
@@ -9206,11 +9236,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-344">
+        <li id="section-345">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-344">&#182;</a>
+                <a class="pilcrow" href="#section-345">&#182;</a>
               </div>
               <p>parser</p>
 
@@ -9235,11 +9265,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-345">
+        <li id="section-346">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-345">&#182;</a>
+                <a class="pilcrow" href="#section-346">&#182;</a>
               </div>
               <p>list</p>
 
@@ -9250,11 +9280,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-346">
+        <li id="section-347">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-346">&#182;</a>
+                <a class="pilcrow" href="#section-347">&#182;</a>
               </div>
               <p>type &amp; value</p>
 
@@ -9293,11 +9323,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-347">
+        <li id="section-348">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-347">&#182;</a>
+                <a class="pilcrow" href="#section-348">&#182;</a>
               </div>
               <p>函数描述</p>
 
@@ -9386,29 +9416,15 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-348">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-348">&#182;</a>
-              </div>
-              <h2 id="-">表达式管理器</h2>
-
-            </div>
-            
-        </li>
-        
-        
         <li id="section-349">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-349">&#182;</a>
               </div>
-              
+              <h2 id="-">表达式管理器</h2>
+
             </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> ExprManager = (<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{</pre></div></div>
             
         </li>
         
@@ -9418,6 +9434,20 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-350">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> ExprManager = (<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-351">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-351">&#182;</a>
               </div>
               <p>构造函数</p>
 
@@ -9432,11 +9462,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-351">
+        <li id="section-352">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-351">&#182;</a>
+                <a class="pilcrow" href="#section-352">&#182;</a>
               </div>
               <p>注册函数</p>
 
@@ -9449,11 +9479,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-352">
+        <li id="section-353">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-352">&#182;</a>
+                <a class="pilcrow" href="#section-353">&#182;</a>
               </div>
               <p>获取函数列表对象</p>
 
@@ -9466,11 +9496,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-353">
+        <li id="section-354">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-353">&#182;</a>
+                <a class="pilcrow" href="#section-354">&#182;</a>
               </div>
               <p>获取表达式列表对象</p>
 
@@ -9483,11 +9513,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-354">
+        <li id="section-355">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-354">&#182;</a>
+                <a class="pilcrow" href="#section-355">&#182;</a>
               </div>
               <p>检查和排序表达式列表</p>
 
@@ -9502,11 +9532,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-355">
+        <li id="section-356">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-355">&#182;</a>
+                <a class="pilcrow" href="#section-356">&#182;</a>
               </div>
               <p>添加表达式</p>
 
@@ -9521,11 +9551,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-356">
+        <li id="section-357">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-356">&#182;</a>
+                <a class="pilcrow" href="#section-357">&#182;</a>
               </div>
               <p>删除表达式</p>
 
@@ -9540,11 +9570,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-357">
+        <li id="section-358">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-357">&#182;</a>
+                <a class="pilcrow" href="#section-358">&#182;</a>
               </div>
               <p>重置表达式列表对象</p>
 
@@ -9558,11 +9588,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-358">
+        <li id="section-359">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-358">&#182;</a>
+                <a class="pilcrow" href="#section-359">&#182;</a>
               </div>
               <p>计算表达式</p>
 
@@ -9597,11 +9627,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-359">
+        <li id="section-360">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-359">&#182;</a>
+                <a class="pilcrow" href="#section-360">&#182;</a>
               </div>
               <p>初始化</p>
 
@@ -9617,11 +9647,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-360">
+        <li id="section-361">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-360">&#182;</a>
+                <a class="pilcrow" href="#section-361">&#182;</a>
               </div>
               <p>计算表达式的依赖关系</p>
 
@@ -9634,11 +9664,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-361">
+        <li id="section-362">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-361">&#182;</a>
+                <a class="pilcrow" href="#section-362">&#182;</a>
               </div>
               <p>计算表达式的值</p>
 
@@ -9660,11 +9690,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-362">
+        <li id="section-363">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-362">&#182;</a>
+                <a class="pilcrow" href="#section-363">&#182;</a>
               </div>
               <p>计算表达式的值</p>
 

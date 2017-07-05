@@ -145,7 +145,8 @@ export default class Check {
                 case "TK_MINUS": /// -减法结点
                     tt = lt.subtract(rt);
                     break;
-                case "TK_CO": /// 比较运算符结点，包括==,!=,>,>=,<,<=
+                case "TK_CO": /// 比较运算符结点，包括>,>=,<,<=
+                case "TK_EO": /// 等于运算符结点，包括==,!=,
                     tt = lt.compare(rt, t.tokenValue);
                     break;
                 case "TK_AND": /// &&结点

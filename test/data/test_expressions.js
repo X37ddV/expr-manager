@@ -1245,6 +1245,10 @@ var exprNull = {
         ['IfNull("12",PN1)', '"12"'],
         ['IIf(true,"12", PN1)', '"12"'],
         ['IIf(false,"12", PN1)', 'null'],
+        ['3>2 == 3<2', 'false'],
+        ['3>2 == 2<3', 'true'],
+        ['3>=2 != 3<=2', 'true'],
+        ['3>=2 != 2<=3', 'false']
     ]
 };
 var exprErr = {

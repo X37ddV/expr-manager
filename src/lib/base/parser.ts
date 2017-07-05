@@ -155,8 +155,10 @@ export default class Parser {
         p = this.doParser_4(p, "TK_MULTI,TK_DIV,TK_MOD");
         // - 处理 + - 四则运算
         p = this.doParser_4(p, "TK_PLUS,TK_MINUS");
-        // - 处理 < <= > >= == != 比较运算符
-        p = this.doParser_4(p, "TK_CO,TK_EO");
+        // - 处理 < <= > >= 比较运算符
+        p = this.doParser_4(p, "TK_CO");
+        // - 处理 == != 等于运算符
+        p = this.doParser_4(p, "TK_EO");
         // - 处理 && 与运算
         p = this.doParser_4(p, "TK_AND");
         // - 处理 || 或运算

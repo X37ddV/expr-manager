@@ -122,7 +122,8 @@ export default class Calc {
                 case "TK_MINUS": /// -减法结点
                     tv = lv.subtract(rv);
                     break;
-                case "TK_CO": /// 比较运算符结点，包括==,!=,>,>=,<,<=
+                case "TK_CO": /// 比较运算符结点，包括>,>=,<,<=
+                case "TK_EO": /// 等于运算符结点，包括==,!=,
                     tv = lv.compare(rv, t.tokenValue);
                     break;
                 case "TK_AND": /// &&结点

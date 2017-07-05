@@ -7,7 +7,6 @@
 
 ## Usage
 ```javascript
-var exprManager = new ExprManager();
 var data = {
     Table: [{
         Field0: 0,
@@ -53,15 +52,32 @@ var dataContext = {
 var context = {
     Field0: "!"
 };
+var exprManager = new ExprManager();
+exprManager.init(data, dataContext, context);
+var tableName = "Table";
 var dataCursor = {
     "Table": 0,
     "Table.SubTable": 0
 };
-exprManager.init(data, dataContext, context);
-var v = exprManager.calcExpr("Field1 + ' ' + SubTable[0].Field1 + $C.Field0", "Table", dataCursor);
+var expr = "Field1 + ' ' + SubTable[0].Field1 + $C.Field0";
+var v = exprManager.calcExpr(expr, tableName, dataCursor);
 console.log(v.toValue());
 // => Hello Wrold!
 ```
+
+## Operator Precedence
+| Operator    | Description                                                        |
+| ----------- | ------------------------------------------------------------------ |
+| . [] () {}  | Member access, array, grouping, object                             |
+| + - !       | Unary operators, logical NOT                                       |
+| * / %       | Multiplication, division, modulo division                          |
+| + -         | Addition, subtraction                                              |
+| < <= > >=   | Less than, less than or equal, greater than, greater than or equal |
+| == !=       | Equality, inequality                                               |
+| &&          | Logical AND                                                        |
+| \|\|        | Logical OR                                                         |
+| :           | Colon operator                                                     |
+| ,           | Multiple evaluation                                                |
 
 ## Example
     npm install

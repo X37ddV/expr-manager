@@ -75,7 +75,7 @@ export default class Lexer {
                     tValue = s[n++];
                     if (n < s.length && s[n] === "=") {
                         tValue += s[n++];
-                        tType = "TK_CO";
+                        tType = "TK_EO";
                     } else {
                         tType = "TK_NOT";
                     }
@@ -91,6 +91,15 @@ export default class Lexer {
                     tType = "TK_CO";
                     break;
                 case "=": /// ==
+                    tValue = s[n++];
+                    if (n < s.length && s[n] === "=") {
+                        tValue += s[n++];
+                        tType = "TK_EO";
+                    } else {
+                        tType = "TK_UNKNOWN";
+                    }
+                    tText = tValue;
+                    break;
                 case "&": /// &&
                 case "|": /// ||
                     tValue = s[n++];

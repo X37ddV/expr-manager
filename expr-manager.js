@@ -1,4 +1,4 @@
-//     expr-manager.js 0.1.1
+//     expr-manager.js 0.1.2
 //     https://github.com/X37ddV/expr-manager
 //     (c) 2016-2017 X37ddV
 //     Released under the MIT License.
@@ -1453,7 +1453,7 @@ var Lexer = (function () {
                     tValue = s[n++];
                     if (n < s.length && s[n] === "=") {
                         tValue += s[n++];
-                        tType = "TK_CO";
+                        tType = "TK_EO";
                     }
                     else {
                         tType = "TK_NOT";
@@ -1470,6 +1470,16 @@ var Lexer = (function () {
                     tType = "TK_CO";
                     break;
                 case "=":
+                    tValue = s[n++];
+                    if (n < s.length && s[n] === "=") {
+                        tValue += s[n++];
+                        tType = "TK_EO";
+                    }
+                    else {
+                        tType = "TK_UNKNOWN";
+                    }
+                    tText = tValue;
+                    break;
                 case "&":
                 case "|":
                     tValue = s[n++];
@@ -1692,46 +1702,47 @@ var Lexer = (function () {
 // 节点类型
 var tokens = ("TK_UNKNOWN,TK_STRING,TK_NUMBER,TK_BOOL,TK_NULL,TK_IDEN,TK_DOT,TK_LP,TK_LA," +
     "TK_LO,TK_RP,TK_RA,TK_RO,TK_UNARY,TK_NOT,TK_MULTI,TK_DIV,TK_MOD,TK_PLUS,TK_MINUS," +
-    "TK_CO,TK_AND,TK_OR,TK_COLON,TK_COMMA").split(",");
+    "TK_CO,TK_EO,TK_AND,TK_OR,TK_COLON,TK_COMMA").split(",");
 var genTokenState = function (tks, opts) {
     var r = {};
     tks.forEach(function (v, i) { return r[v] = opts[i] === "1"; });
     return r;
 };
 // 起始节点规则
-var RULE_BTOKENS = genTokenState(tokens, "0111110111000110000000000".split(""));
+var RULE_BTOKENS = genTokenState(tokens, "01111101110001100000000000".split(""));
 // 结束节点规则
-var RULE_ETOKENS = genTokenState(tokens, "0111110000111000000000000".split(""));
+var RULE_ETOKENS = genTokenState(tokens, "01111100001110000000000000".split(""));
 // 后序节点规则
 var RULE_LEXICAL = (function (tks, opts) {
     var r = {};
     tks.forEach(function (v, i) { return r[v] = genTokenState(tks, opts[i].split("")); });
     return r;
-})(tokens, ("0000000000000000000000000," +
-    "0000001010111001111111111," +
-    "0000001000111001111111111," +
-    "0000001000111001111111111," +
-    "0000000000111001111111111," +
-    "0000001110111001111111111," +
-    "0000010000000000000000000," +
-    "0111110111100110000000000," +
-    "0111110111010110000000000," +
-    "0111110000001000000000000," +
-    "0000001010111001111111101," +
-    "0000001010111001111111101," +
-    "0000001011111001111111101," +
-    "0111110111000110000000000," +
-    "0111110111000110000000000," +
-    "0111110111000110000000000," +
-    "0111110111000110000000000," +
-    "0111110111000110000000000," +
-    "0111110111000110000000000," +
-    "0111110111000110000000000," +
-    "0111110111000110000000000," +
-    "0111110111000110000000000," +
-    "0111110111000110000000000," +
-    "0111110111000110000000000," +
-    "0111110111000110000000000"
+})(tokens, ("00000000000000000000000000," +
+    "00000010101110011111111111," +
+    "00000010001110011111111111," +
+    "00000010001110011111111111," +
+    "00000000001110011111111111," +
+    "00000011101110011111111111," +
+    "00000100000000000000000000," +
+    "01111101111001100000000000," +
+    "01111101110101100000000000," +
+    "01111100000010000000000000," +
+    "00000010101110011111111101," +
+    "00000010101110011111111101," +
+    "00000010111110011111111101," +
+    "01111101110001100000000000," +
+    "01111101110001100000000000," +
+    "01111101110001100000000000," +
+    "01111101110001100000000000," +
+    "01111101110001100000000000," +
+    "01111101110001100000000000," +
+    "01111101110001100000000000," +
+    "01111101110001100000000000," +
+    "01111101110001100000000000," +
+    "01111101110001100000000000," +
+    "01111101110001100000000000," +
+    "01111101110001100000000000," +
+    "01111101110001100000000000"
 ).split(","));
 
 // 语法解析器
@@ -1890,8 +1901,10 @@ var Parser = (function () {
         p = this.doParser_4(p, "TK_MULTI,TK_DIV,TK_MOD");
         // - 处理 + - 四则运算
         p = this.doParser_4(p, "TK_PLUS,TK_MINUS");
-        // - 处理 < <= > >= == != 比较运算符
-        p = this.doParser_4(p, "TK_CO,TK_EO");
+        // - 处理 < <= > >= 比较运算符
+        p = this.doParser_4(p, "TK_CO");
+        // - 处理 == != 等于运算符
+        p = this.doParser_4(p, "TK_EO");
         // - 处理 && 与运算
         p = this.doParser_4(p, "TK_AND");
         // - 处理 || 或运算
@@ -3234,6 +3247,7 @@ var Calc = (function () {
                     tv = lv.subtract(rv);
                     break;
                 case "TK_CO":
+                case "TK_EO":
                     tv = lv.compare(rv, t.tokenValue);
                     break;
                 case "TK_AND":
@@ -3468,6 +3482,7 @@ var Check = (function () {
                     tt = lt.subtract(rt);
                     break;
                 case "TK_CO":
+                case "TK_EO":
                     tt = lt.compare(rt, t.tokenValue);
                     break;
                 case "TK_AND":
