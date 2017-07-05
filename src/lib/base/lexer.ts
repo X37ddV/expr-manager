@@ -107,7 +107,7 @@ export default class Lexer {
                         tType =
                             tValue === "&" ? "TK_AND" :
                                 tValue === "|" ? "TK_OR" :
-                                    "TK_CO";
+                                    "TK_UNKNOWN";
                         tValue += s[n++];
                     } else {
                         tType = "TK_UNKNOWN";

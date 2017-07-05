@@ -65,6 +65,17 @@ console.log(v.toValue());
 // => Hello Wrold!
 ```
 
+## Value Type
+| Type        | Value                                     |
+| ----------- | ----------------------------------------- |
+| string      | "value1" 'value2'                         |
+| number      | 1 -1 1.23 -1.23                           |
+| boolean     | true false                                |
+| date        | Now() "2017-10-24T10:10:10.037Z".ToDate() |
+| object      | {a: 1, b: 2} {a: "1", b: "2"}             |
+| array       | [1,2] ["1","2"]                           |
+| null        | null                                      |
+
 ## Operator Precedence
 | Operator        | Description                                                        |
 | --------------- | ------------------------------------------------------------------ |
@@ -78,6 +89,17 @@ console.log(v.toValue());
 | \|\|            | Logical OR                                                         |
 | :               | Colon operator                                                     |
 | ,               | Multiple evaluation                                                |
+
+## System functions
+| Owner        | Functions                                          |
+| ------------ | -------------------------------------------------- |
+|              | FieldDisplayName FieldName FieldValue IIf IfNull Now Parent PropValue Random RecNo Root |
+| array        | Average Count Distinct Max Min Sum Where           |
+| boolean      | ToString                                           |
+| date         | DateOf DayOf DayOfWeek DaysBetween HourOf HoursBetween IncDay IncHour IncMinute IncMonth IncSecond IncWeek IncYear MilliSecondOf MilliSecondsBetween MinuteOf MinutesBetween MonthOf MonthsBetween SecondOf SecondsBetween ToString WeekOf WeeksBetween YearOf YearsBetween |
+| number       | Abs Ceil Cos Exp Floor Ln Log Power Round Sin Sqrt Tan ToRMB ToString Trunc |
+| object       | Parent RecNo                                       |
+| string       | LeftString Length Lower Pos Replace ReplaceReg RightString SubString ToDate ToNumber ToString Trim TrimLeft TrimRight Upper |
 
 ## Example
     npm install

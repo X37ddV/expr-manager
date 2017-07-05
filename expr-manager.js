@@ -1,4 +1,4 @@
-//     expr-manager.js 0.1.3
+//     expr-manager.js 0.1.4
 //     https://github.com/X37ddV/expr-manager
 //     (c) 2016-2017 X37ddV
 //     Released under the MIT License.
@@ -1487,7 +1487,7 @@ var Lexer = (function () {
                         tType =
                             tValue === "&" ? "TK_AND" :
                                 tValue === "|" ? "TK_OR" :
-                                    "TK_CO";
+                                    "TK_UNKNOWN";
                         tValue += s[n++];
                     }
                     else {

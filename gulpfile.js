@@ -10,7 +10,8 @@ var fs = require('fs'),
     rollupTypescript = require("rollup-plugin-typescript"),
     jasmine = require('jasmine'),
     karma = require("karma"),
-    docco = require("docco");
+    docco = require("docco"),
+    exprManager = require("./expr-manager");
 var rootPath = __dirname;
 var version = JSON.parse(fs.readFileSync(path.join(rootPath, 'package.json'))).version || '';
 var rollupBanner =
@@ -193,6 +194,68 @@ gulp.task("build:docs", function() {
     });
 });
 
+gulp.task("build:docs:readme", function() {
+    var groups = new exprManager().getFunction();
+    var functions = [];
+    var maxGroup = 12;
+    var maxFunctions = 0;
+    for (var group in groups) {
+        if (groups.hasOwnProperty(group)) {
+            var funcs = groups[group];
+            var item = {
+                group: group,
+                funcs: []
+            };
+            for (var func in funcs) {
+                if (funcs.hasOwnProperty(func)) {
+                    item.funcs.push(func)
+                }
+            }
+            var str = item.funcs.join(" ");
+            if (str.length > maxFunctions) {
+                maxFunctions = str.length;
+            }
+            functions.push(item);
+        }
+    }
+    if (maxFunctions > 50) {
+        maxFunctions = 50;
+    }
+    var genRowItem = function(text, count, space) {
+        var r = text;
+        for (var i = text.length; i < count; i++) {
+            r += space;
+        }
+        return r;
+    };
+    var genRow = function(group, maxGroup, functions, maxFunctions) {
+        var r = "| ";
+        if (group == "-") {
+            r += genRowItem("", maxGroup, "-");
+        } else {
+            r += genRowItem(group, maxGroup, " ");
+        }
+        r += " | ";
+        if (functions == "-") {
+            r += genRowItem("", maxFunctions, "-");
+        } else {
+            r += genRowItem(functions, maxFunctions, " ");
+        }
+        return r + " |\n";
+    };
+    var sysFunc = "";
+    sysFunc += genRow("Owner", maxGroup, "Functions", maxFunctions);
+    sysFunc += genRow("-", maxGroup, "-", maxFunctions);
+    for (var f in functions) {
+        if (functions.hasOwnProperty(f)) {
+            sysFunc += genRow(functions[f].group, maxGroup, functions[f].funcs.join(" "), maxFunctions);
+        }
+    }
+    var readme = fs.readFileSync(path.join(rootPath, 'README.md')).toString();
+    readme = readme.replace(/##\sSystem\sfunctions[^#]*/g, "## System functions\n" + sysFunc + "\n");
+    fs.writeFileSync(path.join(rootPath, 'README.md'), readme);
+});
+
 gulp.task("test:phantomjs", function(done) {
     karmaStart(done, ["PhantomJS"]);
 });
@@ -209,7 +272,7 @@ gulp.task("test:all", function(done) {
     karmaStart(done, ["Safari", "Chrome", "PhantomJS"]);
 });
 
-gulp.task("default", ["lint:expr-manager", "lint:example", "build:expr-manager", "build:expr-manager:min", "build:example", "build:docs", "test:all"]);
+gulp.task("default", ["lint:expr-manager", "lint:example", "build:expr-manager", "build:expr-manager:min", "build:example", "build:docs", "build:docs:readme", "test:phantomjs"]);
 gulp.task("travis", ["lint:expr-manager", "lint:example", "test:phantomjs"]);
 gulp.task("appveyor", ["lint:expr-manager", "lint:example", "test:phantomjs"]);
 gulp.task("circle", ["lint:expr-manager", "lint:example", "test:phantomjs"]);
