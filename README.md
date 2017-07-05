@@ -52,8 +52,10 @@ var dataContext = {
 var context = {
     Field0: "!"
 };
+
 var exprManager = new ExprManager();
 exprManager.init(data, dataContext, context);
+
 var tableName = "Table";
 var dataCursor = {
     "Table": 0,
@@ -65,7 +67,7 @@ console.log(v.toValue());
 // => Hello Wrold!
 ```
 
-## Value Type
+## Value type
 | Type        | Value                                     |
 | ----------- | ----------------------------------------- |
 | string      | "value1" 'value2'                         |
@@ -76,7 +78,7 @@ console.log(v.toValue());
 | array       | [1,2] ["1","2"]                           |
 | null        | null                                      |
 
-## Operator Precedence
+## Operator precedence
 | Operator        | Description                                                        |
 | --------------- | ------------------------------------------------------------------ |
 | . \[\] \(\) {}  | Member access, array, grouping, object                             |
@@ -91,15 +93,15 @@ console.log(v.toValue());
 | ,               | Multiple evaluation                                                |
 
 ## System functions
-| Owner        | Functions                                          |
-| ------------ | -------------------------------------------------- |
-|              | FieldDisplayName FieldName FieldValue IIf IfNull Now Parent PropValue Random RecNo Root |
-| array        | Average Count Distinct Max Min Sum Where           |
-| boolean      | ToString                                           |
-| date         | DateOf DayOf DayOfWeek DaysBetween HourOf HoursBetween IncDay IncHour IncMinute IncMonth IncSecond IncWeek IncYear MilliSecondOf MilliSecondsBetween MinuteOf MinutesBetween MonthOf MonthsBetween SecondOf SecondsBetween ToString WeekOf WeeksBetween YearOf YearsBetween |
-| number       | Abs Ceil Cos Exp Floor Ln Log Power Round Sin Sqrt Tan ToRMB ToString Trunc |
-| object       | Parent RecNo                                       |
-| string       | LeftString Length Lower Pos Replace ReplaceReg RightString SubString ToDate ToNumber ToString Trim TrimLeft TrimRight Upper |
+| Owner   | Functions                                                                   |
+| ------- | --------------------------------------------------------------------------- |
+|         | FieldDisplayName FieldName FieldValue IIf IfNull Now Parent PropValue Random RecNo Root |
+| array   | Average Count Distinct Max Min Sum Where                                    |
+| boolean | ToString                                                                    |
+| date    | DateOf DayOf DayOfWeek DaysBetween HourOf HoursBetween IncDay IncHour IncMinute IncMonth IncSecond IncWeek IncYear MilliSecondOf MilliSecondsBetween MinuteOf MinutesBetween MonthOf MonthsBetween SecondOf SecondsBetween ToString WeekOf WeeksBetween YearOf YearsBetween |
+| number  | Abs Ceil Cos Exp Floor Ln Log Power Round Sin Sqrt Tan ToRMB ToString Trunc |
+| object  | Parent RecNo                                                                |
+| string  | LeftString Length Lower Pos Replace ReplaceReg RightString SubString ToDate ToNumber ToString Trim TrimLeft TrimRight Upper |
 
 ## Example
     npm install

@@ -197,7 +197,7 @@ gulp.task("build:docs", function() {
 gulp.task("build:docs:readme", function() {
     var groups = new exprManager().getFunction();
     var functions = [];
-    var maxGroup = 12;
+    var maxGroup = 7;
     var maxFunctions = 0;
     for (var group in groups) {
         if (groups.hasOwnProperty(group)) {
@@ -218,8 +218,8 @@ gulp.task("build:docs:readme", function() {
             functions.push(item);
         }
     }
-    if (maxFunctions > 50) {
-        maxFunctions = 50;
+    if (maxFunctions > 75) {
+        maxFunctions = 75;
     }
     var genRowItem = function(text, count, space) {
         var r = text;
