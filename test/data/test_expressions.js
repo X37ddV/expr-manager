@@ -669,7 +669,7 @@ var exprDate = {
         ['"2000-02-01 00:00:00".ToDate().MonthsBetween("2000-02-01 00:00:00".ToDate().IncMonth(1))', '1'],
         ['"1999-12-31".ToDate()', '"1999-12-31T00:00:00"'],
         ['"1999-12-32".ToDate()', 'undefined'],
-        ['"1999-123-31".ToDate()', 'undefined'],
+        ['"1999-99-31".ToDate()', 'undefined'],
         ['"12".ToDate("H")', '"' + year + '-' + mon2 + '-' + date2 + 'T12:00:00"'],
         ['"1999-12-31".ToDate().', 'undefined'],
         ['."1999-12-31".ToDate()', 'undefined'],

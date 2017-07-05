@@ -66,18 +66,18 @@ console.log(v.toValue());
 ```
 
 ## Operator Precedence
-| Operator    | Description                                                        |
-| ----------- | ------------------------------------------------------------------ |
-| . [] () {}  | Member access, array, grouping, object                             |
-| + - !       | Unary operators, logical NOT                                       |
-| * / %       | Multiplication, division, modulo division                          |
-| + -         | Addition, subtraction                                              |
-| < <= > >=   | Less than, less than or equal, greater than, greater than or equal |
-| == !=       | Equality, inequality                                               |
-| &&          | Logical AND                                                        |
-| \|\|        | Logical OR                                                         |
-| :           | Colon operator                                                     |
-| ,           | Multiple evaluation                                                |
+| Operator        | Description                                                        |
+| --------------- | ------------------------------------------------------------------ |
+| . \[\] \(\) {}  | Member access, array, grouping, object                             |
+| + - !           | Unary operators, logical NOT                                       |
+| * / %           | Multiplication, division, modulo division                          |
+| + -             | Addition, subtraction                                              |
+| < <= > >=       | Less than, less than or equal, greater than, greater than or equal |
+| == !=           | Equality, inequality                                               |
+| &&              | Logical AND                                                        |
+| \|\|            | Logical OR                                                         |
+| :               | Colon operator                                                     |
+| ,               | Multiple evaluation                                                |
 
 ## Example
     npm install

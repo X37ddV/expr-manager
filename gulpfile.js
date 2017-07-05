@@ -197,6 +197,14 @@ gulp.task("test:phantomjs", function(done) {
     karmaStart(done, ["PhantomJS"]);
 });
 
+gulp.task("test:safari", function(done) {
+    karmaStart(done, ["Safari"]);
+});
+
+gulp.task("test:chrome", function(done) {
+    karmaStart(done, ["Chrome"]);
+});
+
 gulp.task("test:all", function(done) {
     karmaStart(done, ["Safari", "Chrome", "PhantomJS"]);
 });
