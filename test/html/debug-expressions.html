@@ -86,7 +86,8 @@
                     continue;
                 var e = exprs[i][0];
                 var k = exprs[i][1]; // 预期值 undefined为不校验或校验为错误
-                var d = exprs[i][2] || ""; // 描述
+                var r = exprs[i][2] || ""; // 错误
+                var d = exprs[i][3] || ""; // 描述
                 var val = doEval(e);
                 var v = encode(val.toValue());
                 var m = val.errorMsg;

@@ -6,19 +6,21 @@ describe("表达式测试", function () {
         for (var i = 0; i < demo.exprs.length; i++) {
             var e = demo.exprs[i][0];
             var k = demo.exprs[i][1]; // 预期值 undefined为不校验或校验为错误
-            var d = demo.exprs[i][2] || ""; // 描述
+            var r = demo.exprs[i][2] || ""; // 错误
+            var d = demo.exprs[i][3] || ""; // 描述
             var val = exprManager.calcExpr(e, "E1", window.dataCursor);
             var v = val.toValue();
             v = v === undefined ? "undefined" : window.JSON.stringify(v);
             if (typeof k == "string") {
-                it(demo.title + " - " + j  + " - " + i + " - " + e, (function (k, v, i) {
+                it(demo.title + " - " + j  + " - " + i + " - " + e, (function (k, v, r, errorMsg) {
                     return function() {
-                        expect(k).toEqual(v)
-                        if (i == 46) {
-                            expect(v).toEqual(k)
+                        if (errorMsg) {
+                            expect(r).toEqual(errorMsg);
+                        } else {
+                            expect(v).toEqual(k);
                         }
                     }
-                })(k, v, i));
+                })(k, v, r, val.errorMsg));
             }
         }
     }
