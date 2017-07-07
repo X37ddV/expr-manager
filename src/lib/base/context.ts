@@ -87,16 +87,16 @@ export default class Context implements IContext {
     }
     public doGetIfNullName(): string { return ""; }
     public doGetIIfName(): string { return ""; }
-    public doGetVariableType(name, source) {
+    public doGetVariableType(name: string, source) {
         //
     }
-    public doGetVariableValue(name, source) {
+    public doGetVariableValue(name: string, source) {
         //
     }
-    public doGetFunctionType(name, source, paramType, paramData) {
+    public doGetFunctionType(name: string, source, paramType, paramData) {
         //
     }
-    public doGetFunctionValue(name, source, paramValue) {
+    public doGetFunctionValue(name: string, source, paramValue) {
         //
     }
     public doGetEntityType(source) {

@@ -64,15 +64,15 @@ export default class ExprContext extends Context {
         return this.functions;
     }
     // 获取IfNull函数名
-    public doGetIfNullName() {
+    public doGetIfNullName(): string {
         return "IfNull";
     }
     // 获取IIf函数名
-    public doGetIIfName() {
+    public doGetIIfName(): string {
         return "IIf";
     }
     // 获取函数返回结果类型对象
-    public doGetFunctionType(name, source, paramType, paramData) {
+    public doGetFunctionType(name: string, source, paramType, paramData) {
         let r;
         const t = (source !== null) ? /// 调用者类型，如"string","number","array","object"
             (source.entity ? source.entity.type : source.type) : /// 有显式调用者
@@ -149,7 +149,7 @@ export default class ExprContext extends Context {
         return r;
     }
     // 获取函数返回值
-    public doGetFunctionValue(name, source, paramValue) {
+    public doGetFunctionValue(name: string, source, paramValue) {
         const t = (source !== null) ? /// 调用者类型，如"string","number","array","object"
             (source.entity ? source.entity.type : source.type) : /// 有显式调用者
             ""; /// 无显式调用者，全局函数
@@ -165,7 +165,7 @@ export default class ExprContext extends Context {
         return r;
     }
     // 获取变量类型对象
-    public doGetVariableType(name, source) {
+    public doGetVariableType(name: string, source) {
         let r;
         let pIndex;
         pIndex = 0;

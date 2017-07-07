@@ -1,5 +1,6 @@
 import { isIDENToken } from "./common";
 import Context from "./context";
+import { ValueType } from "./interface";
 import Value from "./value";
 
 // 表达式计算
@@ -9,11 +10,11 @@ export default class Calc {
     private context: Context = null;
     private values = {};
     // 生成ExprValue对象
-    public genValue(value, type, entity?, errorMsg?, parentObj?) {
+    public genValue(value: any, type: ValueType, entity?, errorMsg?: string, parentObj?) {
         return new Value(this.context, value, type, entity, errorMsg, parentObj);
     }
     // 有错误时，生成对应的ExprValue对象
-    public genErrorValue(errorMsg) {
+    public genErrorValue(errorMsg: string) {
         return this.genValue(undefined, undefined, undefined, errorMsg, undefined);
     }
     // 根据token结点ID返回对应的ExprValue对象
@@ -25,7 +26,7 @@ export default class Calc {
         this.values[tokenId] = v;
     }
     // 对表达式进行语法分析和数值计算
-    public calc(expr, context) {
+    public calc(expr: string, context) {
         this.context = context || new Context();
         let r;
         const p = this.context.getParserInfo(expr); /// 在context数据上下文中对expr进行语法分析
