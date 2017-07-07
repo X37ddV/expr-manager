@@ -1,19 +1,20 @@
 import { eachToken, getValueType, isIDENToken } from "./common";
 import Context from "./context";
+import { IContext } from "./interface";
 import Type from "./type";
 
 // 表达式检查
 // ----------
 
 export default class Check {
-    private context = null;
+    private context: IContext = null;
     private types = {};
     // 生成ExprType对象
-    public genType(type, info?, data?, entity?, depends?, errorMsg?) {
+    public genType(type: any, info?, data?, entity?, depends?, errorMsg?: string): Type {
         return new Type(this.context, type, info, data, entity, depends, errorMsg);
     }
     // 有错误时，生成对应的ExprType对象
-    public genErrorType(errorMsg) {
+    public genErrorType(errorMsg: string): Type {
         return this.genType(undefined, undefined, undefined, undefined, undefined, errorMsg);
     }
     // 根据token结点ID返回对应ExprType对象
@@ -21,14 +22,15 @@ export default class Check {
         return this.types[tokenId];
     }
     // 设置某token结点ID对应的ExprType对象
-    public setType(tokenId, t) {
+    public setType(tokenId, t): Check {
         this.types[tokenId] = t;
+        return this;
     }
     // 对表达式进行语法分析和依赖关系计算
-    public check(expr, context) {
+    public check(expr: string, context: IContext) {
         this.context = context || new Context(); /// TODO 是否允许context不存在？
         let r;
-        const p = this.context.getParserInfo(expr); /// 在context数据上下文中对expr进行语法分析
+        const p = (this.context as Context).getParserInfo(expr); /// 在context数据上下文中对expr进行语法分析
         if (p.errorMsg === "") { /// 表达式解析正确(语法正确，但是运算关系正确性还没验证如：1>2&&43会报错)
             const msg = this.doCheck(p.rootToken); /// 检查表达式运算关系正确性
             if (msg === "") {
@@ -81,7 +83,7 @@ export default class Check {
         return r;
     }
     // 检查表达式运算关系正确性
-    public doCheck(rootToken) {
+    public doCheck(rootToken): string {
         const t = rootToken;
         const p = t.parent;
         let msg = "";

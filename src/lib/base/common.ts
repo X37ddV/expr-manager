@@ -1,10 +1,10 @@
-import { IToken } from "./interface";
+import { IToken, ValueType } from "./interface";
 
 // 内部公共函数
 // ----------
 
 // 获取**值**类型
-export function getValueType(v: any): string {
+export function getValueType(v: any): ValueType {
     return v === null ? "null" : // 兼容IE8
         Object.prototype.toString.call(v).replace("[object ", "").replace("]", "").toLowerCase();
 }
@@ -84,7 +84,7 @@ export function format(str: string, ...values: string[]): string {
     return str.replace(/\{(\d+)\}/g, (m, i) => values[i]);
 }
 // 比较**数组**是否相等
-function compareArray(farr: any, sarr: any, isKey: boolean): boolean {
+function compareArray(farr: any[], sarr: any[], isKey: boolean): boolean {
     let r = farr.length === sarr.length;
     if (r) {
         for (let i = 0; i < farr.length; i++) {
@@ -104,7 +104,7 @@ function compareArray(farr: any, sarr: any, isKey: boolean): boolean {
     return r;
 }
 // 比较**对象**是否相等
-function compareObject(fobj: any, sobj: any): boolean {
+function compareObject(fobj: object, sobj: object): boolean {
     const f = [];
     const s = [];
     let r = true;

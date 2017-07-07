@@ -1,4 +1,5 @@
 import func from "./function/func";
+import { IFunction } from "./lib/base/interface";
 import ExprContext from "./lib/context";
 import ExprList from "./lib/list";
 import "./locale/zh-cn";
@@ -14,7 +15,7 @@ export default class ExprManager {
         this.addFunction(func);
     }
     // 注册函数
-    public addFunction(funcs) {
+    public addFunction(funcs: IFunction) {
         return this.exprContext.addFunction(funcs);
     }
     // 获取函数列表对象
@@ -31,13 +32,13 @@ export default class ExprManager {
             context.calcEntityDependencies(expr, entityName))(this.exprContext));
     }
     // 添加表达式
-    public addExpression(expr, entityName, propertyName, types, callback, scope) {
+    public addExpression(expr: string, entityName: string, propertyName: string, types, callback, scope) {
         /// types = "L|A|U|R"
         this.exprList.add(expr, entityName, propertyName, types, callback, scope);
         return this;
     }
     // 删除表达式
-    public removeExpression(expr, entityName, propertyName, types, callback, scope) {
+    public removeExpression(expr: string, entityName: string, propertyName: string, types, callback, scope) {
         /// types = "L|A|U|R"
         this.exprList.remove(expr, entityName, propertyName, types, callback, scope);
         return this;

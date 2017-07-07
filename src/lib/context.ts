@@ -2,6 +2,7 @@ import Calc from "./base/calc";
 import Check from "./base/check";
 import { format, getValueType, merger } from "./base/common";
 import Context from "./base/context";
+import { IFunction } from "./base/interface";
 import locale from "./base/locale";
 import ExprCurrent from "./current";
 
@@ -15,9 +16,9 @@ export default class ExprContext extends Context {
     private contextVariables = [];                 /// 用于存储环境变量
     private data;                                  /// 全部数据
     private functions = {};                        /// 函数列表
-    private fieldName;
-    private fieldDisplayName;
-    private fieldValue;
+    private fieldName: string;
+    private fieldDisplayName: string;
+    private fieldValue: any;
     // 设置数据游标
     public setDataCursor(cursor) {
         this.exprContext.setDataCursor(cursor);
@@ -35,7 +36,7 @@ export default class ExprContext extends Context {
         this.data = d;
     }
     // 添加函数
-    public addFunction(func) {
+    public addFunction(func: IFunction) {
         let gs;
         gs = {};
         gs[""] = func._ || {};
@@ -597,7 +598,7 @@ export default class ExprContext extends Context {
         this.contextVariables.pop();
     }
     // 计算表达式
-    public _calcExpr(expr, curr) {
+    public _calcExpr(expr: string, curr) {
         if (curr.length > 0) {
             this.exprContext.push(curr);
         }
@@ -611,7 +612,7 @@ export default class ExprContext extends Context {
         return r;
     }
     // 在实体计算环境下计算表达式的值
-    public calcEntityExpr(expr, entityName, cursor) {
+    public calcEntityExpr(expr: string, entityName: string, cursor) {
         const c = [];
         let i = 1;
         while (i < arguments.length) {
@@ -625,7 +626,7 @@ export default class ExprContext extends Context {
         return this._calcExpr(expr, c);
     }
     // 在数据计算环境下计算表达式的值
-    public calcDataExpr(expr, data) {
+    public calcDataExpr(expr: string, data) {
         const c = [];
         let i = 1;
         while (i < arguments.length) {
@@ -638,7 +639,7 @@ export default class ExprContext extends Context {
         return this._calcExpr(expr, c);
     }
     // 计算表达式的依赖关系
-    public calcDependencies(expr, curr) {
+    public calcDependencies(expr: string, curr) {
         if (curr.length > 0) {
             this.exprContext.push(curr);
         }
@@ -652,7 +653,7 @@ export default class ExprContext extends Context {
         return r;
     }
     // 在实体计算环境下计算表达式的依赖关系
-    public calcEntityDependencies(expr, entityName?) {
+    public calcEntityDependencies(expr: string, entityName?: string) {
         const c = [];
         let i = 1;
         while (i < arguments.length) {

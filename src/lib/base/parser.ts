@@ -32,7 +32,7 @@ export default class Parser {
         return this;
     }
     // 初始化语法分析器对象，清空rootToken，tokens和errorMsg
-    private doInit(expr): void {
+    private doInit(expr: string): void {
         if (!expr) {
             this.errorMsg = locale.getLocale().MSG_EP_EMPTY;
         } else {
@@ -76,7 +76,7 @@ export default class Parser {
         };
     }
     // 将表达式构建成Token双向链表
-    private doDoublyLinkedList() {
+    private doDoublyLinkedList(): string {
         let t = this.lexer.nextToken();
         const ts = this.tokens;
         const stack = [];
@@ -219,7 +219,7 @@ export default class Parser {
                 // - 中括号检查
                 case "VTK_ARRAY": /// []
                     if (t.childs && t.childs.length > 0) {
-                        if (t.childs[0] === "TK_COLON") { /// 第一个子节点为":"会报错
+                        if (t.childs[0].tokenType === "TK_COLON") { /// 第一个子节点为":"会报错
                             msg = format(locale.getLocale().MSG_EP_SYNTAX_A, ":");
                         } else if (t.childs[0].tokenType === "VTK_COMMA") {
                             if (t.parent && t.parent.tokenType === "VTK_SUBSCRIPT" &&

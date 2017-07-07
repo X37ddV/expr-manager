@@ -987,6 +987,9 @@ var exprObject = {
         ['{x:23,"$0":"nbgnbv"}["$0"]', '"nbgnbv"'],
         ['{x:23,"$0":"nbgnbv"}[""]', 'null'],
         ['{x:1}.$C', 'null'],
+        ['{a:[[11]]}=={a:[[11]]}', 'true'],
+        ['{a:[[11]]}=={a:[[11]]} && {a:[11]}=={b:[22]}', 'false'],
+        ['{a: 1*1, x}', 'undefined', '对象书写格式不正确'],
     //实体字段
         ['P3', '{"name":"item1","alias":{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}}'],
         ['Root().E2[0].P3', '{"name":"item1","alias":{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}}'],
@@ -1108,7 +1111,8 @@ var exprArray = {
         ['[2,2,3].Distinct("$0")', '[2,3]'],
         ['[{a:1,b:2},{a:2,b:3},{a:3,b:4}].Where("a<=2&&a>1")', '[{"a":2,"b":3}]'],
         ['[{a:1,b:2},{a:2,b:3},{a:2,b:4},{a:1,b:4}].Distinct("a")', '[{"a":1,"b":2},{"a":2,"b":3}]'],
-        ['[1,2,3.3].Count()+[1,2,3.3].Average().ToString()+[1,2,3.3].Sum()+[1,2,3.3].Max().ToString()+[1,2,3.3].Min().ToString()', 'undefined', 'number 和 string 无法做加法运算']
+        ['[1,2,3.3].Count()+[1,2,3.3].Average().ToString()+[1,2,3.3].Sum()+[1,2,3.3].Max().ToString()+[1,2,3.3].Min().ToString()', 'undefined', 'number 和 string 无法做加法运算'],
+        ['[:2]', 'undefined', '[ 后不允许出现 :']
     ]
 };
 var exprNull = {
@@ -1258,6 +1262,7 @@ var exprErr = {
     title: "基于其他的",
     exprs: [
     //
+        ['()', 'undefined', '该处 () 无意义'],
         ['null && 3/0==5', 'false'],
         ['"abc" || 3/0==5','undefined', 'string 无法做逻辑或运算的左运算数'],
     //
@@ -1297,7 +1302,9 @@ var exprErr = {
         ['true.Average()', 'undefined', 'boolean 没有名称为 Average 的方法或参数不匹配'],
     //拼写
         ['IIf', 'undefined', '属性不存在: IIf'],
-        ['iif(true, false)', 'undefined', ' 没有名称为 iif 的方法或参数不匹配']
+        ['iif(true, false)', 'undefined', ' 没有名称为 iif 的方法或参数不匹配'],
+    //其他
+        ['(#∑)', 'undefined', '无法识别 #∑']
     ]
 };
 
@@ -1309,10 +1316,10 @@ var exprTemp = {
        ['PropValue([{name:1},{name:2}], "type")', 'null'],
        ['123.ToRMB(false, false)', '"一百二十三"'],
        ['00002010.00100.ToRMB()', '"贰仟零壹拾元零壹厘"'],
-       ['FieldName()', 'null'],
-       ['FieldValue()', 'null'],
-       ['FieldDisplayName()', 'null'],
-       ['$C.userId', '"admin"'],
+       ['FieldName()', '""'],
+       ['FieldValue()', '""'],
+       ['FieldDisplayName()', '""'],
+       ['$C.userId + ""', '"admin"'],
        ['[1]+[2]', '[1,2]'],
        ['Random() >= 0 && Random() <= 1', 'true']
     ]

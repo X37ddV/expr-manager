@@ -17,11 +17,11 @@ export default class ExprCurrent {
         this.curr.shift();
     }
     // 栈顶计算环境的params属性是否存在第index条记录
-    public isValid(index) {
+    public isValid(index: number) {
         return index >= 0 && this.curr.length > 0 && index < this.curr[0].params.length;
     }
     // 栈顶计算环境的params属性的第index条记录是否为实体数据
-    public isEntityData(index?) {
+    public isEntityData(index?: number) {
         if (this.curr.length > 0) {
             const c = this.curr[0];
             c.pIndex = index || 0;
@@ -31,11 +31,11 @@ export default class ExprCurrent {
         }
     }
     // 得到栈顶计算环境的params属性的第index条记录存储的实体名
-    public getEntityName(index?) {
+    public getEntityName(index?: number) {
         return this.getData(index) || "";
     }
     // 得到实体全名称entityName的访问游标
-    public getEntityDataCursor(entityName, index?) {
+    public getEntityDataCursor(entityName: string, index?: number) {
         let r = entityName ? this.dataCursor[entityName] : 0;
         /// 从计算环境中得到已经存好的访问游标，如：Root().E1[1].Entity1.Sum("ID")中的1
         for (let i = 0; i < this.curr.length; i++) {
@@ -52,7 +52,7 @@ export default class ExprCurrent {
         return r;
     }
     // 得到栈顶计算环境的params属性的第index条记录存储的数据
-    public getData(index) {
+    public getData(index: number) {
         let r;
         if (this.curr.length > 0) {
             const c = this.curr[0];

@@ -1964,7 +1964,7 @@ var Parser = (function () {
                 // - 中括号检查
                 case "VTK_ARRAY":
                     if (t.childs && t.childs.length > 0) {
-                        if (t.childs[0] === "TK_COLON") {
+                        if (t.childs[0].tokenType === "TK_COLON") {
                             msg = format(locale.getLocale().MSG_EP_SYNTAX_A, ":");
                         }
                         else if (t.childs[0].tokenType === "VTK_COMMA") {
@@ -3351,6 +3351,7 @@ var Check = (function () {
     // 设置某token结点ID对应的ExprType对象
     Check.prototype.setType = function (tokenId, t) {
         this.types[tokenId] = t;
+        return this;
     };
     // 对表达式进行语法分析和依赖关系计算
     Check.prototype.check = function (expr, context) {

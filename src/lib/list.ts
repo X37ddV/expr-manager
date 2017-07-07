@@ -8,7 +8,7 @@ export default class ExprList {
     private list = [];
     private cache = {};
     private sorted = false;
-    public _getExprs(entity, property, type) {
+    public _getExprs(entity: string, property: string, type) {
         const name = property ? entity + "." + property : entity;
         const isLoadOrAdd = type === "L" || type === "A";
         const key = name + "|" + type;
@@ -215,7 +215,7 @@ export default class ExprList {
         this.sorted = false;
     }
     // 添加表达式
-    public add(expr, entityName, propertyName, types, callback, scope) {
+    public add(expr: string, entityName: string, propertyName: string, types, callback, scope) {
         this.cache = {};
         this.sorted = false;
         let index = -1;
@@ -240,7 +240,7 @@ export default class ExprList {
         }
     }
     // 删除表达式
-    public remove(expr, entityName, propertyName, types, callback, scope) {
+    public remove(expr: string, entityName: string, propertyName: string, types, callback, scope) {
         this.cache = {};
         this.sorted = false;
         for (let i = 0; i < this.list.length; i++) {
@@ -322,16 +322,16 @@ export default class ExprList {
         }
         return msg;
     }
-    public getExprsByUpdate(entityName, propertyName) {
+    public getExprsByUpdate(entityName: string, propertyName: string) {
         return this._getExprs(entityName, propertyName, "U");
     }
-    public getExprsByLoad(entityName) {
+    public getExprsByLoad(entityName: string) {
         return this._getExprs(entityName, "", "L");
     }
-    public getExprsByAdd(entityName) {
+    public getExprsByAdd(entityName: string) {
         return this._getExprs(entityName, "", "A");
     }
-    public getExprsByRemove(entityName) {
+    public getExprsByRemove(entityName: string) {
         return this._getExprs(entityName, "", "R");
     }
 }

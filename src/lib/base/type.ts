@@ -1,20 +1,20 @@
 import locale from "../base/locale";
 import { format } from "./common";
-import { IContext } from "./interface";
+import { IContext, ValueType } from "./interface";
 
 // 类型
 // ----------
 
 export default class Type {
     private context: IContext;
-    private type;
+    private type: ValueType;
     private info;
     private data;
     private entity;
     private depends;
     private errorMsg;
     // 类型构造函数
-    constructor(context: IContext, type, info, data, entity, depends, errorMsg) {
+    constructor(context: IContext, type: ValueType, info, data, entity, depends, errorMsg: string) {
         this.context = context;
         this.type = type || "undefined";
         this.info = info || type;
@@ -24,23 +24,23 @@ export default class Type {
         this.errorMsg = errorMsg || "";
     }
     // 生成类型对象
-    public genType(type, info?, data?, entity?, depends?, errorMsg?) {
+    public genType(type: ValueType, info?, data?, entity?, depends?, errorMsg?: string): Type {
         return new Type(this.context, type, info, data, entity, depends, errorMsg);
     }
     // 生成错误类型对象
-    public genErrorType(errorMsg) {
+    public genErrorType(errorMsg: string): Type {
         return this.genType(undefined, undefined, undefined, undefined, undefined, errorMsg);
     }
     // 该类型对象是否包含了数据
-    public hasData() {
+    public hasData(): boolean {
         return this.data !== undefined;
     }
     // 得到类型值
-    public toValue() {
+    public toValue(): ValueType {
         return this.type;
     }
     // 追加数组元素
-    public arrayPush(et) {
+    public arrayPush(et): Type {
         if (this.type === "array") {
             this.info.push(et.info); /// info存储数组元素的类型
             this.data.push(et.data); /// data存储数组元素的值
@@ -48,7 +48,7 @@ export default class Type {
         return this;
     }
     // 连接数组元素
-    public arrayConcat(et) {
+    public arrayConcat(et): Type {
         if (this.type === "array" && et.type === "array") {
             this.info = this.info.concat(et.info); /// info存储数组元素的类型
             this.data = this.data.concat(et.data); /// data存储数组元素的值
@@ -56,7 +56,7 @@ export default class Type {
         return this;
     }
     // 设置对象属性
-    public objectSetProperty(et) {
+    public objectSetProperty(et): Type {
         if (this.type === "object") {
             const h = et.info;
             this.info[h.key] = h.value;
@@ -66,7 +66,7 @@ export default class Type {
         return this;
     }
     // 批量设置对象属性
-    public objectSetProperties(et) {
+    public objectSetProperties(et): Type {
         if (this.type === "object" && et.type === "array") {
             for (const item of et.info) {
                 this.info[item.key] = item.value;

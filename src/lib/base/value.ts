@@ -1,7 +1,7 @@
 import Decimal from "decimal.js";
 import locale from "../base/locale";
 import { compare, format, getValueType } from "./common";
-import { IContext } from "./interface";
+import { IContext, ValueType } from "./interface";
 
 // 大数据值计算对象
 const Big = (v) => {
@@ -13,13 +13,13 @@ const Big = (v) => {
 
 export default class Value {
     private context: IContext;
-    private type;
-    private value;
+    private type: ValueType;
+    private value: any;
     private entity;
     private errorMsg;
     private parentObj;
     // 值构造函数
-    constructor(context: IContext, value, type, entity, errorMsg, parentObj) {
+    constructor(context: IContext, value: any, type: ValueType, entity, errorMsg: string, parentObj) {
         this.context = context;
         this.type = type ? type : getValueType(value);
         if (this.type === "number") {
@@ -31,19 +31,19 @@ export default class Value {
         this.parentObj = parentObj || null;
     }
     // 生成值对象
-    public genValue(value, type?, entity?, errorMsg?, parentObj?) {
+    public genValue(value: any, type?: ValueType, entity?, errorMsg?: string, parentObj?): Value {
         return new Value(this.context, value, type, entity, errorMsg, parentObj);
     }
     // 生成错误值对象
-    public genErrorValue(errorMsg) {
+    public genErrorValue(errorMsg: string): Value {
         return this.genValue(undefined, undefined, undefined, errorMsg, undefined);
     }
     // 得到值内容
-    public toValue() {
+    public toValue(): any {
         return this.type === "number" ? Number(this.value) : this.value;
     }
     // 是否为实体
-    public isEntity() {
+    public isEntity(): boolean {
         return this.entity != null;
     }
     // 追加数组元素
@@ -55,14 +55,14 @@ export default class Value {
         return this;
     }
     // 连接数组元素
-    public arrayConcat(ev) {
+    public arrayConcat(ev): Value {
         if (this.type === "array" && ev.type === "array") {
             this.value = this.toValue().concat(ev.toValue());
         }
         return this;
     }
     // 设置对象属性
-    public objectSetProperty(ev) {
+    public objectSetProperty(ev): Value {
         if (this.type === "object") {
             const h = ev.toValue();
             this.value[h.key] = h.value;
@@ -70,7 +70,7 @@ export default class Value {
         return this;
     }
     // 批量设置对象属性
-    public objectSetProperties(ev) {
+    public objectSetProperties(ev): Value {
         if (this.type === "object" && ev.type === "array") {
             const h = ev.toValue();
             for (const item of h) {

@@ -15,19 +15,19 @@ interface IExprItem {
 export default class Context implements IContext {
     private exprList: IExprItem[] = [];
     // 生成ExprValue对象
-    public genValue(value, type?, entity?, errorMsg?, parentObj?) {
+    public genValue(value, type?, entity?, errorMsg?, parentObj?): Value {
         return new Value(this, value, type, entity, errorMsg, parentObj);
     }
     // 有错误时，生成对应的ExprValue对象
-    public genErrorValue(errorMsg: string) {
+    public genErrorValue(errorMsg: string): Value {
         return this.genValue(undefined, undefined, undefined, errorMsg, undefined);
     }
     // 生成ExprType对象
-    public genType(type?, info?, data?, entity?, depends?, errorMsg?) {
+    public genType(type?, info?, data?, entity?, depends?, errorMsg?): Type {
         return new Type(this, type, info, data, entity, depends, errorMsg);
     }
     // 有错误时，生成对应的ExprType对象
-    public genErrorType(errorMsg) {
+    public genErrorType(errorMsg): Type {
         return this.genType(undefined, undefined, undefined, undefined, undefined, errorMsg);
     }
     // 得到函数source.name(paramValue)返回值的ExprType对象

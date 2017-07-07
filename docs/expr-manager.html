@@ -4209,7 +4209,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             
             <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">case</span> <span class="hljs-string">"VTK_ARRAY"</span>:
                     <span class="hljs-keyword">if</span> (t.childs &amp;&amp; t.childs.length &gt; <span class="hljs-number">0</span>) {
-                        <span class="hljs-keyword">if</span> (t.childs[<span class="hljs-number">0</span>] === <span class="hljs-string">"TK_COLON"</span>) {
+                        <span class="hljs-keyword">if</span> (t.childs[<span class="hljs-number">0</span>].tokenType === <span class="hljs-string">"TK_COLON"</span>) {
                             msg = format(locale.getLocale().MSG_EP_SYNTAX_A, <span class="hljs-string">":"</span>);
                         }
                         <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (t.childs[<span class="hljs-number">0</span>].tokenType === <span class="hljs-string">"VTK_COMMA"</span>) {
@@ -6981,6 +6981,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             
             <div class="content"><div class='highlight'><pre>    Check.prototype.setType = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">tokenId, t</span>) </span>{
         <span class="hljs-keyword">this</span>.types[tokenId] = t;
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
     };</pre></div></div>
             
         </li>
