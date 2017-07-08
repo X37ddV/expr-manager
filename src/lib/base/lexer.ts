@@ -11,11 +11,6 @@ export default class Lexer {
     // 设置表达式
     public setExpr(expr: string): Lexer {
         this.expr = expr ? expr.split("") : [];
-        this.reset();
-        return this;
-    }
-    // 重置词法分析器，以便再次从头开始解析
-    public reset(): Lexer {
         this.index = 0;
         return this;
     }

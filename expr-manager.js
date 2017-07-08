@@ -1379,583 +1379,34 @@ var func = {
     string: func_string,
 };
 
-// 大数据值计算对象
-var Big = function (v) {
-    return new Decimal(v);
-};
-// 值
-// ----------
-var Value = (function () {
-    // 值构造函数
-    function Value(context, value, type, entity, errorMsg, parentObj) {
-        this.context = context;
-        this.type = type ? type : getValueType(value);
-        if (this.type === "number") {
-            value += "";
-        }
-        this.value = value;
-        this.entity = entity || null;
-        this.errorMsg = errorMsg || "";
-        this.parentObj = parentObj || null;
-    }
-    // 生成值对象
-    Value.prototype.genValue = function (value, type, entity, errorMsg, parentObj) {
-        return new Value(this.context, value, type, entity, errorMsg, parentObj);
-    };
-    // 生成错误值对象
-    Value.prototype.genErrorValue = function (errorMsg) {
-        return this.genValue(undefined, undefined, undefined, errorMsg, undefined);
-    };
-    // 得到值内容
-    Value.prototype.toValue = function () {
-        return this.type === "number" ? Number(this.value) : this.value;
-    };
-    // 是否为实体
-    Value.prototype.isEntity = function () {
-        return this.entity != null;
-    };
-    // 追加数组元素
-    Value.prototype.arrayPush = function (ev) {
-        if (this.type === "array") {
-            ev = ev || this.genValue(null);
-            this.toValue().push(ev.toValue());
-        }
-        return this;
-    };
-    // 连接数组元素
-    Value.prototype.arrayConcat = function (ev) {
-        if (this.type === "array" && ev.type === "array") {
-            this.value = this.toValue().concat(ev.toValue());
-        }
-        return this;
-    };
-    // 设置对象属性
-    Value.prototype.objectSetProperty = function (ev) {
-        if (this.type === "object") {
-            var h = ev.toValue();
-            this.value[h.key] = h.value;
-        }
-        return this;
-    };
-    // 批量设置对象属性
-    Value.prototype.objectSetProperties = function (ev) {
-        if (this.type === "object" && ev.type === "array") {
-            var h = ev.toValue();
-            for (var _i = 0, h_1 = h; _i < h_1.length; _i++) {
-                var item = h_1[_i];
-                this.value[item.key] = item.value;
-            }
-        }
-        return this;
-    };
-    // 取正/负值
-    Value.prototype.negative = function (op) {
-        var v;
-        if (this.type === "null") {
-            v = this.genValue("0", "number");
-        }
-        else if (this.type === "number") {
-            v = op === "-" ? Big(this.value).times(Big(-1)).toString() : this.value;
-            v = this.genValue(v, "number");
-        }
-        else {
-            v = op === "-" ? locale.getLocale().MSG_EX_NEGATIVE : locale.getLocale().MSG_EX_POSITIVE;
-            v = this.genErrorValue(format(v, this.type));
-        }
-        return v;
-    };
-    // 非运算
-    Value.prototype.not = function () {
-        return (this.type === "boolean") ?
-            this.genValue(!this.value, "boolean") :
-            (this.type === "string" && this.value === "" || this.type === "number" && this.value === "0"
-                || this.type === "null") ?
-                this.genValue(true, "boolean") :
-                this.genValue(false, "boolean");
-    };
-    // 乘法
-    Value.prototype.multiply = function (ev) {
-        var v;
-        if (this.type === "null" && ev.type === "null") {
-            v = this.genValue(null, "null");
-        }
-        else if ((this.type === "number" || this.type === "null") && (ev.type === "number" || ev.type === "null")) {
-            var vl = Big(this.value || "0");
-            var vr = Big(ev.value || "0");
-            v = this.genValue(vl.times(vr).toString(), "number");
-        }
-        else {
-            v = this.genErrorValue(format(locale.getLocale().MSG_EX_MULTIPLY, this.type, ev.type));
-        }
-        return v;
-    };
-    // 除法
-    Value.prototype.divide = function (ev) {
-        var v;
-        if (this.type === "null" && ev.type === "null") {
-            v = this.genValue(null, "null");
-        }
-        else if (ev.type === "null" || ev.type === "number" && ev.value === "0") {
-            v = this.genErrorValue(format(locale.getLocale().MSG_EX_DIVIDE_N, ev.value));
-        }
-        else if ((this.type === "number" || this.type === "null") && (ev.type === "number")) {
-            var vl = Big(this.value || "0");
-            var vr = Big(ev.value);
-            v = this.genValue(vl.div(vr).toString(), "number");
-        }
-        else {
-            v = this.genErrorValue(format(locale.getLocale().MSG_EX_DIVIDE, this.type, ev.type));
-        }
-        return v;
-    };
-    // 求余
-    Value.prototype.remainder = function (ev) {
-        var v;
-        if (this.type === "null" && ev.type === "null") {
-            v = this.genValue(null, "null");
-        }
-        else if (ev.type === "null" || ev.type === "number" && ev.value === "0") {
-            v = this.genErrorValue(format(locale.getLocale().MSG_EX_REMAINDER_N, ev.value));
-        }
-        else if ((this.type === "number" || this.type === "null") && (ev.type === "number")) {
-            var vl = Big(this.value || "0");
-            var vr = Big(ev.value);
-            v = this.genValue(vl.mod(vr).toString(), "number");
-        }
-        else {
-            v = this.genErrorValue(format(locale.getLocale().MSG_EX_REMAINDER, this.type, ev.type));
-        }
-        return v;
-    };
-    // 加法
-    Value.prototype.add = function (ev) {
-        var v;
-        var vl;
-        var vr;
-        if (this.type === "null" && ev.type === "null") {
-            v = this.genValue(null, "null");
-        }
-        else if ((this.type === "number" || this.type === "null") && (ev.type === "number" || ev.type === "null")) {
-            vl = Big(this.value || "0");
-            vr = Big(ev.value || "0");
-            v = this.genValue(vl.plus(vr).toString(), "number");
-        }
-        else if ((this.type === "string" || this.type === "null") && (ev.type === "string" || ev.type === "null")) {
-            vl = this.toValue();
-            vr = ev.toValue();
-            vl = vl || "";
-            vr = vr || "";
-            v = this.genValue(vl + vr, "string");
-        }
-        else if ((this.type === "array" || this.type === "null") && (ev.type === "array" || ev.type === "null")) {
-            vl = this.value || [];
-            vr = ev.value || [];
-            v = this.genValue(vl.concat(vr), "array");
-        }
-        else {
-            v = this.genErrorValue(format(locale.getLocale().MSG_EX_ADD, this.type, ev.type));
-        }
-        return v;
-    };
-    // 减法
-    Value.prototype.subtract = function (ev) {
-        var v;
-        var vl;
-        var vr;
-        if (this.type === "null" && ev.type === "null") {
-            v = this.genValue(null, "null");
-        }
-        else if ((this.type === "number" || this.type === "null") && (ev.type === "number" || ev.type === "null")) {
-            vl = Big(this.value || "0");
-            vr = Big(ev.value || "0");
-            v = this.genValue(vl.minus(vr).toString(), "number");
-        }
-        else if ((this.type === "array" || this.type === "null") && (ev.type === "array" || ev.type === "null")) {
-            vl = this.value || [];
-            vr = ev.value || [];
-            v = [];
-            var found = void 0;
-            for (var _i = 0, vl_1 = vl; _i < vl_1.length; _i++) {
-                var left = vl_1[_i];
-                found = false;
-                for (var _a = 0, vr_1 = vr; _a < vr_1.length; _a++) {
-                    var right = vr_1[_a];
-                    found = compare(left, right);
-                    if (found) {
-                        break;
-                    }
-                }
-                if (!found) {
-                    v.push(left);
-                }
-            }
-            v = this.genValue(v, "array");
-        }
-        else {
-            v = this.genErrorValue(format(locale.getLocale().MSG_EX_SUBTRACT, this.type, ev.type));
-        }
-        return v;
-    };
-    // 等于
-    Value.prototype.equal = function (ev, op) {
-        var v;
-        var vl;
-        var vr;
-        var b = op === "==";
-        if (this.type === "null" && ev.type === "null") {
-            v = this.genValue(b, "boolean");
-        }
-        else if (this.type === "null" || ev.type === "null") {
-            v = this.genValue(!b, "boolean");
-        }
-        else if (this.type === "number" && ev.type === "number") {
-            vl = Big(this.value);
-            vr = Big(ev.value);
-            v = vl.equals(vr);
-            v = this.genValue(b ? v : !v, "boolean");
-        }
-        else if (this.type === ev.type) {
-            v = compare(this.value, ev.value);
-            v = this.genValue(b ? v : !v, "boolean");
-        }
-        else {
-            v = b ? locale.getLocale().MSG_EX_EQUAL : locale.getLocale().MSG_EX_EQUAL_N;
-            v = this.genErrorValue(format(v, this.type, ev.type));
-        }
-        return v;
-    };
-    // 比较运算
-    Value.prototype.compare = function (ev, op) {
-        if (op === "==" || op === "!=") {
-            return this.equal(ev, op);
-        }
-        else {
-            var v = void 0;
-            if ((this.type === "string" || this.type === "null") && (ev.type === "string" || ev.type === "null")) {
-                switch (op) {
-                    case ">":
-                        v = this.value > ev.value;
-                        break;
-                    case "<":
-                        v = this.value < ev.value;
-                        break;
-                    case ">=":
-                        v = this.value >= ev.value;
-                        break;
-                    case "<=":
-                        v = this.value <= ev.value;
-                        break;
-                    default: break;
-                }
-                v = this.genValue(v, "boolean");
-            }
-            else if ((this.type === "date" || this.type === "null") && (ev.type === "date" || ev.type === "null")) {
-                v = this.value - ev.value;
-                switch (op) {
-                    case ">":
-                        v = v > 0;
-                        break;
-                    case "<":
-                        v = v < 0;
-                        break;
-                    case ">=":
-                        v = v >= 0;
-                        break;
-                    case "<=":
-                        v = v <= 0;
-                        break;
-                    default: break;
-                }
-                v = this.genValue(v, "boolean");
-            }
-            else if ((this.type === "number" || this.type === "null") &&
-                (ev.type === "number" || ev.type === "null")) {
-                var vl = void 0;
-                var vr = void 0;
-                vl = Big(this.value || "0");
-                vr = Big(ev.value || "0");
-                switch (op) {
-                    case ">":
-                        v = vl.greaterThan(vr);
-                        break;
-                    case "<":
-                        v = vl.lessThan(vr);
-                        break;
-                    case ">=":
-                        v = vl.greaterThanOrEqualTo(vr);
-                        break;
-                    case "<=":
-                        v = vl.lessThanOrEqualTo(vr);
-                        break;
-                    default: break;
-                }
-                v = this.genValue(v, "boolean");
-            }
-            else {
-                switch (op) {
-                    case ">":
-                        v = locale.getLocale().MSG_EX_COMPARE_A;
-                        break;
-                    case "<":
-                        v = locale.getLocale().MSG_EX_COMPARE_B;
-                        break;
-                    case ">=":
-                        v = locale.getLocale().MSG_EX_COMPARE_C;
-                        break;
-                    case "<=":
-                        v = locale.getLocale().MSG_EX_COMPARE_D;
-                        break;
-                    default: break;
-                }
-                v = this.genErrorValue(format(v, this.type, ev.type));
-            }
-            return v;
-        }
-    };
-    // 与运算
-    Value.prototype.and = function (ev) {
-        var v;
-        if (!ev) {
-            v = (this.type === "boolean" || this.type === "null") ?
-                this.genValue(false, "boolean") :
-                this.genErrorValue(format(locale.getLocale().MSG_EX_AND_L, this.type));
-        }
-        else {
-            v = (this.type === "boolean" && (ev.type === "boolean" || ev.type === "null")) ?
-                this.genValue(!!(this.value && ev.value), "boolean") :
-                this.genErrorValue(format(locale.getLocale().MSG_EX_AND, this.type, ev.type));
-        }
-        return v;
-    };
-    // 或运算
-    Value.prototype.or = function (ev) {
-        var v;
-        if (!ev) {
-            v = (this.type === "boolean") ?
-                this.genValue(true, "boolean") :
-                this.genErrorValue(format(locale.getLocale().MSG_EX_OR_L, this.type));
-        }
-        else {
-            v = ((this.type === "boolean" || this.type === "null") && (ev.type === "boolean" || ev.type === "null")) ?
-                this.genValue(!!(this.value || ev.value), "boolean") :
-                this.genErrorValue(format(locale.getLocale().MSG_EX_OR, this.type, ev.type));
-        }
-        return v;
-    };
-    // 下标运算
-    Value.prototype.subscript = function (ev) {
-        var v;
-        var i;
-        var t;
-        if (ev.type === "array") {
-            i = ev.toValue()[0];
-            t = getValueType(i);
-        }
-        else {
-            i = ev.toValue();
-            t = ev.type;
-        }
-        if (this.type === "string" || this.type === "array") {
-            if (t === "number") {
-                v = this.toValue();
-                if (v.length > i && i >= 0 && v.length > 0) {
-                    if (this.type === "array" && this.entity) {
-                        v = this.context.getEntityValue(this, i);
-                    }
-                    else {
-                        v = v[i];
-                        v = this.genValue(v, getValueType(v), null);
-                    }
-                }
-                else {
-                    v = this.genErrorValue(format(locale.getLocale().MSG_EX_SUBSCRIPT_U, this.type, i));
-                }
-            }
-            else {
-                v = this.genErrorValue(format(locale.getLocale().MSG_EX_SUBSCRIPT_T, i));
-            }
-        }
-        else if (this.type === "object") {
-            v = this.genValue(i);
-            v = v.getVariableValue(this);
-        }
-        else {
-            v = this.genErrorValue(format(locale.getLocale().MSG_EX_SUBSCRIPT, this.type));
-        }
-        return v;
-    };
-    // 获取{key:...,value:...}键值对对象
-    Value.prototype.hashItem = function (ev) {
-        return this.genValue({ key: this.toValue(), value: ev.toValue() }, "object");
-    };
-    // 获取变量值
-    Value.prototype.getVariableValue = function (ev) {
-        return (ev && ev.type !== "object") ?
-            this.genErrorValue(format(locale.getLocale().MSG_EX_DOT, ev.type)) :
-            this.context.getVariableValue(this.toValue(), ev);
-    };
-    // 获取函数返回结果值
-    Value.prototype.getFunctionValue = function (ev) {
-        var v = this.toValue();
-        return (ev && ev.value === null) ?
-            this.genErrorValue(format(locale.getLocale().MSG_EX_FUNC_NULL, v.key)) :
-            this.context.getFunctionValue(v.key, ev, v.value);
-    };
-    // 绝对值
-    Value.prototype.abs = function () {
-        var v = Big(this.value || "0");
-        return this.genValue(v.abs().toString(), "number");
-    };
-    // 向上取整
-    Value.prototype.ceil = function () {
-        var v = Big(this.value || "0");
-        return this.genValue(v.ceil().toString(), "number");
-    };
-    // 向下取整
-    Value.prototype.floor = function () {
-        var v = Big(this.value || "0");
-        return this.genValue(v.floor().toString(), "number");
-    };
-    // 四舍五入保留scale位小数
-    Value.prototype.round = function (scale) {
-        var v;
-        if (scale >= 0) {
-            v = Big(this.value || "0");
-            v = v.toDecimalPlaces(scale, 4);
-            v = this.genValue(v.toString(), "number");
-        }
-        else {
-            v = this.genErrorValue(format(locale.getLocale().MSG_EX_ROUND, scale));
-        }
-        return v;
-    };
-    // 按精度截断数据
-    Value.prototype.trunc = function (scale) {
-        var v;
-        if (scale >= 0) {
-            v = Big(this.value || "0");
-            v = v.toDecimalPlaces(scale, 1);
-            v = this.genValue(v.toString(), "number");
-        }
-        else {
-            v = this.genErrorValue(format(locale.getLocale().MSG_EX_TRUNC, scale));
-        }
-        return v;
-    };
-    // 获取数的余弦
-    Value.prototype.cos = function () {
-        var v = Big(this.value || "0");
-        var name = "cos";
-        v = v[name]();
-        return this.genValue(v.toString(), "number");
-    };
-    // 获取 e 的指数
-    Value.prototype.exp = function () {
-        var v = Big(this.value || "0");
-        v = v.exp();
-        return this.genValue(v.toString(), "number");
-    };
-    // 获取数的自然对数（底为 e）
-    Value.prototype.ln = function () {
-        var value;
-        var v = Big(this.value || "0");
-        if (v.greaterThan("0")) {
-            v = v.ln();
-            value = this.genValue(v.toString(), "number");
-        }
-        else {
-            value = this.genErrorValue(format(locale.getLocale().MSG_EX_LN, v.toString()));
-        }
-        return value;
-    };
-    // 获取数的指定底数的对数
-    Value.prototype.log = function (base) {
-        var value;
-        var v = Big(this.value || "0");
-        if (v.greaterThan("0") && base > 0 && base !== 1) {
-            v = v.log(base);
-            value = this.genValue(v.toString(), "number");
-        }
-        else {
-            value = this.genErrorValue(format(locale.getLocale().MSG_EX_LOG, base, v.toString()));
-        }
-        return value;
-    };
-    // 获取数的指定指数的次幂
-    Value.prototype.power = function (exponent) {
-        var v = Big(this.value || "0");
-        v = v.pow(exponent);
-        return this.genValue(v.toString(), "number");
-    };
-    // 获取数的正弦
-    Value.prototype.sin = function () {
-        var v = Big(this.value || "0");
-        var name = "sin";
-        v = v[name]();
-        return this.genValue(v.toString(), "number");
-    };
-    // 获取数的平方根
-    Value.prototype.sqrt = function () {
-        var v = Big(this.value || "0");
-        v = v.sqrt();
-        return this.genValue(v.toString(), "number");
-    };
-    // 获取树的正切值
-    Value.prototype.tan = function () {
-        var v = Big(this.value || "0");
-        var name = "tan";
-        v = v[name]();
-        return this.genValue(v.toString(), "number");
-    };
-    return Value;
-}());
-
 // 表达式计算
 // ----------
 var Calc = (function () {
     function Calc() {
-        this.context = null;
         this.values = {};
     }
-    // 生成ExprValue对象
-    Calc.prototype.genValue = function (value, type, entity, errorMsg, parentObj) {
-        return new Value(this.context, value, type, entity, errorMsg, parentObj);
-    };
-    // 有错误时，生成对应的ExprValue对象
-    Calc.prototype.genErrorValue = function (errorMsg) {
-        return this.genValue(undefined, undefined, undefined, errorMsg, undefined);
-    };
-    // 根据token结点ID返回对应的ExprValue对象
-    Calc.prototype.getValue = function (tokenId) {
-        return this.values[tokenId];
-    };
-    // 设置某token结点ID对应的ExprValue对象
-    Calc.prototype.setValue = function (tokenId, v) {
-        this.values[tokenId] = v;
-    };
     // 对表达式进行语法分析和数值计算
     Calc.prototype.calc = function (expr, context) {
-        this.context = context;
         var r;
-        var p = this.context.getParserInfo(expr);
+        var p = context.getParserInfo(expr);
         if (p.errorMsg === "") {
-            var msg = this.doCalc(p.rootToken);
+            var msg = this.doCalc(p.rootToken, context);
             if (msg === "") {
-                r = this.getValue(p.rootToken.id);
+                r = this.values[p.rootToken.id];
                 r.tokens = p.tokens;
                 r.rootToken = p.rootToken;
             }
             else {
-                r = this.genErrorValue(msg);
+                r = context.genErrorValue(msg);
             }
         }
         else {
-            r = this.genErrorValue(p.errorMsg);
+            r = context.genErrorValue(p.errorMsg);
         }
         return r;
     };
     // 对表达式进行数值计算
-    Calc.prototype.doCalc = function (rootToken) {
+    Calc.prototype.doCalc = function (rootToken, context) {
         var t = rootToken;
         var p = t.parent;
         var msg = "";
@@ -1965,16 +1416,16 @@ var Calc = (function () {
         var lv;
         var rv;
         if (t.childs) {
-            var isIfNull = this.context.isIfNullToken(t);
-            var isIIf = this.context.isIIfToken(t);
+            var isIfNull = context.isIfNullToken(t);
+            var isIIf = context.isIIfToken(t);
             for (var i = 0; i < t.childs.length; i++) {
-                msg = this.doCalc(t.childs[i]);
+                msg = this.doCalc(t.childs[i], context);
                 if (msg !== "") {
                     break;
                 }
                 else if (i === 0) {
                     l = t.childs[0];
-                    lv = this.getValue(l.id);
+                    lv = this.values[l.id];
                     if (isIfNull && lv.toValue() !== null) {
                         break;
                     }
@@ -1988,7 +1439,7 @@ var Calc = (function () {
                 }
                 else if (i === 1) {
                     r = t.childs[1];
-                    rv = this.getValue(r.id);
+                    rv = this.values[r.id];
                     if (isIIf) {
                         break;
                     }
@@ -1998,19 +1449,19 @@ var Calc = (function () {
         if (msg === "") {
             switch (t.tokenType) {
                 case "TK_STRING":
-                    tv = this.genValue(t.tokenValue, "string");
+                    tv = context.genValue(t.tokenValue, "string");
                     break;
                 case "TK_NUMBER":
-                    tv = this.genValue(t.tokenValue, "number");
+                    tv = context.genValue(t.tokenValue, "number");
                     break;
                 case "TK_BOOL":
-                    tv = this.genValue(t.tokenValue === "true", "boolean");
+                    tv = context.genValue(t.tokenValue === "true", "boolean");
                     break;
                 case "TK_NULL":
-                    tv = this.genValue(null, "null");
+                    tv = context.genValue(null, "null");
                     break;
                 case "TK_IDEN":
-                    tv = this.genValue(t.tokenValue, "string");
+                    tv = context.genValue(t.tokenValue, "string");
                     if (isIDENToken(t)) {
                         tv = tv.getVariableValue(null);
                     }
@@ -2062,22 +1513,22 @@ var Calc = (function () {
                     }
                     break;
                 case "VTK_COMMA":
-                    tv = this.genValue([], "array");
+                    tv = context.genValue([], "array");
                     for (var _i = 0, _a = t.childs; _i < _a.length; _i++) {
                         var item = _a[_i];
-                        lv = this.getValue(item.id);
+                        lv = this.values[item.id];
                         tv.arrayPush(lv);
                     }
                     break;
                 case "VTK_PAREN":
                     tv = (t.childs.length === 0) ?
-                        this.genValue([], "array") :
+                        context.genValue([], "array") :
                         (p && p.tokenType === "TK_IDEN" && l.tokenType !== "VTK_COMMA") ?
-                            this.genValue([], "array").arrayPush(lv) :
+                            context.genValue([], "array").arrayPush(lv) :
                             lv;
                     break;
                 case "VTK_ARRAY":
-                    tv = this.genValue([], "array");
+                    tv = context.genValue([], "array");
                     if (t.childs.length > 0) {
                         if (l.tokenType === "VTK_COMMA") {
                             tv.arrayConcat(lv);
@@ -2088,7 +1539,7 @@ var Calc = (function () {
                     }
                     break;
                 case "VTK_OBJECT":
-                    tv = this.genValue({}, "object");
+                    tv = context.genValue({}, "object");
                     if (t.childs.length > 0) {
                         if (l.tokenType === "VTK_COMMA") {
                             tv.objectSetProperties(lv);
@@ -2111,7 +1562,7 @@ var Calc = (function () {
             }
             msg = tv.errorMsg;
             if (msg === "") {
-                this.setValue(t.id, tv);
+                this.values[t.id] = tv;
             }
         }
         return msg;
@@ -2119,298 +1570,21 @@ var Calc = (function () {
     return Calc;
 }());
 
-// 类型
-// ----------
-var Type = (function () {
-    // 类型构造函数
-    function Type(context, type, info, data, entity, depends, errorMsg) {
-        this.context = context;
-        this.type = type || "undefined";
-        this.info = info || type;
-        this.data = data;
-        this.entity = entity || null;
-        this.depends = depends || null;
-        this.errorMsg = errorMsg || "";
-    }
-    // 生成类型对象
-    Type.prototype.genType = function (type, info, data, entity, depends, errorMsg) {
-        return new Type(this.context, type, info, data, entity, depends, errorMsg);
-    };
-    // 生成错误类型对象
-    Type.prototype.genErrorType = function (errorMsg) {
-        return this.genType(undefined, undefined, undefined, undefined, undefined, errorMsg);
-    };
-    // 该类型对象是否包含了数据
-    Type.prototype.hasData = function () {
-        return this.data !== undefined;
-    };
-    // 得到类型值
-    Type.prototype.toValue = function () {
-        return this.type;
-    };
-    // 追加数组元素
-    Type.prototype.arrayPush = function (et) {
-        if (this.type === "array") {
-            this.info.push(et.info);
-            this.data.push(et.data);
-        }
-        return this;
-    };
-    // 连接数组元素
-    Type.prototype.arrayConcat = function (et) {
-        if (this.type === "array" && et.type === "array") {
-            this.info = this.info.concat(et.info);
-            this.data = this.data.concat(et.data);
-        }
-        return this;
-    };
-    // 设置对象属性
-    Type.prototype.objectSetProperty = function (et) {
-        if (this.type === "object") {
-            var h = et.info;
-            this.info[h.key] = h.value;
-            var d = et.data;
-            this.data[d.key] = d.value;
-        }
-        return this;
-    };
-    // 批量设置对象属性
-    Type.prototype.objectSetProperties = function (et) {
-        if (this.type === "object" && et.type === "array") {
-            for (var _i = 0, _a = et.info; _i < _a.length; _i++) {
-                var item = _a[_i];
-                this.info[item.key] = item.value;
-            }
-            for (var _b = 0, _c = et.data; _b < _c.length; _b++) {
-                var item = _c[_b];
-                this.data[item.key] = item.value;
-            }
-        }
-        return this;
-    };
-    // 取正/负值
-    Type.prototype.negative = function (op) {
-        var t;
-        if (this.type === "null" || this.type === "undefined" || this.type === "number") {
-            t = this.genType("number");
-        }
-        else {
-            t = op === "-" ? locale.getLocale().MSG_EX_NEGATIVE : locale.getLocale().MSG_EX_POSITIVE;
-            t = this.genErrorType(format(t, this.type));
-        }
-        return t;
-    };
-    // 非运算
-    Type.prototype.not = function () {
-        return this.genType("boolean");
-    };
-    // 乘法
-    Type.prototype.multiply = function (et) {
-        return (this.type === "null" && et.type === "null") ? this.genType("null") :
-            ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
-                (et.type === "number" || et.type === "null" || et.type === "undefined")) ? this.genType("number") :
-                this.genErrorType(format(locale.getLocale().MSG_EX_MULTIPLY, this.type, et.type));
-    };
-    // 除法
-    Type.prototype.divide = function (et) {
-        var t;
-        if (this.type === "null" && et.type === "null") {
-            t = this.genType("null");
-        }
-        else if ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
-            (et.type === "number" || et.type === "undefined")) {
-            t = (et.hasData() && (et.data === "null" || et.type === "number" && Number(et.data) === 0)) ?
-                this.genErrorType(format(locale.getLocale().MSG_EX_DIVIDE_N, et.info)) :
-                this.genType("number");
-        }
-        else {
-            t = this.genErrorType(format(locale.getLocale().MSG_EX_DIVIDE, this.type, et.type));
-        }
-        return t;
-    };
-    // 求余
-    Type.prototype.remainder = function (et) {
-        var t;
-        if (this.type === "null" && et.type === "null") {
-            t = this.genType("null");
-        }
-        else if ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
-            (et.type === "number" || et.type === "undefined")) {
-            t = (et.hasData() && (et.data === "null" || et.type === "number" && Number(et.data) === 0)) ?
-                this.genErrorType(format(locale.getLocale().MSG_EX_REMAINDER_N, et.info)) :
-                this.genType("number");
-        }
-        else {
-            t = this.genErrorType(format(locale.getLocale().MSG_EX_REMAINDER, this.type, et.type));
-        }
-        return t;
-    };
-    // 加法
-    Type.prototype.add = function (et) {
-        return (this.type === "undefined" && et.type === "undefined") ? this.genType("undefined") :
-            (this.type === "null" && et.type === "null") ? this.genType("null") :
-                ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
-                    (et.type === "number" || et.type === "null" || et.type === "undefined")) ? this.genType("number") :
-                    ((this.type === "string" || this.type === "number" || this.type === "null" ||
-                        this.type === "undefined") && (et.type === "string" || et.type === "number" ||
-                        et.type === "null" || et.type === "undefined")) ? this.genType("string") :
-                        ((this.type === "array" || this.type === "null" || this.type === "undefined") &&
-                            (et.type === "array" || et.type === "null" ||
-                                et.type === "undefined")) ? this.genType("array") :
-                            this.genErrorType(format(locale.getLocale().MSG_EX_ADD, this.type, et.type));
-    };
-    // 减法
-    Type.prototype.subtract = function (et) {
-        return (this.type === "undefined" && et.type === "undefined") ?
-            this.genType("undefined") :
-            (this.type === "null" && et.type === "null") ?
-                this.genType("null") :
-                ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
-                    (et.type === "number" || et.type === "null" || et.type === "undefined")) ?
-                    this.genType("number") :
-                    ((this.type === "array" || this.type === "null" || this.type === "undefined") &&
-                        (et.type === "array" || et.type === "null" || et.type === "undefined")) ?
-                        this.genType("array") :
-                        this.genErrorType(format(locale.getLocale().MSG_EX_SUBTRACT, this.type, et.type));
-    };
-    // 等于
-    Type.prototype.equal = function (et, op) {
-        var t;
-        var b = op === "==";
-        if (this.type === "undefined" || et.type === "undefined" || this.type === "null" || et.type === "null" ||
-            this.type === et.type) {
-            t = this.genType("boolean");
-        }
-        else {
-            t = b ? locale.getLocale().MSG_EX_EQUAL : locale.getLocale().MSG_EX_EQUAL_N;
-            t = this.genErrorType(format(t, this.type, et.type));
-        }
-        return t;
-    };
-    // 比较运算
-    Type.prototype.compare = function (et, op) {
-        if (op === "==" || op === "!=") {
-            return this.equal(et, op);
-        }
-        else {
-            var t = void 0;
-            if (this.type === "undefined" || et.type === "undefined" || this.type === "null" || et.type === "null" ||
-                (this.type === et.type && (et.type === "string" || et.type === "date" || et.type === "number"))) {
-                t = this.genType("boolean");
-            }
-            else {
-                switch (op) {
-                    case ">":
-                        t = locale.getLocale().MSG_EX_COMPARE_A;
-                        break;
-                    case "<":
-                        t = locale.getLocale().MSG_EX_COMPARE_B;
-                        break;
-                    case ">=":
-                        t = locale.getLocale().MSG_EX_COMPARE_C;
-                        break;
-                    case "<=":
-                        t = locale.getLocale().MSG_EX_COMPARE_D;
-                        break;
-                    default: break;
-                }
-                t = this.genErrorType(format(t, this.type, et.type));
-            }
-            return t;
-        }
-    };
-    // 与运算
-    Type.prototype.and = function (et) {
-        return (this.type === "undefined" || et.type === "undefined" || this.type === "null" || et.type === "null" ||
-            (this.type === "boolean" && et.type === "boolean")) ?
-            this.genType("boolean") :
-            this.genErrorType(format(locale.getLocale().MSG_EX_AND, this.type, et.type));
-    };
-    // 或运算
-    Type.prototype.or = function (et) {
-        return (this.type === "undefined" || et.type === "undefined" || this.type === "null" || et.type === "null" ||
-            (this.type === "boolean" && et.type === "boolean")) ?
-            this.genType("boolean") :
-            this.genErrorType(format(locale.getLocale().MSG_EX_OR, this.type, et.type));
-    };
-    // 下标运算
-    Type.prototype.subscript = function (et) {
-        var t;
-        var i = (et.type === "array") ?
-            et.info[0] :
-            et.info;
-        if (this.type === "string" || this.type === "array") {
-            if (i === "number") {
-                t = (this.type === "array" && this.entity) ?
-                    this.context.getEntityType(this) :
-                    (this.type === "string") ?
-                        this.genType("string") :
-                        this.genType("undefined");
-            }
-            else {
-                t = this.genErrorType(format(locale.getLocale().MSG_EX_SUBSCRIPT_T, i));
-            }
-        }
-        else if (this.type === "object") {
-            t = this.genType("string", "string", i);
-            t = t.getVariableType(this);
-        }
-        else {
-            t = (this.type === "undefined") ?
-                this.genType("undefined") :
-                this.genErrorType(format(locale.getLocale().MSG_EX_SUBSCRIPT, this.type));
-        }
-        return t;
-    };
-    // 获取{key:...,value:...}键值对对象
-    Type.prototype.hashItem = function (et) {
-        return this.genType("object", { key: this.data, value: et.info }, { key: this.data, value: et.data });
-    };
-    // 获取变量值类型对象
-    Type.prototype.getVariableType = function (et) {
-        return this.context.getVariableType(this.data, et);
-    };
-    // 获取函数返回结果类型对象
-    Type.prototype.getFunctionType = function (et) {
-        return this.context.getFunctionType(this.info.key, et, this.info.value, this.data.value);
-    };
-    return Type;
-}());
-
 // 表达式检查
 // ----------
 var Check = (function () {
     function Check() {
-        this.context = null;
         this.types = {};
     }
-    // 生成ExprType对象
-    Check.prototype.genType = function (type, info, data, entity, depends, errorMsg) {
-        return new Type(this.context, type, info, data, entity, depends, errorMsg);
-    };
-    // 有错误时，生成对应的ExprType对象
-    Check.prototype.genErrorType = function (errorMsg) {
-        return this.genType(undefined, undefined, undefined, undefined, undefined, errorMsg);
-    };
-    // 根据token结点ID返回对应ExprType对象
-    Check.prototype.getType = function (tokenId) {
-        return this.types[tokenId];
-    };
-    // 设置某token结点ID对应的ExprType对象
-    Check.prototype.setType = function (tokenId, t) {
-        this.types[tokenId] = t;
-        return this;
-    };
     // 对表达式进行语法分析和依赖关系计算
     Check.prototype.check = function (expr, context) {
         var _this = this;
-        this.context = context;
         var r;
-        var p = this.context.getParserInfo(expr);
+        var p = context.getParserInfo(expr);
         if (p.errorMsg === "") {
-            var msg = this.doCheck(p.rootToken);
+            var msg = this.doCheck(p.rootToken, context);
             if (msg === "") {
-                r = this.getType(p.rootToken.id);
+                r = this.types[p.rootToken.id];
                 r.tokens = p.tokens;
                 r.rootToken = p.rootToken;
                 var ds_1 = [];
@@ -2436,7 +1610,7 @@ var Check = (function () {
                     }
                 };
                 eachToken(r.rootToken, function (token) {
-                    var tt = _this.getType(token.id);
+                    var tt = _this.types[token.id];
                     if (tt) {
                         if (tt.depends) {
                             pushDepends_1(tt.depends);
@@ -2444,7 +1618,7 @@ var Check = (function () {
                         var e = tt.entity;
                         if (e) {
                             var pp = token.parent;
-                            var pt = pp ? _this.getType(pp.id) : null;
+                            var pt = pp ? _this.types[pp.id] : null;
                             if (!pt || !pt.entity) {
                                 pushDepends_1(e.fullName);
                             }
@@ -2455,16 +1629,16 @@ var Check = (function () {
                 r.dependencies = ds_1;
             }
             else {
-                r = this.genErrorType(msg);
+                r = context.genErrorType(msg);
             }
         }
         else {
-            r = this.genErrorType(p.errorMsg);
+            r = context.genErrorType(p.errorMsg);
         }
         return r;
     };
     // 检查表达式运算关系正确性
-    Check.prototype.doCheck = function (rootToken) {
+    Check.prototype.doCheck = function (rootToken, context) {
         var t = rootToken;
         var p = t.parent;
         var msg = "";
@@ -2475,36 +1649,36 @@ var Check = (function () {
         var rt;
         if (t.childs) {
             for (var i = 0; i < t.childs.length; i++) {
-                msg = this.doCheck(t.childs[i]);
+                msg = this.doCheck(t.childs[i], context);
                 if (msg !== "") {
                     break;
                 }
                 else if (i === 0) {
                     l = t.childs[0];
-                    lt = this.getType(l.id);
+                    lt = this.types[l.id];
                 }
                 else if (i === 1) {
                     r = t.childs[1];
-                    rt = this.getType(r.id);
+                    rt = this.types[r.id];
                 }
             }
         }
         if (msg === "") {
             switch (t.tokenType) {
                 case "TK_STRING":
-                    tt = this.genType("string", "string", t.tokenValue);
+                    tt = context.genType("string", "string", t.tokenValue);
                     break;
                 case "TK_NUMBER":
-                    tt = this.genType("number", "number", t.tokenValue);
+                    tt = context.genType("number", "number", t.tokenValue);
                     break;
                 case "TK_BOOL":
-                    tt = this.genType("boolean", "boolean", t.tokenValue);
+                    tt = context.genType("boolean", "boolean", t.tokenValue);
                     break;
                 case "TK_NULL":
-                    tt = this.genType("null", "null", t.tokenValue);
+                    tt = context.genType("null", "null", t.tokenValue);
                     break;
                 case "TK_IDEN":
-                    tt = this.genType("string", "string", t.tokenValue);
+                    tt = context.genType("string", "string", t.tokenValue);
                     if (isIDENToken(t)) {
                         tt = tt.getVariableType(null);
                     }
@@ -2556,27 +1730,27 @@ var Check = (function () {
                     }
                     break;
                 case "VTK_COMMA":
-                    tt = this.genType("array", [], []);
+                    tt = context.genType("array", [], []);
                     for (var _i = 0, _a = t.childs; _i < _a.length; _i++) {
                         var item = _a[_i];
-                        lt = this.getType(item.id);
+                        lt = this.types[item.id];
                         tt.arrayPush(lt);
                     }
                     break;
                 case "VTK_PAREN":
                     if (t.childs.length === 0) {
                         tt = (p && p.tokenType === "TK_IDEN") ?
-                            this.genType("array", [], []) :
-                            this.genType("undefined");
+                            context.genType("array", [], []) :
+                            context.genType("undefined");
                     }
                     else {
                         tt = (p && p.tokenType === "TK_IDEN" && l.tokenType !== "VTK_COMMA") ?
-                            this.genType("array", [], []).arrayPush(lt) :
+                            context.genType("array", [], []).arrayPush(lt) :
                             lt;
                     }
                     break;
                 case "VTK_ARRAY":
-                    tt = this.genType("array", [], []);
+                    tt = context.genType("array", [], []);
                     if (t.childs.length > 0) {
                         if (l.tokenType === "VTK_COMMA") {
                             tt.arrayConcat(lt);
@@ -2587,7 +1761,7 @@ var Check = (function () {
                     }
                     break;
                 case "VTK_OBJECT":
-                    tt = this.genType("object", {}, {});
+                    tt = context.genType("object", {}, {});
                     if (t.childs.length > 0) {
                         if (l.tokenType === "VTK_COMMA") {
                             tt.objectSetProperties(lt);
@@ -2610,7 +1784,7 @@ var Check = (function () {
             }
             msg = tt.errorMsg;
             if (msg === "") {
-                this.setType(t.id, tt);
+                this.types[t.id] = tt;
             }
         }
         return msg;
@@ -2628,11 +1802,6 @@ var Lexer = (function () {
     // 设置表达式
     Lexer.prototype.setExpr = function (expr) {
         this.expr = expr ? expr.split("") : [];
-        this.reset();
-        return this;
-    };
-    // 重置词法分析器，以便再次从头开始解析
-    Lexer.prototype.reset = function () {
         this.index = 0;
         return this;
     };
@@ -3467,6 +2636,795 @@ var Parser = (function () {
         return l;
     };
     return Parser;
+}());
+
+// 类型
+// ----------
+var Type = (function () {
+    // 类型构造函数
+    function Type(context, type, info, data, entity, depends, errorMsg) {
+        this.context = context;
+        this.type = type || "undefined";
+        this.info = info || type;
+        this.data = data;
+        this.entity = entity || null;
+        this.depends = depends || null;
+        this.errorMsg = errorMsg || "";
+    }
+    // 生成类型对象
+    Type.prototype.genType = function (type, info, data, entity, depends, errorMsg) {
+        return new Type(this.context, type, info, data, entity, depends, errorMsg);
+    };
+    // 生成错误类型对象
+    Type.prototype.genErrorType = function (errorMsg) {
+        return this.genType(undefined, undefined, undefined, undefined, undefined, errorMsg);
+    };
+    // 该类型对象是否包含了数据
+    Type.prototype.hasData = function () {
+        return this.data !== undefined;
+    };
+    // 得到类型值
+    Type.prototype.toValue = function () {
+        return this.type;
+    };
+    // 追加数组元素
+    Type.prototype.arrayPush = function (et) {
+        if (this.type === "array") {
+            this.info.push(et.info);
+            this.data.push(et.data);
+        }
+        return this;
+    };
+    // 连接数组元素
+    Type.prototype.arrayConcat = function (et) {
+        if (this.type === "array" && et.type === "array") {
+            this.info = this.info.concat(et.info);
+            this.data = this.data.concat(et.data);
+        }
+        return this;
+    };
+    // 设置对象属性
+    Type.prototype.objectSetProperty = function (et) {
+        if (this.type === "object") {
+            var h = et.info;
+            this.info[h.key] = h.value;
+            var d = et.data;
+            this.data[d.key] = d.value;
+        }
+        return this;
+    };
+    // 批量设置对象属性
+    Type.prototype.objectSetProperties = function (et) {
+        if (this.type === "object" && et.type === "array") {
+            for (var _i = 0, _a = et.info; _i < _a.length; _i++) {
+                var item = _a[_i];
+                this.info[item.key] = item.value;
+            }
+            for (var _b = 0, _c = et.data; _b < _c.length; _b++) {
+                var item = _c[_b];
+                this.data[item.key] = item.value;
+            }
+        }
+        return this;
+    };
+    // 取正/负值
+    Type.prototype.negative = function (op) {
+        var t;
+        if (this.type === "null" || this.type === "undefined" || this.type === "number") {
+            t = this.genType("number");
+        }
+        else {
+            t = op === "-" ? locale.getLocale().MSG_EX_NEGATIVE : locale.getLocale().MSG_EX_POSITIVE;
+            t = this.genErrorType(format(t, this.type));
+        }
+        return t;
+    };
+    // 非运算
+    Type.prototype.not = function () {
+        return this.genType("boolean");
+    };
+    // 乘法
+    Type.prototype.multiply = function (et) {
+        return (this.type === "null" && et.type === "null") ? this.genType("null") :
+            ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
+                (et.type === "number" || et.type === "null" || et.type === "undefined")) ? this.genType("number") :
+                this.genErrorType(format(locale.getLocale().MSG_EX_MULTIPLY, this.type, et.type));
+    };
+    // 除法
+    Type.prototype.divide = function (et) {
+        var t;
+        if (this.type === "null" && et.type === "null") {
+            t = this.genType("null");
+        }
+        else if ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
+            (et.type === "number" || et.type === "undefined")) {
+            t = (et.hasData() && (et.data === "null" || et.type === "number" && Number(et.data) === 0)) ?
+                this.genErrorType(format(locale.getLocale().MSG_EX_DIVIDE_N, et.info)) :
+                this.genType("number");
+        }
+        else {
+            t = this.genErrorType(format(locale.getLocale().MSG_EX_DIVIDE, this.type, et.type));
+        }
+        return t;
+    };
+    // 求余
+    Type.prototype.remainder = function (et) {
+        var t;
+        if (this.type === "null" && et.type === "null") {
+            t = this.genType("null");
+        }
+        else if ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
+            (et.type === "number" || et.type === "undefined")) {
+            t = (et.hasData() && (et.data === "null" || et.type === "number" && Number(et.data) === 0)) ?
+                this.genErrorType(format(locale.getLocale().MSG_EX_REMAINDER_N, et.info)) :
+                this.genType("number");
+        }
+        else {
+            t = this.genErrorType(format(locale.getLocale().MSG_EX_REMAINDER, this.type, et.type));
+        }
+        return t;
+    };
+    // 加法
+    Type.prototype.add = function (et) {
+        return (this.type === "undefined" && et.type === "undefined") ? this.genType("undefined") :
+            (this.type === "null" && et.type === "null") ? this.genType("null") :
+                ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
+                    (et.type === "number" || et.type === "null" || et.type === "undefined")) ? this.genType("number") :
+                    ((this.type === "string" || this.type === "number" || this.type === "null" ||
+                        this.type === "undefined") && (et.type === "string" || et.type === "number" ||
+                        et.type === "null" || et.type === "undefined")) ? this.genType("string") :
+                        ((this.type === "array" || this.type === "null" || this.type === "undefined") &&
+                            (et.type === "array" || et.type === "null" ||
+                                et.type === "undefined")) ? this.genType("array") :
+                            this.genErrorType(format(locale.getLocale().MSG_EX_ADD, this.type, et.type));
+    };
+    // 减法
+    Type.prototype.subtract = function (et) {
+        return (this.type === "undefined" && et.type === "undefined") ?
+            this.genType("undefined") :
+            (this.type === "null" && et.type === "null") ?
+                this.genType("null") :
+                ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
+                    (et.type === "number" || et.type === "null" || et.type === "undefined")) ?
+                    this.genType("number") :
+                    ((this.type === "array" || this.type === "null" || this.type === "undefined") &&
+                        (et.type === "array" || et.type === "null" || et.type === "undefined")) ?
+                        this.genType("array") :
+                        this.genErrorType(format(locale.getLocale().MSG_EX_SUBTRACT, this.type, et.type));
+    };
+    // 等于
+    Type.prototype.equal = function (et, op) {
+        var t;
+        var b = op === "==";
+        if (this.type === "undefined" || et.type === "undefined" || this.type === "null" || et.type === "null" ||
+            this.type === et.type) {
+            t = this.genType("boolean");
+        }
+        else {
+            t = b ? locale.getLocale().MSG_EX_EQUAL : locale.getLocale().MSG_EX_EQUAL_N;
+            t = this.genErrorType(format(t, this.type, et.type));
+        }
+        return t;
+    };
+    // 比较运算
+    Type.prototype.compare = function (et, op) {
+        if (op === "==" || op === "!=") {
+            return this.equal(et, op);
+        }
+        else {
+            var t = void 0;
+            if (this.type === "undefined" || et.type === "undefined" || this.type === "null" || et.type === "null" ||
+                (this.type === et.type && (et.type === "string" || et.type === "date" || et.type === "number"))) {
+                t = this.genType("boolean");
+            }
+            else {
+                switch (op) {
+                    case ">":
+                        t = locale.getLocale().MSG_EX_COMPARE_A;
+                        break;
+                    case "<":
+                        t = locale.getLocale().MSG_EX_COMPARE_B;
+                        break;
+                    case ">=":
+                        t = locale.getLocale().MSG_EX_COMPARE_C;
+                        break;
+                    case "<=":
+                        t = locale.getLocale().MSG_EX_COMPARE_D;
+                        break;
+                    default: break;
+                }
+                t = this.genErrorType(format(t, this.type, et.type));
+            }
+            return t;
+        }
+    };
+    // 与运算
+    Type.prototype.and = function (et) {
+        return (this.type === "undefined" || et.type === "undefined" || this.type === "null" || et.type === "null" ||
+            (this.type === "boolean" && et.type === "boolean")) ?
+            this.genType("boolean") :
+            this.genErrorType(format(locale.getLocale().MSG_EX_AND, this.type, et.type));
+    };
+    // 或运算
+    Type.prototype.or = function (et) {
+        return (this.type === "undefined" || et.type === "undefined" || this.type === "null" || et.type === "null" ||
+            (this.type === "boolean" && et.type === "boolean")) ?
+            this.genType("boolean") :
+            this.genErrorType(format(locale.getLocale().MSG_EX_OR, this.type, et.type));
+    };
+    // 下标运算
+    Type.prototype.subscript = function (et) {
+        var t;
+        var i = (et.type === "array") ?
+            et.info[0] :
+            et.info;
+        if (this.type === "string" || this.type === "array") {
+            if (i === "number") {
+                t = (this.type === "array" && this.entity) ?
+                    this.context.getEntityType(this) :
+                    (this.type === "string") ?
+                        this.genType("string") :
+                        this.genType("undefined");
+            }
+            else {
+                t = this.genErrorType(format(locale.getLocale().MSG_EX_SUBSCRIPT_T, i));
+            }
+        }
+        else if (this.type === "object") {
+            t = this.genType("string", "string", i);
+            t = t.getVariableType(this);
+        }
+        else {
+            t = (this.type === "undefined") ?
+                this.genType("undefined") :
+                this.genErrorType(format(locale.getLocale().MSG_EX_SUBSCRIPT, this.type));
+        }
+        return t;
+    };
+    // 获取{key:...,value:...}键值对对象
+    Type.prototype.hashItem = function (et) {
+        return this.genType("object", { key: this.data, value: et.info }, { key: this.data, value: et.data });
+    };
+    // 获取变量值类型对象
+    Type.prototype.getVariableType = function (et) {
+        return this.context.getVariableType(this.data, et);
+    };
+    // 获取函数返回结果类型对象
+    Type.prototype.getFunctionType = function (et) {
+        return this.context.getFunctionType(this.info.key, et, this.info.value, this.data.value);
+    };
+    return Type;
+}());
+
+// 大数据值计算对象
+var Big = function (v) {
+    return new Decimal(v);
+};
+// 值
+// ----------
+var Value = (function () {
+    // 值构造函数
+    function Value(context, value, type, entity, errorMsg, parentObj) {
+        this.context = context;
+        this.type = type ? type : getValueType(value);
+        if (this.type === "number") {
+            value += "";
+        }
+        this.value = value;
+        this.entity = entity || null;
+        this.errorMsg = errorMsg || "";
+        this.parentObj = parentObj || null;
+    }
+    // 生成值对象
+    Value.prototype.genValue = function (value, type, entity, errorMsg, parentObj) {
+        return new Value(this.context, value, type, entity, errorMsg, parentObj);
+    };
+    // 生成错误值对象
+    Value.prototype.genErrorValue = function (errorMsg) {
+        return this.genValue(undefined, undefined, undefined, errorMsg, undefined);
+    };
+    // 得到值内容
+    Value.prototype.toValue = function () {
+        return this.type === "number" ? Number(this.value) : this.value;
+    };
+    // 是否为实体
+    Value.prototype.isEntity = function () {
+        return this.entity != null;
+    };
+    // 追加数组元素
+    Value.prototype.arrayPush = function (ev) {
+        if (this.type === "array") {
+            ev = ev || this.genValue(null);
+            this.toValue().push(ev.toValue());
+        }
+        return this;
+    };
+    // 连接数组元素
+    Value.prototype.arrayConcat = function (ev) {
+        if (this.type === "array" && ev.type === "array") {
+            this.value = this.toValue().concat(ev.toValue());
+        }
+        return this;
+    };
+    // 设置对象属性
+    Value.prototype.objectSetProperty = function (ev) {
+        if (this.type === "object") {
+            var h = ev.toValue();
+            this.value[h.key] = h.value;
+        }
+        return this;
+    };
+    // 批量设置对象属性
+    Value.prototype.objectSetProperties = function (ev) {
+        if (this.type === "object" && ev.type === "array") {
+            var h = ev.toValue();
+            for (var _i = 0, h_1 = h; _i < h_1.length; _i++) {
+                var item = h_1[_i];
+                this.value[item.key] = item.value;
+            }
+        }
+        return this;
+    };
+    // 取正/负值
+    Value.prototype.negative = function (op) {
+        var v;
+        if (this.type === "null") {
+            v = this.genValue("0", "number");
+        }
+        else if (this.type === "number") {
+            v = op === "-" ? Big(this.value).times(Big(-1)).toString() : this.value;
+            v = this.genValue(v, "number");
+        }
+        else {
+            v = op === "-" ? locale.getLocale().MSG_EX_NEGATIVE : locale.getLocale().MSG_EX_POSITIVE;
+            v = this.genErrorValue(format(v, this.type));
+        }
+        return v;
+    };
+    // 非运算
+    Value.prototype.not = function () {
+        return (this.type === "boolean") ?
+            this.genValue(!this.value, "boolean") :
+            (this.type === "string" && this.value === "" || this.type === "number" && this.value === "0"
+                || this.type === "null") ?
+                this.genValue(true, "boolean") :
+                this.genValue(false, "boolean");
+    };
+    // 乘法
+    Value.prototype.multiply = function (ev) {
+        var v;
+        if (this.type === "null" && ev.type === "null") {
+            v = this.genValue(null, "null");
+        }
+        else if ((this.type === "number" || this.type === "null") && (ev.type === "number" || ev.type === "null")) {
+            var vl = Big(this.value || "0");
+            var vr = Big(ev.value || "0");
+            v = this.genValue(vl.times(vr).toString(), "number");
+        }
+        else {
+            v = this.genErrorValue(format(locale.getLocale().MSG_EX_MULTIPLY, this.type, ev.type));
+        }
+        return v;
+    };
+    // 除法
+    Value.prototype.divide = function (ev) {
+        var v;
+        if (this.type === "null" && ev.type === "null") {
+            v = this.genValue(null, "null");
+        }
+        else if (ev.type === "null" || ev.type === "number" && ev.value === "0") {
+            v = this.genErrorValue(format(locale.getLocale().MSG_EX_DIVIDE_N, ev.value));
+        }
+        else if ((this.type === "number" || this.type === "null") && (ev.type === "number")) {
+            var vl = Big(this.value || "0");
+            var vr = Big(ev.value);
+            v = this.genValue(vl.div(vr).toString(), "number");
+        }
+        else {
+            v = this.genErrorValue(format(locale.getLocale().MSG_EX_DIVIDE, this.type, ev.type));
+        }
+        return v;
+    };
+    // 求余
+    Value.prototype.remainder = function (ev) {
+        var v;
+        if (this.type === "null" && ev.type === "null") {
+            v = this.genValue(null, "null");
+        }
+        else if (ev.type === "null" || ev.type === "number" && ev.value === "0") {
+            v = this.genErrorValue(format(locale.getLocale().MSG_EX_REMAINDER_N, ev.value));
+        }
+        else if ((this.type === "number" || this.type === "null") && (ev.type === "number")) {
+            var vl = Big(this.value || "0");
+            var vr = Big(ev.value);
+            v = this.genValue(vl.mod(vr).toString(), "number");
+        }
+        else {
+            v = this.genErrorValue(format(locale.getLocale().MSG_EX_REMAINDER, this.type, ev.type));
+        }
+        return v;
+    };
+    // 加法
+    Value.prototype.add = function (ev) {
+        var v;
+        var vl;
+        var vr;
+        if (this.type === "null" && ev.type === "null") {
+            v = this.genValue(null, "null");
+        }
+        else if ((this.type === "number" || this.type === "null") && (ev.type === "number" || ev.type === "null")) {
+            vl = Big(this.value || "0");
+            vr = Big(ev.value || "0");
+            v = this.genValue(vl.plus(vr).toString(), "number");
+        }
+        else if ((this.type === "string" || this.type === "null") && (ev.type === "string" || ev.type === "null")) {
+            vl = this.toValue();
+            vr = ev.toValue();
+            vl = vl || "";
+            vr = vr || "";
+            v = this.genValue(vl + vr, "string");
+        }
+        else if ((this.type === "array" || this.type === "null") && (ev.type === "array" || ev.type === "null")) {
+            vl = this.value || [];
+            vr = ev.value || [];
+            v = this.genValue(vl.concat(vr), "array");
+        }
+        else {
+            v = this.genErrorValue(format(locale.getLocale().MSG_EX_ADD, this.type, ev.type));
+        }
+        return v;
+    };
+    // 减法
+    Value.prototype.subtract = function (ev) {
+        var v;
+        var vl;
+        var vr;
+        if (this.type === "null" && ev.type === "null") {
+            v = this.genValue(null, "null");
+        }
+        else if ((this.type === "number" || this.type === "null") && (ev.type === "number" || ev.type === "null")) {
+            vl = Big(this.value || "0");
+            vr = Big(ev.value || "0");
+            v = this.genValue(vl.minus(vr).toString(), "number");
+        }
+        else if ((this.type === "array" || this.type === "null") && (ev.type === "array" || ev.type === "null")) {
+            vl = this.value || [];
+            vr = ev.value || [];
+            v = [];
+            var found = void 0;
+            for (var _i = 0, vl_1 = vl; _i < vl_1.length; _i++) {
+                var left = vl_1[_i];
+                found = false;
+                for (var _a = 0, vr_1 = vr; _a < vr_1.length; _a++) {
+                    var right = vr_1[_a];
+                    found = compare(left, right);
+                    if (found) {
+                        break;
+                    }
+                }
+                if (!found) {
+                    v.push(left);
+                }
+            }
+            v = this.genValue(v, "array");
+        }
+        else {
+            v = this.genErrorValue(format(locale.getLocale().MSG_EX_SUBTRACT, this.type, ev.type));
+        }
+        return v;
+    };
+    // 等于
+    Value.prototype.equal = function (ev, op) {
+        var v;
+        var vl;
+        var vr;
+        var b = op === "==";
+        if (this.type === "null" && ev.type === "null") {
+            v = this.genValue(b, "boolean");
+        }
+        else if (this.type === "null" || ev.type === "null") {
+            v = this.genValue(!b, "boolean");
+        }
+        else if (this.type === "number" && ev.type === "number") {
+            vl = Big(this.value);
+            vr = Big(ev.value);
+            v = vl.equals(vr);
+            v = this.genValue(b ? v : !v, "boolean");
+        }
+        else if (this.type === ev.type) {
+            v = compare(this.value, ev.value);
+            v = this.genValue(b ? v : !v, "boolean");
+        }
+        else {
+            v = b ? locale.getLocale().MSG_EX_EQUAL : locale.getLocale().MSG_EX_EQUAL_N;
+            v = this.genErrorValue(format(v, this.type, ev.type));
+        }
+        return v;
+    };
+    // 比较运算
+    Value.prototype.compare = function (ev, op) {
+        if (op === "==" || op === "!=") {
+            return this.equal(ev, op);
+        }
+        else {
+            var v = void 0;
+            if ((this.type === "string" || this.type === "null") && (ev.type === "string" || ev.type === "null")) {
+                switch (op) {
+                    case ">":
+                        v = this.value > ev.value;
+                        break;
+                    case "<":
+                        v = this.value < ev.value;
+                        break;
+                    case ">=":
+                        v = this.value >= ev.value;
+                        break;
+                    case "<=":
+                        v = this.value <= ev.value;
+                        break;
+                    default: break;
+                }
+                v = this.genValue(v, "boolean");
+            }
+            else if ((this.type === "date" || this.type === "null") && (ev.type === "date" || ev.type === "null")) {
+                v = this.value - ev.value;
+                switch (op) {
+                    case ">":
+                        v = v > 0;
+                        break;
+                    case "<":
+                        v = v < 0;
+                        break;
+                    case ">=":
+                        v = v >= 0;
+                        break;
+                    case "<=":
+                        v = v <= 0;
+                        break;
+                    default: break;
+                }
+                v = this.genValue(v, "boolean");
+            }
+            else if ((this.type === "number" || this.type === "null") &&
+                (ev.type === "number" || ev.type === "null")) {
+                var vl = void 0;
+                var vr = void 0;
+                vl = Big(this.value || "0");
+                vr = Big(ev.value || "0");
+                switch (op) {
+                    case ">":
+                        v = vl.greaterThan(vr);
+                        break;
+                    case "<":
+                        v = vl.lessThan(vr);
+                        break;
+                    case ">=":
+                        v = vl.greaterThanOrEqualTo(vr);
+                        break;
+                    case "<=":
+                        v = vl.lessThanOrEqualTo(vr);
+                        break;
+                    default: break;
+                }
+                v = this.genValue(v, "boolean");
+            }
+            else {
+                switch (op) {
+                    case ">":
+                        v = locale.getLocale().MSG_EX_COMPARE_A;
+                        break;
+                    case "<":
+                        v = locale.getLocale().MSG_EX_COMPARE_B;
+                        break;
+                    case ">=":
+                        v = locale.getLocale().MSG_EX_COMPARE_C;
+                        break;
+                    case "<=":
+                        v = locale.getLocale().MSG_EX_COMPARE_D;
+                        break;
+                    default: break;
+                }
+                v = this.genErrorValue(format(v, this.type, ev.type));
+            }
+            return v;
+        }
+    };
+    // 与运算
+    Value.prototype.and = function (ev) {
+        var v;
+        if (!ev) {
+            v = (this.type === "boolean" || this.type === "null") ?
+                this.genValue(false, "boolean") :
+                this.genErrorValue(format(locale.getLocale().MSG_EX_AND_L, this.type));
+        }
+        else {
+            v = (this.type === "boolean" && (ev.type === "boolean" || ev.type === "null")) ?
+                this.genValue(!!(this.value && ev.value), "boolean") :
+                this.genErrorValue(format(locale.getLocale().MSG_EX_AND, this.type, ev.type));
+        }
+        return v;
+    };
+    // 或运算
+    Value.prototype.or = function (ev) {
+        var v;
+        if (!ev) {
+            v = (this.type === "boolean") ?
+                this.genValue(true, "boolean") :
+                this.genErrorValue(format(locale.getLocale().MSG_EX_OR_L, this.type));
+        }
+        else {
+            v = ((this.type === "boolean" || this.type === "null") && (ev.type === "boolean" || ev.type === "null")) ?
+                this.genValue(!!(this.value || ev.value), "boolean") :
+                this.genErrorValue(format(locale.getLocale().MSG_EX_OR, this.type, ev.type));
+        }
+        return v;
+    };
+    // 下标运算
+    Value.prototype.subscript = function (ev) {
+        var v;
+        var i;
+        var t;
+        if (ev.type === "array") {
+            i = ev.toValue()[0];
+            t = getValueType(i);
+        }
+        else {
+            i = ev.toValue();
+            t = ev.type;
+        }
+        if (this.type === "string" || this.type === "array") {
+            if (t === "number") {
+                v = this.toValue();
+                if (v.length > i && i >= 0 && v.length > 0) {
+                    if (this.type === "array" && this.entity) {
+                        v = this.context.getEntityValue(this, i);
+                    }
+                    else {
+                        v = v[i];
+                        v = this.genValue(v, getValueType(v), null);
+                    }
+                }
+                else {
+                    v = this.genErrorValue(format(locale.getLocale().MSG_EX_SUBSCRIPT_U, this.type, i));
+                }
+            }
+            else {
+                v = this.genErrorValue(format(locale.getLocale().MSG_EX_SUBSCRIPT_T, i));
+            }
+        }
+        else if (this.type === "object") {
+            v = this.genValue(i);
+            v = v.getVariableValue(this);
+        }
+        else {
+            v = this.genErrorValue(format(locale.getLocale().MSG_EX_SUBSCRIPT, this.type));
+        }
+        return v;
+    };
+    // 获取{key:...,value:...}键值对对象
+    Value.prototype.hashItem = function (ev) {
+        return this.genValue({ key: this.toValue(), value: ev.toValue() }, "object");
+    };
+    // 获取变量值
+    Value.prototype.getVariableValue = function (ev) {
+        return (ev && ev.type !== "object") ?
+            this.genErrorValue(format(locale.getLocale().MSG_EX_DOT, ev.type)) :
+            this.context.getVariableValue(this.toValue(), ev);
+    };
+    // 获取函数返回结果值
+    Value.prototype.getFunctionValue = function (ev) {
+        var v = this.toValue();
+        return (ev && ev.value === null) ?
+            this.genErrorValue(format(locale.getLocale().MSG_EX_FUNC_NULL, v.key)) :
+            this.context.getFunctionValue(v.key, ev, v.value);
+    };
+    // 绝对值
+    Value.prototype.abs = function () {
+        var v = Big(this.value || "0");
+        return this.genValue(v.abs().toString(), "number");
+    };
+    // 向上取整
+    Value.prototype.ceil = function () {
+        var v = Big(this.value || "0");
+        return this.genValue(v.ceil().toString(), "number");
+    };
+    // 向下取整
+    Value.prototype.floor = function () {
+        var v = Big(this.value || "0");
+        return this.genValue(v.floor().toString(), "number");
+    };
+    // 四舍五入保留scale位小数
+    Value.prototype.round = function (scale) {
+        var v;
+        if (scale >= 0) {
+            v = Big(this.value || "0");
+            v = v.toDecimalPlaces(scale, 4);
+            v = this.genValue(v.toString(), "number");
+        }
+        else {
+            v = this.genErrorValue(format(locale.getLocale().MSG_EX_ROUND, scale));
+        }
+        return v;
+    };
+    // 按精度截断数据
+    Value.prototype.trunc = function (scale) {
+        var v;
+        if (scale >= 0) {
+            v = Big(this.value || "0");
+            v = v.toDecimalPlaces(scale, 1);
+            v = this.genValue(v.toString(), "number");
+        }
+        else {
+            v = this.genErrorValue(format(locale.getLocale().MSG_EX_TRUNC, scale));
+        }
+        return v;
+    };
+    // 获取数的余弦
+    Value.prototype.cos = function () {
+        var v = Big(this.value || "0");
+        var name = "cos";
+        v = v[name]();
+        return this.genValue(v.toString(), "number");
+    };
+    // 获取 e 的指数
+    Value.prototype.exp = function () {
+        var v = Big(this.value || "0");
+        v = v.exp();
+        return this.genValue(v.toString(), "number");
+    };
+    // 获取数的自然对数（底为 e）
+    Value.prototype.ln = function () {
+        var value;
+        var v = Big(this.value || "0");
+        if (v.greaterThan("0")) {
+            v = v.ln();
+            value = this.genValue(v.toString(), "number");
+        }
+        else {
+            value = this.genErrorValue(format(locale.getLocale().MSG_EX_LN, v.toString()));
+        }
+        return value;
+    };
+    // 获取数的指定底数的对数
+    Value.prototype.log = function (base) {
+        var value;
+        var v = Big(this.value || "0");
+        if (v.greaterThan("0") && base > 0 && base !== 1) {
+            v = v.log(base);
+            value = this.genValue(v.toString(), "number");
+        }
+        else {
+            value = this.genErrorValue(format(locale.getLocale().MSG_EX_LOG, base, v.toString()));
+        }
+        return value;
+    };
+    // 获取数的指定指数的次幂
+    Value.prototype.power = function (exponent) {
+        var v = Big(this.value || "0");
+        v = v.pow(exponent);
+        return this.genValue(v.toString(), "number");
+    };
+    // 获取数的正弦
+    Value.prototype.sin = function () {
+        var v = Big(this.value || "0");
+        var name = "sin";
+        v = v[name]();
+        return this.genValue(v.toString(), "number");
+    };
+    // 获取数的平方根
+    Value.prototype.sqrt = function () {
+        var v = Big(this.value || "0");
+        v = v.sqrt();
+        return this.genValue(v.toString(), "number");
+    };
+    // 获取树的正切值
+    Value.prototype.tan = function () {
+        var v = Big(this.value || "0");
+        var name = "tan";
+        v = v[name]();
+        return this.genValue(v.toString(), "number");
+    };
+    return Value;
 }());
 
 // 上下文基类

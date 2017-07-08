@@ -36,23 +36,3 @@ export interface IToken {
     tokenType?: string;
     tokenValue?: string;
 }
-
-export interface IParser {
-    rootToken: IToken;
-    tokens: IToken[];
-    errorMsg: string;
-    parser(expr: string): IParser;
-}
-
-export interface IContext {
-    // genValue(value: any, type?, entity?, errorMsg?: string, parentObj?): Value;
-    getParserInfo(expr: string): IParser;
-    isIfNullToken(token: IToken): boolean;
-    isIIfToken(token: IToken): boolean;
-    getEntityType(source);
-    getVariableType(name, source);
-    getFunctionType(name, source, paramType, paramData);
-    getEntityValue(source, index);
-    getVariableValue(name, source);
-    getFunctionValue(name, source, paramValue);
-}

@@ -1,18 +1,17 @@
 import { isFunctionToken } from "./common";
-import { IContext, IParser } from "./interface";
 import Parser from "./parser";
 import Type from "./type";
 import Value from "./value";
 
 interface IExprItem {
-    parser: IParser;
+    parser: Parser;
     text: string;
 }
 
 // 上下文基类
 // ----------
 
-export default class Context implements IContext {
+export default class Context {
     private exprList: IExprItem[] = [];
     // 生成ExprValue对象
     public genValue(value: any, type?, entity?, errorMsg?: string, parentObj?): Value {
@@ -55,7 +54,7 @@ export default class Context implements IContext {
         return this.doGetEntityValue(source, index);
     }
     // 得到解析信息
-    public getParserInfo(expr: string): IParser {
+    public getParserInfo(expr: string): Parser {
         expr = expr.trim(); /// 去除表达式两端无效空格
         let index = -1; /// 查找当前上下文的exprList列表
         for (let i = 0; i < this.exprList.length; i++) {

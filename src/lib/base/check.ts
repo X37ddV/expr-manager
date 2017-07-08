@@ -1,39 +1,20 @@
 import { eachToken, getValueType, isIDENToken } from "./common";
-import { IContext } from "./interface";
+import Context from "./context";
 import Type from "./type";
 
 // 表达式检查
 // ----------
 
 export default class Check {
-    private context: IContext = null;
     private types = {};
-    // 生成ExprType对象
-    public genType(type: any, info?, data?, entity?, depends?, errorMsg?: string): Type {
-        return new Type(this.context, type, info, data, entity, depends, errorMsg);
-    }
-    // 有错误时，生成对应的ExprType对象
-    public genErrorType(errorMsg: string): Type {
-        return this.genType(undefined, undefined, undefined, undefined, undefined, errorMsg);
-    }
-    // 根据token结点ID返回对应ExprType对象
-    public getType(tokenId) {
-        return this.types[tokenId];
-    }
-    // 设置某token结点ID对应的ExprType对象
-    public setType(tokenId, t): Check {
-        this.types[tokenId] = t;
-        return this;
-    }
     // 对表达式进行语法分析和依赖关系计算
-    public check(expr: string, context: IContext) {
-        this.context = context;
+    public check(expr: string, context: Context) {
         let r;
-        const p = this.context.getParserInfo(expr); /// 在context数据上下文中对expr进行语法分析
+        const p = context.getParserInfo(expr); /// 在context数据上下文中对expr进行语法分析
         if (p.errorMsg === "") { /// 表达式解析正确(语法正确，但是运算关系正确性还没验证如：1>2&&43会报错)
-            const msg = this.doCheck(p.rootToken); /// 检查表达式运算关系正确性
+            const msg = this.doCheck(p.rootToken, context); /// 检查表达式运算关系正确性
             if (msg === "") {
-                r = this.getType(p.rootToken.id); /// 返回根节点对应的ExprType对象
+                r = this.types[p.rootToken.id]; /// 返回根节点对应的ExprType对象
                 r.tokens = p.tokens;
                 r.rootToken = p.rootToken;
                 const ds = [];
@@ -56,7 +37,7 @@ export default class Check {
                     }
                 };
                 eachToken(r.rootToken, (token) => {
-                    const tt = this.getType(token.id);
+                    const tt = this.types[token.id];
                     if (tt) {
                         if (tt.depends) {
                             pushDepends(tt.depends);
@@ -64,7 +45,7 @@ export default class Check {
                         const e = tt.entity;
                         if (e) {
                             const pp = token.parent;
-                            const pt = pp ? this.getType(pp.id) : null;
+                            const pt = pp ? this.types[pp.id] : null;
                             if (!pt || !pt.entity) {
                                 pushDepends(e.fullName);
                             }
@@ -74,15 +55,15 @@ export default class Check {
                 }, this);
                 r.dependencies = ds;
             } else { /// 运算关系出错
-                r = this.genErrorType(msg);
+                r = context.genErrorType(msg);
             }
         } else { /// 解析过程中出错
-            r = this.genErrorType(p.errorMsg);
+            r = context.genErrorType(p.errorMsg);
         }
         return r;
     }
     // 检查表达式运算关系正确性
-    public doCheck(rootToken): string {
+    private doCheck(rootToken, context: Context): string {
         const t = rootToken;
         const p = t.parent;
         let msg = "";
@@ -93,34 +74,34 @@ export default class Check {
         let rt; /// 语法树结点对应的ExprType对象
         if (t.childs) { /// 先检查该结点的所有子节点
             for (let i = 0; i < t.childs.length; i++) {
-                msg = this.doCheck(t.childs[i]);
+                msg = this.doCheck(t.childs[i], context);
                 if (msg !== "") { /// 子节点运算关系出错，直接返回错误信息，不再检查父节点
                     break;
                 } else if (i === 0) {
                     l = t.childs[0];
-                    lt = this.getType(l.id); /// 左运算数
+                    lt = this.types[l.id]; /// 左运算数
                 } else if (i === 1) {
                     r = t.childs[1];
-                    rt = this.getType(r.id); /// 右运算数
+                    rt = this.types[r.id]; /// 右运算数
                 }
             }
         }
         if (msg === "") {
             switch (t.tokenType) {
                 case "TK_STRING": /// 字符串结点
-                    tt = this.genType("string", "string", t.tokenValue);
+                    tt = context.genType("string", "string", t.tokenValue);
                     break;
                 case "TK_NUMBER": /// 数字结点
-                    tt = this.genType("number", "number", t.tokenValue);
+                    tt = context.genType("number", "number", t.tokenValue);
                     break;
                 case "TK_BOOL": /// 布尔结点
-                    tt = this.genType("boolean", "boolean", t.tokenValue);
+                    tt = context.genType("boolean", "boolean", t.tokenValue);
                     break;
                 case "TK_NULL": /// NULL结点
-                    tt = this.genType("null", "null", t.tokenValue);
+                    tt = context.genType("null", "null", t.tokenValue);
                     break;
                 case "TK_IDEN": /// 标识符结点
-                    tt = this.genType("string", "string", t.tokenValue);
+                    tt = context.genType("string", "string", t.tokenValue);
                     if (isIDENToken(t)) { /// 排除了函数名和对象属性的情况
                         tt = tt.getVariableType(null);
                     }
@@ -172,25 +153,25 @@ export default class Check {
                     }
                     break;
                 case "VTK_COMMA": /// ,结点
-                    tt = this.genType("array", [], []);
+                    tt = context.genType("array", [], []);
                     for (const item of t.childs) {
-                        lt = this.getType(item.id);
+                        lt = this.types[item.id];
                         tt.arrayPush(lt); /// lt为(1,2)或[x:1,y:2]中，的子节点
                     }
                     break;
                 case "VTK_PAREN": /// ()结点
                     if (t.childs.length === 0) { /// 如：fun()
                         tt = (p && p.tokenType === "TK_IDEN") ?
-                            this.genType("array", [], []) :
-                            this.genType("undefined");
+                            context.genType("array", [], []) :
+                            context.genType("undefined");
                     } else {
                         tt = (p && p.tokenType === "TK_IDEN" && l.tokenType !== "VTK_COMMA") ?
-                            this.genType("array", [], []).arrayPush(lt) : /// 如：fun(2)
+                            context.genType("array", [], []).arrayPush(lt) : /// 如：fun(2)
                             lt; /// 如：fun(1,2,3) 或 2+((4))
                     }
                     break;
                 case "VTK_ARRAY": /// []结点
-                    tt = this.genType("array", [], []);
+                    tt = context.genType("array", [], []);
                     if (t.childs.length > 0) {
                         if (l.tokenType === "VTK_COMMA") {
                             tt.arrayConcat(lt);
@@ -200,7 +181,7 @@ export default class Check {
                     }
                     break;
                 case "VTK_OBJECT": /// {}结点
-                    tt = this.genType("object", {}, {});
+                    tt = context.genType("object", {}, {});
                     if (t.childs.length > 0) {
                         if (l.tokenType === "VTK_COMMA") {
                             tt.objectSetProperties(lt); /// 如：{x:1,y:2}
@@ -222,7 +203,7 @@ export default class Check {
             }
             msg = tt.errorMsg;
             if (msg === "") {
-                this.setType(t.id, tt); /// 设置某token结点ID对应的ExprType对象
+                this.types[t.id] = tt; /// 设置某token结点ID对应的ExprType对象
             }
         }
         return msg;

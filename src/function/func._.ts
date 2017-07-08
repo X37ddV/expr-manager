@@ -1,5 +1,4 @@
 import { isArray, isObject, isString } from "../lib/base/common";
-import { IContext } from "../lib/base/interface";
 
 // 表达式函数
 // ----------
