@@ -1,19 +1,19 @@
 import locale from "../base/locale";
 import { eachToken, format, hasToken } from "./common";
-import { IToken } from "./interface";
+import { IParser, IToken } from "./interface";
 import Lexer from "./lexer";
 import { RULE_BTOKENS, RULE_ETOKENS, RULE_LEXICAL } from "./rule";
 
 // 语法解析器
 // ----------
 
-export default class Parser {
-    private tokens: IToken[] = []; /// 按照顺序存储Token对象
-    private rootToken: IToken = null; /// 存储语法树的根Token对象
-    private errorMsg: string = ""; /// 错误信息，如果为空字符串则表示没有错误
+export default class Parser implements IParser {
+    public errorMsg: string = ""; /// 错误信息，如果为空字符串则表示没有错误
+    public tokens: IToken[] = []; /// 按照顺序存储Token对象
+    public rootToken: IToken = null; /// 存储语法树的根Token对象
     private lexer: Lexer = new Lexer(); /// 词法分析器对象，将表达式拆成Token对象数组
     // 表达式解析
-    public parser(expr: string): Parser {
+    public parser(expr: string): IParser {
         // - 初始化
         this.doInit(expr);
         // - 构建Token双向链表

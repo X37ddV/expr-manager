@@ -1379,1115 +1379,6 @@ var func = {
     string: func_string,
 };
 
-// 词法分析器
-// ----------
-var Lexer = (function () {
-    function Lexer() {
-        this.expr = []; // 表达式字符数组
-        this.index = 0; // 当前索引位置
-    }
-    // 设置表达式
-    Lexer.prototype.setExpr = function (expr) {
-        this.expr = expr ? expr.split("") : [];
-        this.reset();
-        return this;
-    };
-    // 重置词法分析器，以便再次从头开始解析
-    Lexer.prototype.reset = function () {
-        this.index = 0;
-        return this;
-    };
-    // 下一个Token结点
-    Lexer.prototype.nextToken = function () {
-        var s = this.expr;
-        var n = this.index;
-        var hasWrong = false;
-        var token;
-        while (n < s.length) {
-            if (s[n] !== " ") {
-                break;
-            }
-            else {
-                n++;
-            }
-        }
-        var tValue = "";
-        var tType = "";
-        var tText = "";
-        var tIndex = n + 1;
-        if (n < s.length) {
-            switch (s[n]) {
-                case "[":
-                case "]":
-                case "{":
-                case "}":
-                case ".":
-                case "(":
-                case ")":
-                case "*":
-                case "/":
-                case "%":
-                case "+":
-                case "-":
-                case ":":
-                case ",":
-                    tText = tValue = s[n++];
-                    tType =
-                        tValue === "[" ? "TK_LA" :
-                            tValue === "]" ? "TK_RA" :
-                                tValue === "{" ? "TK_LO" :
-                                    tValue === "}" ? "TK_RO" :
-                                        tValue === "." ? "TK_DOT" :
-                                            tValue === "(" ? "TK_LP" :
-                                                tValue === ")" ? "TK_RP" :
-                                                    tValue === "*" ? "TK_MULTI" :
-                                                        tValue === "/" ? "TK_DIV" :
-                                                            tValue === "%" ? "TK_MOD" :
-                                                                tValue === "+" ? "TK_PLUS" :
-                                                                    tValue === "-" ? "TK_MINUS" :
-                                                                        tValue === ":" ? "TK_COLON" :
-                                                                            tValue === "," ? "TK_COMMA" :
-                                                                                "";
-                    break;
-                case "!":
-                    tValue = s[n++];
-                    if (n < s.length && s[n] === "=") {
-                        tValue += s[n++];
-                        tType = "TK_EO";
-                    }
-                    else {
-                        tType = "TK_NOT";
-                    }
-                    tText = tValue;
-                    break;
-                case ">":
-                case "<":
-                    tValue = s[n++];
-                    if (n < s.length && s[n] === "=") {
-                        tValue += s[n++];
-                    }
-                    tText = tValue;
-                    tType = "TK_CO";
-                    break;
-                case "=":
-                    tValue = s[n++];
-                    if (n < s.length && s[n] === "=") {
-                        tValue += s[n++];
-                        tType = "TK_EO";
-                    }
-                    else {
-                        tType = "TK_UNKNOWN";
-                    }
-                    tText = tValue;
-                    break;
-                case "&":
-                case "|":
-                    tValue = s[n++];
-                    if (n < s.length && s[n] === tValue) {
-                        tType =
-                            tValue === "&" ? "TK_AND" :
-                                tValue === "|" ? "TK_OR" :
-                                    "TK_UNKNOWN";
-                        tValue += s[n++];
-                    }
-                    else {
-                        tType = "TK_UNKNOWN";
-                    }
-                    tText = tValue;
-                    break;
-                case "'":
-                case "\"":
-                    var start = s[n];
-                    var v = [];
-                    var endFlag = false;
-                    tValue += s[n++];
-                    while (!hasWrong && n < s.length) {
-                        if (s[n] === "\\") {
-                            switch (s[n + 1]) {
-                                case "\\":
-                                    n++;
-                                    v.push("\\");
-                                    break;
-                                case "n":
-                                    n++;
-                                    v.push("\n");
-                                    break;
-                                case "\'":
-                                    n++;
-                                    v.push("\'");
-                                    break;
-                                case "\"":
-                                    n++;
-                                    v.push("\"");
-                                    break;
-                                case "t":
-                                    n++;
-                                    v.push("\t");
-                                    break;
-                                case "b":
-                                    n++;
-                                    v.push("\b");
-                                    break;
-                                case "r":
-                                    n++;
-                                    v.push("\r");
-                                    break;
-                                case "f":
-                                    n++;
-                                    v.push("\f");
-                                    break;
-                                case "u":
-                                    var strU = s.join("").substring(n + 2, n + 6);
-                                    if (isX(s[n + 2]) && isX(s[n + 3]) && isX(s[n + 4]) && isX(s[n + 5])) {
-                                        v.push(String.fromCharCode(parseInt(strU, 16)));
-                                        n += 5;
-                                    }
-                                    else {
-                                        hasWrong = true;
-                                        token = {
-                                            tokenErrorMsg: format(locale.getLocale().MSG_EL_SYNTAX_UC, "\\u" + strU),
-                                            tokenIndex: n,
-                                            tokenType: "TK_STRING",
-                                        };
-                                    }
-                                    break;
-                                case "x":
-                                    var strX = s.join("").substring(n + 2, n + 4);
-                                    if (isX(s[n + 2]) && isX(s[n + 3])) {
-                                        v.push(String.fromCharCode(parseInt(strX, 16)));
-                                        n += 3;
-                                    }
-                                    else {
-                                        hasWrong = true;
-                                        token = {
-                                            tokenErrorMsg: format(locale.getLocale().MSG_EL_SYNTAX_XN, "\\x" + strX),
-                                            tokenIndex: n,
-                                            tokenType: "TK_STRING",
-                                        };
-                                    }
-                                    break;
-                                case "0":
-                                case "1":
-                                case "2":
-                                case "3":
-                                case "4":
-                                case "5":
-                                case "6":
-                                case "7":
-                                    var strN = s.join("").substring(n + 1, n + 4);
-                                    if (isO(s[n + 1]) && isO(s[n + 2]) && isO(s[n + 3])) {
-                                        v.push(String.fromCharCode(parseInt(strN, 8)));
-                                        n += 3;
-                                    }
-                                    else {
-                                        hasWrong = true;
-                                        token = {
-                                            tokenErrorMsg: format(locale.getLocale().MSG_EL_SYNTAX_ON, "\\" + strN),
-                                            tokenIndex: n,
-                                            tokenType: "TK_STRING",
-                                        };
-                                    }
-                                    break;
-                                default:
-                                    n++;
-                                    v.push(s[n]);
-                                    break;
-                            }
-                        }
-                        else if (s[n] === start) {
-                            endFlag = true;
-                            break;
-                        }
-                        else {
-                            v.push(s[n]);
-                        }
-                        n++;
-                    }
-                    if (!hasWrong) {
-                        if (endFlag === true) {
-                            tValue += v.join("") + start;
-                        }
-                        else {
-                            hasWrong = true;
-                            token = {
-                                tokenErrorMsg: format(locale.getLocale().MSG_EL_SYNTAX_S, tValue + v.join("")),
-                                tokenIndex: n,
-                                tokenType: "TK_STRING",
-                            };
-                            break;
-                        }
-                        n++;
-                        tText = tValue;
-                        tValue = v.join("");
-                        tType = "TK_STRING";
-                    }
-                    break;
-                default:
-                    tValue = s[n++];
-                    if (isN(tValue)) {
-                        while (n < s.length) {
-                            if (!isN(s[n]) || (s[n] === "." && !isN(s[n + 1]))) {
-                                break;
-                            }
-                            tValue += s[n++];
-                        }
-                        tType = isNS(tValue) ? "TK_NUMBER" : "TK_UNKNOWN";
-                    }
-                    else if (isC(tValue)) {
-                        while (n < s.length) {
-                            if (!isC(s[n])) {
-                                break;
-                            }
-                            tValue += s[n++];
-                        }
-                        switch (tValue) {
-                            case "true":
-                            case "false":
-                                tType = "TK_BOOL";
-                                break;
-                            case "null":
-                                tType = "TK_NULL";
-                                break;
-                            default:
-                                tType = "TK_IDEN";
-                        }
-                    }
-                    else {
-                        while (n < s.length) {
-                            if (!isUN(s[n])) {
-                                break;
-                            }
-                            tValue += s[n++];
-                        }
-                        tType = "TK_UNKNOWN";
-                    }
-                    tText = tValue;
-            }
-        }
-        else {
-            return null;
-        }
-        if (tType === "TK_PLUS" || tType === "TK_MINUS") {
-            var j = n - tText.length - 1;
-            while (j >= 0) {
-                if ("({[+-*/%><=&|:,".indexOf(s[j]) >= 0) {
-                    tType = "TK_UNARY";
-                    break;
-                }
-                else if (s[j] !== " ") {
-                    break;
-                }
-                j--;
-            }
-            if (j === -1) {
-                tType = "TK_UNARY";
-            }
-        }
-        this.index = n;
-        if (!hasWrong) {
-            token = {
-                tokenIndex: tIndex,
-                tokenText: tText,
-                tokenType: tType,
-                tokenValue: tValue,
-            };
-        }
-        return token;
-    };
-    return Lexer;
-}());
-
-// 语法规则
-// ----------
-// 节点类型
-var tokens = ("TK_UNKNOWN,TK_STRING,TK_NUMBER,TK_BOOL,TK_NULL,TK_IDEN,TK_DOT,TK_LP,TK_LA," +
-    "TK_LO,TK_RP,TK_RA,TK_RO,TK_UNARY,TK_NOT,TK_MULTI,TK_DIV,TK_MOD,TK_PLUS,TK_MINUS," +
-    "TK_CO,TK_EO,TK_AND,TK_OR,TK_COLON,TK_COMMA").split(",");
-var genTokenState = function (tks, opts) {
-    var r = {};
-    tks.forEach(function (v, i) { return r[v] = opts[i] === "1"; });
-    return r;
-};
-// 起始节点规则
-var RULE_BTOKENS = genTokenState(tokens, "01111101110001100000000000".split(""));
-// 结束节点规则
-var RULE_ETOKENS = genTokenState(tokens, "01111100001110000000000000".split(""));
-// 后序节点规则
-var RULE_LEXICAL = (function (tks, opts) {
-    var r = {};
-    tks.forEach(function (v, i) { return r[v] = genTokenState(tks, opts[i].split("")); });
-    return r;
-})(tokens, ("00000000000000000000000000," +
-    "00000010101110011111111111," +
-    "00000010001110011111111111," +
-    "00000010001110011111111111," +
-    "00000000001110011111111111," +
-    "00000011101110011111111111," +
-    "00000100000000000000000000," +
-    "01111101111001100000000000," +
-    "01111101110101100000000000," +
-    "01111100000010000000000000," +
-    "00000010101110011111111101," +
-    "00000010101110011111111101," +
-    "00000010111110011111111101," +
-    "01111101110001100000000000," +
-    "01111101110001100000000000," +
-    "01111101110001100000000000," +
-    "01111101110001100000000000," +
-    "01111101110001100000000000," +
-    "01111101110001100000000000," +
-    "01111101110001100000000000," +
-    "01111101110001100000000000," +
-    "01111101110001100000000000," +
-    "01111101110001100000000000," +
-    "01111101110001100000000000," +
-    "01111101110001100000000000," +
-    "01111101110001100000000000"
-).split(","));
-
-// 语法解析器
-// ----------
-var Parser = (function () {
-    function Parser() {
-        this.tokens = [];
-        this.rootToken = null;
-        this.errorMsg = "";
-        this.lexer = new Lexer();
-    }
-    // 表达式解析
-    Parser.prototype.parser = function (expr) {
-        // - 初始化
-        this.doInit(expr);
-        // - 构建Token双向链表
-        if (this.errorMsg === "") {
-            this.errorMsg = this.doDoublyLinkedList();
-        }
-        // - 构建语法树，返回根节点
-        if (this.errorMsg === "") {
-            this.rootToken = this.doParser(this.tokens);
-        }
-        // - 检查语法错误
-        if (this.errorMsg === "" && this.rootToken) {
-            this.errorMsg = this.doCheckSyntax(this.rootToken);
-        }
-        // - 返回自己
-        return this;
-    };
-    // 初始化语法分析器对象，清空rootToken，tokens和errorMsg
-    Parser.prototype.doInit = function (expr) {
-        if (!expr) {
-            this.errorMsg = locale.getLocale().MSG_EP_EMPTY;
-        }
-        else {
-            this.rootToken = null;
-            this.tokens = [];
-            this.errorMsg = "";
-            this.lexer.setExpr(expr);
-        }
-    };
-    // 创建虚节点
-    Parser.prototype.doCreateVirtualToken = function (type) {
-        var v;
-        switch (type) {
-            case "VTK_COMMA":
-                v = ",";
-                break;
-            case "VTK_PAREN":
-                v = "()";
-                break;
-            case "VTK_ARRAY":
-                v = "[]";
-                break;
-            case "VTK_OBJECT":
-                v = "{}";
-                break;
-            case "VTK_SUBSCRIPT":
-                v = "[n]";
-                break;
-            case "VTK_FUNCTION":
-                v = "Fn()";
-                break;
-            default:
-                v = "";
-        }
-        return {
-            childs: [],
-            parent: null,
-            tokenText: v,
-            tokenType: type,
-            tokenValue: v,
-        };
-    };
-    // 将表达式构建成Token双向链表
-    Parser.prototype.doDoublyLinkedList = function () {
-        var t = this.lexer.nextToken();
-        var ts = this.tokens;
-        var stack = [];
-        var r = "";
-        while (!r && t) {
-            if (t.tokenType === "TK_UNKNOWN") {
-                r = format(locale.getLocale().MSG_EP_UNKNOWN, t.tokenText);
-                break;
-            }
-            else if (t.tokenType === "TK_STRING") {
-                if (t.tokenErrorMsg) {
-                    r = t.tokenErrorMsg;
-                    break;
-                }
-            }
-            t.parent = null;
-            t.childs = [];
-            this.tokens.push(t);
-            // - 检查前后依赖关系正确性
-            if (ts.length === 1 && !RULE_BTOKENS[t.tokenType]) {
-                r = format(locale.getLocale().MSG_EP_LEXICAL_B, t.tokenText);
-                break;
-            }
-            else if (ts.length !== 1 && !RULE_LEXICAL[ts[ts.length - 2].tokenType][t.tokenType]) {
-               
-                r = format(locale.getLocale().MSG_EP_LEXICAL_L, ts[ts.length - 2].tokenText, t.tokenText);
-                break;
-            }
-            // - 检查括号匹配正确性
-            switch (t.tokenType) {
-                case "TK_LP":
-                case "TK_LA":
-                case "TK_LO":
-                    stack.push(t);
-                    break;
-                case "TK_RP":
-                case "TK_RA":
-                case "TK_RO":
-                    if (stack.length) {
-                        if (t.tokenType.replace("R", "L") === stack[stack.length - 1].tokenType) {
-                            stack.pop();
-                        }
-                        else {
-                            r = format(locale.getLocale().MSG_EP_MATCH, stack[stack.length - 1].tokenText);
-                        }
-                    }
-                    else {
-                        r = format(locale.getLocale().MSG_EP_MATCH, t.tokenText);
-                    }
-                    break;
-                default:
-                    break;
-            }
-            t = this.lexer.nextToken();
-        }
-        if (!r && !RULE_ETOKENS[ts[ts.length - 1].tokenType]) {
-            r = format(locale.getLocale().MSG_EP_LEXICAL_E, ts[ts.length - 1].tokenText);
-        }
-        if (!r && stack.length) {
-            r = format(locale.getLocale().MSG_EP_MATCH, stack[stack.length - 1].tokenText);
-        }
-        return r;
-    };
-    // 构建语法树，返回根节点
-    Parser.prototype.doParser = function (ts) {
-        var p = null;
-        if (ts && !ts.length) {
-            return p;
-        }
-        // - 处理 ()[]{} 括号节点
-        p = this.doParser_0(ts);
-        // - 处理能构成 function 的节点
-        p = this.doParser_1(p);
-        // - 处理 . [] 节点构成的子项调用
-        p = this.doParser_2(p);
-        // - 处理 + - ! 单目运算节点
-        p = this.doParser_3(p);
-        // - 处理 * / % 四则运算
-        p = this.doParser_4(p, "TK_MULTI,TK_DIV,TK_MOD");
-        // - 处理 + - 四则运算
-        p = this.doParser_4(p, "TK_PLUS,TK_MINUS");
-        // - 处理 < <= > >= 比较运算符
-        p = this.doParser_4(p, "TK_CO");
-        // - 处理 == != 等于运算符
-        p = this.doParser_4(p, "TK_EO");
-        // - 处理 && 与运算
-        p = this.doParser_4(p, "TK_AND");
-        // - 处理 || 或运算
-        p = this.doParser_4(p, "TK_OR");
-        // - 处理 : 冒号
-        p = this.doParser_4(p, "TK_COLON");
-        // - 处理 , 逗号
-        p = this.doParser_5(p);
-        if (p.length > 1) {
-            this.errorMsg = "语法解析错误";
-        }
-        return p[0];
-    };
-    // 检查语法错误
-    Parser.prototype.doCheckSyntax = function (rootToken) {
-        var msg = "";
-        var s;
-        var id = 0;
-        eachToken(this.rootToken, function (t) {
-            t.id = id++;
-            s = t.tokenText;
-            switch (t.tokenType) {
-                // - 点操作符检查
-                case "TK_DOT":
-                    if (t.childs[1].tokenType === "TK_IDEN" &&
-                        !hasToken("VTK_FUNCTION,TK_IDEN,TK_DOT,VTK_SUBSCRIPT,VTK_PAREN,VTK_OBJECT", t.childs[0].tokenType)) {
-                        msg = format(locale.getLocale().MSG_EP_SYNTAX_D, t.childs[0].tokenType);
-                    }
-                    break;
-                // - 冒号操作符检查
-                case "TK_COLON":
-                    if (!t.parent || !hasToken("VTK_OBJECT,VTK_COMMA", t.parent.tokenType)) {
-                        msg = format(locale.getLocale().MSG_EP_SYNTAX_P, s);
-                    }
-                    else if (t.childs && t.childs[0] && t.childs[0].childs &&
-                        t.childs[0].childs.length > 0) {
-                        msg = format(locale.getLocale().MSG_EP_SYNTAX_E, s);
-                    }
-                    break;
-                // - 逗号操作符检查
-                case "VTK_COMMA":
-                    if (!t.parent || !hasToken("VTK_OBJECT,VTK_ARRAY,VTK_PAREN", t.parent.tokenType)) {
-                        msg = format(locale.getLocale().MSG_EP_SYNTAX_C, s);
-                    }
-                    break;
-                // - 小括号检查
-                case "VTK_PAREN":
-                    if (t.parent && t.parent.tokenType !== "TK_IDEN" || !t.parent) {
-                        if (t.childs.length === 0) {
-                            msg = format(locale.getLocale().MSG_EP_SYNTAX_N, s);
-                        }
-                        else if (t.childs[0].tokenType === "VTK_COMMA") {
-                            msg = format(locale.getLocale().MSG_EP_SYNTAX_M, s);
-                        }
-                    }
-                    break;
-                // - 中括号检查
-                case "VTK_ARRAY":
-                    if (t.childs && t.childs.length > 0) {
-                        if (t.childs[0].tokenType === "TK_COLON") {
-                            msg = format(locale.getLocale().MSG_EP_SYNTAX_A, ":");
-                        }
-                        else if (t.childs[0].tokenType === "VTK_COMMA") {
-                            if (t.parent && t.parent.tokenType === "VTK_SUBSCRIPT" &&
-                                t.parent.childs[0] !== t) {
-                                msg = format(locale.getLocale().MSG_EP_SYNTAX_SUB, ",");
-                            }
-                            if (t.childs[0].childs) {
-                                for (var _i = 0, _a = t.childs[0].childs; _i < _a.length; _i++) {
-                                    var item = _a[_i];
-                                    if (item.tokenType === "TK_COLON") {
-                                        msg = format(locale.getLocale().MSG_EP_SYNTAX_A, ":");
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    break;
-                // - 大括号检查
-                case "VTK_OBJECT":
-                    var y = false;
-                    if (t.childs && (t.childs.length === 0 || hasToken("TK_COLON,VTK_COMMA", t.childs[0].tokenType))) {
-                        if (t.childs.length > 0 && t.childs[0].tokenType === "VTK_COMMA") {
-                            if (t.childs[0].childs) {
-                                for (var _b = 0, _c = t.childs[0].childs; _b < _c.length; _b++) {
-                                    var item = _c[_b];
-                                    y = item.tokenType === "TK_COLON";
-                                    if (!y) {
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        else {
-                            y = true;
-                        }
-                    }
-                    if (!y) {
-                        msg = locale.getLocale().MSG_EP_SYNTAX_O;
-                    }
-                    break;
-                default:
-                    break;
-            }
-            if (msg !== "") {
-                return false;
-            }
-        }, this);
-        return msg;
-    };
-    // () [] {}，将括号中的多个token拿出来计算并生成虚Token插入到原来的Token数组中
-    Parser.prototype.doParser_0 = function (ts) {
-        var t;
-        var l = [];
-        var counter = 0;
-        var queue = [];
-        var i = 0;
-        while (i < ts.length) {
-            t = ts[i];
-            if (hasToken("TK_LP,TK_LA,TK_LO", t.tokenType)) {
-                counter++;
-            }
-            else if (hasToken("TK_RP,TK_RA,TK_RO", t.tokenType)) {
-                counter--;
-            }
-            if (counter > 0) {
-                queue.push(t);
-            }
-            else if (queue.length > 0) {
-                var root = queue.shift();
-                var rootType = void 0;
-                switch (root.tokenType) {
-                    case "TK_LP":
-                        rootType = "VTK_PAREN";
-                        break;
-                    case "TK_LA":
-                        rootType = "VTK_ARRAY";
-                        break;
-                    case "TK_LO":
-                        rootType = "VTK_OBJECT";
-                        break;
-                    default: break;
-                }
-                t = this.doCreateVirtualToken(rootType);
-                t.tokenIndex = root.tokenIndex;
-                var tmp = this.doParser(queue);
-                if (tmp) {
-                    t.childs.push(tmp);
-                    tmp.parent = t;
-                }
-                l.push(t);
-                queue = [];
-            }
-            else {
-                l.push(t);
-            }
-            i++;
-        }
-        return l;
-    };
-    // 标识符与()相连构成函数
-    Parser.prototype.doParser_1 = function (ts) {
-        var t;
-        var n;
-        var l = [];
-        var i = 0;
-        while (i < ts.length) {
-            t = ts[i];
-            n = ts[i + 1];
-           
-            if (t.tokenType === "TK_IDEN" && n && n.tokenType === "VTK_PAREN") {
-                var tmp = this.doCreateVirtualToken("VTK_FUNCTION");
-                tmp.tokenIndex = t.tokenIndex;
-                tmp.childs.push(t);
-                t.parent = tmp;
-                tmp.childs.push(n);
-                n.parent = t;
-                i++;
-                l.push(tmp);
-            }
-            else {
-                l.push(t);
-            }
-            i++;
-        }
-        return l;
-    };
-    // 处理 . [] 与标识符、string、()、[]、{}一起构成下标访问属性访问
-    Parser.prototype.doParser_2 = function (ts) {
-        var t;
-        var n;
-        var l = [];
-        var i = 0;
-        while (i < ts.length) {
-            t = ts[i];
-            n = ts[i + 1];
-            if (n && (n.tokenType === "TK_DOT" || n.tokenType === "VTK_ARRAY" && hasToken("TK_IDEN,TK_STRING,VTK_PAREN,VTK_FUNCTION,VTK_ARRAY,VTK_OBJECT", t.tokenType))) {
-                do {
-                    switch (n.tokenType) {
-                        case "TK_DOT":
-                            n.childs.push(t);
-                            t.parent = n;
-                            i += 2;
-                            t = ts[i];
-                            n.childs.push(t);
-                            t.parent = n;
-                            t = n;
-                            n = ts[i + 1];
-                            break;
-                        case "VTK_ARRAY":
-                            var tmp = this.doCreateVirtualToken("VTK_SUBSCRIPT");
-                            tmp.childs.push(t);
-                            t.parent = tmp;
-                            tmp.childs.push(n);
-                            n.parent = tmp;
-                            t = tmp;
-                            i++;
-                            n = ts[i + 1];
-                            break;
-                        default:
-                            break;
-                    }
-                } while (n && (n.tokenType === "TK_DOT" || n.tokenType === "VTK_ARRAY"));
-                l.push(t);
-            }
-            else {
-                l.push(t);
-            }
-            i++;
-        }
-        return l;
-    };
-    // 处理 + - ! 单目运算
-    Parser.prototype.doParser_3 = function (ts) {
-        var t;
-        var l = [];
-        var i = 0;
-        while (i < ts.length) {
-            t = ts[i];
-            if (hasToken("TK_UNARY,TK_NOT", t.tokenType)) {
-                l.push(t);
-                do {
-                    var tmp = ts[++i];
-                    t.childs.push(tmp);
-                    tmp.parent = t;
-                    t = ts[i];
-                } while (hasToken("TK_UNARY,TK_NOT", t.tokenType));
-            }
-            else {
-                l.push(t);
-            }
-            i++;
-        }
-        return l;
-    };
-    // 处理 1.* / % 2.+ - 3.< <= > >= == != 4.&& 5.|| 6.: 优先级
-    Parser.prototype.doParser_4 = function (ts, tts) {
-        var t;
-        var n;
-        var l = [];
-        var i = 0;
-        while (i < ts.length) {
-            t = ts[i];
-            n = ts[i + 1];
-            if (n && hasToken(tts, n.tokenType)) {
-                var tmp = void 0;
-                do {
-                    n.childs.push(t);
-                    t.parent = n;
-                    tmp = n;
-                    i += 2;
-                    t = ts[i];
-                    n = ts[i + 1];
-                    tmp.childs.push(t);
-                    t.parent = tmp;
-                    if (n && hasToken(tts, n.tokenType)) {
-                        t = tmp;
-                    }
-                    else {
-                        break;
-                    }
-                } while (true);
-                l.push(tmp);
-            }
-            else {
-                l.push(t);
-            }
-            i++;
-        }
-        return l;
-    };
-    // 处理 , 即对象字段分隔{a:1,b:'re'}或数组元素[1,2,3]，函数参数分隔符fun(a,b)
-    Parser.prototype.doParser_5 = function (ts) {
-        var t;
-        var n;
-        var l = [];
-        var i = 0;
-        while (i < ts.length) {
-            t = ts[i];
-            n = ts[i + 1];
-            if (n && n.tokenType === "TK_COMMA") {
-                var tmp = this.doCreateVirtualToken("VTK_COMMA");
-                tmp.tokenIndex = n.tokenIndex;
-                while (n && n.tokenType === "TK_COMMA") {
-                    tmp.childs.push(t);
-                    t.parent = tmp;
-                    i += 2;
-                    t = ts[i];
-                    n = ts[i + 1];
-                }
-                tmp.childs.push(t);
-                t.parent = tmp;
-                l.push(tmp);
-            }
-            else {
-                l.push(t);
-            }
-            i++;
-        }
-        return l;
-    };
-    return Parser;
-}());
-
-// 类型
-// ----------
-var Type = (function () {
-    // 类型构造函数
-    function Type(context, type, info, data, entity, depends, errorMsg) {
-        this.context = context;
-        this.type = type || "undefined";
-        this.info = info || type;
-        this.data = data;
-        this.entity = entity || null;
-        this.depends = depends || null;
-        this.errorMsg = errorMsg || "";
-    }
-    // 生成类型对象
-    Type.prototype.genType = function (type, info, data, entity, depends, errorMsg) {
-        return new Type(this.context, type, info, data, entity, depends, errorMsg);
-    };
-    // 生成错误类型对象
-    Type.prototype.genErrorType = function (errorMsg) {
-        return this.genType(undefined, undefined, undefined, undefined, undefined, errorMsg);
-    };
-    // 该类型对象是否包含了数据
-    Type.prototype.hasData = function () {
-        return this.data !== undefined;
-    };
-    // 得到类型值
-    Type.prototype.toValue = function () {
-        return this.type;
-    };
-    // 追加数组元素
-    Type.prototype.arrayPush = function (et) {
-        if (this.type === "array") {
-            this.info.push(et.info);
-            this.data.push(et.data);
-        }
-        return this;
-    };
-    // 连接数组元素
-    Type.prototype.arrayConcat = function (et) {
-        if (this.type === "array" && et.type === "array") {
-            this.info = this.info.concat(et.info);
-            this.data = this.data.concat(et.data);
-        }
-        return this;
-    };
-    // 设置对象属性
-    Type.prototype.objectSetProperty = function (et) {
-        if (this.type === "object") {
-            var h = et.info;
-            this.info[h.key] = h.value;
-            var d = et.data;
-            this.data[d.key] = d.value;
-        }
-        return this;
-    };
-    // 批量设置对象属性
-    Type.prototype.objectSetProperties = function (et) {
-        if (this.type === "object" && et.type === "array") {
-            for (var _i = 0, _a = et.info; _i < _a.length; _i++) {
-                var item = _a[_i];
-                this.info[item.key] = item.value;
-            }
-            for (var _b = 0, _c = et.data; _b < _c.length; _b++) {
-                var item = _c[_b];
-                this.data[item.key] = item.value;
-            }
-        }
-        return this;
-    };
-    // 取正/负值
-    Type.prototype.negative = function (op) {
-        var t;
-        if (this.type === "null" || this.type === "undefined" || this.type === "number") {
-            t = this.genType("number");
-        }
-        else {
-            t = op === "-" ? locale.getLocale().MSG_EX_NEGATIVE : locale.getLocale().MSG_EX_POSITIVE;
-            t = this.genErrorType(format(t, this.type));
-        }
-        return t;
-    };
-    // 非运算
-    Type.prototype.not = function () {
-        return this.genType("boolean");
-    };
-    // 乘法
-    Type.prototype.multiply = function (et) {
-        return (this.type === "null" && et.type === "null") ? this.genType("null") :
-            ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
-                (et.type === "number" || et.type === "null" || et.type === "undefined")) ? this.genType("number") :
-                this.genErrorType(format(locale.getLocale().MSG_EX_MULTIPLY, this.type, et.type));
-    };
-    // 除法
-    Type.prototype.divide = function (et) {
-        var t;
-        if (this.type === "null" && et.type === "null") {
-            t = this.genType("null");
-        }
-        else if ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
-            (et.type === "number" || et.type === "undefined")) {
-            t = (et.hasData() && (et.data === "null" || et.type === "number" && Number(et.data) === 0)) ?
-                this.genErrorType(format(locale.getLocale().MSG_EX_DIVIDE_N, et.info)) :
-                this.genType("number");
-        }
-        else {
-            t = this.genErrorType(format(locale.getLocale().MSG_EX_DIVIDE, this.type, et.type));
-        }
-        return t;
-    };
-    // 求余
-    Type.prototype.remainder = function (et) {
-        var t;
-        if (this.type === "null" && et.type === "null") {
-            t = this.genType("null");
-        }
-        else if ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
-            (et.type === "number" || et.type === "undefined")) {
-            t = (et.hasData() && (et.data === "null" || et.type === "number" && Number(et.data) === 0)) ?
-                this.genErrorType(format(locale.getLocale().MSG_EX_REMAINDER_N, et.info)) :
-                this.genType("number");
-        }
-        else {
-            t = this.genErrorType(format(locale.getLocale().MSG_EX_REMAINDER, this.type, et.type));
-        }
-        return t;
-    };
-    // 加法
-    Type.prototype.add = function (et) {
-        return (this.type === "undefined" && et.type === "undefined") ? this.genType("undefined") :
-            (this.type === "null" && et.type === "null") ? this.genType("null") :
-                ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
-                    (et.type === "number" || et.type === "null" || et.type === "undefined")) ? this.genType("number") :
-                    ((this.type === "string" || this.type === "number" || this.type === "null" ||
-                        this.type === "undefined") && (et.type === "string" || et.type === "number" ||
-                        et.type === "null" || et.type === "undefined")) ? this.genType("string") :
-                        ((this.type === "array" || this.type === "null" || this.type === "undefined") &&
-                            (et.type === "array" || et.type === "null" ||
-                                et.type === "undefined")) ? this.genType("array") :
-                            this.genErrorType(format(locale.getLocale().MSG_EX_ADD, this.type, et.type));
-    };
-    // 减法
-    Type.prototype.subtract = function (et) {
-        return (this.type === "undefined" && et.type === "undefined") ?
-            this.genType("undefined") :
-            (this.type === "null" && et.type === "null") ?
-                this.genType("null") :
-                ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
-                    (et.type === "number" || et.type === "null" || et.type === "undefined")) ?
-                    this.genType("number") :
-                    ((this.type === "array" || this.type === "null" || this.type === "undefined") &&
-                        (et.type === "array" || et.type === "null" || et.type === "undefined")) ?
-                        this.genType("array") :
-                        this.genErrorType(format(locale.getLocale().MSG_EX_SUBTRACT, this.type, et.type));
-    };
-    // 等于
-    Type.prototype.equal = function (et, op) {
-        var t;
-        var b = op === "==";
-        if (this.type === "undefined" || et.type === "undefined" || this.type === "null" || et.type === "null" ||
-            this.type === et.type) {
-            t = this.genType("boolean");
-        }
-        else {
-            t = b ? locale.getLocale().MSG_EX_EQUAL : locale.getLocale().MSG_EX_EQUAL_N;
-            t = this.genErrorType(format(t, this.type, et.type));
-        }
-        return t;
-    };
-    // 比较运算
-    Type.prototype.compare = function (et, op) {
-        if (op === "==" || op === "!=") {
-            return this.equal(et, op);
-        }
-        else {
-            var t = void 0;
-            if (this.type === "undefined" || et.type === "undefined" || this.type === "null" || et.type === "null" ||
-                (this.type === et.type && (et.type === "string" || et.type === "date" || et.type === "number"))) {
-                t = this.genType("boolean");
-            }
-            else {
-                switch (op) {
-                    case ">":
-                        t = locale.getLocale().MSG_EX_COMPARE_A;
-                        break;
-                    case "<":
-                        t = locale.getLocale().MSG_EX_COMPARE_B;
-                        break;
-                    case ">=":
-                        t = locale.getLocale().MSG_EX_COMPARE_C;
-                        break;
-                    case "<=":
-                        t = locale.getLocale().MSG_EX_COMPARE_D;
-                        break;
-                    default: break;
-                }
-                t = this.genErrorType(format(t, this.type, et.type));
-            }
-            return t;
-        }
-    };
-    // 与运算
-    Type.prototype.and = function (et) {
-        return (this.type === "undefined" || et.type === "undefined" || this.type === "null" || et.type === "null" ||
-            (this.type === "boolean" && et.type === "boolean")) ?
-            this.genType("boolean") :
-            this.genErrorType(format(locale.getLocale().MSG_EX_AND, this.type, et.type));
-    };
-    // 或运算
-    Type.prototype.or = function (et) {
-        return (this.type === "undefined" || et.type === "undefined" || this.type === "null" || et.type === "null" ||
-            (this.type === "boolean" && et.type === "boolean")) ?
-            this.genType("boolean") :
-            this.genErrorType(format(locale.getLocale().MSG_EX_OR, this.type, et.type));
-    };
-    // 下标运算
-    Type.prototype.subscript = function (et) {
-        var t;
-        var i = (et.type === "array") ?
-            et.info[0] :
-            et.info;
-        if (this.type === "string" || this.type === "array") {
-            if (i === "number") {
-                t = (this.type === "array" && this.entity) ?
-                    this.context.getEntityType(this) :
-                    (this.type === "string") ?
-                        this.genType("string") :
-                        this.genType("undefined");
-            }
-            else {
-                t = this.genErrorType(format(locale.getLocale().MSG_EX_SUBSCRIPT_T, i));
-            }
-        }
-        else if (this.type === "object") {
-            t = this.genType("string", "string", i);
-            t = t.getVariableType(this);
-        }
-        else {
-            t = (this.type === "undefined") ?
-                this.genType("undefined") :
-                this.genErrorType(format(locale.getLocale().MSG_EX_SUBSCRIPT, this.type));
-        }
-        return t;
-    };
-    // 获取{key:...,value:...}键值对对象
-    Type.prototype.hashItem = function (et) {
-        return this.genType("object", { key: this.data, value: et.info }, { key: this.data, value: et.data });
-    };
-    // 获取变量值类型对象
-    Type.prototype.getVariableType = function (et) {
-        return this.context.getVariableType(this.data, et);
-    };
-    // 获取函数返回结果类型对象
-    Type.prototype.getFunctionType = function (et) {
-        return this.context.getFunctionType(this.info.key, et, this.info.value, this.data.value);
-    };
-    return Type;
-}());
-
 // 大数据值计算对象
 var Big = function (v) {
     return new Decimal(v);
@@ -3019,107 +1910,6 @@ var Value = (function () {
     return Value;
 }());
 
-// 上下文基类
-// ----------
-var Context = (function () {
-    function Context() {
-        this.exprList = [];
-    }
-    // 生成ExprValue对象
-    Context.prototype.genValue = function (value, type, entity, errorMsg, parentObj) {
-        return new Value(this, value, type, entity, errorMsg, parentObj);
-    };
-    // 有错误时，生成对应的ExprValue对象
-    Context.prototype.genErrorValue = function (errorMsg) {
-        return this.genValue(undefined, undefined, undefined, errorMsg, undefined);
-    };
-    // 生成ExprType对象
-    Context.prototype.genType = function (type, info, data, entity, depends, errorMsg) {
-        return new Type(this, type, info, data, entity, depends, errorMsg);
-    };
-    // 有错误时，生成对应的ExprType对象
-    Context.prototype.genErrorType = function (errorMsg) {
-        return this.genType(undefined, undefined, undefined, undefined, undefined, errorMsg);
-    };
-    // 得到函数source.name(paramValue)返回值的ExprType对象
-    Context.prototype.getFunctionType = function (name, source, paramType, paramData) {
-        return this.doGetFunctionType(name, source, paramType, paramData);
-    };
-    // 得到函数source.name(paramValue)执行结果
-    Context.prototype.getFunctionValue = function (name, source, paramValue) {
-        return this.doGetFunctionValue(name, source, paramValue);
-    };
-    // 得到变量类型
-    Context.prototype.getVariableType = function (name, source) {
-        return this.doGetVariableType(name, source);
-    };
-    // 得到对象source的name属性值
-    Context.prototype.getVariableValue = function (name, source) {
-        return this.doGetVariableValue(name, source);
-    };
-    // 得到实体类型
-    Context.prototype.getEntityType = function (source) {
-        return this.doGetEntityType(source);
-    };
-    // 从实体数组source中取出第index条实体记录
-    Context.prototype.getEntityValue = function (source, index) {
-        return this.doGetEntityValue(source, index);
-    };
-    // 得到解析信息
-    Context.prototype.getParserInfo = function (expr) {
-        expr = expr.trim();
-        var index = -1;
-        for (var i = 0; i < this.exprList.length; i++) {
-            if (this.exprList[i].text === expr) {
-                index = i;
-                break;
-            }
-        }
-        var r;
-        if (index >= 0) {
-            r = this.exprList[index].parser;
-        }
-        else {
-            var p = new Parser();
-            r = p.parser(expr);
-            this.exprList.push({
-                parser: r,
-                text: expr,
-            });
-        }
-        return r;
-    };
-    // 是否为IfNull(1,2)函数形式的","结点
-    Context.prototype.isIfNullToken = function (token) {
-        return isFunctionToken(token, this.doGetIfNullName());
-    };
-    // 是否为IIf(true,1,2)函数形式的","结点
-    Context.prototype.isIIfToken = function (token) {
-        return isFunctionToken(token, this.doGetIIfName());
-    };
-    Context.prototype.doGetIfNullName = function () { return ""; };
-    Context.prototype.doGetIIfName = function () { return ""; };
-    Context.prototype.doGetVariableType = function (name, source) {
-        //
-    };
-    Context.prototype.doGetVariableValue = function (name, source) {
-        //
-    };
-    Context.prototype.doGetFunctionType = function (name, source, paramType, paramData) {
-        //
-    };
-    Context.prototype.doGetFunctionValue = function (name, source, paramValue) {
-        //
-    };
-    Context.prototype.doGetEntityType = function (source) {
-        //
-    };
-    Context.prototype.doGetEntityValue = function (source, index) {
-        //
-    };
-    return Context;
-}());
-
 // 表达式计算
 // ----------
 var Calc = (function () {
@@ -3145,7 +1935,7 @@ var Calc = (function () {
     };
     // 对表达式进行语法分析和数值计算
     Calc.prototype.calc = function (expr, context) {
-        this.context = context || new Context();
+        this.context = context;
         var r;
         var p = this.context.getParserInfo(expr);
         if (p.errorMsg === "") {
@@ -3329,6 +2119,264 @@ var Calc = (function () {
     return Calc;
 }());
 
+// 类型
+// ----------
+var Type = (function () {
+    // 类型构造函数
+    function Type(context, type, info, data, entity, depends, errorMsg) {
+        this.context = context;
+        this.type = type || "undefined";
+        this.info = info || type;
+        this.data = data;
+        this.entity = entity || null;
+        this.depends = depends || null;
+        this.errorMsg = errorMsg || "";
+    }
+    // 生成类型对象
+    Type.prototype.genType = function (type, info, data, entity, depends, errorMsg) {
+        return new Type(this.context, type, info, data, entity, depends, errorMsg);
+    };
+    // 生成错误类型对象
+    Type.prototype.genErrorType = function (errorMsg) {
+        return this.genType(undefined, undefined, undefined, undefined, undefined, errorMsg);
+    };
+    // 该类型对象是否包含了数据
+    Type.prototype.hasData = function () {
+        return this.data !== undefined;
+    };
+    // 得到类型值
+    Type.prototype.toValue = function () {
+        return this.type;
+    };
+    // 追加数组元素
+    Type.prototype.arrayPush = function (et) {
+        if (this.type === "array") {
+            this.info.push(et.info);
+            this.data.push(et.data);
+        }
+        return this;
+    };
+    // 连接数组元素
+    Type.prototype.arrayConcat = function (et) {
+        if (this.type === "array" && et.type === "array") {
+            this.info = this.info.concat(et.info);
+            this.data = this.data.concat(et.data);
+        }
+        return this;
+    };
+    // 设置对象属性
+    Type.prototype.objectSetProperty = function (et) {
+        if (this.type === "object") {
+            var h = et.info;
+            this.info[h.key] = h.value;
+            var d = et.data;
+            this.data[d.key] = d.value;
+        }
+        return this;
+    };
+    // 批量设置对象属性
+    Type.prototype.objectSetProperties = function (et) {
+        if (this.type === "object" && et.type === "array") {
+            for (var _i = 0, _a = et.info; _i < _a.length; _i++) {
+                var item = _a[_i];
+                this.info[item.key] = item.value;
+            }
+            for (var _b = 0, _c = et.data; _b < _c.length; _b++) {
+                var item = _c[_b];
+                this.data[item.key] = item.value;
+            }
+        }
+        return this;
+    };
+    // 取正/负值
+    Type.prototype.negative = function (op) {
+        var t;
+        if (this.type === "null" || this.type === "undefined" || this.type === "number") {
+            t = this.genType("number");
+        }
+        else {
+            t = op === "-" ? locale.getLocale().MSG_EX_NEGATIVE : locale.getLocale().MSG_EX_POSITIVE;
+            t = this.genErrorType(format(t, this.type));
+        }
+        return t;
+    };
+    // 非运算
+    Type.prototype.not = function () {
+        return this.genType("boolean");
+    };
+    // 乘法
+    Type.prototype.multiply = function (et) {
+        return (this.type === "null" && et.type === "null") ? this.genType("null") :
+            ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
+                (et.type === "number" || et.type === "null" || et.type === "undefined")) ? this.genType("number") :
+                this.genErrorType(format(locale.getLocale().MSG_EX_MULTIPLY, this.type, et.type));
+    };
+    // 除法
+    Type.prototype.divide = function (et) {
+        var t;
+        if (this.type === "null" && et.type === "null") {
+            t = this.genType("null");
+        }
+        else if ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
+            (et.type === "number" || et.type === "undefined")) {
+            t = (et.hasData() && (et.data === "null" || et.type === "number" && Number(et.data) === 0)) ?
+                this.genErrorType(format(locale.getLocale().MSG_EX_DIVIDE_N, et.info)) :
+                this.genType("number");
+        }
+        else {
+            t = this.genErrorType(format(locale.getLocale().MSG_EX_DIVIDE, this.type, et.type));
+        }
+        return t;
+    };
+    // 求余
+    Type.prototype.remainder = function (et) {
+        var t;
+        if (this.type === "null" && et.type === "null") {
+            t = this.genType("null");
+        }
+        else if ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
+            (et.type === "number" || et.type === "undefined")) {
+            t = (et.hasData() && (et.data === "null" || et.type === "number" && Number(et.data) === 0)) ?
+                this.genErrorType(format(locale.getLocale().MSG_EX_REMAINDER_N, et.info)) :
+                this.genType("number");
+        }
+        else {
+            t = this.genErrorType(format(locale.getLocale().MSG_EX_REMAINDER, this.type, et.type));
+        }
+        return t;
+    };
+    // 加法
+    Type.prototype.add = function (et) {
+        return (this.type === "undefined" && et.type === "undefined") ? this.genType("undefined") :
+            (this.type === "null" && et.type === "null") ? this.genType("null") :
+                ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
+                    (et.type === "number" || et.type === "null" || et.type === "undefined")) ? this.genType("number") :
+                    ((this.type === "string" || this.type === "number" || this.type === "null" ||
+                        this.type === "undefined") && (et.type === "string" || et.type === "number" ||
+                        et.type === "null" || et.type === "undefined")) ? this.genType("string") :
+                        ((this.type === "array" || this.type === "null" || this.type === "undefined") &&
+                            (et.type === "array" || et.type === "null" ||
+                                et.type === "undefined")) ? this.genType("array") :
+                            this.genErrorType(format(locale.getLocale().MSG_EX_ADD, this.type, et.type));
+    };
+    // 减法
+    Type.prototype.subtract = function (et) {
+        return (this.type === "undefined" && et.type === "undefined") ?
+            this.genType("undefined") :
+            (this.type === "null" && et.type === "null") ?
+                this.genType("null") :
+                ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
+                    (et.type === "number" || et.type === "null" || et.type === "undefined")) ?
+                    this.genType("number") :
+                    ((this.type === "array" || this.type === "null" || this.type === "undefined") &&
+                        (et.type === "array" || et.type === "null" || et.type === "undefined")) ?
+                        this.genType("array") :
+                        this.genErrorType(format(locale.getLocale().MSG_EX_SUBTRACT, this.type, et.type));
+    };
+    // 等于
+    Type.prototype.equal = function (et, op) {
+        var t;
+        var b = op === "==";
+        if (this.type === "undefined" || et.type === "undefined" || this.type === "null" || et.type === "null" ||
+            this.type === et.type) {
+            t = this.genType("boolean");
+        }
+        else {
+            t = b ? locale.getLocale().MSG_EX_EQUAL : locale.getLocale().MSG_EX_EQUAL_N;
+            t = this.genErrorType(format(t, this.type, et.type));
+        }
+        return t;
+    };
+    // 比较运算
+    Type.prototype.compare = function (et, op) {
+        if (op === "==" || op === "!=") {
+            return this.equal(et, op);
+        }
+        else {
+            var t = void 0;
+            if (this.type === "undefined" || et.type === "undefined" || this.type === "null" || et.type === "null" ||
+                (this.type === et.type && (et.type === "string" || et.type === "date" || et.type === "number"))) {
+                t = this.genType("boolean");
+            }
+            else {
+                switch (op) {
+                    case ">":
+                        t = locale.getLocale().MSG_EX_COMPARE_A;
+                        break;
+                    case "<":
+                        t = locale.getLocale().MSG_EX_COMPARE_B;
+                        break;
+                    case ">=":
+                        t = locale.getLocale().MSG_EX_COMPARE_C;
+                        break;
+                    case "<=":
+                        t = locale.getLocale().MSG_EX_COMPARE_D;
+                        break;
+                    default: break;
+                }
+                t = this.genErrorType(format(t, this.type, et.type));
+            }
+            return t;
+        }
+    };
+    // 与运算
+    Type.prototype.and = function (et) {
+        return (this.type === "undefined" || et.type === "undefined" || this.type === "null" || et.type === "null" ||
+            (this.type === "boolean" && et.type === "boolean")) ?
+            this.genType("boolean") :
+            this.genErrorType(format(locale.getLocale().MSG_EX_AND, this.type, et.type));
+    };
+    // 或运算
+    Type.prototype.or = function (et) {
+        return (this.type === "undefined" || et.type === "undefined" || this.type === "null" || et.type === "null" ||
+            (this.type === "boolean" && et.type === "boolean")) ?
+            this.genType("boolean") :
+            this.genErrorType(format(locale.getLocale().MSG_EX_OR, this.type, et.type));
+    };
+    // 下标运算
+    Type.prototype.subscript = function (et) {
+        var t;
+        var i = (et.type === "array") ?
+            et.info[0] :
+            et.info;
+        if (this.type === "string" || this.type === "array") {
+            if (i === "number") {
+                t = (this.type === "array" && this.entity) ?
+                    this.context.getEntityType(this) :
+                    (this.type === "string") ?
+                        this.genType("string") :
+                        this.genType("undefined");
+            }
+            else {
+                t = this.genErrorType(format(locale.getLocale().MSG_EX_SUBSCRIPT_T, i));
+            }
+        }
+        else if (this.type === "object") {
+            t = this.genType("string", "string", i);
+            t = t.getVariableType(this);
+        }
+        else {
+            t = (this.type === "undefined") ?
+                this.genType("undefined") :
+                this.genErrorType(format(locale.getLocale().MSG_EX_SUBSCRIPT, this.type));
+        }
+        return t;
+    };
+    // 获取{key:...,value:...}键值对对象
+    Type.prototype.hashItem = function (et) {
+        return this.genType("object", { key: this.data, value: et.info }, { key: this.data, value: et.data });
+    };
+    // 获取变量值类型对象
+    Type.prototype.getVariableType = function (et) {
+        return this.context.getVariableType(this.data, et);
+    };
+    // 获取函数返回结果类型对象
+    Type.prototype.getFunctionType = function (et) {
+        return this.context.getFunctionType(this.info.key, et, this.info.value, this.data.value);
+    };
+    return Type;
+}());
+
 // 表达式检查
 // ----------
 var Check = (function () {
@@ -3356,7 +2404,7 @@ var Check = (function () {
     // 对表达式进行语法分析和依赖关系计算
     Check.prototype.check = function (expr, context) {
         var _this = this;
-        this.context = context || new Context();
+        this.context = context;
         var r;
         var p = this.context.getParserInfo(expr);
         if (p.errorMsg === "") {
@@ -3568,6 +2616,957 @@ var Check = (function () {
         return msg;
     };
     return Check;
+}());
+
+// 词法分析器
+// ----------
+var Lexer = (function () {
+    function Lexer() {
+        this.expr = []; // 表达式字符数组
+        this.index = 0; // 当前索引位置
+    }
+    // 设置表达式
+    Lexer.prototype.setExpr = function (expr) {
+        this.expr = expr ? expr.split("") : [];
+        this.reset();
+        return this;
+    };
+    // 重置词法分析器，以便再次从头开始解析
+    Lexer.prototype.reset = function () {
+        this.index = 0;
+        return this;
+    };
+    // 下一个Token结点
+    Lexer.prototype.nextToken = function () {
+        var s = this.expr;
+        var n = this.index;
+        var hasWrong = false;
+        var token;
+        while (n < s.length) {
+            if (s[n] !== " ") {
+                break;
+            }
+            else {
+                n++;
+            }
+        }
+        var tValue = "";
+        var tType = "";
+        var tText = "";
+        var tIndex = n + 1;
+        if (n < s.length) {
+            switch (s[n]) {
+                case "[":
+                case "]":
+                case "{":
+                case "}":
+                case ".":
+                case "(":
+                case ")":
+                case "*":
+                case "/":
+                case "%":
+                case "+":
+                case "-":
+                case ":":
+                case ",":
+                    tText = tValue = s[n++];
+                    tType =
+                        tValue === "[" ? "TK_LA" :
+                            tValue === "]" ? "TK_RA" :
+                                tValue === "{" ? "TK_LO" :
+                                    tValue === "}" ? "TK_RO" :
+                                        tValue === "." ? "TK_DOT" :
+                                            tValue === "(" ? "TK_LP" :
+                                                tValue === ")" ? "TK_RP" :
+                                                    tValue === "*" ? "TK_MULTI" :
+                                                        tValue === "/" ? "TK_DIV" :
+                                                            tValue === "%" ? "TK_MOD" :
+                                                                tValue === "+" ? "TK_PLUS" :
+                                                                    tValue === "-" ? "TK_MINUS" :
+                                                                        tValue === ":" ? "TK_COLON" :
+                                                                            tValue === "," ? "TK_COMMA" :
+                                                                                "";
+                    break;
+                case "!":
+                    tValue = s[n++];
+                    if (n < s.length && s[n] === "=") {
+                        tValue += s[n++];
+                        tType = "TK_EO";
+                    }
+                    else {
+                        tType = "TK_NOT";
+                    }
+                    tText = tValue;
+                    break;
+                case ">":
+                case "<":
+                    tValue = s[n++];
+                    if (n < s.length && s[n] === "=") {
+                        tValue += s[n++];
+                    }
+                    tText = tValue;
+                    tType = "TK_CO";
+                    break;
+                case "=":
+                    tValue = s[n++];
+                    if (n < s.length && s[n] === "=") {
+                        tValue += s[n++];
+                        tType = "TK_EO";
+                    }
+                    else {
+                        tType = "TK_UNKNOWN";
+                    }
+                    tText = tValue;
+                    break;
+                case "&":
+                case "|":
+                    tValue = s[n++];
+                    if (n < s.length && s[n] === tValue) {
+                        tType =
+                            tValue === "&" ? "TK_AND" :
+                                tValue === "|" ? "TK_OR" :
+                                    "TK_UNKNOWN";
+                        tValue += s[n++];
+                    }
+                    else {
+                        tType = "TK_UNKNOWN";
+                    }
+                    tText = tValue;
+                    break;
+                case "'":
+                case "\"":
+                    var start = s[n];
+                    var v = [];
+                    var endFlag = false;
+                    tValue += s[n++];
+                    while (!hasWrong && n < s.length) {
+                        if (s[n] === "\\") {
+                            switch (s[n + 1]) {
+                                case "\\":
+                                    n++;
+                                    v.push("\\");
+                                    break;
+                                case "n":
+                                    n++;
+                                    v.push("\n");
+                                    break;
+                                case "\'":
+                                    n++;
+                                    v.push("\'");
+                                    break;
+                                case "\"":
+                                    n++;
+                                    v.push("\"");
+                                    break;
+                                case "t":
+                                    n++;
+                                    v.push("\t");
+                                    break;
+                                case "b":
+                                    n++;
+                                    v.push("\b");
+                                    break;
+                                case "r":
+                                    n++;
+                                    v.push("\r");
+                                    break;
+                                case "f":
+                                    n++;
+                                    v.push("\f");
+                                    break;
+                                case "u":
+                                    var strU = s.join("").substring(n + 2, n + 6);
+                                    if (isX(s[n + 2]) && isX(s[n + 3]) && isX(s[n + 4]) && isX(s[n + 5])) {
+                                        v.push(String.fromCharCode(parseInt(strU, 16)));
+                                        n += 5;
+                                    }
+                                    else {
+                                        hasWrong = true;
+                                        token = {
+                                            tokenErrorMsg: format(locale.getLocale().MSG_EL_SYNTAX_UC, "\\u" + strU),
+                                            tokenIndex: n,
+                                            tokenType: "TK_STRING",
+                                        };
+                                    }
+                                    break;
+                                case "x":
+                                    var strX = s.join("").substring(n + 2, n + 4);
+                                    if (isX(s[n + 2]) && isX(s[n + 3])) {
+                                        v.push(String.fromCharCode(parseInt(strX, 16)));
+                                        n += 3;
+                                    }
+                                    else {
+                                        hasWrong = true;
+                                        token = {
+                                            tokenErrorMsg: format(locale.getLocale().MSG_EL_SYNTAX_XN, "\\x" + strX),
+                                            tokenIndex: n,
+                                            tokenType: "TK_STRING",
+                                        };
+                                    }
+                                    break;
+                                case "0":
+                                case "1":
+                                case "2":
+                                case "3":
+                                case "4":
+                                case "5":
+                                case "6":
+                                case "7":
+                                    var strN = s.join("").substring(n + 1, n + 4);
+                                    if (isO(s[n + 1]) && isO(s[n + 2]) && isO(s[n + 3])) {
+                                        v.push(String.fromCharCode(parseInt(strN, 8)));
+                                        n += 3;
+                                    }
+                                    else {
+                                        hasWrong = true;
+                                        token = {
+                                            tokenErrorMsg: format(locale.getLocale().MSG_EL_SYNTAX_ON, "\\" + strN),
+                                            tokenIndex: n,
+                                            tokenType: "TK_STRING",
+                                        };
+                                    }
+                                    break;
+                                default:
+                                    n++;
+                                    v.push(s[n]);
+                                    break;
+                            }
+                        }
+                        else if (s[n] === start) {
+                            endFlag = true;
+                            break;
+                        }
+                        else {
+                            v.push(s[n]);
+                        }
+                        n++;
+                    }
+                    if (!hasWrong) {
+                        if (endFlag === true) {
+                            tValue += v.join("") + start;
+                        }
+                        else {
+                            hasWrong = true;
+                            token = {
+                                tokenErrorMsg: format(locale.getLocale().MSG_EL_SYNTAX_S, tValue + v.join("")),
+                                tokenIndex: n,
+                                tokenType: "TK_STRING",
+                            };
+                            break;
+                        }
+                        n++;
+                        tText = tValue;
+                        tValue = v.join("");
+                        tType = "TK_STRING";
+                    }
+                    break;
+                default:
+                    tValue = s[n++];
+                    if (isN(tValue)) {
+                        while (n < s.length) {
+                            if (!isN(s[n]) || (s[n] === "." && !isN(s[n + 1]))) {
+                                break;
+                            }
+                            tValue += s[n++];
+                        }
+                        tType = isNS(tValue) ? "TK_NUMBER" : "TK_UNKNOWN";
+                    }
+                    else if (isC(tValue)) {
+                        while (n < s.length) {
+                            if (!isC(s[n])) {
+                                break;
+                            }
+                            tValue += s[n++];
+                        }
+                        switch (tValue) {
+                            case "true":
+                            case "false":
+                                tType = "TK_BOOL";
+                                break;
+                            case "null":
+                                tType = "TK_NULL";
+                                break;
+                            default:
+                                tType = "TK_IDEN";
+                        }
+                    }
+                    else {
+                        while (n < s.length) {
+                            if (!isUN(s[n])) {
+                                break;
+                            }
+                            tValue += s[n++];
+                        }
+                        tType = "TK_UNKNOWN";
+                    }
+                    tText = tValue;
+            }
+        }
+        else {
+            return null;
+        }
+        if (tType === "TK_PLUS" || tType === "TK_MINUS") {
+            var j = n - tText.length - 1;
+            while (j >= 0) {
+                if ("({[+-*/%><=&|:,".indexOf(s[j]) >= 0) {
+                    tType = "TK_UNARY";
+                    break;
+                }
+                else if (s[j] !== " ") {
+                    break;
+                }
+                j--;
+            }
+            if (j === -1) {
+                tType = "TK_UNARY";
+            }
+        }
+        this.index = n;
+        if (!hasWrong) {
+            token = {
+                tokenIndex: tIndex,
+                tokenText: tText,
+                tokenType: tType,
+                tokenValue: tValue,
+            };
+        }
+        return token;
+    };
+    return Lexer;
+}());
+
+// 语法规则
+// ----------
+// 节点类型
+var tokens = ("TK_UNKNOWN,TK_STRING,TK_NUMBER,TK_BOOL,TK_NULL,TK_IDEN,TK_DOT,TK_LP,TK_LA," +
+    "TK_LO,TK_RP,TK_RA,TK_RO,TK_UNARY,TK_NOT,TK_MULTI,TK_DIV,TK_MOD,TK_PLUS,TK_MINUS," +
+    "TK_CO,TK_EO,TK_AND,TK_OR,TK_COLON,TK_COMMA").split(",");
+var genTokenState = function (tks, opts) {
+    var r = {};
+    tks.forEach(function (v, i) { return r[v] = opts[i] === "1"; });
+    return r;
+};
+// 起始节点规则
+var RULE_BTOKENS = genTokenState(tokens, "01111101110001100000000000".split(""));
+// 结束节点规则
+var RULE_ETOKENS = genTokenState(tokens, "01111100001110000000000000".split(""));
+// 后序节点规则
+var RULE_LEXICAL = (function (tks, opts) {
+    var r = {};
+    tks.forEach(function (v, i) { return r[v] = genTokenState(tks, opts[i].split("")); });
+    return r;
+})(tokens, ("00000000000000000000000000," +
+    "00000010101110011111111111," +
+    "00000010001110011111111111," +
+    "00000010001110011111111111," +
+    "00000000001110011111111111," +
+    "00000011101110011111111111," +
+    "00000100000000000000000000," +
+    "01111101111001100000000000," +
+    "01111101110101100000000000," +
+    "01111100000010000000000000," +
+    "00000010101110011111111101," +
+    "00000010101110011111111101," +
+    "00000010111110011111111101," +
+    "01111101110001100000000000," +
+    "01111101110001100000000000," +
+    "01111101110001100000000000," +
+    "01111101110001100000000000," +
+    "01111101110001100000000000," +
+    "01111101110001100000000000," +
+    "01111101110001100000000000," +
+    "01111101110001100000000000," +
+    "01111101110001100000000000," +
+    "01111101110001100000000000," +
+    "01111101110001100000000000," +
+    "01111101110001100000000000," +
+    "01111101110001100000000000"
+).split(","));
+
+// 语法解析器
+// ----------
+var Parser = (function () {
+    function Parser() {
+        this.errorMsg = "";
+        this.tokens = [];
+        this.rootToken = null;
+        this.lexer = new Lexer();
+    }
+    // 表达式解析
+    Parser.prototype.parser = function (expr) {
+        // - 初始化
+        this.doInit(expr);
+        // - 构建Token双向链表
+        if (this.errorMsg === "") {
+            this.errorMsg = this.doDoublyLinkedList();
+        }
+        // - 构建语法树，返回根节点
+        if (this.errorMsg === "") {
+            this.rootToken = this.doParser(this.tokens);
+        }
+        // - 检查语法错误
+        if (this.errorMsg === "" && this.rootToken) {
+            this.errorMsg = this.doCheckSyntax(this.rootToken);
+        }
+        // - 返回自己
+        return this;
+    };
+    // 初始化语法分析器对象，清空rootToken，tokens和errorMsg
+    Parser.prototype.doInit = function (expr) {
+        if (!expr) {
+            this.errorMsg = locale.getLocale().MSG_EP_EMPTY;
+        }
+        else {
+            this.rootToken = null;
+            this.tokens = [];
+            this.errorMsg = "";
+            this.lexer.setExpr(expr);
+        }
+    };
+    // 创建虚节点
+    Parser.prototype.doCreateVirtualToken = function (type) {
+        var v;
+        switch (type) {
+            case "VTK_COMMA":
+                v = ",";
+                break;
+            case "VTK_PAREN":
+                v = "()";
+                break;
+            case "VTK_ARRAY":
+                v = "[]";
+                break;
+            case "VTK_OBJECT":
+                v = "{}";
+                break;
+            case "VTK_SUBSCRIPT":
+                v = "[n]";
+                break;
+            case "VTK_FUNCTION":
+                v = "Fn()";
+                break;
+            default:
+                v = "";
+        }
+        return {
+            childs: [],
+            parent: null,
+            tokenText: v,
+            tokenType: type,
+            tokenValue: v,
+        };
+    };
+    // 将表达式构建成Token双向链表
+    Parser.prototype.doDoublyLinkedList = function () {
+        var t = this.lexer.nextToken();
+        var ts = this.tokens;
+        var stack = [];
+        var r = "";
+        while (!r && t) {
+            if (t.tokenType === "TK_UNKNOWN") {
+                r = format(locale.getLocale().MSG_EP_UNKNOWN, t.tokenText);
+                break;
+            }
+            else if (t.tokenType === "TK_STRING") {
+                if (t.tokenErrorMsg) {
+                    r = t.tokenErrorMsg;
+                    break;
+                }
+            }
+            t.parent = null;
+            t.childs = [];
+            this.tokens.push(t);
+            // - 检查前后依赖关系正确性
+            if (ts.length === 1 && !RULE_BTOKENS[t.tokenType]) {
+                r = format(locale.getLocale().MSG_EP_LEXICAL_B, t.tokenText);
+                break;
+            }
+            else if (ts.length !== 1 && !RULE_LEXICAL[ts[ts.length - 2].tokenType][t.tokenType]) {
+               
+                r = format(locale.getLocale().MSG_EP_LEXICAL_L, ts[ts.length - 2].tokenText, t.tokenText);
+                break;
+            }
+            // - 检查括号匹配正确性
+            switch (t.tokenType) {
+                case "TK_LP":
+                case "TK_LA":
+                case "TK_LO":
+                    stack.push(t);
+                    break;
+                case "TK_RP":
+                case "TK_RA":
+                case "TK_RO":
+                    if (stack.length) {
+                        if (t.tokenType.replace("R", "L") === stack[stack.length - 1].tokenType) {
+                            stack.pop();
+                        }
+                        else {
+                            r = format(locale.getLocale().MSG_EP_MATCH, stack[stack.length - 1].tokenText);
+                        }
+                    }
+                    else {
+                        r = format(locale.getLocale().MSG_EP_MATCH, t.tokenText);
+                    }
+                    break;
+                default:
+                    break;
+            }
+            t = this.lexer.nextToken();
+        }
+        if (!r && !RULE_ETOKENS[ts[ts.length - 1].tokenType]) {
+            r = format(locale.getLocale().MSG_EP_LEXICAL_E, ts[ts.length - 1].tokenText);
+        }
+        if (!r && stack.length) {
+            r = format(locale.getLocale().MSG_EP_MATCH, stack[stack.length - 1].tokenText);
+        }
+        return r;
+    };
+    // 构建语法树，返回根节点
+    Parser.prototype.doParser = function (ts) {
+        var p = null;
+        if (ts && !ts.length) {
+            return p;
+        }
+        // - 处理 ()[]{} 括号节点
+        p = this.doParser_0(ts);
+        // - 处理能构成 function 的节点
+        p = this.doParser_1(p);
+        // - 处理 . [] 节点构成的子项调用
+        p = this.doParser_2(p);
+        // - 处理 + - ! 单目运算节点
+        p = this.doParser_3(p);
+        // - 处理 * / % 四则运算
+        p = this.doParser_4(p, "TK_MULTI,TK_DIV,TK_MOD");
+        // - 处理 + - 四则运算
+        p = this.doParser_4(p, "TK_PLUS,TK_MINUS");
+        // - 处理 < <= > >= 比较运算符
+        p = this.doParser_4(p, "TK_CO");
+        // - 处理 == != 等于运算符
+        p = this.doParser_4(p, "TK_EO");
+        // - 处理 && 与运算
+        p = this.doParser_4(p, "TK_AND");
+        // - 处理 || 或运算
+        p = this.doParser_4(p, "TK_OR");
+        // - 处理 : 冒号
+        p = this.doParser_4(p, "TK_COLON");
+        // - 处理 , 逗号
+        p = this.doParser_5(p);
+        if (p.length > 1) {
+            this.errorMsg = "语法解析错误";
+        }
+        return p[0];
+    };
+    // 检查语法错误
+    Parser.prototype.doCheckSyntax = function (rootToken) {
+        var msg = "";
+        var s;
+        var id = 0;
+        eachToken(this.rootToken, function (t) {
+            t.id = id++;
+            s = t.tokenText;
+            switch (t.tokenType) {
+                // - 点操作符检查
+                case "TK_DOT":
+                    if (t.childs[1].tokenType === "TK_IDEN" &&
+                        !hasToken("VTK_FUNCTION,TK_IDEN,TK_DOT,VTK_SUBSCRIPT,VTK_PAREN,VTK_OBJECT", t.childs[0].tokenType)) {
+                        msg = format(locale.getLocale().MSG_EP_SYNTAX_D, t.childs[0].tokenType);
+                    }
+                    break;
+                // - 冒号操作符检查
+                case "TK_COLON":
+                    if (!t.parent || !hasToken("VTK_OBJECT,VTK_COMMA", t.parent.tokenType)) {
+                        msg = format(locale.getLocale().MSG_EP_SYNTAX_P, s);
+                    }
+                    else if (t.childs && t.childs[0] && t.childs[0].childs &&
+                        t.childs[0].childs.length > 0) {
+                        msg = format(locale.getLocale().MSG_EP_SYNTAX_E, s);
+                    }
+                    break;
+                // - 逗号操作符检查
+                case "VTK_COMMA":
+                    if (!t.parent || !hasToken("VTK_OBJECT,VTK_ARRAY,VTK_PAREN", t.parent.tokenType)) {
+                        msg = format(locale.getLocale().MSG_EP_SYNTAX_C, s);
+                    }
+                    break;
+                // - 小括号检查
+                case "VTK_PAREN":
+                    if (t.parent && t.parent.tokenType !== "TK_IDEN" || !t.parent) {
+                        if (t.childs.length === 0) {
+                            msg = format(locale.getLocale().MSG_EP_SYNTAX_N, s);
+                        }
+                        else if (t.childs[0].tokenType === "VTK_COMMA") {
+                            msg = format(locale.getLocale().MSG_EP_SYNTAX_M, s);
+                        }
+                    }
+                    break;
+                // - 中括号检查
+                case "VTK_ARRAY":
+                    if (t.childs && t.childs.length > 0) {
+                        if (t.childs[0].tokenType === "TK_COLON") {
+                            msg = format(locale.getLocale().MSG_EP_SYNTAX_A, ":");
+                        }
+                        else if (t.childs[0].tokenType === "VTK_COMMA") {
+                            if (t.parent && t.parent.tokenType === "VTK_SUBSCRIPT" &&
+                                t.parent.childs[0] !== t) {
+                                msg = format(locale.getLocale().MSG_EP_SYNTAX_SUB, ",");
+                            }
+                            if (t.childs[0].childs) {
+                                for (var _i = 0, _a = t.childs[0].childs; _i < _a.length; _i++) {
+                                    var item = _a[_i];
+                                    if (item.tokenType === "TK_COLON") {
+                                        msg = format(locale.getLocale().MSG_EP_SYNTAX_A, ":");
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
+                // - 大括号检查
+                case "VTK_OBJECT":
+                    var y = false;
+                    if (t.childs && (t.childs.length === 0 || hasToken("TK_COLON,VTK_COMMA", t.childs[0].tokenType))) {
+                        if (t.childs.length > 0 && t.childs[0].tokenType === "VTK_COMMA") {
+                            if (t.childs[0].childs) {
+                                for (var _b = 0, _c = t.childs[0].childs; _b < _c.length; _b++) {
+                                    var item = _c[_b];
+                                    y = item.tokenType === "TK_COLON";
+                                    if (!y) {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            y = true;
+                        }
+                    }
+                    if (!y) {
+                        msg = locale.getLocale().MSG_EP_SYNTAX_O;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            if (msg !== "") {
+                return false;
+            }
+        }, this);
+        return msg;
+    };
+    // () [] {}，将括号中的多个token拿出来计算并生成虚Token插入到原来的Token数组中
+    Parser.prototype.doParser_0 = function (ts) {
+        var t;
+        var l = [];
+        var counter = 0;
+        var queue = [];
+        var i = 0;
+        while (i < ts.length) {
+            t = ts[i];
+            if (hasToken("TK_LP,TK_LA,TK_LO", t.tokenType)) {
+                counter++;
+            }
+            else if (hasToken("TK_RP,TK_RA,TK_RO", t.tokenType)) {
+                counter--;
+            }
+            if (counter > 0) {
+                queue.push(t);
+            }
+            else if (queue.length > 0) {
+                var root = queue.shift();
+                var rootType = void 0;
+                switch (root.tokenType) {
+                    case "TK_LP":
+                        rootType = "VTK_PAREN";
+                        break;
+                    case "TK_LA":
+                        rootType = "VTK_ARRAY";
+                        break;
+                    case "TK_LO":
+                        rootType = "VTK_OBJECT";
+                        break;
+                    default: break;
+                }
+                t = this.doCreateVirtualToken(rootType);
+                t.tokenIndex = root.tokenIndex;
+                var tmp = this.doParser(queue);
+                if (tmp) {
+                    t.childs.push(tmp);
+                    tmp.parent = t;
+                }
+                l.push(t);
+                queue = [];
+            }
+            else {
+                l.push(t);
+            }
+            i++;
+        }
+        return l;
+    };
+    // 标识符与()相连构成函数
+    Parser.prototype.doParser_1 = function (ts) {
+        var t;
+        var n;
+        var l = [];
+        var i = 0;
+        while (i < ts.length) {
+            t = ts[i];
+            n = ts[i + 1];
+           
+            if (t.tokenType === "TK_IDEN" && n && n.tokenType === "VTK_PAREN") {
+                var tmp = this.doCreateVirtualToken("VTK_FUNCTION");
+                tmp.tokenIndex = t.tokenIndex;
+                tmp.childs.push(t);
+                t.parent = tmp;
+                tmp.childs.push(n);
+                n.parent = t;
+                i++;
+                l.push(tmp);
+            }
+            else {
+                l.push(t);
+            }
+            i++;
+        }
+        return l;
+    };
+    // 处理 . [] 与标识符、string、()、[]、{}一起构成下标访问属性访问
+    Parser.prototype.doParser_2 = function (ts) {
+        var t;
+        var n;
+        var l = [];
+        var i = 0;
+        while (i < ts.length) {
+            t = ts[i];
+            n = ts[i + 1];
+            if (n && (n.tokenType === "TK_DOT" || n.tokenType === "VTK_ARRAY" && hasToken("TK_IDEN,TK_STRING,VTK_PAREN,VTK_FUNCTION,VTK_ARRAY,VTK_OBJECT", t.tokenType))) {
+                do {
+                    switch (n.tokenType) {
+                        case "TK_DOT":
+                            n.childs.push(t);
+                            t.parent = n;
+                            i += 2;
+                            t = ts[i];
+                            n.childs.push(t);
+                            t.parent = n;
+                            t = n;
+                            n = ts[i + 1];
+                            break;
+                        case "VTK_ARRAY":
+                            var tmp = this.doCreateVirtualToken("VTK_SUBSCRIPT");
+                            tmp.childs.push(t);
+                            t.parent = tmp;
+                            tmp.childs.push(n);
+                            n.parent = tmp;
+                            t = tmp;
+                            i++;
+                            n = ts[i + 1];
+                            break;
+                        default:
+                            break;
+                    }
+                } while (n && (n.tokenType === "TK_DOT" || n.tokenType === "VTK_ARRAY"));
+                l.push(t);
+            }
+            else {
+                l.push(t);
+            }
+            i++;
+        }
+        return l;
+    };
+    // 处理 + - ! 单目运算
+    Parser.prototype.doParser_3 = function (ts) {
+        var t;
+        var l = [];
+        var i = 0;
+        while (i < ts.length) {
+            t = ts[i];
+            if (hasToken("TK_UNARY,TK_NOT", t.tokenType)) {
+                l.push(t);
+                do {
+                    var tmp = ts[++i];
+                    t.childs.push(tmp);
+                    tmp.parent = t;
+                    t = ts[i];
+                } while (hasToken("TK_UNARY,TK_NOT", t.tokenType));
+            }
+            else {
+                l.push(t);
+            }
+            i++;
+        }
+        return l;
+    };
+    // 处理 1.* / % 2.+ - 3.< <= > >= == != 4.&& 5.|| 6.: 优先级
+    Parser.prototype.doParser_4 = function (ts, tts) {
+        var t;
+        var n;
+        var l = [];
+        var i = 0;
+        while (i < ts.length) {
+            t = ts[i];
+            n = ts[i + 1];
+            if (n && hasToken(tts, n.tokenType)) {
+                var tmp = void 0;
+                do {
+                    n.childs.push(t);
+                    t.parent = n;
+                    tmp = n;
+                    i += 2;
+                    t = ts[i];
+                    n = ts[i + 1];
+                    tmp.childs.push(t);
+                    t.parent = tmp;
+                    if (n && hasToken(tts, n.tokenType)) {
+                        t = tmp;
+                    }
+                    else {
+                        break;
+                    }
+                } while (true);
+                l.push(tmp);
+            }
+            else {
+                l.push(t);
+            }
+            i++;
+        }
+        return l;
+    };
+    // 处理 , 即对象字段分隔{a:1,b:'re'}或数组元素[1,2,3]，函数参数分隔符fun(a,b)
+    Parser.prototype.doParser_5 = function (ts) {
+        var t;
+        var n;
+        var l = [];
+        var i = 0;
+        while (i < ts.length) {
+            t = ts[i];
+            n = ts[i + 1];
+            if (n && n.tokenType === "TK_COMMA") {
+                var tmp = this.doCreateVirtualToken("VTK_COMMA");
+                tmp.tokenIndex = n.tokenIndex;
+                while (n && n.tokenType === "TK_COMMA") {
+                    tmp.childs.push(t);
+                    t.parent = tmp;
+                    i += 2;
+                    t = ts[i];
+                    n = ts[i + 1];
+                }
+                tmp.childs.push(t);
+                t.parent = tmp;
+                l.push(tmp);
+            }
+            else {
+                l.push(t);
+            }
+            i++;
+        }
+        return l;
+    };
+    return Parser;
+}());
+
+// 上下文基类
+// ----------
+var Context = (function () {
+    function Context() {
+        this.exprList = [];
+    }
+    // 生成ExprValue对象
+    Context.prototype.genValue = function (value, type, entity, errorMsg, parentObj) {
+        return new Value(this, value, type, entity, errorMsg, parentObj);
+    };
+    // 有错误时，生成对应的ExprValue对象
+    Context.prototype.genErrorValue = function (errorMsg) {
+        return this.genValue(undefined, undefined, undefined, errorMsg, undefined);
+    };
+    // 生成ExprType对象
+    Context.prototype.genType = function (type, info, data, entity, depends, errorMsg) {
+        return new Type(this, type, info, data, entity, depends, errorMsg);
+    };
+    // 有错误时，生成对应的ExprType对象
+    Context.prototype.genErrorType = function (errorMsg) {
+        return this.genType(undefined, undefined, undefined, undefined, undefined, errorMsg);
+    };
+    // 得到函数source.name(paramValue)返回值的ExprType对象
+    Context.prototype.getFunctionType = function (name, source, paramType, paramData) {
+        return this.doGetFunctionType(name, source, paramType, paramData);
+    };
+    // 得到函数source.name(paramValue)执行结果
+    Context.prototype.getFunctionValue = function (name, source, paramValue) {
+        return this.doGetFunctionValue(name, source, paramValue);
+    };
+    // 得到变量类型
+    Context.prototype.getVariableType = function (name, source) {
+        return this.doGetVariableType(name, source);
+    };
+    // 得到对象source的name属性值
+    Context.prototype.getVariableValue = function (name, source) {
+        return this.doGetVariableValue(name, source);
+    };
+    // 得到实体类型
+    Context.prototype.getEntityType = function (source) {
+        return this.doGetEntityType(source);
+    };
+    // 从实体数组source中取出第index条实体记录
+    Context.prototype.getEntityValue = function (source, index) {
+        return this.doGetEntityValue(source, index);
+    };
+    // 得到解析信息
+    Context.prototype.getParserInfo = function (expr) {
+        expr = expr.trim();
+        var index = -1;
+        for (var i = 0; i < this.exprList.length; i++) {
+            if (this.exprList[i].text === expr) {
+                index = i;
+                break;
+            }
+        }
+        var r;
+        if (index >= 0) {
+            r = this.exprList[index].parser;
+        }
+        else {
+            r = new Parser().parser(expr);
+            this.exprList.push({
+                parser: r,
+                text: expr,
+            });
+        }
+        return r;
+    };
+    // 是否为IfNull(1,2)函数形式的","结点
+    Context.prototype.isIfNullToken = function (token) {
+        return isFunctionToken(token, this.doGetIfNullName());
+    };
+    // 是否为IIf(true,1,2)函数形式的","结点
+    Context.prototype.isIIfToken = function (token) {
+        return isFunctionToken(token, this.doGetIIfName());
+    };
+    Context.prototype.doGetIfNullName = function () { return ""; };
+    Context.prototype.doGetIIfName = function () { return ""; };
+    Context.prototype.doGetVariableType = function (name, source) {
+        //
+    };
+    Context.prototype.doGetVariableValue = function (name, source) {
+        //
+    };
+    Context.prototype.doGetFunctionType = function (name, source, paramType, paramData) {
+        //
+    };
+    Context.prototype.doGetFunctionValue = function (name, source, paramValue) {
+        //
+    };
+    Context.prototype.doGetEntityType = function (source) {
+        //
+    };
+    Context.prototype.doGetEntityValue = function (source, index) {
+        //
+    };
+    return Context;
 }());
 
 // 表达式游标

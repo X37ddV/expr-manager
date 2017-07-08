@@ -1,11 +1,11 @@
 import { isFunctionToken } from "./common";
-import { IContext } from "./interface";
+import { IContext, IParser } from "./interface";
 import Parser from "./parser";
 import Type from "./type";
 import Value from "./value";
 
 interface IExprItem {
-    parser: Parser;
+    parser: IParser;
     text: string;
 }
 
@@ -15,7 +15,7 @@ interface IExprItem {
 export default class Context implements IContext {
     private exprList: IExprItem[] = [];
     // 生成ExprValue对象
-    public genValue(value, type?, entity?, errorMsg?, parentObj?): Value {
+    public genValue(value: any, type?, entity?, errorMsg?: string, parentObj?): Value {
         return new Value(this, value, type, entity, errorMsg, parentObj);
     }
     // 有错误时，生成对应的ExprValue对象
@@ -55,7 +55,7 @@ export default class Context implements IContext {
         return this.doGetEntityValue(source, index);
     }
     // 得到解析信息
-    public getParserInfo(expr) {
+    public getParserInfo(expr: string): IParser {
         expr = expr.trim(); /// 去除表达式两端无效空格
         let index = -1; /// 查找当前上下文的exprList列表
         for (let i = 0; i < this.exprList.length; i++) {
@@ -68,8 +68,7 @@ export default class Context implements IContext {
         if (index >= 0) { /// 该表达式之前被解析过，直接返回缓存里的解析结果
             r = this.exprList[index].parser;
         } else { /// 该表达式之前从未被解析过，开始新的解析
-            const p = new Parser();
-            r = p.parser(expr); /// return this;
+            r = new Parser().parser(expr); /// return this;
             this.exprList.push({ /// 将解析过的表达式缓存，下次不需要再次解析
                 parser: r,
                 text: expr,
@@ -78,11 +77,11 @@ export default class Context implements IContext {
         return r; /// 返回ExprParser对象
     }
     // 是否为IfNull(1,2)函数形式的","结点
-    public isIfNullToken(token) {
+    public isIfNullToken(token): boolean {
         return isFunctionToken(token, this.doGetIfNullName());
     }
     // 是否为IIf(true,1,2)函数形式的","结点
-    public isIIfToken(token) {
+    public isIIfToken(token): boolean {
         return isFunctionToken(token, this.doGetIIfName());
     }
     public doGetIfNullName(): string { return ""; }

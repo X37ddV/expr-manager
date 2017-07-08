@@ -1,5 +1,5 @@
 import { isIDENToken } from "./common";
-import Context from "./context";
+import { IContext } from "./interface";
 import { ValueType } from "./interface";
 import Value from "./value";
 
@@ -7,7 +7,7 @@ import Value from "./value";
 // ----------
 
 export default class Calc {
-    private context: Context = null;
+    private context: IContext = null;
     private values = {};
     // 生成ExprValue对象
     public genValue(value: any, type: ValueType, entity?, errorMsg?: string, parentObj?) {
@@ -27,7 +27,7 @@ export default class Calc {
     }
     // 对表达式进行语法分析和数值计算
     public calc(expr: string, context) {
-        this.context = context || new Context();
+        this.context = context;
         let r;
         const p = this.context.getParserInfo(expr); /// 在context数据上下文中对expr进行语法分析
         if (p.errorMsg === "") { /// 表达式解析正确(语法正确，但是计算结果尚需验证如3/0)

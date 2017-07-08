@@ -1,5 +1,4 @@
 import { eachToken, getValueType, isIDENToken } from "./common";
-import Context from "./context";
 import { IContext } from "./interface";
 import Type from "./type";
 
@@ -28,9 +27,9 @@ export default class Check {
     }
     // 对表达式进行语法分析和依赖关系计算
     public check(expr: string, context: IContext) {
-        this.context = context || new Context(); /// TODO 是否允许context不存在？
+        this.context = context;
         let r;
-        const p = (this.context as Context).getParserInfo(expr); /// 在context数据上下文中对expr进行语法分析
+        const p = this.context.getParserInfo(expr); /// 在context数据上下文中对expr进行语法分析
         if (p.errorMsg === "") { /// 表达式解析正确(语法正确，但是运算关系正确性还没验证如：1>2&&43会报错)
             const msg = this.doCheck(p.rootToken); /// 检查表达式运算关系正确性
             if (msg === "") {
