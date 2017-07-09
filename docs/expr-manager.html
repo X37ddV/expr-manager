@@ -3121,7 +3121,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         <span class="hljs-keyword">var</span> msg = <span class="hljs-string">""</span>;
         <span class="hljs-keyword">var</span> l;
         <span class="hljs-keyword">var</span> r;
-        <span class="hljs-keyword">var</span> tv = <span class="hljs-literal">null</span>;
+        <span class="hljs-keyword">var</span> tv;
         <span class="hljs-keyword">var</span> lv;
         <span class="hljs-keyword">var</span> rv;
         <span class="hljs-keyword">if</span> (t.childs) {
@@ -3265,8 +3265,6 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                     tv = (p &amp;&amp; p.tokenType === <span class="hljs-string">"TK_DOT"</span> &amp;&amp; p.childs[<span class="hljs-number">0</span>] !== t) ?
                         lv.hashItem(rv) :
                         lv.hashItem(rv).getFunctionValue(<span class="hljs-literal">null</span>);
-                    <span class="hljs-keyword">break</span>;
-                <span class="hljs-keyword">default</span>:
                     <span class="hljs-keyword">break</span>;
             }
             msg = tv.errorMsg;

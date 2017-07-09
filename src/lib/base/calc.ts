@@ -1,5 +1,6 @@
 import { isIDENToken } from "./common";
-import { IContext, IToken } from "./interface";
+import Context from "./context";
+import { IToken } from "./interface";
 import Value from "./value";
 
 // 表达式计算
@@ -8,7 +9,7 @@ import Value from "./value";
 export default class Calc {
     private values = {};
     // 对表达式进行语法分析和数值计算
-    public calc(expr: string, context: IContext): Value {
+    public calc(expr: string, context: Context): Value {
         let r: Value;
         const p = context.getParserInfo(expr); /// 在context数据上下文中对expr进行语法分析
         if (p.errorMsg === "") { /// 表达式解析正确(语法正确，但是计算结果尚需验证如3/0)
@@ -26,15 +27,15 @@ export default class Calc {
         return r;
     }
     // 对表达式进行数值计算
-    private doCalc(rootToken: IToken, context: IContext): string {
+    private doCalc(rootToken: IToken, context: Context): string {
         const t = rootToken;
         const p = t.parent;
-        let msg = "";
-        let l;
-        let r;
-        let tv = null;
-        let lv;
-        let rv;
+        let msg: string = "";
+        let l: IToken;
+        let r: IToken;
+        let tv: Value;
+        let lv: Value;
+        let rv: Value;
         if (t.childs) { /// 先计算该结点的所有子节点
             const isIfNull = context.isIfNullToken(t); /// 是否为IfNull(1,2)函数形式的","结点
             const isIIf = context.isIIfToken(t); /// 是否为IIf(true,1,2)函数形式的","结点
@@ -170,8 +171,6 @@ export default class Calc {
                     tv = (p && p.tokenType === "TK_DOT" && p.childs[0] !== t) ?
                         lv.hashItem(rv) : /// 有显式调用者
                         lv.hashItem(rv).getFunctionValue(null); /// 没有显式调用者
-                    break;
-                default:
                     break;
             }
             msg = tv.errorMsg;

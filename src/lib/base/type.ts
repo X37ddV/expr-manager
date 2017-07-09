@@ -1,6 +1,8 @@
 import locale from "../base/locale";
 import { format } from "./common";
-import { IContext, ValueType } from "./interface";
+import Context from "./context";
+import { ValueType } from "./interface";
+import { IToken } from "./interface";
 
 // 类型
 // ----------
@@ -10,14 +12,14 @@ export default class Type {
     public tokens: IToken[];
     public rootToken: IToken;
     public dependencies: any[];
-    private context: IContext;
+    private context: Context;
     private type: ValueType;
     private info;
     private data;
     private entity;
     private depends;
     // 类型构造函数
-    constructor(context: IContext, type: ValueType, info, data, entity, depends, errorMsg: string) {
+    constructor(context: Context, type: ValueType, info, data, entity, depends, errorMsg: string) {
         this.context = context;
         this.type = type || "undefined";
         this.info = info || type;

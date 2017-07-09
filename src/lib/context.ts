@@ -2,7 +2,7 @@ import Calc from "./base/calc";
 import Check from "./base/check";
 import { format, getValueType, merger } from "./base/common";
 import Context from "./base/context";
-import { IContext, ValueType } from "./base/interface";
+import { ValueType } from "./base/interface";
 import locale from "./base/locale";
 import Parser from "./base/parser";
 import Type from "./base/type";
@@ -11,7 +11,7 @@ import ExprCurrent from "./current";
 
 export interface IFunctionItem {
     e?: "root" | "parent" | "value" | "data";
-    fn: (context: IContext, ...others) => any;
+    fn: (context: Context, ...others) => any;
     p: Array<
         "undefined" | "undefined?" |
         "string" | "string?" |

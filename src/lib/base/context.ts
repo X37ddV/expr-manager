@@ -1,5 +1,5 @@
 import { isFunctionToken } from "./common";
-import { IContext, ValueType } from "./interface";
+import { ValueType } from "./interface";
 import Parser from "./parser";
 import Type from "./type";
 import Value from "./value";
@@ -9,7 +9,7 @@ interface IExprItem {
     text: string;
 }
 
-export default abstract class Context implements IContext {
+export default abstract class Context {
     private exprList: IExprItem[] = [];
     // 得到解析信息
     public getParserInfo(expr: string): Parser {

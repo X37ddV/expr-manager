@@ -1412,7 +1412,7 @@ var Calc = (function () {
         var msg = "";
         var l;
         var r;
-        var tv = null;
+        var tv;
         var lv;
         var rv;
         if (t.childs) {
@@ -1556,8 +1556,6 @@ var Calc = (function () {
                     tv = (p && p.tokenType === "TK_DOT" && p.childs[0] !== t) ?
                         lv.hashItem(rv) :
                         lv.hashItem(rv).getFunctionValue(null);
-                    break;
-                default:
                     break;
             }
             msg = tv.errorMsg;
