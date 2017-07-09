@@ -1,6 +1,5 @@
 import func from "./function/func";
-import { IFunction } from "./lib/base/interface";
-import ExprContext from "./lib/context";
+import ExprContext, { IFunction } from "./lib/context";
 import ExprList from "./lib/list";
 import "./locale/zh-cn";
 

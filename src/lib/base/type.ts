@@ -6,13 +6,16 @@ import { IContext, ValueType } from "./interface";
 // ----------
 
 export default class Type {
+    public errorMsg: string;
+    public tokens: IToken[];
+    public rootToken: IToken;
+    public dependencies: any[];
     private context: IContext;
     private type: ValueType;
     private info;
     private data;
     private entity;
     private depends;
-    private errorMsg;
     // 类型构造函数
     constructor(context: IContext, type: ValueType, info, data, entity, depends, errorMsg: string) {
         this.context = context;

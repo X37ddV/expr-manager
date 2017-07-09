@@ -8,8 +8,8 @@ import Type from "./type";
 export default class Check {
     private types = {};
     // 对表达式进行语法分析和依赖关系计算
-    public check(expr: string, context: IContext) {
-        let r;
+    public check(expr: string, context: IContext): Type {
+        let r: Type;
         const p = context.getParserInfo(expr); /// 在context数据上下文中对expr进行语法分析
         if (p.errorMsg === "") { /// 表达式解析正确(语法正确，但是运算关系正确性还没验证如：1>2&&43会报错)
             const msg = this.doCheck(p.rootToken, context); /// 检查表达式运算关系正确性

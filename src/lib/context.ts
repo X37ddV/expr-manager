@@ -1,6 +1,7 @@
 import Calc from "./base/calc";
 import Check from "./base/check";
-import { format, getValueType, isFunctionToken, merger } from "./base/common";
+import { format, getValueType, merger } from "./base/common";
+import Context from "./base/context";
 import { IContext, ValueType } from "./base/interface";
 import locale from "./base/locale";
 import Parser from "./base/parser";
@@ -8,9 +9,9 @@ import Type from "./base/type";
 import Value from "./base/value";
 import ExprCurrent from "./current";
 
-interface IFunctionItem {
+export interface IFunctionItem {
     e?: "root" | "parent" | "value" | "data";
-    fn: (context, ...others) => any;
+    fn: (context: IContext, ...others) => any;
     p: Array<
         "undefined" | "undefined?" |
         "string" | "string?" |
@@ -24,7 +25,7 @@ interface IFunctionItem {
     r: "undefined" | "string" | "number" | "boolean" | "date" | "object" | "array";
 }
 
-interface IFunction {
+export interface IFunction {
     _?: IFunctionItem;
     array?: IFunctionItem;
     boolean?: IFunctionItem;
@@ -34,16 +35,10 @@ interface IFunction {
     string?: IFunctionItem;
 }
 
-interface IExprItem {
-    parser: Parser;
-    text: string;
-}
-
 // 表达式上下文
 // ----------
 
-export default class ExprContext implements IContext {
-    private exprList: IExprItem[] = [];
+export default class ExprContext extends Context {
     private exprContext: ExprCurrent = new ExprCurrent(); /// 计算环境堆栈
     private pageContext = { $C: {} };              /// 页面上下文
     private dataContext;                           /// 数据上下文
@@ -53,47 +48,9 @@ export default class ExprContext implements IContext {
     private fieldName: string;
     private fieldDisplayName: string;
     private fieldValue: any;
-    // 得到解析信息
-    public getParserInfo(expr: string): Parser {
-        expr = expr.trim(); /// 去除表达式两端无效空格
-        let index = -1; /// 查找当前上下文的exprList列表
-        for (let i = 0; i < this.exprList.length; i++) {
-            if (this.exprList[i].text === expr) {
-                index = i;
-                break;
-            }
-        }
-        let r;
-        if (index >= 0) { /// 该表达式之前被解析过，直接返回缓存里的解析结果
-            r = this.exprList[index].parser;
-        } else { /// 该表达式之前从未被解析过，开始新的解析
-            r = new Parser().parser(expr); /// return this;
-            this.exprList.push({ /// 将解析过的表达式缓存，下次不需要再次解析
-                parser: r,
-                text: expr,
-            });
-        }
-        return r; /// 返回ExprParser对象
-    }
-    // 生成ExprValue对象
-    public genValue(value: any, type?: ValueType, entity?, errorMsg?: string, parentObj?): Value {
-        return new Value(this, value, type, entity, errorMsg, parentObj);
-    }
-    // 有错误时，生成对应的ExprValue对象
-    public genErrorValue(errorMsg: string): Value {
-        return this.genValue(undefined, undefined, undefined, errorMsg, undefined);
-    }
-    // 生成ExprType对象
-    public genType(type?: ValueType, info?, data?, entity?, depends?, errorMsg?): Type {
-        return new Type(this, type, info, data, entity, depends, errorMsg);
-    }
-    // 有错误时，生成对应的ExprType对象
-    public genErrorType(errorMsg: string): Type {
-        return this.genType(undefined, undefined, undefined, undefined, undefined, errorMsg);
-    }
     // 获取函数返回结果类型对象
-    public getFunctionType(name: string, source, paramType, paramData) {
-        let r;
+    public doGetFunctionType(name: string, source, paramType, paramData): Type {
+        let r: Type;
         const t = (source !== null) ? /// 调用者类型，如"string","number","array","object"
             (source.entity ? source.entity.type : source.type) : /// 有显式调用者
             ""; /// 无显式调用者，全局函数
@@ -169,7 +126,7 @@ export default class ExprContext implements IContext {
         return r;
     }
     // 获取函数返回值
-    public getFunctionValue(name: string, source, paramValue) {
+    public doGetFunctionValue(name: string, source, paramValue): Value {
         const t = (source !== null) ? /// 调用者类型，如"string","number","array","object"
             (source.entity ? source.entity.type : source.type) : /// 有显式调用者
             ""; /// 无显式调用者，全局函数
@@ -185,8 +142,8 @@ export default class ExprContext implements IContext {
         return r;
     }
     // 获取变量类型对象
-    public getVariableType(name: string, source) {
-        let r;
+    public doGetVariableType(name: string, source): Type {
+        let r: Type;
         let pIndex;
         pIndex = 0;
         if (source === null && name.split("")[0] === "$") {
@@ -242,7 +199,7 @@ export default class ExprContext implements IContext {
         return r;
     }
     // 获取变量值
-    public getVariableValue(name, source) {
+    public doGetVariableValue(name, source): Value {
         let r;
         let pIndex;
         pIndex = 0;
@@ -342,13 +299,13 @@ export default class ExprContext implements IContext {
         return r;
     }
     // 获取实体类型对象
-    public getEntityType(source) {
+    public doGetEntityType(source): Type {
         const e = this.genEntityInfo(source.entity, "object");
         const t = this.genType("object", "object", undefined, e, [e.fullName]);
         return t;
     }
     // 获取实体值，根据游标索引
-    public getEntityValue(source, index) {
+    public doGetEntityValue(source, index): Value {
         const v = source.toValue()[index];
         const e = this.genEntityInfo(source.entity, "object");
         e.recNo = source.entity.map[index];
@@ -356,13 +313,13 @@ export default class ExprContext implements IContext {
         const r = this.genValue(v, getValueType(v), e, "", parentObj);
         return r;
     }
-    // 是否为IfNull(1,2)函数形式的","结点
-    public isIfNullToken(token): boolean {
-        return isFunctionToken(token, "IfNull");
+    // 获取IfNull函数名称
+    public doGetIsIfNullTokenName(): string {
+        return "IfNull";
     }
-    // 是否为IIf(true,1,2)函数形式的","结点
-    public isIIfToken(token): boolean {
-        return isFunctionToken(token, "IIf");
+    // 获取IIf函数名称
+    public doGetIsIIfTokenName(): string {
+        return "IIf";
     }
     // 设置数据游标
     public setDataCursor(cursor) {
@@ -711,7 +668,7 @@ export default class ExprContext implements IContext {
         return this._calcExpr(expr, c);
     }
     // 计算表达式的依赖关系
-    public calcDependencies(expr: string, curr) {
+    public calcDependencies(expr: string, curr): Type {
         if (curr.length > 0) {
             this.exprContext.push(curr);
         }
@@ -725,7 +682,7 @@ export default class ExprContext implements IContext {
         return r;
     }
     // 在实体计算环境下计算表达式的依赖关系
-    public calcEntityDependencies(expr: string, entityName?: string) {
+    public calcEntityDependencies(expr: string, entityName?: string): Type {
         const c = [];
         let i = 1;
         while (i < arguments.length) {
@@ -738,7 +695,7 @@ export default class ExprContext implements IContext {
         return this.calcDependencies(expr, c);
     }
     // 在数据计算环境下计算表达式的依赖关系
-    public calcDataDependencies(expr) {
+    public calcDataDependencies(expr): Type {
         const c = [];
         let i = 1;
         while (i < arguments.length) {

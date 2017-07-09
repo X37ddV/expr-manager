@@ -12,6 +12,8 @@ const Big = (v) => {
 // ----------
 
 export default class Value {
+    public tokens: IToken[];
+    public rootToken: IToken;
     private context: IContext;
     private type: ValueType;
     private value: any;

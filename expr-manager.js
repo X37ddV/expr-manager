@@ -17,6 +17,12 @@
 moment = moment && 'default' in moment ? moment['default'] : moment;
 Decimal = Decimal && 'default' in Decimal ? Decimal['default'] : Decimal;
 
+function __extends(d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+}
+
 // 内部公共函数
 // ----------
 // 获取**值**类型
@@ -416,7 +422,7 @@ var funcArrayCount = {
     e: "value",
     fn: function (context, source) {
         var r = source.toValue().length;
-        return context.genValue(r, "", null, "");
+        return context.genValue(r, undefined, null, "");
     },
     p: [],
     r: "number",
@@ -3421,6 +3427,78 @@ var Value = (function () {
     return Value;
 }());
 
+var Context = (function () {
+    function Context() {
+        this.exprList = [];
+    }
+    // 得到解析信息
+    Context.prototype.getParserInfo = function (expr) {
+        expr = expr.trim();
+        var index = -1;
+        for (var i = 0; i < this.exprList.length; i++) {
+            if (this.exprList[i].text === expr) {
+                index = i;
+                break;
+            }
+        }
+        var r;
+        if (index >= 0) {
+            r = this.exprList[index].parser;
+        }
+        else {
+            r = new Parser().parser(expr);
+            this.exprList.push({
+                parser: r,
+                text: expr,
+            });
+        }
+        return r;
+    };
+    // 生成ExprValue对象
+    Context.prototype.genValue = function (value, type, entity, errorMsg, parentObj) {
+        return new Value(this, value, type, entity, errorMsg, parentObj);
+    };
+    // 有错误时，生成对应的ExprValue对象
+    Context.prototype.genErrorValue = function (errorMsg) {
+        return this.genValue(undefined, undefined, undefined, errorMsg, undefined);
+    };
+    // 生成ExprType对象
+    Context.prototype.genType = function (type, info, data, entity, depends, errorMsg) {
+        return new Type(this, type, info, data, entity, depends, errorMsg);
+    };
+    // 有错误时，生成对应的ExprType对象
+    Context.prototype.genErrorType = function (errorMsg) {
+        return this.genType(undefined, undefined, undefined, undefined, undefined, errorMsg);
+    };
+    Context.prototype.getFunctionType = function (name, source, paramType, paramData) {
+        return this.doGetFunctionType(name, source, paramType, paramData);
+    };
+    Context.prototype.getFunctionValue = function (name, source, paramValue) {
+        return this.doGetFunctionValue(name, source, paramValue);
+    };
+    Context.prototype.getVariableType = function (name, source) {
+        return this.doGetVariableType(name, source);
+    };
+    Context.prototype.getVariableValue = function (name, source) {
+        return this.doGetVariableValue(name, source);
+    };
+    Context.prototype.getEntityType = function (source) {
+        return this.doGetEntityType(source);
+    };
+    Context.prototype.getEntityValue = function (source, index) {
+        return this.doGetEntityValue(source, index);
+    };
+    // 是否为IfNull(1,2)函数形式的","结点
+    Context.prototype.isIfNullToken = function (token) {
+        return isFunctionToken(token, this.doGetIsIfNullTokenName());
+    };
+    // 是否为IIf(true,1,2)函数形式的","结点
+    Context.prototype.isIIfToken = function (token) {
+        return isFunctionToken(token, this.doGetIsIIfTokenName());
+    };
+    return Context;
+}());
+
 // 表达式游标
 // ----------
 var ExprCurrent = (function () {
@@ -3490,55 +3568,17 @@ var ExprCurrent = (function () {
 
 // 表达式上下文
 // ----------
-var ExprContext = (function () {
+var ExprContext = (function (_super) {
+    __extends(ExprContext, _super);
     function ExprContext() {
-        this.exprList = [];
+        _super.apply(this, arguments);
         this.exprContext = new ExprCurrent();
         this.pageContext = { $C: {} };
         this.contextVariables = [];
         this.functions = {};
     }
-    // 得到解析信息
-    ExprContext.prototype.getParserInfo = function (expr) {
-        expr = expr.trim();
-        var index = -1;
-        for (var i = 0; i < this.exprList.length; i++) {
-            if (this.exprList[i].text === expr) {
-                index = i;
-                break;
-            }
-        }
-        var r;
-        if (index >= 0) {
-            r = this.exprList[index].parser;
-        }
-        else {
-            r = new Parser().parser(expr);
-            this.exprList.push({
-                parser: r,
-                text: expr,
-            });
-        }
-        return r;
-    };
-    // 生成ExprValue对象
-    ExprContext.prototype.genValue = function (value, type, entity, errorMsg, parentObj) {
-        return new Value(this, value, type, entity, errorMsg, parentObj);
-    };
-    // 有错误时，生成对应的ExprValue对象
-    ExprContext.prototype.genErrorValue = function (errorMsg) {
-        return this.genValue(undefined, undefined, undefined, errorMsg, undefined);
-    };
-    // 生成ExprType对象
-    ExprContext.prototype.genType = function (type, info, data, entity, depends, errorMsg) {
-        return new Type(this, type, info, data, entity, depends, errorMsg);
-    };
-    // 有错误时，生成对应的ExprType对象
-    ExprContext.prototype.genErrorType = function (errorMsg) {
-        return this.genType(undefined, undefined, undefined, undefined, undefined, errorMsg);
-    };
     // 获取函数返回结果类型对象
-    ExprContext.prototype.getFunctionType = function (name, source, paramType, paramData) {
+    ExprContext.prototype.doGetFunctionType = function (name, source, paramType, paramData) {
         var r;
         var t = (source !== null) ?
             (source.entity ? source.entity.type : source.type) :
@@ -3620,7 +3660,7 @@ var ExprContext = (function () {
         return r;
     };
     // 获取函数返回值
-    ExprContext.prototype.getFunctionValue = function (name, source, paramValue) {
+    ExprContext.prototype.doGetFunctionValue = function (name, source, paramValue) {
         var t = (source !== null) ?
             (source.entity ? source.entity.type : source.type) :
             "";
@@ -3637,7 +3677,7 @@ var ExprContext = (function () {
         return r;
     };
     // 获取变量类型对象
-    ExprContext.prototype.getVariableType = function (name, source) {
+    ExprContext.prototype.doGetVariableType = function (name, source) {
         var r;
         var pIndex;
         pIndex = 0;
@@ -3703,7 +3743,7 @@ var ExprContext = (function () {
         return r;
     };
     // 获取变量值
-    ExprContext.prototype.getVariableValue = function (name, source) {
+    ExprContext.prototype.doGetVariableValue = function (name, source) {
         var r;
         var pIndex;
         pIndex = 0;
@@ -3813,13 +3853,13 @@ var ExprContext = (function () {
         return r;
     };
     // 获取实体类型对象
-    ExprContext.prototype.getEntityType = function (source) {
+    ExprContext.prototype.doGetEntityType = function (source) {
         var e = this.genEntityInfo(source.entity, "object");
         var t = this.genType("object", "object", undefined, e, [e.fullName]);
         return t;
     };
     // 获取实体值，根据游标索引
-    ExprContext.prototype.getEntityValue = function (source, index) {
+    ExprContext.prototype.doGetEntityValue = function (source, index) {
         var v = source.toValue()[index];
         var e = this.genEntityInfo(source.entity, "object");
         e.recNo = source.entity.map[index];
@@ -3827,13 +3867,13 @@ var ExprContext = (function () {
         var r = this.genValue(v, getValueType(v), e, "", parentObj);
         return r;
     };
-    // 是否为IfNull(1,2)函数形式的","结点
-    ExprContext.prototype.isIfNullToken = function (token) {
-        return isFunctionToken(token, "IfNull");
+    // 获取IfNull函数名称
+    ExprContext.prototype.doGetIsIfNullTokenName = function () {
+        return "IfNull";
     };
-    // 是否为IIf(true,1,2)函数形式的","结点
-    ExprContext.prototype.isIIfToken = function (token) {
-        return isFunctionToken(token, "IIf");
+    // 获取IIf函数名称
+    ExprContext.prototype.doGetIsIIfTokenName = function () {
+        return "IIf";
     };
     // 设置数据游标
     ExprContext.prototype.setDataCursor = function (cursor) {
@@ -4244,7 +4284,7 @@ var ExprContext = (function () {
         this.exprContext.pop();
     };
     return ExprContext;
-}());
+}(Context));
 
 // 表达式列表
 // ----------
