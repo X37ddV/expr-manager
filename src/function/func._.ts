@@ -1,11 +1,12 @@
 import { isArray, isObject, isString } from "../lib/base/common";
+import ExprContext from "../lib/context";
 
 // 表达式函数
 // ----------
 
 // 条件判断函数，如果第一个参数为true，则获取第二个参数，否则获取第三个参数
 const funcIIf = {
-    fn: (context, source, bool, tv, fv) => {
+    fn: (context: ExprContext, source, bool, tv, fv) => {
         return context.genValue(bool ? tv : fv);
     },
     p: ["boolean", "undefined", "undefined"],
@@ -13,7 +14,7 @@ const funcIIf = {
 };
 // 空值判断函数，如果第一个参数为null，则获取第二个参数，否则获取第一个参数
 const funcIfNull = {
-    fn: (context, source, v, d) => {
+    fn: (context: ExprContext, source, v, d) => {
         return context.genValue((v !== null) ? v : d);
     },
     p: ["undefined", "undefined"],
@@ -80,7 +81,7 @@ const funcFieldValue = {
 };
 // 获取对象属性值
 const funcPropValue = {
-    fn: (context, source, obj, prop, delimiter) => {
+    fn: (context: ExprContext, source, obj, prop, delimiter) => {
         let r;
         let o = obj;
         if (isString(delimiter) && isArray(o)) {

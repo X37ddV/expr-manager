@@ -17,12 +17,6 @@
 moment = moment && 'default' in moment ? moment['default'] : moment;
 Decimal = Decimal && 'default' in Decimal ? Decimal['default'] : Decimal;
 
-function __extends(d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-}
-
 // 内部公共函数
 // ----------
 // 获取**值**类型
@@ -3427,106 +3421,6 @@ var Value = (function () {
     return Value;
 }());
 
-// 上下文基类
-// ----------
-var Context = (function () {
-    function Context() {
-        this.exprList = [];
-    }
-    // 生成ExprValue对象
-    Context.prototype.genValue = function (value, type, entity, errorMsg, parentObj) {
-        return new Value(this, value, type, entity, errorMsg, parentObj);
-    };
-    // 有错误时，生成对应的ExprValue对象
-    Context.prototype.genErrorValue = function (errorMsg) {
-        return this.genValue(undefined, undefined, undefined, errorMsg, undefined);
-    };
-    // 生成ExprType对象
-    Context.prototype.genType = function (type, info, data, entity, depends, errorMsg) {
-        return new Type(this, type, info, data, entity, depends, errorMsg);
-    };
-    // 有错误时，生成对应的ExprType对象
-    Context.prototype.genErrorType = function (errorMsg) {
-        return this.genType(undefined, undefined, undefined, undefined, undefined, errorMsg);
-    };
-    // 得到函数source.name(paramValue)返回值的ExprType对象
-    Context.prototype.getFunctionType = function (name, source, paramType, paramData) {
-        return this.doGetFunctionType(name, source, paramType, paramData);
-    };
-    // 得到函数source.name(paramValue)执行结果
-    Context.prototype.getFunctionValue = function (name, source, paramValue) {
-        return this.doGetFunctionValue(name, source, paramValue);
-    };
-    // 得到变量类型
-    Context.prototype.getVariableType = function (name, source) {
-        return this.doGetVariableType(name, source);
-    };
-    // 得到对象source的name属性值
-    Context.prototype.getVariableValue = function (name, source) {
-        return this.doGetVariableValue(name, source);
-    };
-    // 得到实体类型
-    Context.prototype.getEntityType = function (source) {
-        return this.doGetEntityType(source);
-    };
-    // 从实体数组source中取出第index条实体记录
-    Context.prototype.getEntityValue = function (source, index) {
-        return this.doGetEntityValue(source, index);
-    };
-    // 得到解析信息
-    Context.prototype.getParserInfo = function (expr) {
-        expr = expr.trim();
-        var index = -1;
-        for (var i = 0; i < this.exprList.length; i++) {
-            if (this.exprList[i].text === expr) {
-                index = i;
-                break;
-            }
-        }
-        var r;
-        if (index >= 0) {
-            r = this.exprList[index].parser;
-        }
-        else {
-            r = new Parser().parser(expr);
-            this.exprList.push({
-                parser: r,
-                text: expr,
-            });
-        }
-        return r;
-    };
-    // 是否为IfNull(1,2)函数形式的","结点
-    Context.prototype.isIfNullToken = function (token) {
-        return isFunctionToken(token, this.doGetIfNullName());
-    };
-    // 是否为IIf(true,1,2)函数形式的","结点
-    Context.prototype.isIIfToken = function (token) {
-        return isFunctionToken(token, this.doGetIIfName());
-    };
-    Context.prototype.doGetIfNullName = function () { return ""; };
-    Context.prototype.doGetIIfName = function () { return ""; };
-    Context.prototype.doGetVariableType = function (name, source) {
-        //
-    };
-    Context.prototype.doGetVariableValue = function (name, source) {
-        //
-    };
-    Context.prototype.doGetFunctionType = function (name, source, paramType, paramData) {
-        //
-    };
-    Context.prototype.doGetFunctionValue = function (name, source, paramValue) {
-        //
-    };
-    Context.prototype.doGetEntityType = function (source) {
-        //
-    };
-    Context.prototype.doGetEntityValue = function (source, index) {
-        //
-    };
-    return Context;
-}());
-
 // 表达式游标
 // ----------
 var ExprCurrent = (function () {
@@ -3596,69 +3490,55 @@ var ExprCurrent = (function () {
 
 // 表达式上下文
 // ----------
-var ExprContext = (function (_super) {
-    __extends(ExprContext, _super);
+var ExprContext = (function () {
     function ExprContext() {
-        _super.apply(this, arguments);
+        this.exprList = [];
         this.exprContext = new ExprCurrent();
         this.pageContext = { $C: {} };
         this.contextVariables = [];
         this.functions = {};
     }
-    // 设置数据游标
-    ExprContext.prototype.setDataCursor = function (cursor) {
-        this.exprContext.setDataCursor(cursor);
-    };
-    // 设置页面上下文
-    ExprContext.prototype.setPageContext = function (ctx) {
-        this.pageContext.$C = ctx;
-    };
-    // 设置数据上下文
-    ExprContext.prototype.setDataContext = function (ctx) {
-        this.dataContext = ctx;
-    };
-    // 设置数据
-    ExprContext.prototype.setData = function (d) {
-        this.data = d;
-    };
-    // 添加函数
-    ExprContext.prototype.addFunction = function (func) {
-        var gs;
-        gs = {};
-        gs[""] = func._ || {};
-        gs.array = func.array || {};
-        gs.boolean = func.boolean || {};
-        gs.date = func.date || {};
-        gs.number = func.number || {};
-        gs.object = func.object || {};
-        gs.string = func.string || {};
-        for (var g in gs) {
-            if (gs.hasOwnProperty(g)) {
-                var group = gs[g];
-                for (var n in group) {
-                    if (group.hasOwnProperty(n)) {
-                        var fullName = g ? g + "." + n : n;
-                        group[n].getLocale = (function (key) { return function () { return locale.getFunction()[key]; }; })(fullName);
-                    }
-                }
+    // 得到解析信息
+    ExprContext.prototype.getParserInfo = function (expr) {
+        expr = expr.trim();
+        var index = -1;
+        for (var i = 0; i < this.exprList.length; i++) {
+            if (this.exprList[i].text === expr) {
+                index = i;
+                break;
             }
         }
-        return merger(this.functions, gs);
+        var r;
+        if (index >= 0) {
+            r = this.exprList[index].parser;
+        }
+        else {
+            r = new Parser().parser(expr);
+            this.exprList.push({
+                parser: r,
+                text: expr,
+            });
+        }
+        return r;
     };
-    // 获取函数
-    ExprContext.prototype.getFunction = function () {
-        return this.functions;
+    // 生成ExprValue对象
+    ExprContext.prototype.genValue = function (value, type, entity, errorMsg, parentObj) {
+        return new Value(this, value, type, entity, errorMsg, parentObj);
     };
-    // 获取IfNull函数名
-    ExprContext.prototype.doGetIfNullName = function () {
-        return "IfNull";
+    // 有错误时，生成对应的ExprValue对象
+    ExprContext.prototype.genErrorValue = function (errorMsg) {
+        return this.genValue(undefined, undefined, undefined, errorMsg, undefined);
     };
-    // 获取IIf函数名
-    ExprContext.prototype.doGetIIfName = function () {
-        return "IIf";
+    // 生成ExprType对象
+    ExprContext.prototype.genType = function (type, info, data, entity, depends, errorMsg) {
+        return new Type(this, type, info, data, entity, depends, errorMsg);
+    };
+    // 有错误时，生成对应的ExprType对象
+    ExprContext.prototype.genErrorType = function (errorMsg) {
+        return this.genType(undefined, undefined, undefined, undefined, undefined, errorMsg);
     };
     // 获取函数返回结果类型对象
-    ExprContext.prototype.doGetFunctionType = function (name, source, paramType, paramData) {
+    ExprContext.prototype.getFunctionType = function (name, source, paramType, paramData) {
         var r;
         var t = (source !== null) ?
             (source.entity ? source.entity.type : source.type) :
@@ -3740,7 +3620,7 @@ var ExprContext = (function (_super) {
         return r;
     };
     // 获取函数返回值
-    ExprContext.prototype.doGetFunctionValue = function (name, source, paramValue) {
+    ExprContext.prototype.getFunctionValue = function (name, source, paramValue) {
         var t = (source !== null) ?
             (source.entity ? source.entity.type : source.type) :
             "";
@@ -3757,7 +3637,7 @@ var ExprContext = (function (_super) {
         return r;
     };
     // 获取变量类型对象
-    ExprContext.prototype.doGetVariableType = function (name, source) {
+    ExprContext.prototype.getVariableType = function (name, source) {
         var r;
         var pIndex;
         pIndex = 0;
@@ -3823,7 +3703,7 @@ var ExprContext = (function (_super) {
         return r;
     };
     // 获取变量值
-    ExprContext.prototype.doGetVariableValue = function (name, source) {
+    ExprContext.prototype.getVariableValue = function (name, source) {
         var r;
         var pIndex;
         pIndex = 0;
@@ -3933,19 +3813,71 @@ var ExprContext = (function (_super) {
         return r;
     };
     // 获取实体类型对象
-    ExprContext.prototype.doGetEntityType = function (source) {
+    ExprContext.prototype.getEntityType = function (source) {
         var e = this.genEntityInfo(source.entity, "object");
         var t = this.genType("object", "object", undefined, e, [e.fullName]);
         return t;
     };
     // 获取实体值，根据游标索引
-    ExprContext.prototype.doGetEntityValue = function (source, index) {
+    ExprContext.prototype.getEntityValue = function (source, index) {
         var v = source.toValue()[index];
         var e = this.genEntityInfo(source.entity, "object");
         e.recNo = source.entity.map[index];
         var parentObj = source.parentObj;
         var r = this.genValue(v, getValueType(v), e, "", parentObj);
         return r;
+    };
+    // 是否为IfNull(1,2)函数形式的","结点
+    ExprContext.prototype.isIfNullToken = function (token) {
+        return isFunctionToken(token, "IfNull");
+    };
+    // 是否为IIf(true,1,2)函数形式的","结点
+    ExprContext.prototype.isIIfToken = function (token) {
+        return isFunctionToken(token, "IIf");
+    };
+    // 设置数据游标
+    ExprContext.prototype.setDataCursor = function (cursor) {
+        this.exprContext.setDataCursor(cursor);
+    };
+    // 设置页面上下文
+    ExprContext.prototype.setPageContext = function (ctx) {
+        this.pageContext.$C = ctx;
+    };
+    // 设置数据上下文
+    ExprContext.prototype.setDataContext = function (ctx) {
+        this.dataContext = ctx;
+    };
+    // 设置数据
+    ExprContext.prototype.setData = function (d) {
+        this.data = d;
+    };
+    // 添加函数
+    ExprContext.prototype.addFunction = function (func) {
+        var gs;
+        gs = {};
+        gs[""] = func._ || {};
+        gs.array = func.array || {};
+        gs.boolean = func.boolean || {};
+        gs.date = func.date || {};
+        gs.number = func.number || {};
+        gs.object = func.object || {};
+        gs.string = func.string || {};
+        for (var g in gs) {
+            if (gs.hasOwnProperty(g)) {
+                var group = gs[g];
+                for (var n in group) {
+                    if (group.hasOwnProperty(n)) {
+                        var fullName = g ? g + "." + n : n;
+                        group[n].getLocale = (function (key) { return function () { return locale.getFunction()[key]; }; })(fullName);
+                    }
+                }
+            }
+        }
+        return merger(this.functions, gs);
+    };
+    // 获取函数
+    ExprContext.prototype.getFunction = function () {
+        return this.functions;
     };
     // 获取实体信息
     ExprContext.prototype.genEntityInfo = function (fullName, type) {
@@ -4032,7 +3964,7 @@ var ExprContext = (function (_super) {
                 entity = this.genEntityInfo(this.getParentName(entity), "object");
                 entity.recNo = this.exprContext.getEntityDataCursor(entity.name);
                 var value = this.getEntityData(entity.name);
-                r = this.genValue(value, "", entity);
+                r = this.genValue(value, undefined, entity);
             }
         }
         else {
@@ -4312,7 +4244,7 @@ var ExprContext = (function (_super) {
         this.exprContext.pop();
     };
     return ExprContext;
-}(Context));
+}());
 
 // 表达式列表
 // ----------

@@ -1,13 +1,12 @@
 import locale from "../base/locale";
 import { format } from "./common";
-import Context from "./context";
-import { ValueType } from "./interface";
+import { IContext, ValueType } from "./interface";
 
 // 类型
 // ----------
 
 export default class Type {
-    private context: Context;
+    private context: IContext;
     private type: ValueType;
     private info;
     private data;
@@ -15,7 +14,7 @@ export default class Type {
     private depends;
     private errorMsg;
     // 类型构造函数
-    constructor(context: Context, type: ValueType, info, data, entity, depends, errorMsg: string) {
+    constructor(context: IContext, type: ValueType, info, data, entity, depends, errorMsg: string) {
         this.context = context;
         this.type = type || "undefined";
         this.info = info || type;

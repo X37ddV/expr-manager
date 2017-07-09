@@ -90,7 +90,7 @@ const funcArrayCount = {
     e: "value",
     fn: (context, source) => {
         const r = source.toValue().length;
-        return context.genValue(r, "", null, "");
+        return context.genValue(r, undefined, null, "");
     },
     p: [],
     r: "number",

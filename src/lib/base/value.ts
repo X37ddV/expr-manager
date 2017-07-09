@@ -1,8 +1,7 @@
 import Decimal from "decimal.js";
 import locale from "../base/locale";
 import { compare, format, getValueType } from "./common";
-import Context from "./context";
-import { ValueType } from "./interface";
+import { IContext, ValueType } from "./interface";
 
 // 大数据值计算对象
 const Big = (v) => {
@@ -13,14 +12,14 @@ const Big = (v) => {
 // ----------
 
 export default class Value {
-    private context: Context;
+    private context: IContext;
     private type: ValueType;
     private value: any;
     private entity;
     private errorMsg;
     private parentObj;
     // 值构造函数
-    constructor(context: Context, value: any, type: ValueType, entity, errorMsg: string, parentObj) {
+    constructor(context: IContext, value: any, type: ValueType, entity, errorMsg: string, parentObj) {
         this.context = context;
         this.type = type ? type : getValueType(value);
         if (this.type === "number") {

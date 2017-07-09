@@ -1,5 +1,5 @@
 import { isIDENToken } from "./common";
-import Context from "./context";
+import { IContext } from "./interface";
 import Value from "./value";
 
 // 表达式计算
@@ -8,7 +8,7 @@ import Value from "./value";
 export default class Calc {
     private values = {};
     // 对表达式进行语法分析和数值计算
-    public calc(expr: string, context: Context) {
+    public calc(expr: string, context: IContext) {
         let r;
         const p = context.getParserInfo(expr); /// 在context数据上下文中对expr进行语法分析
         if (p.errorMsg === "") { /// 表达式解析正确(语法正确，但是计算结果尚需验证如3/0)
@@ -26,7 +26,7 @@ export default class Calc {
         return r;
     }
     // 对表达式进行数值计算
-    private doCalc(rootToken, context: Context) {
+    private doCalc(rootToken, context: IContext) {
         const t = rootToken;
         const p = t.parent;
         let msg = "";
