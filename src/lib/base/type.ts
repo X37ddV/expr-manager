@@ -45,7 +45,7 @@ export default class Type {
         return this.type;
     }
     // 追加数组元素
-    public arrayPush(et): Type {
+    public arrayPush(et: Type): Type {
         if (this.type === "array") {
             this.info.push(et.info); /// info存储数组元素的类型
             this.data.push(et.data); /// data存储数组元素的值
@@ -53,7 +53,7 @@ export default class Type {
         return this;
     }
     // 连接数组元素
-    public arrayConcat(et): Type {
+    public arrayConcat(et: Type): Type {
         if (this.type === "array" && et.type === "array") {
             this.info = this.info.concat(et.info); /// info存储数组元素的类型
             this.data = this.data.concat(et.data); /// data存储数组元素的值
@@ -61,7 +61,7 @@ export default class Type {
         return this;
     }
     // 设置对象属性
-    public objectSetProperty(et): Type {
+    public objectSetProperty(et: Type): Type {
         if (this.type === "object") {
             const h = et.info;
             this.info[h.key] = h.value;
@@ -71,7 +71,7 @@ export default class Type {
         return this;
     }
     // 批量设置对象属性
-    public objectSetProperties(et): Type {
+    public objectSetProperties(et: Type): Type {
         if (this.type === "object" && et.type === "array") {
             for (const item of et.info) {
                 this.info[item.key] = item.value;
@@ -83,7 +83,7 @@ export default class Type {
         return this;
     }
     // 取正/负值
-    public negative(op) {
+    public negative(op: string): Type {
         let t;
         if (this.type === "null" || this.type === "undefined" || this.type === "number") {
             t = this.genType("number");
@@ -94,18 +94,18 @@ export default class Type {
         return t;
     }
     // 非运算
-    public not() {
+    public not(): Type {
         return this.genType("boolean");
     }
     // 乘法
-    public multiply(et) {
+    public multiply(et: Type): Type {
         return (this.type === "null" && et.type === "null") ? this.genType("null") :
             ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
                 (et.type === "number" || et.type === "null" || et.type === "undefined")) ? this.genType("number") :
                 this.genErrorType(format(locale.getLocale().MSG_EX_MULTIPLY, this.type, et.type));
     }
     // 除法
-    public divide(et) {
+    public divide(et: Type): Type {
         let t;
         if (this.type === "null" && et.type === "null") {
             t = this.genType("null");
@@ -120,7 +120,7 @@ export default class Type {
         return t;
     }
     // 求余
-    public remainder(et) {
+    public remainder(et: Type): Type {
         let t;
         if (this.type === "null" && et.type === "null") {
             t = this.genType("null");
@@ -135,7 +135,7 @@ export default class Type {
         return t;
     }
     // 加法
-    public add(et) {
+    public add(et: Type): Type {
         return (this.type === "undefined" && et.type === "undefined") ? this.genType("undefined") :
             (this.type === "null" && et.type === "null") ? this.genType("null") :
                 ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
@@ -149,7 +149,7 @@ export default class Type {
                             this.genErrorType(format(locale.getLocale().MSG_EX_ADD, this.type, et.type));
     }
     // 减法
-    public subtract(et) {
+    public subtract(et: Type): Type {
         return (this.type === "undefined" && et.type === "undefined") ?
             this.genType("undefined") :
             (this.type === "null" && et.type === "null") ?
@@ -163,7 +163,7 @@ export default class Type {
                         this.genErrorType(format(locale.getLocale().MSG_EX_SUBTRACT, this.type, et.type));
     }
     // 等于
-    public equal(et, op) {
+    public equal(et: Type, op: string): Type {
         let t;
         const b = op === "==";
         if (this.type === "undefined" || et.type === "undefined" || this.type === "null" || et.type === "null" ||
@@ -176,7 +176,7 @@ export default class Type {
         return t;
     }
     // 比较运算
-    public compare(et, op) {
+    public compare(et: Type, op: string): Type {
         if (op === "==" || op === "!=") {
             return this.equal(et, op);
         } else {
@@ -198,21 +198,21 @@ export default class Type {
         }
     }
     // 与运算
-    public and(et) {
+    public and(et: Type): Type {
         return (this.type === "undefined" || et.type === "undefined" || this.type === "null" || et.type === "null" ||
             (this.type === "boolean" && et.type === "boolean")) ?
             this.genType("boolean") :
             this.genErrorType(format(locale.getLocale().MSG_EX_AND, this.type, et.type));
     }
     // 或运算
-    public or(et) {
+    public or(et: Type): Type {
         return (this.type === "undefined" || et.type === "undefined" || this.type === "null" || et.type === "null" ||
             (this.type === "boolean" && et.type === "boolean")) ?
             this.genType("boolean") :
             this.genErrorType(format(locale.getLocale().MSG_EX_OR, this.type, et.type));
     }
     // 下标运算
-    public subscript(et) {
+    public subscript(et: Type): Type {
         let t;
         const i = (et.type === "array") ?
             et.info[0] :
@@ -238,15 +238,15 @@ export default class Type {
         return t;
     }
     // 获取{key:...,value:...}键值对对象
-    public hashItem(et) {
+    public hashItem(et: Type): Type {
         return this.genType("object", { key: this.data, value: et.info }, { key: this.data, value: et.data });
     }
     // 获取变量值类型对象
-    public getVariableType(et) {
+    public getVariableType(et: Type): Type {
         return this.context.getVariableType(this.data, et);
     }
     // 获取函数返回结果类型对象
-    public getFunctionType(et) {
+    public getFunctionType(et: Type): Type {
         return this.context.getFunctionType(this.info.key, et, this.info.value, this.data.value);
     }
 }

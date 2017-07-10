@@ -2974,8 +2974,8 @@ var Value = (function () {
             v = this.genValue(v, "number");
         }
         else {
-            v = op === "-" ? locale.getLocale().MSG_EX_NEGATIVE : locale.getLocale().MSG_EX_POSITIVE;
-            v = this.genErrorValue(format(v, this.type));
+            var errorMsg = op === "-" ? locale.getLocale().MSG_EX_NEGATIVE : locale.getLocale().MSG_EX_POSITIVE;
+            v = this.genErrorValue(format(errorMsg, this.type));
         }
         return v;
     };
@@ -3088,7 +3088,7 @@ var Value = (function () {
         else if ((this.type === "array" || this.type === "null") && (ev.type === "array" || ev.type === "null")) {
             vl = this.value || [];
             vr = ev.value || [];
-            v = [];
+            var val = [];
             var found = void 0;
             for (var _i = 0, vl_1 = vl; _i < vl_1.length; _i++) {
                 var left = vl_1[_i];
@@ -3101,10 +3101,10 @@ var Value = (function () {
                     }
                 }
                 if (!found) {
-                    v.push(left);
+                    val.push(left);
                 }
             }
-            v = this.genValue(v, "array");
+            v = this.genValue(val, "array");
         }
         else {
             v = this.genErrorValue(format(locale.getLocale().MSG_EX_SUBTRACT, this.type, ev.type));
@@ -3126,16 +3126,16 @@ var Value = (function () {
         else if (this.type === "number" && ev.type === "number") {
             vl = Big(this.value);
             vr = Big(ev.value);
-            v = vl.equals(vr);
-            v = this.genValue(b ? v : !v, "boolean");
+            var val = vl.equals(vr);
+            v = this.genValue(b ? val : !val, "boolean");
         }
         else if (this.type === ev.type) {
-            v = compare(this.value, ev.value);
-            v = this.genValue(b ? v : !v, "boolean");
+            var val = compare(this.value, ev.value);
+            v = this.genValue(b ? val : !val, "boolean");
         }
         else {
-            v = b ? locale.getLocale().MSG_EX_EQUAL : locale.getLocale().MSG_EX_EQUAL_N;
-            v = this.genErrorValue(format(v, this.type, ev.type));
+            var val = b ? locale.getLocale().MSG_EX_EQUAL : locale.getLocale().MSG_EX_EQUAL_N;
+            v = this.genErrorValue(format(val, this.type, ev.type));
         }
         return v;
     };
@@ -3340,7 +3340,7 @@ var Value = (function () {
             v = this.genValue(v.toString(), "number");
         }
         else {
-            v = this.genErrorValue(format(locale.getLocale().MSG_EX_ROUND, scale));
+            v = this.genErrorValue(format(locale.getLocale().MSG_EX_ROUND, scale.toString()));
         }
         return v;
     };
@@ -3353,7 +3353,7 @@ var Value = (function () {
             v = this.genValue(v.toString(), "number");
         }
         else {
-            v = this.genErrorValue(format(locale.getLocale().MSG_EX_TRUNC, scale));
+            v = this.genErrorValue(format(locale.getLocale().MSG_EX_TRUNC, scale.toString()));
         }
         return v;
     };
@@ -3392,7 +3392,7 @@ var Value = (function () {
             value = this.genValue(v.toString(), "number");
         }
         else {
-            value = this.genErrorValue(format(locale.getLocale().MSG_EX_LOG, base, v.toString()));
+            value = this.genErrorValue(format(locale.getLocale().MSG_EX_LOG, base.toString(), v.toString()));
         }
         return value;
     };

@@ -5898,8 +5898,8 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             v = <span class="hljs-keyword">this</span>.genValue(v, <span class="hljs-string">"number"</span>);
         }
         <span class="hljs-keyword">else</span> {
-            v = op === <span class="hljs-string">"-"</span> ? locale.getLocale().MSG_EX_NEGATIVE : locale.getLocale().MSG_EX_POSITIVE;
-            v = <span class="hljs-keyword">this</span>.genErrorValue(format(v, <span class="hljs-keyword">this</span>.type));
+            <span class="hljs-keyword">var</span> errorMsg = op === <span class="hljs-string">"-"</span> ? locale.getLocale().MSG_EX_NEGATIVE : locale.getLocale().MSG_EX_POSITIVE;
+            v = <span class="hljs-keyword">this</span>.genErrorValue(format(errorMsg, <span class="hljs-keyword">this</span>.type));
         }
         <span class="hljs-keyword">return</span> v;
     };</pre></div></div>
@@ -6090,7 +6090,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"array"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span>) &amp;&amp; (ev.type === <span class="hljs-string">"array"</span> || ev.type === <span class="hljs-string">"null"</span>)) {
             vl = <span class="hljs-keyword">this</span>.value || [];
             vr = ev.value || [];
-            v = [];
+            <span class="hljs-keyword">var</span> val = [];
             <span class="hljs-keyword">var</span> found = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>;
             <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _i = <span class="hljs-number">0</span>, vl_1 = vl; _i &lt; vl_1.length; _i++) {
                 <span class="hljs-keyword">var</span> left = vl_1[_i];
@@ -6103,10 +6103,10 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                     }
                 }
                 <span class="hljs-keyword">if</span> (!found) {
-                    v.push(left);
+                    val.push(left);
                 }
             }
-            v = <span class="hljs-keyword">this</span>.genValue(v, <span class="hljs-string">"array"</span>);
+            v = <span class="hljs-keyword">this</span>.genValue(val, <span class="hljs-string">"array"</span>);
         }
         <span class="hljs-keyword">else</span> {
             v = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EX_SUBTRACT, <span class="hljs-keyword">this</span>.type, ev.type));
@@ -6141,16 +6141,16 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"number"</span> &amp;&amp; ev.type === <span class="hljs-string">"number"</span>) {
             vl = Big(<span class="hljs-keyword">this</span>.value);
             vr = Big(ev.value);
-            v = vl.equals(vr);
-            v = <span class="hljs-keyword">this</span>.genValue(b ? v : !v, <span class="hljs-string">"boolean"</span>);
+            <span class="hljs-keyword">var</span> val = vl.equals(vr);
+            v = <span class="hljs-keyword">this</span>.genValue(b ? val : !val, <span class="hljs-string">"boolean"</span>);
         }
         <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === ev.type) {
-            v = compare(<span class="hljs-keyword">this</span>.value, ev.value);
-            v = <span class="hljs-keyword">this</span>.genValue(b ? v : !v, <span class="hljs-string">"boolean"</span>);
+            <span class="hljs-keyword">var</span> val = compare(<span class="hljs-keyword">this</span>.value, ev.value);
+            v = <span class="hljs-keyword">this</span>.genValue(b ? val : !val, <span class="hljs-string">"boolean"</span>);
         }
         <span class="hljs-keyword">else</span> {
-            v = b ? locale.getLocale().MSG_EX_EQUAL : locale.getLocale().MSG_EX_EQUAL_N;
-            v = <span class="hljs-keyword">this</span>.genErrorValue(format(v, <span class="hljs-keyword">this</span>.type, ev.type));
+            <span class="hljs-keyword">var</span> val = b ? locale.getLocale().MSG_EX_EQUAL : locale.getLocale().MSG_EX_EQUAL_N;
+            v = <span class="hljs-keyword">this</span>.genErrorValue(format(val, <span class="hljs-keyword">this</span>.type, ev.type));
         }
         <span class="hljs-keyword">return</span> v;
     };</pre></div></div>
@@ -6498,7 +6498,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             v = <span class="hljs-keyword">this</span>.genValue(v.toString(), <span class="hljs-string">"number"</span>);
         }
         <span class="hljs-keyword">else</span> {
-            v = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EX_ROUND, scale));
+            v = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EX_ROUND, scale.toString()));
         }
         <span class="hljs-keyword">return</span> v;
     };</pre></div></div>
@@ -6524,7 +6524,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             v = <span class="hljs-keyword">this</span>.genValue(v.toString(), <span class="hljs-string">"number"</span>);
         }
         <span class="hljs-keyword">else</span> {
-            v = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EX_TRUNC, scale));
+            v = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EX_TRUNC, scale.toString()));
         }
         <span class="hljs-keyword">return</span> v;
     };</pre></div></div>
@@ -6615,7 +6615,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             value = <span class="hljs-keyword">this</span>.genValue(v.toString(), <span class="hljs-string">"number"</span>);
         }
         <span class="hljs-keyword">else</span> {
-            value = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EX_LOG, base, v.toString()));
+            value = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EX_LOG, base.toString(), v.toString()));
         }
         <span class="hljs-keyword">return</span> value;
     };</pre></div></div>

@@ -44,7 +44,7 @@ export default class Parser {
     }
     // 创建虚节点
     private doCreateVirtualToken(type: TokenType): IToken {
-        let v;
+        let v: string;
         switch (type) {
             case "VTK_COMMA": /// 逗号，用于函数多个参数、数组元素、对象属性之间
                 v = ",";
