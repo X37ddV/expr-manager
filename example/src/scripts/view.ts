@@ -1,8 +1,6 @@
 import $ from "jquery";
 import _ from "underscore";
 
-type IListener = (eventObject: JQueryEventObject, ...args: any[]) => any;
-
 interface IEventsHash {
     [selector: string]: string | ((eventObject: JQueryEventObject) => void);
 }
@@ -78,8 +76,8 @@ class View {
         }
         return this;
     }
-    public delegate(eventName: string, selector: string, listener: IListener): View {
-        this.$el.on(eventName + ".delegateEvents" + this.cid, selector, listener);
+    public delegate(eventName: string, selector: string, handler: JQuery.EventHandler<HTMLElement>): View {
+        this.$el.on(eventName + ".delegateEvents" + this.cid, selector, handler);
         return this;
     }
     public undelegateEvents(): View {
@@ -88,8 +86,8 @@ class View {
         }
         return this;
     }
-    public undelegate(eventName: string, selector: string, listener: IListener): View {
-        this.$el.off(eventName + ".delegateEvents" + this.cid, selector, listener);
+    public undelegate(eventName: string, selector: string, handler: JQuery.EventHandler<HTMLElement>): View {
+        this.$el.off(eventName + ".delegateEvents" + this.cid, selector, handler);
         return this;
     }
     public on(eventName: string | object, callback: (...args) => void, context?: any): View {

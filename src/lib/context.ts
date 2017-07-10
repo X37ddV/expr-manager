@@ -11,7 +11,7 @@ import ExprCurrent from "./current";
 
 export interface IFunctionItem {
     e?: "root" | "parent" | "value" | "data";
-    fn: (context: Context, ...others) => any;
+    fn: (context, ...others) => any;
     p: Array<
         "undefined" | "undefined?" |
         "string" | "string?" |
@@ -44,7 +44,7 @@ export default class ExprContext extends Context {
     private dataContext;                           /// 数据上下文
     private contextVariables = [];                 /// 用于存储环境变量
     private data;                                  /// 全部数据
-    private functions = {};                        /// 函数列表
+    private functions: IFunction = {};             /// 函数列表
     private fieldName: string;
     private fieldDisplayName: string;
     private fieldValue: any;
@@ -362,7 +362,7 @@ export default class ExprContext extends Context {
         return merger(this.functions, gs);
     }
     // 获取函数
-    public getFunction() {
+    public getFunction(): IFunction {
         return this.functions;
     }
     // 获取实体信息

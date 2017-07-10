@@ -954,7 +954,7 @@ var funcNumberToRMB = {
             var cl = "角分厘".split("");
             var cz = isRMB ? "整" : "";
             var cf = "负";
-            var v = "";
+            var r = "";
             var s = (num + ".").split(".", 2);
             var x = s[0].split("");
             var y = s[1].split("");
@@ -989,12 +989,12 @@ var funcNumberToRMB = {
                     }
                     // + 加上该小节的位数
                     if (c.length === 0) {
-                        if (v.length > 0 && v.split("")[0] !== cn[0]) {
-                            v = cn[0] + v;
+                        if (r.length > 0 && r.split("")[0] !== cn[0]) {
+                            r = cn[0] + r;
                         }
                     }
                     else {
-                        v = c + (cw[Math.floor((i - 1) / 4)] || "") + v;
+                        r = c + (cw[Math.floor((i - 1) / 4)] || "") + r;
                     }
                     c = "";
                     t = [];
@@ -1002,45 +1002,45 @@ var funcNumberToRMB = {
             }
             // - 处理小数部分
             if (y.length > 0) {
-                v += cd;
+                r += cd;
                 for (var k = 0; k < y.length; k++) {
                     var m = Number(y[k]);
                     if (isRMB) {
                         // + 避免小数点后 "零" 的重覆出现
-                        if ((m !== 0) || (v.substring(v.length - 1) !== cn[0]) || (k > 2)) {
-                            v += cn[m];
+                        if ((m !== 0) || (r.substring(r.length - 1) !== cn[0]) || (k > 2)) {
+                            r += cn[m];
                         }
-                        if ((m !== 0) || (v.substring(v.length - 1) === cn[0]) && (k === 2)) {
-                            v += cl[k] || "";
+                        if ((m !== 0) || (r.substring(r.length - 1) === cn[0]) && (k === 2)) {
+                            r += cl[k] || "";
                         }
                     }
                     else {
-                        v += cn[m];
+                        r += cn[m];
                     }
                 }
             }
             else {
                 // + 处理无小数部分时整数部分的结尾
-                if (v.length === 0) {
-                    v = cn[0];
+                if (r.length === 0) {
+                    r = cn[0];
                 }
                 if (isRMB) {
-                    v += cd + cz;
+                    r += cd + cz;
                 }
             }
             // - 其他例外状况的处理, 非人民币则将 "壹拾" 或 "一十" 改为 "拾" 或 "十"
-            if (!isRMB && v.substring(0, 2) === cn[1] + cq[1]) {
-                v = v.substring(1);
+            if (!isRMB && r.substring(0, 2) === cn[1] + cq[1]) {
+                r = r.substring(1);
             }
             // - 没有整数部分 且 有小数部分
-            if (v.split("")[0] === cd) {
-                v = isRMB ? v.substring(1) : cn[0] + v;
+            if (r.split("")[0] === cd) {
+                r = isRMB ? r.substring(1) : cn[0] + r;
             }
             // - 是否为负数
             if (isNegative) {
-                v = cf + v;
+                r = cf + r;
             }
-            return v;
+            return r;
         };
         var v = source.toValue();
         return context.genValue(isNumber(v) ?

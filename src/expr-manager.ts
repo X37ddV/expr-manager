@@ -18,7 +18,7 @@ export default class ExprManager {
         return this.exprContext.addFunction(funcs);
     }
     // 获取函数列表对象
-    public getFunction() {
+    public getFunction(): IFunction {
         return this.exprContext.getFunction();
     }
     // 获取表达式列表对象
@@ -84,7 +84,7 @@ export default class ExprManager {
         return this.exprContext.calcEntityDependencies(expr, entityName);
     }
     // 计算表达式的值
-    public calcExpr(expr, entityName, dataCursor, field) {
+    public calcExpr(expr: string, entityName: string, dataCursor, field) {
         /// field = {FieldDisplayName: "", FieldName: "", FieldValue: ""}
         this.exprContext.setDataCursor(dataCursor);
         if (field) {

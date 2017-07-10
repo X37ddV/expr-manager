@@ -121,7 +121,7 @@ class Terminal extends View {
         return this;
     }
     protected doDblClick(): Terminal {
-        this.setTyperSelection(0, this.$typer.val().length);
+        this.setTyperSelection(0, (this.$typer.val() as string).length);
         return this.focus();
     }
     protected doBlur(): Terminal {
@@ -169,14 +169,14 @@ class Terminal extends View {
             if (me.suggestCount > 0) {
                 const selection = me.getTyperSelection();
                 if (selection.start === selection.end) {
-                    me.$typer.val(s.insert(me.$typer.val(), selection.start, me.suggestValue));
+                    me.$typer.val(s.insert(me.$typer.val() as string, selection.start, me.suggestValue));
                     const pos = selection.start + me.suggestValue.length;
                     me.setTyperSelection(pos, pos);
                     e.stopPropagation();
                     e.preventDefault();
                 }
             } else if (combo === "enter") {
-                const cmd = me.$typer.val();
+                const cmd = me.$typer.val() as string;
                 if (cmd !== "") {
                     if (me.history[me.history.length - 1] !== cmd) {
                         me.history.push(cmd);
@@ -233,7 +233,7 @@ class Terminal extends View {
             const text = me.$text;
             const selection = me.getTyperSelection();
             // 判断按键
-            const val = typer.val();
+            const val = typer.val() as string;
             if (me.tmpKeyCombo && selection.start === selection.end) {
                 const n = val.length - me.tmpOldValue.length;
                 if (n === 1 || n === -1) {

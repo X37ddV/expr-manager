@@ -66,8 +66,8 @@ var View = (function () {
         }
         return this;
     };
-    View.prototype.delegate = function (eventName, selector, listener) {
-        this.$el.on(eventName + ".delegateEvents" + this.cid, selector, listener);
+    View.prototype.delegate = function (eventName, selector, handler) {
+        this.$el.on(eventName + ".delegateEvents" + this.cid, selector, handler);
         return this;
     };
     View.prototype.undelegateEvents = function () {
@@ -76,8 +76,8 @@ var View = (function () {
         }
         return this;
     };
-    View.prototype.undelegate = function (eventName, selector, listener) {
-        this.$el.off(eventName + ".delegateEvents" + this.cid, selector, listener);
+    View.prototype.undelegate = function (eventName, selector, handler) {
+        this.$el.off(eventName + ".delegateEvents" + this.cid, selector, handler);
         return this;
     };
     View.prototype.on = function (eventName, callback, context) {
@@ -814,7 +814,7 @@ var Expression = (function () {
         var idFuncs = 0;
         var idParams = 0;
         function genParams(func) {
-            var r = [];
+            var rps = [];
             var ps = func.p;
             var pl = func.getLocale().p;
             var p = String(func.fn).match(/\(.*\)/)[0].replace(/[\(\)\s]/g, "").split(",");
@@ -835,12 +835,12 @@ var Expression = (function () {
                     FType: type,
                     ID: idParams++,
                 };
-                r.push(paramItem);
+                rps.push(paramItem);
             }
-            return r;
+            return rps;
         }
         function genFuncs(funcs) {
-            var r = [];
+            var rfs = [];
             for (var name in funcs) {
                 if (funcs.hasOwnProperty(name)) {
                     var f = funcs[name];
@@ -856,13 +856,13 @@ var Expression = (function () {
                         ID: idFuncs++,
                         TParams: params,
                     };
-                    r.push(funcItem);
+                    rfs.push(funcItem);
                 }
             }
-            return r;
+            return rfs;
         }
         function genGroups(groups) {
-            var r = [];
+            var rgs = [];
             for (var name in groups) {
                 if (groups.hasOwnProperty(name)) {
                     var g = groups[name];
@@ -878,15 +878,14 @@ var Expression = (function () {
                         ID: idGroups++,
                         TFuncs: funcs,
                     };
-                    r.push(groupItem);
+                    rgs.push(groupItem);
                 }
             }
-            return r;
+            return rgs;
         }
-        var r = {
+        return {
             TGroups: genGroups(this.exprManager.getFunction()),
         };
-        return r;
     };
     Expression.prototype.newId = function () {
         return this.currentNewId--;

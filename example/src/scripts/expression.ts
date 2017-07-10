@@ -209,7 +209,7 @@ export default class Expression {
         let idFuncs = 0;
         let idParams = 0;
         function genParams(func) {
-            const r = [];
+            const rps = [];
             const ps = func.p;
             const pl = func.getLocale().p;
             const p = String(func.fn).match(/\(.*\)/)[0].replace(/[\(\)\s]/g, "").split(",");
@@ -230,12 +230,12 @@ export default class Expression {
                     FType: type,
                     ID: idParams++,
                 };
-                r.push(paramItem);
+                rps.push(paramItem);
             }
-            return r;
+            return rps;
         }
         function genFuncs(funcs) {
-            const r = [];
+            const rfs = [];
             for (const name in funcs) {
                 if (funcs.hasOwnProperty(name)) {
                     const f = funcs[name];
@@ -251,13 +251,13 @@ export default class Expression {
                         ID: idFuncs++,
                         TParams: params,
                     };
-                    r.push(funcItem);
+                    rfs.push(funcItem);
                 }
             }
-            return r;
+            return rfs;
         }
         function genGroups(groups) {
-            const r = [];
+            const rgs = [];
             for (const name in groups) {
                 if (groups.hasOwnProperty(name)) {
                     const g = groups[name];
@@ -272,15 +272,14 @@ export default class Expression {
                         ID: idGroups++,
                         TFuncs: funcs,
                     };
-                    r.push(groupItem);
+                    rgs.push(groupItem);
                 }
             }
-            return r;
+            return rgs;
         }
-        const r = {
+        return {
             TGroups: genGroups(this.exprManager.getFunction()),
         };
-        return r;
     }
     private newId(): number {
         return this.currentNewId--;

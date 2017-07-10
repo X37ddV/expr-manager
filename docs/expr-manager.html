@@ -2148,7 +2148,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             <span class="hljs-keyword">var</span> cl = <span class="hljs-string">"角分厘"</span>.split(<span class="hljs-string">""</span>);
             <span class="hljs-keyword">var</span> cz = isRMB ? <span class="hljs-string">"整"</span> : <span class="hljs-string">""</span>;
             <span class="hljs-keyword">var</span> cf = <span class="hljs-string">"负"</span>;
-            <span class="hljs-keyword">var</span> v = <span class="hljs-string">""</span>;
+            <span class="hljs-keyword">var</span> r = <span class="hljs-string">""</span>;
             <span class="hljs-keyword">var</span> s = (num + <span class="hljs-string">"."</span>).split(<span class="hljs-string">"."</span>, <span class="hljs-number">2</span>);
             <span class="hljs-keyword">var</span> x = s[<span class="hljs-number">0</span>].split(<span class="hljs-string">""</span>);
             <span class="hljs-keyword">var</span> y = s[<span class="hljs-number">1</span>].split(<span class="hljs-string">""</span>);
@@ -2243,12 +2243,12 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>                    <span class="hljs-keyword">if</span> (c.length === <span class="hljs-number">0</span>) {
-                        <span class="hljs-keyword">if</span> (v.length &gt; <span class="hljs-number">0</span> &amp;&amp; v.split(<span class="hljs-string">""</span>)[<span class="hljs-number">0</span>] !== cn[<span class="hljs-number">0</span>]) {
-                            v = cn[<span class="hljs-number">0</span>] + v;
+                        <span class="hljs-keyword">if</span> (r.length &gt; <span class="hljs-number">0</span> &amp;&amp; r.split(<span class="hljs-string">""</span>)[<span class="hljs-number">0</span>] !== cn[<span class="hljs-number">0</span>]) {
+                            r = cn[<span class="hljs-number">0</span>] + r;
                         }
                     }
                     <span class="hljs-keyword">else</span> {
-                        v = c + (cw[<span class="hljs-built_in">Math</span>.floor((i - <span class="hljs-number">1</span>) / <span class="hljs-number">4</span>)] || <span class="hljs-string">""</span>) + v;
+                        r = c + (cw[<span class="hljs-built_in">Math</span>.floor((i - <span class="hljs-number">1</span>) / <span class="hljs-number">4</span>)] || <span class="hljs-string">""</span>) + r;
                     }
                     c = <span class="hljs-string">""</span>;
                     t = [];
@@ -2271,7 +2271,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> (y.length &gt; <span class="hljs-number">0</span>) {
-                v += cd;
+                r += cd;
                 <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> k = <span class="hljs-number">0</span>; k &lt; y.length; k++) {
                     <span class="hljs-keyword">var</span> m = <span class="hljs-built_in">Number</span>(y[k]);
                     <span class="hljs-keyword">if</span> (isRMB) {</pre></div></div>
@@ -2291,15 +2291,15 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">if</span> ((m !== <span class="hljs-number">0</span>) || (v.substring(v.length - <span class="hljs-number">1</span>) !== cn[<span class="hljs-number">0</span>]) || (k &gt; <span class="hljs-number">2</span>)) {
-                            v += cn[m];
+            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">if</span> ((m !== <span class="hljs-number">0</span>) || (r.substring(r.length - <span class="hljs-number">1</span>) !== cn[<span class="hljs-number">0</span>]) || (k &gt; <span class="hljs-number">2</span>)) {
+                            r += cn[m];
                         }
-                        <span class="hljs-keyword">if</span> ((m !== <span class="hljs-number">0</span>) || (v.substring(v.length - <span class="hljs-number">1</span>) === cn[<span class="hljs-number">0</span>]) &amp;&amp; (k === <span class="hljs-number">2</span>)) {
-                            v += cl[k] || <span class="hljs-string">""</span>;
+                        <span class="hljs-keyword">if</span> ((m !== <span class="hljs-number">0</span>) || (r.substring(r.length - <span class="hljs-number">1</span>) === cn[<span class="hljs-number">0</span>]) &amp;&amp; (k === <span class="hljs-number">2</span>)) {
+                            r += cl[k] || <span class="hljs-string">""</span>;
                         }
                     }
                     <span class="hljs-keyword">else</span> {
-                        v += cn[m];
+                        r += cn[m];
                     }
                 }
             }
@@ -2320,11 +2320,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">if</span> (v.length === <span class="hljs-number">0</span>) {
-                    v = cn[<span class="hljs-number">0</span>];
+            <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">if</span> (r.length === <span class="hljs-number">0</span>) {
+                    r = cn[<span class="hljs-number">0</span>];
                 }
                 <span class="hljs-keyword">if</span> (isRMB) {
-                    v += cd + cz;
+                    r += cd + cz;
                 }
             }</pre></div></div>
             
@@ -2343,8 +2343,8 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> (!isRMB &amp;&amp; v.substring(<span class="hljs-number">0</span>, <span class="hljs-number">2</span>) === cn[<span class="hljs-number">1</span>] + cq[<span class="hljs-number">1</span>]) {
-                v = v.substring(<span class="hljs-number">1</span>);
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> (!isRMB &amp;&amp; r.substring(<span class="hljs-number">0</span>, <span class="hljs-number">2</span>) === cn[<span class="hljs-number">1</span>] + cq[<span class="hljs-number">1</span>]) {
+                r = r.substring(<span class="hljs-number">1</span>);
             }</pre></div></div>
             
         </li>
@@ -2362,8 +2362,8 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> (v.split(<span class="hljs-string">""</span>)[<span class="hljs-number">0</span>] === cd) {
-                v = isRMB ? v.substring(<span class="hljs-number">1</span>) : cn[<span class="hljs-number">0</span>] + v;
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> (r.split(<span class="hljs-string">""</span>)[<span class="hljs-number">0</span>] === cd) {
+                r = isRMB ? r.substring(<span class="hljs-number">1</span>) : cn[<span class="hljs-number">0</span>] + r;
             }</pre></div></div>
             
         </li>
@@ -2382,9 +2382,9 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> (isNegative) {
-                v = cf + v;
+                r = cf + r;
             }
-            <span class="hljs-keyword">return</span> v;
+            <span class="hljs-keyword">return</span> r;
         };
         <span class="hljs-keyword">var</span> v = source.toValue();
         <span class="hljs-keyword">return</span> context.genValue(isNumber(v) ?
