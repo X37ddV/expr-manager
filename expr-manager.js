@@ -3468,21 +3468,27 @@ var Context = (function () {
     Context.prototype.genErrorType = function (errorMsg) {
         return this.genType(undefined, undefined, undefined, undefined, undefined, errorMsg);
     };
+    // 获取函数返回结果类型对象
     Context.prototype.getFunctionType = function (name, source, paramType, paramData) {
         return this.doGetFunctionType(name, source, paramType, paramData);
     };
+    // 获取函数返回值
     Context.prototype.getFunctionValue = function (name, source, paramValue) {
         return this.doGetFunctionValue(name, source, paramValue);
     };
+    // 获取变量类型对象
     Context.prototype.getVariableType = function (name, source) {
         return this.doGetVariableType(name, source);
     };
+    // 获取变量值
     Context.prototype.getVariableValue = function (name, source) {
         return this.doGetVariableValue(name, source);
     };
+    // 获取实体类型对象
     Context.prototype.getEntityType = function (source) {
         return this.doGetEntityType(source);
     };
+    // 获取实体值，根据游标索引
     Context.prototype.getEntityValue = function (source, index) {
         return this.doGetEntityValue(source, index);
     };

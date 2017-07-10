@@ -49,21 +49,27 @@ export default abstract class Context {
     public genErrorType(errorMsg: string): Type {
         return this.genType(undefined, undefined, undefined, undefined, undefined, errorMsg);
     }
+    // 获取函数返回结果类型对象
     public getFunctionType(name: string, source: any, paramType: any, paramData: any): Type {
         return this.doGetFunctionType(name, source, paramType, paramData);
     }
+    // 获取函数返回值
     public getFunctionValue(name: string, source: any, paramValue: any): Value {
         return this.doGetFunctionValue(name, source, paramValue);
     }
+    // 获取变量类型对象
     public getVariableType(name: string, source: any): Type {
         return this.doGetVariableType(name, source);
     }
+    // 获取变量值
     public getVariableValue(name: string, source: any): Value {
         return this.doGetVariableValue(name, source);
     }
+    // 获取实体类型对象
     public getEntityType(source: any): Type {
         return this.doGetEntityType(source);
     }
+    // 获取实体值，根据游标索引
     public getEntityValue(source: any, index: number): Value {
         return this.doGetEntityValue(source, index);
     }

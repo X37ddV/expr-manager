@@ -1,6 +1,6 @@
 import locale from "../base/locale";
 import { eachToken, format, hasToken } from "./common";
-import { IToken } from "./interface";
+import { IToken, TokenType } from "./interface";
 import Lexer from "./lexer";
 import { RULE_BTOKENS, RULE_ETOKENS, RULE_LEXICAL } from "./rule";
 
@@ -43,7 +43,7 @@ export default class Parser {
         }
     }
     // 创建虚节点
-    private doCreateVirtualToken(type: string): IToken {
+    private doCreateVirtualToken(type: TokenType): IToken {
         let v;
         switch (type) {
             case "VTK_COMMA": /// 逗号，用于函数多个参数、数组元素、对象属性之间
