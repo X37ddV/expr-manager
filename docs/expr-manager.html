@@ -9186,7 +9186,8 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    ExprManager.prototype.regFunction = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">funcs</span>) </span>{
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.exprContext.regFunction(funcs);
+        <span class="hljs-keyword">this</span>.exprContext.regFunction(funcs);
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
     };</pre></div></div>
             
         </li>
@@ -9325,8 +9326,6 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                 <span class="hljs-keyword">break</span>;
             <span class="hljs-keyword">case</span> <span class="hljs-string">"remove"</span>:
                 list = <span class="hljs-keyword">this</span>.exprList.getExprsByRemove(info.entityName);
-                <span class="hljs-keyword">break</span>;
-            <span class="hljs-keyword">default</span>:
                 <span class="hljs-keyword">break</span>;
         }
         <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _i = <span class="hljs-number">0</span>, list_1 = list; _i &lt; list_1.length; _i++) {

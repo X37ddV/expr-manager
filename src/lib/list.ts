@@ -215,7 +215,7 @@ export default class ExprList {
         this.sorted = false;
     }
     // 添加表达式
-    public add(expr: string, entityName: string, propertyName: string, types, callback, scope) {
+    public add(expr: string, entityName: string, propertyName: string, types: string, callback, scope) {
         this.cache = {};
         this.sorted = false;
         let index = -1;
@@ -240,7 +240,7 @@ export default class ExprList {
         }
     }
     // 删除表达式
-    public remove(expr: string, entityName: string, propertyName: string, types, callback, scope) {
+    public remove(expr: string, entityName: string, propertyName: string, types: string, callback, scope) {
         this.cache = {};
         this.sorted = false;
         for (let i = 0; i < this.list.length; i++) {
@@ -253,7 +253,7 @@ export default class ExprList {
         }
     }
     // 检查和排序表达式列表
-    public checkAndSort(dependCallback) {
+    public checkAndSort(dependCallback): string {
         this.cache = {};
         this.sorted = true;
         let msg = "";

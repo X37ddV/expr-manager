@@ -618,7 +618,7 @@ export default class ExprContext extends Context {
         this.contextVariables.pop();
     }
     // 计算表达式
-    public _calcExpr(expr: string, curr) {
+    public _calcExpr(expr: string, curr): Value {
         if (curr.length > 0) {
             this.exprContext.push(curr);
         }
@@ -632,7 +632,7 @@ export default class ExprContext extends Context {
         return r;
     }
     // 在实体计算环境下计算表达式的值
-    public calcEntityExpr(expr: string, entityName: string, cursor) {
+    public calcEntityExpr(expr: string, entityName: string, cursor): Value {
         const c = [];
         let i = 1;
         while (i < arguments.length) {

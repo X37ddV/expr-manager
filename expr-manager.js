@@ -4808,7 +4808,8 @@ var ExprManager = (function () {
     }
     // 注册函数
     ExprManager.prototype.regFunction = function (funcs) {
-        return this.exprContext.regFunction(funcs);
+        this.exprContext.regFunction(funcs);
+        return this;
     };
     // 获取函数列表对象
     ExprManager.prototype.getFunction = function () {
@@ -4856,8 +4857,6 @@ var ExprManager = (function () {
                 break;
             case "remove":
                 list = this.exprList.getExprsByRemove(info.entityName);
-                break;
-            default:
                 break;
         }
         for (var _i = 0, list_1 = list; _i < list_1.length; _i++) {

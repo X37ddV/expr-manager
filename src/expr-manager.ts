@@ -1,7 +1,11 @@
 import func from "./function/func";
+import Type from "./lib/base/type";
+import Value from "./lib/base/value";
 import ExprContext, { IFunction } from "./lib/context";
 import ExprList from "./lib/list";
 import "./locale/zh-cn";
+
+type CalcType = "load" | "add" | "update" | "remove";
 
 // 表达式管理器
 // ----------
@@ -14,41 +18,42 @@ export default class ExprManager {
         this.regFunction(func);
     }
     // 注册函数
-    public regFunction(funcs: IFunction): IFunction {
-        return this.exprContext.regFunction(funcs);
+    public regFunction(funcs: IFunction): ExprManager {
+        this.exprContext.regFunction(funcs);
+        return this;
     }
     // 获取函数列表对象
     public getFunction(): IFunction {
         return this.exprContext.getFunction();
     }
     // 获取表达式列表对象
-    public getExpressionList() {
+    public getExpressionList(): ExprList {
         return this.exprList;
     }
     // 检查和排序表达式列表
-    public checkAndSort() {
+    public checkAndSort(): string {
         return this.exprList.checkAndSort(((context) => (expr, entityName) =>
             context.calcEntityDependencies(expr, entityName))(this.exprContext));
     }
     // 添加表达式
-    public addExpression(expr: string, entityName: string, propertyName: string, types, callback, scope) {
+    public addExpression(expr: string, entityName: string, propertyName: string, types: string, callback, scope) {
         /// types = "L|A|U|R"
         this.exprList.add(expr, entityName, propertyName, types, callback, scope);
         return this;
     }
     // 删除表达式
-    public removeExpression(expr: string, entityName: string, propertyName: string, types, callback, scope) {
+    public removeExpression(expr: string, entityName: string, propertyName: string, types: string, callback, scope) {
         /// types = "L|A|U|R"
         this.exprList.remove(expr, entityName, propertyName, types, callback, scope);
         return this;
     }
     // 重置表达式列表对象
-    public resetExpression() {
+    public resetExpression(): ExprManager {
         this.exprList.reset();
         return this;
     }
     // 计算表达式
-    public calcExpression(type, info) {
+    public calcExpression(type: CalcType, info): ExprManager {
         let list;
         switch (type) {
             case "load":
@@ -62,8 +67,6 @@ export default class ExprManager {
                 break;
             case "remove":
                 list = this.exprList.getExprsByRemove(info.entityName);
-                break;
-            default:
                 break;
         }
         for (const item of list) {
@@ -80,11 +83,11 @@ export default class ExprManager {
         return this;
     }
     // 计算表达式的依赖关系
-    public calcDependencies(expr: string, entityName: string) {
+    public calcDependencies(expr: string, entityName: string): Type {
         return this.exprContext.calcEntityDependencies(expr, entityName);
     }
     // 计算表达式的值
-    public calcExpr(expr: string, entityName: string, dataCursor, field) {
+    public calcExpr(expr: string, entityName: string, dataCursor, field): Value {
         /// field = {FieldDisplayName: "", FieldName: "", FieldValue: ""}
         this.exprContext.setDataCursor(dataCursor);
         if (field) {
