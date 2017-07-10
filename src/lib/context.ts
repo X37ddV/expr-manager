@@ -26,13 +26,13 @@ export interface IFunctionItem {
 }
 
 export interface IFunction {
-    _?: IFunctionItem;
-    array?: IFunctionItem;
-    boolean?: IFunctionItem;
-    date?: IFunctionItem;
-    number?: IFunctionItem;
-    object?: IFunctionItem;
-    string?: IFunctionItem;
+    ""?: IFunctionItem;
+    "array"?: IFunctionItem;
+    "boolean"?: IFunctionItem;
+    "date"?: IFunctionItem;
+    "number"?: IFunctionItem;
+    "object"?: IFunctionItem;
+    "string"?: IFunctionItem;
 }
 
 // 表达式上下文
@@ -199,7 +199,7 @@ export default class ExprContext extends Context {
         return r;
     }
     // 获取变量值
-    public doGetVariableValue(name, source): Value {
+    public doGetVariableValue(name: string, source): Value {
         let r;
         let pIndex;
         pIndex = 0;
@@ -337,20 +337,11 @@ export default class ExprContext extends Context {
     public setData(d) {
         this.data = d;
     }
-    // 添加函数
-    public addFunction(func: IFunction) {
-        let gs;
-        gs = {};
-        gs[""] = func._ || {};
-        gs.array = func.array || {};
-        gs.boolean = func.boolean || {};
-        gs.date = func.date || {};
-        gs.number = func.number || {};
-        gs.object = func.object || {};
-        gs.string = func.string || {};
-        for (const g in gs) {
-            if (gs.hasOwnProperty(g)) {
-                const group = gs[g];
+    // 注册函数
+    public regFunction(func: IFunction): IFunction {
+        for (const g in func) {
+            if (func.hasOwnProperty(g)) {
+                const group = func[g];
                 for (const n in group) {
                     if (group.hasOwnProperty(n)) {
                         const fullName = g ? g + "." + n : n;
@@ -359,7 +350,7 @@ export default class ExprContext extends Context {
                 }
             }
         }
-        return merger(this.functions, gs);
+        return merger(this.functions, func);
     }
     // 获取函数
     public getFunction(): IFunction {

@@ -1370,13 +1370,13 @@ var func_string = {
 };
 
 var func = {
-    _: func__,
-    array: func_array,
-    boolean: func_boolean,
-    date: func_date,
-    number: func_number,
-    object: func_object,
-    string: func_string,
+    "": func__,
+    "array": func_array,
+    "boolean": func_boolean,
+    "date": func_date,
+    "number": func_number,
+    "object": func_object,
+    "string": func_string,
 };
 
 // 表达式计算
@@ -3895,20 +3895,11 @@ var ExprContext = (function (_super) {
     ExprContext.prototype.setData = function (d) {
         this.data = d;
     };
-    // 添加函数
-    ExprContext.prototype.addFunction = function (func) {
-        var gs;
-        gs = {};
-        gs[""] = func._ || {};
-        gs.array = func.array || {};
-        gs.boolean = func.boolean || {};
-        gs.date = func.date || {};
-        gs.number = func.number || {};
-        gs.object = func.object || {};
-        gs.string = func.string || {};
-        for (var g in gs) {
-            if (gs.hasOwnProperty(g)) {
-                var group = gs[g];
+    // 注册函数
+    ExprContext.prototype.regFunction = function (func) {
+        for (var g in func) {
+            if (func.hasOwnProperty(g)) {
+                var group = func[g];
                 for (var n in group) {
                     if (group.hasOwnProperty(n)) {
                         var fullName = g ? g + "." + n : n;
@@ -3917,7 +3908,7 @@ var ExprContext = (function (_super) {
                 }
             }
         }
-        return merger(this.functions, gs);
+        return merger(this.functions, func);
     };
     // 获取函数
     ExprContext.prototype.getFunction = function () {
@@ -4813,11 +4804,11 @@ var ExprManager = (function () {
     function ExprManager() {
         this.exprContext = new ExprContext();
         this.exprList = new ExprList();
-        this.addFunction(func);
+        this.regFunction(func);
     }
     // 注册函数
-    ExprManager.prototype.addFunction = function (funcs) {
-        return this.exprContext.addFunction(funcs);
+    ExprManager.prototype.regFunction = function (funcs) {
+        return this.exprContext.regFunction(funcs);
     };
     // 获取函数列表对象
     ExprManager.prototype.getFunction = function () {

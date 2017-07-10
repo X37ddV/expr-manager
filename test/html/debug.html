@@ -125,7 +125,11 @@
             //分析、计算输入的表达式
             var expr = document.getElementById("exprtext").value;
             var tree = document.getElementById("exprtree");
-            var value = exprManager.calcExpr(expr, "E1", window.dataCursor);
+            var value = exprManager.calcExpr(expr, "E1", window.dataCursor, {
+                FieldDisplayName: "",
+                FieldName: "",
+                FieldValue: "",
+            });
             tree.innerHTML = getSyntaxTree(expr, value);
             // 展开和折叠token树
             $(".tokenNav").on("click", function () {

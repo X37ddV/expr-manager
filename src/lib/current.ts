@@ -17,11 +17,11 @@ export default class ExprCurrent {
         this.curr.shift();
     }
     // 栈顶计算环境的params属性是否存在第index条记录
-    public isValid(index: number) {
+    public isValid(index: number): boolean {
         return index >= 0 && this.curr.length > 0 && index < this.curr[0].params.length;
     }
     // 栈顶计算环境的params属性的第index条记录是否为实体数据
-    public isEntityData(index?: number) {
+    public isEntityData(index?: number): boolean {
         if (this.curr.length > 0) {
             const c = this.curr[0];
             c.pIndex = index || 0;

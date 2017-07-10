@@ -11,11 +11,11 @@ export default class ExprManager {
     private exprList: ExprList = new ExprList();
     // 构造函数
     constructor() {
-        this.addFunction(func);
+        this.regFunction(func);
     }
     // 注册函数
-    public addFunction(funcs: IFunction) {
-        return this.exprContext.addFunction(funcs);
+    public regFunction(funcs: IFunction): IFunction {
+        return this.exprContext.regFunction(funcs);
     }
     // 获取函数列表对象
     public getFunction(): IFunction {

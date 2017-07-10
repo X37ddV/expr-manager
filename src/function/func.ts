@@ -8,11 +8,11 @@ import func_string from "./func.string";
 
 // 系统函数列表
 export default {
-    _: func__,
-    array: func_array,
-    boolean: func_boolean,
-    date: func_date,
-    number: func_number,
-    object: func_object,
-    string: func_string,
+    "": func__,
+    "array": func_array,
+    "boolean": func_boolean,
+    "date": func_date,
+    "number": func_number,
+    "object": func_object,
+    "string": func_string,
 };

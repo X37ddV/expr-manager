@@ -3030,13 +3030,13 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
 };
 
 <span class="hljs-keyword">var</span> func = {
-    <span class="hljs-attr">_</span>: func__,
-    <span class="hljs-attr">array</span>: func_array,
-    <span class="hljs-attr">boolean</span>: func_boolean,
-    <span class="hljs-attr">date</span>: func_date,
-    <span class="hljs-attr">number</span>: func_number,
-    <span class="hljs-attr">object</span>: func_object,
-    <span class="hljs-attr">string</span>: func_string,
+    <span class="hljs-string">""</span>: func__,
+    <span class="hljs-string">"array"</span>: func_array,
+    <span class="hljs-string">"boolean"</span>: func_boolean,
+    <span class="hljs-string">"date"</span>: func_date,
+    <span class="hljs-string">"number"</span>: func_number,
+    <span class="hljs-string">"object"</span>: func_object,
+    <span class="hljs-string">"string"</span>: func_string,
 };</pre></div></div>
             
         </li>
@@ -7655,23 +7655,14 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-287">&#182;</a>
               </div>
-              <p>添加函数</p>
+              <p>注册函数</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.addFunction = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">func</span>) </span>{
-        <span class="hljs-keyword">var</span> gs;
-        gs = {};
-        gs[<span class="hljs-string">""</span>] = func._ || {};
-        gs.array = func.array || {};
-        gs.boolean = func.boolean || {};
-        gs.date = func.date || {};
-        gs.number = func.number || {};
-        gs.object = func.object || {};
-        gs.string = func.string || {};
-        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> g <span class="hljs-keyword">in</span> gs) {
-            <span class="hljs-keyword">if</span> (gs.hasOwnProperty(g)) {
-                <span class="hljs-keyword">var</span> group = gs[g];
+            <div class="content"><div class='highlight'><pre>    ExprContext.prototype.regFunction = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">func</span>) </span>{
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> g <span class="hljs-keyword">in</span> func) {
+            <span class="hljs-keyword">if</span> (func.hasOwnProperty(g)) {
+                <span class="hljs-keyword">var</span> group = func[g];
                 <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> n <span class="hljs-keyword">in</span> group) {
                     <span class="hljs-keyword">if</span> (group.hasOwnProperty(n)) {
                         <span class="hljs-keyword">var</span> fullName = g ? g + <span class="hljs-string">"."</span> + n : n;
@@ -7680,7 +7671,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                 }
             }
         }
-        <span class="hljs-keyword">return</span> merger(<span class="hljs-keyword">this</span>.functions, gs);
+        <span class="hljs-keyword">return</span> merger(<span class="hljs-keyword">this</span>.functions, func);
     };</pre></div></div>
             
         </li>
@@ -9178,7 +9169,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             <div class="content"><div class='highlight'><pre>    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">ExprManager</span>(<span class="hljs-params"></span>) </span>{
         <span class="hljs-keyword">this</span>.exprContext = <span class="hljs-keyword">new</span> ExprContext();
         <span class="hljs-keyword">this</span>.exprList = <span class="hljs-keyword">new</span> ExprList();
-        <span class="hljs-keyword">this</span>.addFunction(func);
+        <span class="hljs-keyword">this</span>.regFunction(func);
     }</pre></div></div>
             
         </li>
@@ -9194,8 +9185,8 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.addFunction = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">funcs</span>) </span>{
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.exprContext.addFunction(funcs);
+            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.regFunction = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">funcs</span>) </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.exprContext.regFunction(funcs);
     };</pre></div></div>
             
         </li>

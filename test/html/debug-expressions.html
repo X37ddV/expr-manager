@@ -67,7 +67,11 @@
         }
         function doEval(expr) {
             // 分析、计算表达式expr
-            return exprManager.calcExpr(expr, "E1", window.dataCursor);
+            return exprManager.calcExpr(expr, "E1", window.dataCursor, {
+                FieldDisplayName: "",
+                FieldName: "",
+                FieldValue: "",
+            });
         }
         // 全局变量-表达式
         window._Y = 0;  // 正常
