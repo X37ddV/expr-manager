@@ -1,9 +1,11 @@
+import ExprContext from "../lib/context";
+
 // 布尔函数
 // ----------
 
 // 转换布尔类型为字符串
 const funcBooleanToString = {
-    fn: (context, source) => {
+    fn: (context: ExprContext, source) => {
         return context.genValue(source.toValue() + "");
     },
     p: [],

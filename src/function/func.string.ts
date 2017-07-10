@@ -1,13 +1,14 @@
 import moment from "moment";
 import { format, isNumber, isString } from "../lib/base/common";
 import locale from "../lib/base/locale";
+import ExprContext from "../lib/context";
 
 // 字符串函数
 // ----------
 
 // 转换字符串类型为字符串
 const funcStringToString = {
-    fn: (context, source) => {
+    fn: (context: ExprContext, source) => {
         return context.genValue(source.toValue() + "");
     },
     p: [],
@@ -15,7 +16,7 @@ const funcStringToString = {
 };
 // 转换字符串类型为数字
 const funcStringToNumber = {
-    fn: (context, source) => {
+    fn: (context: ExprContext, source) => {
         const n = Number(source.toValue());
         return isNaN(n) ?
             context.genErrorValue(format(locale.getLocale().MSG_EF_STR_TO_NUM, source.toValue())) :
@@ -26,7 +27,7 @@ const funcStringToNumber = {
 };
 // 转换字符串类型为日期时间
 const funcStringToDate = {
-    fn: (context, source, fmt) => {
+    fn: (context: ExprContext, source, fmt) => {
         fmt = fmt || "";
         const s = source.toValue();
         const m = moment(s, fmt);
@@ -39,7 +40,7 @@ const funcStringToDate = {
 };
 // 获取字符串长度
 const funcStringLength = {
-    fn: (context, source) => {
+    fn: (context: ExprContext, source) => {
         const value = source.toValue();
         return context.genValue(isString(value) ? value.length : null);
     },
@@ -48,7 +49,7 @@ const funcStringLength = {
 };
 // 转换字符串为大写
 const funcStringUpper = {
-    fn: (context, source) => {
+    fn: (context: ExprContext, source) => {
         const value = source.toValue();
         return context.genValue(isString(value) ? value.toUpperCase() : null);
     },
@@ -57,7 +58,7 @@ const funcStringUpper = {
 };
 // 转换字符串为小写
 const funcStringLower = {
-    fn: (context, source) => {
+    fn: (context: ExprContext, source) => {
         const value = source.toValue();
         return context.genValue(isString(value) ? value.toLowerCase() : null);
     },
@@ -66,7 +67,7 @@ const funcStringLower = {
 };
 // 去除字符串两端空格
 const funcStringTrim = {
-    fn: (context, source) => {
+    fn: (context: ExprContext, source) => {
         const value = source.toValue();
         return context.genValue(isString(value) ? value.trim() : null);
     },
@@ -75,7 +76,7 @@ const funcStringTrim = {
 };
 // 去除字符串左端空格
 const funcStringTrimLeft = {
-    fn: (context, source) => {
+    fn: (context: ExprContext, source) => {
         const value = source.toValue();
         return context.genValue(isString(value) ? value.replace(/^\s+/g, "") : null);
     },
@@ -84,7 +85,7 @@ const funcStringTrimLeft = {
 };
 // 去除字符串右端空格
 const funcStringTrimRight = {
-    fn: (context, source) => {
+    fn: (context: ExprContext, source) => {
         const value = source.toValue();
         return context.genValue(isString(value) ? value.replace(/\s+$/g, "") : null);
     },
@@ -93,7 +94,7 @@ const funcStringTrimRight = {
 };
 // 获取字符串的子字符串，指定开始位置和长度
 const funcStringSubString = {
-    fn: (context, source, start, len) => {
+    fn: (context: ExprContext, source, start, len) => {
         const value = source.toValue();
         const left = start >= 0 ? start : value.toString().length + start;
         let right = left + len;
@@ -108,7 +109,7 @@ const funcStringSubString = {
 };
 // 获取字符串的左子字符串，指定长度
 const funcStringLeftString = {
-    fn: (context, source, len) => {
+    fn: (context: ExprContext, source, len) => {
         const value = source.toValue();
         return context.genValue(isString(value) && isNumber(len) ? value.substring(0, len) : null);
     },
@@ -117,7 +118,7 @@ const funcStringLeftString = {
 };
 // 获取字符串的右子字符串，指定长度
 const funcStringRightString = {
-    fn: (context, source, len) => {
+    fn: (context: ExprContext, source, len) => {
         const value = source.toValue();
         return context.genValue(isString(value) && isNumber(len) ?
             value.substring(value.length - len, value.length) : null);
@@ -127,7 +128,7 @@ const funcStringRightString = {
 };
 // 检索字符串，获取子字符串在字符串中的起始位置
 const funcStringPos = {
-    fn: (context, source, subValue) => {
+    fn: (context: ExprContext, source, subValue) => {
         const value = source.toValue();
         return context.genValue(isString(value) && isString(subValue) ?
             value.indexOf(subValue) : null);
@@ -137,7 +138,7 @@ const funcStringPos = {
 };
 // 字符串替换
 const funcStringReplace = {
-    fn: (context, source, srcStr, desStr, model) => {
+    fn: (context: ExprContext, source, srcStr, desStr, model) => {
         let r;
         let t;
         if (model === undefined) { // 默认全部替换,且区分大小写(i表示不区分大小写)
@@ -196,7 +197,7 @@ const funcStringReplace = {
 };
 // 正则替换
 const funcStringReplaceReg = {
-    fn: (context, source, srcStr, desStr, model) => {
+    fn: (context: ExprContext, source, srcStr, desStr, model) => {
         let r;
         if (model === undefined) { // 默认全部替换,且区分大小写(i表示不区分大小写)
             model = "g";

@@ -23,7 +23,7 @@ const funcIfNull = {
 // 获取当前实体的父实体对象，如果当前为根则获取自己
 const funcParent = {
     e: "parent",
-    fn: (context) => {
+    fn: (context: ExprContext) => {
         return context.getParentValue(null);
     },
     p: [],
@@ -32,7 +32,7 @@ const funcParent = {
 // 获取当前实体的索引号，没有记录返回-1
 const funcRecNo = {
     e: "value",
-    fn: (context) => {
+    fn: (context: ExprContext) => {
         return context.getRecNo(null);
     },
     p: [],
@@ -41,7 +41,7 @@ const funcRecNo = {
 // 获取实体根对象
 const funcRoot = {
     e: "root",
-    fn: (context) => {
+    fn: (context: ExprContext) => {
         return context.getRootValue();
     },
     p: [],
@@ -49,7 +49,7 @@ const funcRoot = {
 };
 // 获取本地当前日期时间
 const funcNow = {
-    fn: (context) => {
+    fn: (context: ExprContext) => {
         return context.genValue(new Date());
     },
     p: [],
@@ -57,7 +57,7 @@ const funcNow = {
 };
 // 获取当前字段唯一标识
 const funcFieldName = {
-    fn: (context) => {
+    fn: (context: ExprContext) => {
         return context.getContextVariableValue("FieldName");
     },
     p: [],
@@ -65,7 +65,7 @@ const funcFieldName = {
 };
 // 获取当前字段别名
 const funcFieldDisplayName = {
-    fn: (context) => {
+    fn: (context: ExprContext) => {
         return context.getContextVariableValue("FieldDisplayName");
     },
     p: [],
@@ -73,7 +73,7 @@ const funcFieldDisplayName = {
 };
 // 获取当前字段值
 const funcFieldValue = {
-    fn: (context) => {
+    fn: (context: ExprContext) => {
         return context.getContextVariableValue("FieldValue");
     },
     p: [],
@@ -108,7 +108,7 @@ const funcPropValue = {
 };
 // 返回介于 0 ~ 1 之间的一个随机数
 const funcRandom = {
-    fn: (context) => {
+    fn: (context: ExprContext) => {
         return context.genValue(Math.random());
     },
     p: [],

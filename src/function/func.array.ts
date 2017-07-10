@@ -1,4 +1,5 @@
 import { compare } from "../lib/base/common";
+import ExprContext from "../lib/context";
 
 // 集合私有函数
 // ----------
@@ -88,7 +89,7 @@ function doCompCollection(source, expr, fn) {
 // 获取集合元素个数
 const funcArrayCount = {
     e: "value",
-    fn: (context, source) => {
+    fn: (context: ExprContext, source) => {
         const r = source.toValue().length;
         return context.genValue(r, undefined, null, "");
     },
@@ -98,7 +99,7 @@ const funcArrayCount = {
 // 获取集合元素的合计值
 const funcArraySum = {
     e: "value",
-    fn: (context, source, expr) => {
+    fn: (context: ExprContext, source, expr) => {
         expr = expr || "$0";
         const r = doCompCollection.call(context, source, expr, (a, b) => {
             return a.add(b);
@@ -111,7 +112,7 @@ const funcArraySum = {
 // 获取集合元素的最大值
 const funcArrayMax = {
     e: "value",
-    fn: (context, source, expr) => {
+    fn: (context: ExprContext, source, expr) => {
         expr = expr || "$0";
         const r = doCompCollection.call(context, source, expr, (a, b) => {
             let v = a.compare(b, ">");
@@ -128,7 +129,7 @@ const funcArrayMax = {
 // 获取集合元素的最小值
 const funcArrayMin = {
     e: "value",
-    fn: (context, source, expr) => {
+    fn: (context: ExprContext, source, expr) => {
         expr = expr || "$0";
         const r = doCompCollection.call(context, source, expr, (a, b) => {
             let v = a.compare(b, "<");
@@ -145,7 +146,7 @@ const funcArrayMin = {
 // 获取集合元素的平均值
 const funcArrayAverage = {
     e: "value",
-    fn: (context, source, expr) => {
+    fn: (context: ExprContext, source, expr) => {
         expr = expr || "$0";
         let r = doCompCollection.call(context, source, expr, (a, b) => {
             return a.add(b);
