@@ -80,7 +80,7 @@ export default class ExprManager {
         return this;
     }
     // 计算表达式的依赖关系
-    public calcDependencies(expr, entityName) {
+    public calcDependencies(expr: string, entityName: string) {
         return this.exprContext.calcEntityDependencies(expr, entityName);
     }
     // 计算表达式的值
@@ -97,7 +97,7 @@ export default class ExprManager {
         return r;
     }
     // 计算表达式的值
-    public calc(expr, data) {
+    public calc(expr: string, data) {
         return this.exprContext.calcDataExpr(expr, data);
     }
 }

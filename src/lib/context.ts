@@ -419,14 +419,14 @@ export default class ExprContext extends Context {
         return r;
     }
     // 获取根数据值
-    public getRootValue() {
+    public getRootValue(): Value {
         const entity = this.genEntityInfo("", "object");
         entity.recNo = 0;
         return this.genValue(this.data, "object", entity, "");
     }
     // 获取父实体值
-    public getParentValue(source) {
-        let r;
+    public getParentValue(source): Value {
+        let r: Value;
         if (this.exprContext.isEntityData()) {
             let entity;
             if (source === null) { /// Parent()
@@ -607,7 +607,7 @@ export default class ExprContext extends Context {
         return r;
     }
     // 获取上下文变量值
-    public getContextVariableValue(key) {
+    public getContextVariableValue(key): Value {
         let r;
         const v = this.contextVariables;
         if (v.length > 0) {
