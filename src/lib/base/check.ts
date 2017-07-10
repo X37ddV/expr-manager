@@ -63,15 +63,15 @@ export default class Check {
         return r;
     }
     // 检查表达式运算关系正确性
-    private doCheck(rootToken, context: Context): string {
+    private doCheck(rootToken: IToken, context: Context): string {
         const t = rootToken;
         const p = t.parent;
         let msg = "";
-        let l;
-        let r; /// 语法树上的结点
-        let tt = null;
-        let lt;
-        let rt; /// 语法树结点对应的ExprType对象
+        let l: IToken; /// 左节点，语法树上的结点
+        let r: IToken; /// 右节点，语法树上的结点
+        let tt: Type;
+        let lt: Type;
+        let rt: Type; /// 语法树结点对应的ExprType对象
         if (t.childs) { /// 先检查该结点的所有子节点
             for (let i = 0; i < t.childs.length; i++) {
                 msg = this.doCheck(t.childs[i], context);
@@ -197,8 +197,6 @@ export default class Check {
                     tt = (p && p.tokenType === "TK_DOT" && p.childs[0] !== t) ?
                         lt.hashItem(rt) : /// 有显式调用者
                         lt.hashItem(rt).getFunctionType(null); /// 没有显式调用者
-                    break;
-                default:
                     break;
             }
             msg = tt.errorMsg;

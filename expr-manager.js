@@ -1642,7 +1642,7 @@ var Check = (function () {
         var msg = "";
         var l;
         var r;
-        var tt = null;
+        var tt;
         var lt;
         var rt;
         if (t.childs) {
@@ -1776,8 +1776,6 @@ var Check = (function () {
                     tt = (p && p.tokenType === "TK_DOT" && p.childs[0] !== t) ?
                         lt.hashItem(rt) :
                         lt.hashItem(rt).getFunctionType(null);
-                    break;
-                default:
                     break;
             }
             msg = tt.errorMsg;

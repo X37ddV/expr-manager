@@ -1112,7 +1112,17 @@ var exprArray = {
         ['[{a:1,b:2},{a:2,b:3},{a:3,b:4}].Where("a<=2&&a>1")', '[{"a":2,"b":3}]'],
         ['[{a:1,b:2},{a:2,b:3},{a:2,b:4},{a:1,b:4}].Distinct("a")', '[{"a":1,"b":2},{"a":2,"b":3}]'],
         ['[1,2,3.3].Count()+[1,2,3.3].Average().ToString()+[1,2,3.3].Sum()+[1,2,3.3].Max().ToString()+[1,2,3.3].Min().ToString()', 'undefined', 'number 和 string 无法做加法运算'],
-        ['[:2]', 'undefined', '[ 后不允许出现 :']
+        ['[:2]', 'undefined', '[ 后不允许出现 :'],
+        ['[].Sum()', 'null'],
+        ['[].Count()', '0'],
+        ['[].Distinct()', '[]'],
+        ['[].Average()', '0'],
+        ['[].Max()', 'null'],
+        ['[].Min()', 'null'],
+        ['[].Where("")', '[]'],
+        ['[1, 2].Distinct("$1")', 'undefined', '参数不存在: $1'],
+        ['[1,2].Max()', '2'],
+        ['[2,1].Max()', '2']
     ]
 };
 var exprNull = {
