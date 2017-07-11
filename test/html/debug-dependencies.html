@@ -70,8 +70,7 @@
         function genDependDemo(depend) {
             window._DN++;
             var html = "";
-            var e = window.exprManager,
-                el = e.getExpressionList();
+            var e = window.exprManager;
             e.resetExpression(); // 重置表达式列表对象
             for (var i in depend.dataSource) {
                 var entity = depend.dataSource[i];
@@ -88,7 +87,7 @@
                 for (var k = 0; k < depend.testCase.length; k++) {
                     var c = depend.testCase[k];
                     var type = c.cmd[0], entityName = c.cmd[1], propertyName = c.cmd[2];
-                    var list = el.getExprs(type, entityName, propertyName);
+                    var list = e.getExpressionList(type, entityName, propertyName);
                     var pList = [], pListHTML = [];
                     for (var p = 0; p < list.length; p++) {
                         var l = list[p], iColor = "";

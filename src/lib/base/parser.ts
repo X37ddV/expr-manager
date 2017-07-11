@@ -290,7 +290,6 @@ export default class Parser {
                     case "TK_LP": rootType = "VTK_PAREN"; break; /// ()参数或者是普通括号
                     case "TK_LA": rootType = "VTK_ARRAY"; break; /// []数组或者是下标
                     case "TK_LO": rootType = "VTK_OBJECT"; break; /// {}对象
-                    default: break;
                 }
                 t = this.doCreateVirtualToken(rootType);
                 t.tokenIndex = root.tokenIndex; /// 记录该括号节点的

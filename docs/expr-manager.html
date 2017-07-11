@@ -4705,7 +4705,6 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                     <span class="hljs-keyword">case</span> <span class="hljs-string">"TK_LO"</span>:
                         rootType = <span class="hljs-string">"VTK_OBJECT"</span>;
                         <span class="hljs-keyword">break</span>;
-                    <span class="hljs-keyword">default</span>: <span class="hljs-keyword">break</span>;
                 }
                 t = <span class="hljs-keyword">this</span>.doCreateVirtualToken(rootType);
                 t.tokenIndex = root.tokenIndex;
@@ -5403,7 +5402,6 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                     <span class="hljs-keyword">case</span> <span class="hljs-string">"&lt;="</span>:
                         t = locale.getLocale().MSG_EX_COMPARE_D;
                         <span class="hljs-keyword">break</span>;
-                    <span class="hljs-keyword">default</span>: <span class="hljs-keyword">break</span>;
                 }
                 t = <span class="hljs-keyword">this</span>.genErrorType(format(t, <span class="hljs-keyword">this</span>.type, et.type));
             }
@@ -6082,7 +6080,6 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                     <span class="hljs-keyword">case</span> <span class="hljs-string">"&lt;="</span>:
                         v = <span class="hljs-keyword">this</span>.value &lt;= ev.value;
                         <span class="hljs-keyword">break</span>;
-                    <span class="hljs-keyword">default</span>: <span class="hljs-keyword">break</span>;
                 }
                 v = <span class="hljs-keyword">this</span>.genValue(v, <span class="hljs-string">"boolean"</span>);
             }
@@ -6101,7 +6098,6 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                     <span class="hljs-keyword">case</span> <span class="hljs-string">"&lt;="</span>:
                         v = v &lt;= <span class="hljs-number">0</span>;
                         <span class="hljs-keyword">break</span>;
-                    <span class="hljs-keyword">default</span>: <span class="hljs-keyword">break</span>;
                 }
                 v = <span class="hljs-keyword">this</span>.genValue(v, <span class="hljs-string">"boolean"</span>);
             }
@@ -6124,7 +6120,6 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                     <span class="hljs-keyword">case</span> <span class="hljs-string">"&lt;="</span>:
                         v = vl.lessThanOrEqualTo(vr);
                         <span class="hljs-keyword">break</span>;
-                    <span class="hljs-keyword">default</span>: <span class="hljs-keyword">break</span>;
                 }
                 v = <span class="hljs-keyword">this</span>.genValue(v, <span class="hljs-string">"boolean"</span>);
             }
@@ -6142,7 +6137,6 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                     <span class="hljs-keyword">case</span> <span class="hljs-string">"&lt;="</span>:
                         v = locale.getLocale().MSG_EX_COMPARE_D;
                         <span class="hljs-keyword">break</span>;
-                    <span class="hljs-keyword">default</span>: <span class="hljs-keyword">break</span>;
                 }
                 v = <span class="hljs-keyword">this</span>.genErrorValue(format(v, <span class="hljs-keyword">this</span>.type, ev.type));
             }
@@ -8691,7 +8685,6 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    ExprList.prototype.getExprs = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">type, entity, property</span>) </span>{
-        <span class="hljs-keyword">if</span> (property === <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>) { property = <span class="hljs-string">""</span>; }
         <span class="hljs-keyword">var</span> name = property ? entity + <span class="hljs-string">"."</span> + property : entity;
         <span class="hljs-keyword">var</span> isLoadOrAdd = type === <span class="hljs-string">"load"</span> || type === <span class="hljs-string">"add"</span>;
         <span class="hljs-keyword">var</span> key = name + <span class="hljs-string">"|"</span> + type;
@@ -9067,12 +9060,14 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-334">&#182;</a>
               </div>
-              <p>注册函数</p>
+              <p>初始化</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.regFunction = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">funcs</span>) </span>{
-        <span class="hljs-keyword">this</span>.exprContext.regFunction(funcs);
+            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.init = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">data, dataContext, context</span>) </span>{
+        <span class="hljs-keyword">this</span>.exprContext.setData(data);
+        <span class="hljs-keyword">this</span>.exprContext.setDataContext(dataContext);
+        <span class="hljs-keyword">this</span>.exprContext.setPageContext(context || {});
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
     };</pre></div></div>
             
@@ -9085,12 +9080,13 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-335">&#182;</a>
               </div>
-              <p>获取函数列表对象</p>
+              <p>注册函数</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.getFunction = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.exprContext.getFunction();
+            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.regFunction = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">funcs</span>) </span>{
+        <span class="hljs-keyword">this</span>.exprContext.regFunction(funcs);
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
     };</pre></div></div>
             
         </li>
@@ -9102,12 +9098,12 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-336">&#182;</a>
               </div>
-              <p>获取表达式列表对象</p>
+              <p>获取函数列表对象</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.getExpressionList = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.exprList;
+            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.getFunction = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.exprContext.getFunction();
     };</pre></div></div>
             
         </li>
@@ -9119,14 +9115,13 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-337">&#182;</a>
               </div>
-              <p>检查和排序表达式列表</p>
+              <p>重置表达式列表对象</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.checkAndSort = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.exprList.checkAndSort((<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">context</span>) </span>{ <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, entityName</span>) </span>{
-            <span class="hljs-keyword">return</span> context.calcEntityDependencies(expr, entityName);
-        }; })(<span class="hljs-keyword">this</span>.exprContext));
+            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.resetExpression = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">this</span>.exprList.reset();
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
     };</pre></div></div>
             
         </li>
@@ -9174,13 +9169,12 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-340">&#182;</a>
               </div>
-              <p>重置表达式列表对象</p>
+              <p>获取表达式列表对象</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.resetExpression = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
-        <span class="hljs-keyword">this</span>.exprList.reset();
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.getExpressionList = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">type, entityName, propertyName</span>) </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.exprList.getExprs(type, entityName, propertyName);
     };</pre></div></div>
             
         </li>
@@ -9192,18 +9186,14 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-341">&#182;</a>
               </div>
-              <p>计算表达式</p>
+              <p>检查和排序表达式列表</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.calcExpression = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">type, info</span>) </span>{
-        <span class="hljs-keyword">var</span> list = <span class="hljs-keyword">this</span>.exprList.getExprs(type, info.entityName, info.propertyName);
-        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _i = <span class="hljs-number">0</span>, list_1 = list; _i &lt; list_1.length; _i++) {
-            <span class="hljs-keyword">var</span> item = list_1[_i];
-            info.exprInfo = item;
-            item.callback.call(item.scope, type, info);
-        }
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.checkAndSort = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.exprList.checkAndSort((<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">context</span>) </span>{ <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, entityName</span>) </span>{
+            <span class="hljs-keyword">return</span> context.calcEntityDependencies(expr, entityName);
+        }; })(<span class="hljs-keyword">this</span>.exprContext));
     };</pre></div></div>
             
         </li>
@@ -9215,14 +9205,17 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-342">&#182;</a>
               </div>
-              <p>初始化</p>
+              <p>计算表达式</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.init = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">data, dataContext, context</span>) </span>{
-        <span class="hljs-keyword">this</span>.exprContext.setData(data);
-        <span class="hljs-keyword">this</span>.exprContext.setDataContext(dataContext);
-        <span class="hljs-keyword">this</span>.exprContext.setPageContext(context || {});
+            <div class="content"><div class='highlight'><pre>    ExprManager.prototype.calcExpression = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">type, info</span>) </span>{
+        <span class="hljs-keyword">var</span> list = <span class="hljs-keyword">this</span>.getExpressionList(type, info.entityName, info.propertyName);
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _i = <span class="hljs-number">0</span>, list_1 = list; _i &lt; list_1.length; _i++) {
+            <span class="hljs-keyword">var</span> item = list_1[_i];
+            info.exprInfo = item;
+            item.callback.call(item.scope, type, info);
+        }
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
     };</pre></div></div>
             

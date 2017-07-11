@@ -17,7 +17,7 @@ interface IModeItem {
     updateMode: ModeType;
     updateTarget?: string;
 }
-interface IExprItem {
+export interface IExprItem {
     callback: any;
     entityName: string;
     expr: string;
@@ -295,7 +295,7 @@ export default class ExprList {
         return msg;
     }
     // 根据计算类型获取表达式列表
-    public getExprs(type: CalcType, entity: string, property: string = "") {
+    public getExprs(type: CalcType, entity: string, property?: string): IExprItem[] {
         const name = property ? entity + "." + property : entity;
         const isLoadOrAdd = type === "load" || type === "add";
         const key = name + "|" + type;

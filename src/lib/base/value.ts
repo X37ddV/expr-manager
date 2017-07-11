@@ -17,9 +17,9 @@ export default class Value {
     public errorMsg: string;
     public tokens: IToken[];
     public rootToken: IToken;
-    private context: Context;
-    private type: ValueType;
+    public type: ValueType;
     private value: any;
+    private context: Context;
     private entity;
     private parentObj;
     // 值构造函数
@@ -248,7 +248,6 @@ export default class Value {
                     case "<": v = this.value < ev.value; break;
                     case ">=": v = this.value >= ev.value; break;
                     case "<=": v = this.value <= ev.value; break;
-                    default: break;
                 }
                 v = this.genValue(v, "boolean");
             } else if ((this.type === "date" || this.type === "null") && (ev.type === "date" || ev.type === "null")) {
@@ -258,7 +257,6 @@ export default class Value {
                     case "<": v = v < 0; break;
                     case ">=": v = v >= 0; break;
                     case "<=": v = v <= 0; break;
-                    default: break;
                 }
                 v = this.genValue(v, "boolean");
             } else if ((this.type === "number" || this.type === "null") &&
@@ -272,7 +270,6 @@ export default class Value {
                     case "<": v = vl.lessThan(vr); break;
                     case ">=": v = vl.greaterThanOrEqualTo(vr); break;
                     case "<=": v = vl.lessThanOrEqualTo(vr); break;
-                    default: break;
                 }
                 v = this.genValue(v, "boolean");
             } else {
@@ -281,7 +278,6 @@ export default class Value {
                     case "<": v = locale.getLocale().MSG_EX_COMPARE_B; break;
                     case ">=": v = locale.getLocale().MSG_EX_COMPARE_C; break;
                     case "<=": v = locale.getLocale().MSG_EX_COMPARE_D; break;
-                    default: break;
                 }
                 v = this.genErrorValue(format(v, this.type, ev.type));
             }

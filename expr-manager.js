@@ -2373,7 +2373,6 @@ var Parser = (function () {
                     case "TK_LO":
                         rootType = "VTK_OBJECT";
                         break;
-                    default: break;
                 }
                 t = this.doCreateVirtualToken(rootType);
                 t.tokenIndex = root.tokenIndex;
@@ -2749,7 +2748,6 @@ var Type = (function () {
                     case "<=":
                         t = locale.getLocale().MSG_EX_COMPARE_D;
                         break;
-                    default: break;
                 }
                 t = this.genErrorType(format(t, this.type, et.type));
             }
@@ -3080,7 +3078,6 @@ var Value = (function () {
                     case "<=":
                         v = this.value <= ev.value;
                         break;
-                    default: break;
                 }
                 v = this.genValue(v, "boolean");
             }
@@ -3099,7 +3096,6 @@ var Value = (function () {
                     case "<=":
                         v = v <= 0;
                         break;
-                    default: break;
                 }
                 v = this.genValue(v, "boolean");
             }
@@ -3122,7 +3118,6 @@ var Value = (function () {
                     case "<=":
                         v = vl.lessThanOrEqualTo(vr);
                         break;
-                    default: break;
                 }
                 v = this.genValue(v, "boolean");
             }
@@ -3140,7 +3135,6 @@ var Value = (function () {
                     case "<=":
                         v = locale.getLocale().MSG_EX_COMPARE_D;
                         break;
-                    default: break;
                 }
                 v = this.genErrorValue(format(v, this.type, ev.type));
             }
@@ -4489,7 +4483,6 @@ var ExprList = (function () {
     };
     // 根据计算类型获取表达式列表
     ExprList.prototype.getExprs = function (type, entity, property) {
-        if (property === void 0) { property = ""; }
         var name = property ? entity + "." + property : entity;
         var isLoadOrAdd = type === "load" || type === "add";
         var key = name + "|" + type;
@@ -4705,6 +4698,13 @@ var ExprManager = (function () {
         this.exprList = new ExprList();
         this.regFunction(func);
     }
+    // 初始化
+    ExprManager.prototype.init = function (data, dataContext, context) {
+        this.exprContext.setData(data);
+        this.exprContext.setDataContext(dataContext);
+        this.exprContext.setPageContext(context || {});
+        return this;
+    };
     // 注册函数
     ExprManager.prototype.regFunction = function (funcs) {
         this.exprContext.regFunction(funcs);
@@ -4714,15 +4714,10 @@ var ExprManager = (function () {
     ExprManager.prototype.getFunction = function () {
         return this.exprContext.getFunction();
     };
-    // 获取表达式列表对象
-    ExprManager.prototype.getExpressionList = function () {
-        return this.exprList;
-    };
-    // 检查和排序表达式列表
-    ExprManager.prototype.checkAndSort = function () {
-        return this.exprList.checkAndSort((function (context) { return function (expr, entityName) {
-            return context.calcEntityDependencies(expr, entityName);
-        }; })(this.exprContext));
+    // 重置表达式列表对象
+    ExprManager.prototype.resetExpression = function () {
+        this.exprList.reset();
+        return this;
     };
     // 添加表达式
     ExprManager.prototype.addExpression = function (expr, entityName, propertyName, types, callback, scope) {
@@ -4734,26 +4729,24 @@ var ExprManager = (function () {
         this.exprList.remove(expr, entityName, propertyName, types, callback, scope);
         return this;
     };
-    // 重置表达式列表对象
-    ExprManager.prototype.resetExpression = function () {
-        this.exprList.reset();
-        return this;
+    // 获取表达式列表对象
+    ExprManager.prototype.getExpressionList = function (type, entityName, propertyName) {
+        return this.exprList.getExprs(type, entityName, propertyName);
+    };
+    // 检查和排序表达式列表
+    ExprManager.prototype.checkAndSort = function () {
+        return this.exprList.checkAndSort((function (context) { return function (expr, entityName) {
+            return context.calcEntityDependencies(expr, entityName);
+        }; })(this.exprContext));
     };
     // 计算表达式
     ExprManager.prototype.calcExpression = function (type, info) {
-        var list = this.exprList.getExprs(type, info.entityName, info.propertyName);
+        var list = this.getExpressionList(type, info.entityName, info.propertyName);
         for (var _i = 0, list_1 = list; _i < list_1.length; _i++) {
             var item = list_1[_i];
             info.exprInfo = item;
             item.callback.call(item.scope, type, info);
         }
-        return this;
-    };
-    // 初始化
-    ExprManager.prototype.init = function (data, dataContext, context) {
-        this.exprContext.setData(data);
-        this.exprContext.setDataContext(dataContext);
-        this.exprContext.setPageContext(context || {});
         return this;
     };
     // 计算表达式的依赖关系

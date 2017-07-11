@@ -12,10 +12,10 @@ export default class Type {
     public tokens: IToken[];
     public rootToken: IToken;
     public dependencies: string[];
+    public type: ValueType;
     public entity;
     public depends;
     private context: Context;
-    private type: ValueType;
     private info;
     private data;
     // 类型构造函数
@@ -190,7 +190,6 @@ export default class Type {
                     case "<": t = locale.getLocale().MSG_EX_COMPARE_B; break;
                     case ">=": t = locale.getLocale().MSG_EX_COMPARE_C; break;
                     case "<=": t = locale.getLocale().MSG_EX_COMPARE_D; break;
-                    default: break;
                 }
                 t = this.genErrorType(format(t, this.type, et.type));
             }

@@ -35,7 +35,6 @@ describe("依赖关系测试", function () {
     exprManager.init(window.data, window.dataContext, window.context);
     for (var m = 0; m < window.demoDependencies.length; m++) {
         var demoDepend = window.demoDependencies[m];
-        var el = exprManager.getExpressionList();
         exprManager.resetExpression(); // 重置表达式列表对象
         for (var i in demoDepend.dataSource) {
             var entity = demoDepend.dataSource[i];
@@ -51,7 +50,7 @@ describe("依赖关系测试", function () {
                 var type = c.cmd[0];
                 var entityName = c.cmd[1];
                 var propertyName = c.cmd[2];
-                var list = el.getExprs(type, entityName, propertyName);
+                var list = exprManager.getExpressionList(type, entityName, propertyName);
                 var pList = [];
                 for (var p = 0; p < list.length; p++) {
                     pList.push(list[p].fullName);
