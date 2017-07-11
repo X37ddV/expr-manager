@@ -1,15 +1,28 @@
+export interface IDataCurrent {
+    [fullName: string]: number;
+}
+export interface ICurrentParam {
+    current: string;
+    cursor: number;
+    isEntityData: boolean;
+}
+export interface ICurrentItem {
+    pIndex: number;
+    params: ICurrentParam[];
+}
+
 // 表达式游标
 // ----------
 
 export default class ExprCurrent {
-    private curr = [];
-    private dataCursor;
+    private curr: ICurrentItem[] = [];
+    private dataCursor: IDataCurrent;
     // 设置数据游标
-    public setDataCursor(cursor) {
+    public setDataCursor(cursor: IDataCurrent) {
         this.dataCursor = cursor;
     }
     // 向栈顶添加新的计算环境
-    public push(c) {
+    public push(c: ICurrentParam[]) {
         this.curr.unshift({ pIndex: 0, params: c });
     }
     // 删除栈顶的计算环境
@@ -31,7 +44,7 @@ export default class ExprCurrent {
         }
     }
     // 得到栈顶计算环境的params属性的第index条记录存储的实体名
-    public getEntityName(index?: number) {
+    public getEntityName(index?: number): string {
         return this.getData(index) || "";
     }
     // 得到实体全名称entityName的访问游标
@@ -52,7 +65,7 @@ export default class ExprCurrent {
         return r;
     }
     // 得到栈顶计算环境的params属性的第index条记录存储的数据
-    public getData(index: number) {
+    public getData(index: number): string {
         let r;
         if (this.curr.length > 0) {
             const c = this.curr[0];

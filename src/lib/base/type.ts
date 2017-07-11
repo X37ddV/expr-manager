@@ -11,13 +11,13 @@ export default class Type {
     public errorMsg: string;
     public tokens: IToken[];
     public rootToken: IToken;
-    public dependencies: any[];
+    public dependencies: string[];
+    public entity;
+    public depends;
     private context: Context;
     private type: ValueType;
     private info;
     private data;
-    private entity;
-    private depends;
     // 类型构造函数
     constructor(context: Context, type: ValueType, info, data, entity, depends, errorMsg: string) {
         this.context = context;

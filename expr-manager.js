@@ -110,93 +110,15 @@ function format(str) {
     }
     return str.replace(/\{(\d+)\}/g, function (m, i) { return values[i]; });
 }
-// 比较**数组**是否相等
-function compareArray(farr, sarr, isKey) {
-    var r = farr.length === sarr.length;
-    if (r) {
-        for (var i = 0; i < farr.length; i++) {
-            if (isKey === true) {
-                if (sarr.indexOf(farr[i]) === -1) {
-                    r = false;
-                    break;
-                }
-            }
-            else {
-                if (!compare(farr[i], sarr[i])) {
-                    r = false;
-                    break;
-                }
-            }
-        }
-    }
-    return r;
-}
-// 比较**对象**是否相等
-function compareObject(fobj, sobj) {
-    var f = [];
-    var s = [];
-    var r = true;
-    for (var i in fobj) {
-        if (fobj.hasOwnProperty(i)) {
-            f.push(i);
-        }
-    }
-    for (var j in sobj) {
-        if (sobj.hasOwnProperty(j)) {
-            s.push(j);
-        }
-    }
-    if (compareArray(f, s, true)) {
-        for (var ele in fobj) {
-            if (sobj.hasOwnProperty(ele) && !compare(fobj[ele], sobj[ele])) {
-                r = false;
-                break;
-            }
-        }
-    }
-    else {
-        r = false;
-    }
-    return r;
-}
 // 比较**值**是否相等
 function compare(fobj, sobj) {
-    var r;
-    if (fobj !== null && sobj !== null && fobj !== undefined && sobj !== undefined) {
-        var ftype = typeof (fobj);
-        var stype = typeof (sobj);
-        if (ftype === stype) {
-            if (ftype === "object") {
-                r = fobj.constructor === Date && sobj.constructor === Date ? fobj.valueOf() === sobj.valueOf() :
-                    fobj.constructor === Array && sobj.constructor === Array ? compareArray(fobj, sobj, false) :
-                        fobj.constructor !== Array && sobj.constructor !== Array ? compareObject(fobj, sobj) :
-                            false;
-            }
-            else {
-                r = fobj === sobj;
-            }
-        }
-        else {
-            r = false;
-        }
-    }
-    else {
-        r = fobj === sobj;
-    }
-    return r;
+    return JSON.stringify(fobj) === JSON.stringify(sobj);
 }
-// 遍历对象c中的属性, 将属性键值对依次添加到对象o中
+// 合并对象，浅遍历
 function merger(o, c) {
-    if (isObject(o) && isObject(c)) {
-        for (var p in c) {
-            if (c.hasOwnProperty(p)) {
-                if (o[p] && isObject(o[p])) {
-                    merger(o[p], c[p]);
-                }
-                else {
-                    o[p] = c[p];
-                }
-            }
+    for (var p in c) {
+        if (c.hasOwnProperty(p)) {
+            o[p] = c[p];
         }
     }
     return o;
@@ -3856,14 +3778,14 @@ var ExprContext = (function (_super) {
     };
     // 获取实体类型对象
     ExprContext.prototype.doGetEntityType = function (source) {
-        var e = this.genEntityInfo(source.entity, "object");
+        var e = this.genEntityInfo(source.entity.fullName, "object");
         var t = this.genType("object", "object", undefined, e, [e.fullName]);
         return t;
     };
     // 获取实体值，根据游标索引
     ExprContext.prototype.doGetEntityValue = function (source, index) {
         var v = source.toValue()[index];
-        var e = this.genEntityInfo(source.entity, "object");
+        var e = this.genEntityInfo(source.entity.fullName, "object");
         e.recNo = source.entity.map[index];
         var parentObj = source.parentObj;
         var r = this.genValue(v, getValueType(v), e, "", parentObj);
@@ -3914,9 +3836,6 @@ var ExprContext = (function (_super) {
     };
     // 获取实体信息
     ExprContext.prototype.genEntityInfo = function (fullName, type) {
-        if (getValueType(fullName) === "object") {
-            fullName = fullName.fullName;
-        }
         var name = [];
         var field = [];
         var dataType;
@@ -4287,67 +4206,6 @@ var ExprList = (function () {
         this.cache = {};
         this.sorted = false;
     }
-    ExprList.prototype._getExprs = function (entity, property, type) {
-        var name = property ? entity + "." + property : entity;
-        var isLoadOrAdd = type === "L" || type === "A";
-        var key = name + "|" + type;
-        var r = this.sorted ? this.cache[key] : [];
-        if (!r) {
-            r = [];
-            var s_1 = {};
-            var l_1 = {};
-            var list_1 = [];
-            for (var _i = 0, _a = this.list; _i < _a.length; _i++) {
-                var item = _a[_i];
-                if (item.types) {
-                    if (item.types.indexOf(type) >= 0) {
-                        list_1.push(item);
-                    }
-                }
-                else {
-                    list_1.push(item);
-                }
-            }
-            var fn_1 = function (fullName, entityName) {
-                for (var i = 0; i < list_1.length; i++) {
-                    if (l_1[i] !== true) {
-                        l_1[i] = true;
-                        var x = list_1[i];
-                        var f = isLoadOrAdd && (x.entityName === entityName && x.entityName !== "");
-                        if (!f && x.dependencies) {
-                            for (var _i = 0, _a = x.dependencies; _i < _a.length; _i++) {
-                                var dependency = _a[_i];
-                                f = dependency === fullName;
-                                if (f) {
-                                    break;
-                                }
-                            }
-                        }
-                        if (f && !s_1[i]) {
-                            s_1[i] = true;
-                            fn_1(x.fullName, entityName);
-                        }
-                        l_1[i] = false;
-                    }
-                }
-            };
-            fn_1(name, name);
-            for (var k = 0; k < list_1.length; k++) {
-                if (s_1[k]) {
-                    var o = {};
-                    for (var p in list_1[k]) {
-                        if (list_1[k].hasOwnProperty(p)) {
-                            o[p] = list_1[k][p];
-                        }
-                    }
-                    r.push(o);
-                }
-            }
-            this._doUpdateMode(r, type, name, entity, property);
-            this.cache[key] = r;
-        }
-        return r;
-    };
     ExprList.prototype._doUpdateMode = function (r, t, name, entity, property) {
         var updateList = [{
                 entityName: entity,
@@ -4364,7 +4222,7 @@ var ExprList = (function () {
                 entityName: item.entityName,
                 fullName: item.fullName,
                 propertyName: item.propertyName,
-                type: "U",
+                type: "update",
                 updateMode: item.updateMode,
                 updateTarget: item.updateTarget,
             });
@@ -4374,19 +4232,19 @@ var ExprList = (function () {
         var modeList = [];
        
         if (updateList && l && l.dependencies) {
-            for (var _i = 0, _a = updateList.length; _i < _a.length; _i++) {
-                var updateItem = _a[_i];
-                for (var _b = 0, _c = l.dependencies; _b < _c.length; _b++) {
-                    var dependency = _c[_b];
+            for (var _i = 0, updateList_1 = updateList; _i < updateList_1.length; _i++) {
+                var updateItem = updateList_1[_i];
+                for (var _a = 0, _b = l.dependencies; _a < _b.length; _a++) {
+                    var dependency = _b[_a];
                     if (updateItem.fullName === dependency) {
                         var commonAncestry = true;
                         var isSubChange = false;
                        
-                        if (updateItem.type === "U") {
+                        if (updateItem.type === "update") {
                            
                             var isDependEntity = false;
-                            for (var _d = 0, _e = l.dependencies; _d < _e.length; _d++) {
-                                var depend = _e[_d];
+                            for (var _c = 0, _d = l.dependencies; _c < _d.length; _c++) {
+                                var depend = _d[_c];
                                 isDependEntity = (updateItem.fullName.indexOf(depend + ".") === 0);
                                 if (isDependEntity) {
                                     break;
@@ -4424,7 +4282,7 @@ var ExprList = (function () {
                                 commonAncestry = false;
                             }
                         }
-                        else if (updateItem.type === "R") {
+                        else if (updateItem.type === "remove") {
                            
                             if (updateItem.entityName === l.entityName) {
                                
@@ -4479,12 +4337,10 @@ var ExprList = (function () {
        
         var a = "Single";
         var at = "";
-        var b;
-        var bt;
-        for (var _f = 0, modeList_1 = modeList; _f < modeList_1.length; _f++) {
-            var item = modeList_1[_f];
-            b = item.updateMode;
-            bt = item.updateTarget || "";
+        for (var _e = 0, modeList_1 = modeList; _e < modeList_1.length; _e++) {
+            var item = modeList_1[_e];
+            var b = item.updateMode;
+            var bt = item.updateTarget || "";
             if (a === b && (a === "BranchDelete" || a === "BranchUpdate")) {
                 if (at.length > bt.length) {
                     at = bt;
@@ -4524,7 +4380,7 @@ var ExprList = (function () {
         for (var i = 0; i < this.list.length; i++) {
             var item = this.list[i];
             if (item.expr === expr && item.entityName === entityName && item.propertyName === propertyName &&
-                item.types === types && item.callback === callback && item.scope === scope) {
+                compare(item.types.sort(), types.sort()) && item.callback === callback && item.scope === scope) {
                 index = i;
                 break;
             }
@@ -4548,7 +4404,7 @@ var ExprList = (function () {
         for (var i = 0; i < this.list.length; i++) {
             var item = this.list[i];
             if (item.expr === expr && item.entityName === entityName && item.propertyName === propertyName &&
-                item.types === types && item.callback === callback && item.scope === scope) {
+                compare(item.types.sort(), types.sort()) && item.callback === callback && item.scope === scope) {
                 this.list.splice(i, 1);
                 break;
             }
@@ -4579,8 +4435,8 @@ var ExprList = (function () {
             var newList_1 = [];
             var findItem_1 = function (list, item) {
                 var r = false;
-                for (var _i = 0, list_2 = list; _i < list_2.length; _i++) {
-                    var listItem = list_2[_i];
+                for (var _i = 0, list_1 = list; _i < list_1.length; _i++) {
+                    var listItem = list_1[_i];
                     if (listItem === item) {
                         r = true;
                     }
@@ -4631,17 +4487,62 @@ var ExprList = (function () {
         }
         return msg;
     };
-    ExprList.prototype.getExprsByUpdate = function (entityName, propertyName) {
-        return this._getExprs(entityName, propertyName, "U");
-    };
-    ExprList.prototype.getExprsByLoad = function (entityName) {
-        return this._getExprs(entityName, "", "L");
-    };
-    ExprList.prototype.getExprsByAdd = function (entityName) {
-        return this._getExprs(entityName, "", "A");
-    };
-    ExprList.prototype.getExprsByRemove = function (entityName) {
-        return this._getExprs(entityName, "", "R");
+    // 根据计算类型获取表达式列表
+    ExprList.prototype.getExprs = function (type, entity, property) {
+        if (property === void 0) { property = ""; }
+        var name = property ? entity + "." + property : entity;
+        var isLoadOrAdd = type === "load" || type === "add";
+        var key = name + "|" + type;
+        var r = this.sorted ? this.cache[key] : [];
+        if (!r) {
+            r = [];
+            var s_1 = {};
+            var l_1 = {};
+            var list_2 = [];
+            for (var _i = 0, _a = this.list; _i < _a.length; _i++) {
+                var item = _a[_i];
+                if (item.types && item.types.length > 0) {
+                    if (item.types.indexOf(type) >= 0) {
+                        list_2.push(item);
+                    }
+                }
+                else {
+                    list_2.push(item);
+                }
+            }
+            var fn_1 = function (fullName, entityName) {
+                for (var i = 0; i < list_2.length; i++) {
+                    if (l_1[i] !== true) {
+                        l_1[i] = true;
+                        var x = list_2[i];
+                        var f = isLoadOrAdd && (x.entityName === entityName && x.entityName !== "");
+                        if (!f && x.dependencies) {
+                            for (var _i = 0, _a = x.dependencies; _i < _a.length; _i++) {
+                                var dependency = _a[_i];
+                                f = dependency === fullName;
+                                if (f) {
+                                    break;
+                                }
+                            }
+                        }
+                        if (f && !s_1[i]) {
+                            s_1[i] = true;
+                            fn_1(x.fullName, entityName);
+                        }
+                        l_1[i] = false;
+                    }
+                }
+            };
+            fn_1(name, name);
+            for (var k = 0; k < list_2.length; k++) {
+                if (s_1[k]) {
+                    r.push(merger({}, list_2[k]));
+                }
+            }
+            this._doUpdateMode(r, type, name, entity, property);
+            this.cache[key] = r;
+        }
+        return r;
     };
     return ExprList;
 }());
@@ -4825,13 +4726,11 @@ var ExprManager = (function () {
     };
     // 添加表达式
     ExprManager.prototype.addExpression = function (expr, entityName, propertyName, types, callback, scope) {
-       
         this.exprList.add(expr, entityName, propertyName, types, callback, scope);
         return this;
     };
     // 删除表达式
     ExprManager.prototype.removeExpression = function (expr, entityName, propertyName, types, callback, scope) {
-       
         this.exprList.remove(expr, entityName, propertyName, types, callback, scope);
         return this;
     };
@@ -4842,21 +4741,7 @@ var ExprManager = (function () {
     };
     // 计算表达式
     ExprManager.prototype.calcExpression = function (type, info) {
-        var list;
-        switch (type) {
-            case "load":
-                list = this.exprList.getExprsByLoad(info.entityName);
-                break;
-            case "add":
-                list = this.exprList.getExprsByAdd(info.entityName);
-                break;
-            case "update":
-                list = this.exprList.getExprsByUpdate(info.entityName, info.propertyName);
-                break;
-            case "remove":
-                list = this.exprList.getExprsByRemove(info.entityName);
-                break;
-        }
+        var list = this.exprList.getExprs(type, info.entityName, info.propertyName);
         for (var _i = 0, list_1 = list; _i < list_1.length; _i++) {
             var item = list_1[_i];
             info.exprInfo = item;

@@ -87,23 +87,8 @@
                 html += "<tr style='font-weight:bold;color:#FFF;background-color:#808080;'><td>No.</td><td colspan='2'>Command</td><td>Dependencies</td></tr>";
                 for (var k = 0; k < depend.testCase.length; k++) {
                     var c = depend.testCase[k];
-                    var list = [], type = c.cmd[0], entityName = c.cmd[1], propertyName = c.cmd[2];
-                    switch (type) {
-                        case "load":
-                            list = el.getExprsByLoad(entityName);
-                            break;
-                        case "add":
-                            list = el.getExprsByAdd(entityName);
-                            break;
-                        case "remove":
-                            list = el.getExprsByRemove(entityName);
-                            break;
-                        case "update":
-                            list = el.getExprsByUpdate(entityName, propertyName);
-                            break;
-                        default:
-                            alert("demoDependencies.js中有错误");
-                    }
+                    var type = c.cmd[0], entityName = c.cmd[1], propertyName = c.cmd[2];
+                    var list = el.getExprs(type, entityName, propertyName);
                     var pList = [], pListHTML = [];
                     for (var p = 0; p < list.length; p++) {
                         var l = list[p], iColor = "";

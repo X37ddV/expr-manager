@@ -83,87 +83,15 @@ export function eachToken(token: IToken, fn: (token: IToken) => boolean, scope):
 export function format(str: string, ...values: string[]): string {
     return str.replace(/\{(\d+)\}/g, (m, i) => values[i]);
 }
-// 比较**数组**是否相等
-function compareArray(farr: any[], sarr: any[], isKey: boolean): boolean {
-    let r = farr.length === sarr.length;
-    if (r) {
-        for (let i = 0; i < farr.length; i++) {
-            if (isKey === true) { // 查找是否存在
-                if (sarr.indexOf(farr[i]) === -1) {
-                    r = false;
-                    break;
-                }
-            } else { // 数组元素递归比较是否相等
-                if (!compare(farr[i], sarr[i])) {
-                    r = false;
-                    break;
-                }
-            }
-        }
-    }
-    return r;
-}
-// 比较**对象**是否相等
-function compareObject(fobj: object, sobj: object): boolean {
-    const f = [];
-    const s = [];
-    let r = true;
-    for (const i in fobj) {
-        if (fobj.hasOwnProperty(i)) {
-            f.push(i);
-        }
-    }
-    for (const j in sobj) {
-        if (sobj.hasOwnProperty(j)) {
-            s.push(j);
-        }
-    }
-    if (compareArray(f, s, true)) { // 对象所包含的属性集相同
-        for (const ele in fobj) { // 有属性值为undefined或对应属性的值不相等
-            if (sobj.hasOwnProperty(ele) && !compare(fobj[ele], sobj[ele])) {
-                r = false;
-                break;
-            }
-        }
-    } else {
-        r = false;
-    }
-    return r;
-}
 // 比较**值**是否相等
 export function compare(fobj: any, sobj: any): boolean {
-    let r;
-    if (fobj !== null && sobj !== null && fobj !== undefined && sobj !== undefined) {
-        const ftype = typeof (fobj);
-        const stype = typeof (sobj);
-        if (ftype === stype) {
-            if (ftype === "object") { // 都是复合类型
-                r = fobj.constructor === Date && sobj.constructor === Date ? fobj.valueOf() === sobj.valueOf() :
-                    fobj.constructor === Array && sobj.constructor === Array ? compareArray(fobj, sobj, false) :
-                    fobj.constructor !== Array && sobj.constructor !== Array ? compareObject(fobj, sobj) :
-                    false;
-            } else { // 都是简单类型
-                r = fobj === sobj;
-            }
-        } else {
-            r = false;
-        }
-    } else {
-        r = fobj === sobj;
-    }
-    return r;
+    return JSON.stringify(fobj) === JSON.stringify(sobj);
 }
-// 遍历对象c中的属性, 将属性键值对依次添加到对象o中
+// 合并对象，浅遍历
 export function merger(o: object, c: object): object {
-    if (isObject(o) && isObject(c)) {
-        for (const p in c) {
-            if (c.hasOwnProperty(p)) {
-                if (o[p] && isObject(o[p])) { // 嵌套, 可以扩充该对象的子对象
-                    merger(o[p], c[p]);
-                } else { // 添加新属性, 或覆盖原有属性值(同名属性类型不为object)
-                    o[p] = c[p];
-                }
-            }
+    for (const p in c) {
+        if (c.hasOwnProperty(p)) {
+            o[p] = c[p];
         }
     }
     return o;

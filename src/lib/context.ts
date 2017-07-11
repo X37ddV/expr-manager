@@ -37,6 +37,16 @@ export interface IFunction {
     string?: IFunctionGroup;
 }
 
+// TODO:
+interface IEntityInfo {
+    field: string;
+    fullName: string;
+    name: string;
+    recNo: number;
+    type: "object" | "array";
+    map?: number[];
+}
+
 // 表达式上下文
 // ----------
 
@@ -60,7 +70,7 @@ export default class ExprContext extends Context {
         if (ft === null) {
             r = this.genErrorType(format(locale.getLocale().MSG_EC_FUNC_T, t, name));
         } else {
-            let depends = [];
+            let depends: string[] = [];
             if (ft.p) {
                 const pd = paramData;
                 for (let i = 0; i < ft.p.length; i++) { /// 参数中含有子表达式，先求出子表达式的依赖关系
@@ -302,14 +312,14 @@ export default class ExprContext extends Context {
     }
     // 获取实体类型对象
     public doGetEntityType(source): Type {
-        const e = this.genEntityInfo(source.entity, "object");
+        const e = this.genEntityInfo(source.entity.fullName, "object");
         const t = this.genType("object", "object", undefined, e, [e.fullName]);
         return t;
     }
     // 获取实体值，根据游标索引
     public doGetEntityValue(source, index): Value {
         const v = source.toValue()[index];
-        const e = this.genEntityInfo(source.entity, "object");
+        const e = this.genEntityInfo(source.entity.fullName, "object");
         e.recNo = source.entity.map[index];
         const parentObj = source.parentObj;
         const r = this.genValue(v, getValueType(v), e, "", parentObj);
@@ -359,10 +369,7 @@ export default class ExprContext extends Context {
         return this.functions;
     }
     // 获取实体信息
-    public genEntityInfo(fullName, type?) {
-        if (getValueType(fullName) === "object") {
-            fullName = fullName.fullName;
-        }
+    public genEntityInfo(fullName: string, type?: "object" | "array"): IEntityInfo {
         const name = [];
         const field = [];
         let dataType;
@@ -394,7 +401,7 @@ export default class ExprContext extends Context {
                 }
             }
         }
-        let r = {
+        let r: IEntityInfo = {
             field: field.join("."),
             fullName: (fullName),
             name: name.join("."),

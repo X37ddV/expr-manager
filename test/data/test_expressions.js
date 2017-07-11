@@ -662,7 +662,13 @@ var exprNumber = {
         ['P2.Round(0)', '12346'],
         ['Entity1[0].P2.Round(0)', '2'],
         ['P2.Round(-1)', 'undefined', '做四舍五入运算时，保留小数位数不能为负数: -1'], //120?undefined
-
+        ['0.ToRMB()', '"零元整"'],
+        ['1000000000.0000000.ToRMB(false, false)', '"十亿"'],
+        ['0.1.ToRMB(false, false)', '"零点一"'],
+        ['0.1.ToRMB(true, false)', '"一角"'],
+        ['0.1.ToRMB(true, true)', '"壹角"'],
+        ['0.1.ToRMB(false, true)', '"零点壹"'],
+        ['100002345.ToRMB()', '"壹亿零贰仟叁佰肆拾伍元整"']
     ]
 };
 var exprDate = {

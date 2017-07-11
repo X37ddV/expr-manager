@@ -1,3 +1,5 @@
+type CalcType = "load" | "add" | "update" | "remove";
+
 type FunctionEntityType = "root" | "parent" | "value" | "data";
 
 type FunctionResultType = "undefined" | "string" | "number" | "boolean" | "date" |
@@ -59,11 +61,11 @@ declare class ExprManager {
     init(data, dataContext, context): ExprManager;
     calcExpr(expr: string, entityName: string, dataCursor, field): Value;
     getFunction(): IFunction;
-    addExpression(expr: string, entityName: string, propertyName: string, types, callback, scope): ExprManager;
-    removeExpression(expr: string, entityName: string, propertyName: string, types, callback, scope): ExprManager;
+    addExpression(expr: string, entityName: string, propertyName: string, types: CalcType[], callback, scope): ExprManager;
+    removeExpression(expr: string, entityName: string, propertyName: string, types: CalcType[], callback, scope): ExprManager;
     resetExpression(): ExprManager;
     checkAndSort(): string;
-    calcExpression(type, info): ExprManager;
+    calcExpression(type: CalcType, info): ExprManager;
     calcDependencies(expr: string, entityName: string): any;
 }
 

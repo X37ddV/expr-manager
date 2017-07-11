@@ -1,5 +1,5 @@
 import { isArray, isObject, isString } from "../lib/base/common";
-import ExprContext from "../lib/context";
+import ExprContext, { FunctionEntityType, FunctionParamsType, FunctionResultType } from "../lib/context";
 
 // 表达式函数
 // ----------

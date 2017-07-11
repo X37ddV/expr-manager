@@ -1,5 +1,5 @@
 import { compare } from "../lib/base/common";
-import ExprContext from "../lib/context";
+import ExprContext, { FunctionEntityType, FunctionParamsType, FunctionResultType } from "../lib/context";
 
 // 集合私有函数
 // ----------

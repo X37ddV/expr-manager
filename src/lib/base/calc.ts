@@ -7,7 +7,7 @@ import Value from "./value";
 // ----------
 
 export default class Calc {
-    private values = {};
+    private values: {[id: number]: Value} = {};
     // 对表达式进行语法分析和数值计算
     public calc(expr: string, context: Context): Value {
         let r: Value;

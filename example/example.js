@@ -711,10 +711,10 @@ var Expression = (function () {
                 if (fields.hasOwnProperty(fieldName)) {
                     var field = fields[fieldName];
                     if (field.expr) {
-                        me.exprManager.addExpression(field.expr, name, fieldName, "L|A|U|R", me.doCalcExpr, me);
+                        me.exprManager.addExpression(field.expr, name, fieldName, ["load", "add", "update", "remove"], me.doCalcExpr, me);
                     }
                     else if (field.defaultExpr) {
-                        me.exprManager.addExpression(field.defaultExpr, name, fieldName, "A", me.doCalcExpr, me);
+                        me.exprManager.addExpression(field.defaultExpr, name, fieldName, ["add"], me.doCalcExpr, me);
                     }
                 }
             }

@@ -1,12 +1,13 @@
 import { eachToken, getValueType, isIDENToken } from "./common";
 import Context from "./context";
+import { IToken } from "./interface";
 import Type from "./type";
 
 // 表达式检查
 // ----------
 
 export default class Check {
-    private types = {};
+    private types: {[id: number]: Type} = {};
     // 对表达式进行语法分析和依赖关系计算
     public check(expr: string, context: Context): Type {
         let r: Type;

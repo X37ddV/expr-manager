@@ -1,73 +1,47 @@
-import { format } from "./base/common";
+import { compare, format, merger } from "./base/common";
 import locale from "./base/locale";
+import Type from "./base/type";
+
+export type CalcType = "load" | "add" | "update" | "remove";
+type ModeType = "Single" | "BranchUpdate" | "BranchDelete" | "All";
+interface IUpdateItem {
+    entityName: string;
+    fullName: string;
+    propertyName: string;
+    type: CalcType;
+    updateMode: ModeType;
+    updateTarget: string;
+    dependencies?: string[];
+}
+interface IModeItem {
+    updateMode: ModeType;
+    updateTarget?: string;
+}
+interface IExprItem {
+    callback: any;
+    entityName: string;
+    expr: string;
+    fullName: string;
+    propertyName: string;
+    scope: any;
+    types: CalcType[];
+    updateMode?: ModeType;
+    updateTarget?: string;
+    dependencies?: string[];
+}
+interface IExprCache {
+    [key: string]: IExprItem[];
+}
 
 // 表达式列表
 // ----------
 
 export default class ExprList {
-    private list = [];
-    private cache = {};
+    private list: IExprItem[] = [];
+    private cache: IExprCache = {};
     private sorted = false;
-    public _getExprs(entity: string, property: string, type) {
-        const name = property ? entity + "." + property : entity;
-        const isLoadOrAdd = type === "L" || type === "A";
-        const key = name + "|" + type;
-        let r = this.sorted ? this.cache[key] : [];
-        if (!r) {
-            r = [];
-            const s = {};
-            const l = {};
-            const list = [];
-            for (const item of this.list) {
-                if (item.types) {
-                    if (item.types.indexOf(type) >= 0) {
-                        list.push(item);
-                    }
-                } else {
-                    list.push(item);
-                }
-            }
-            const fn = (fullName: string, entityName: string) => {
-                for (let i = 0; i < list.length; i++) {
-                    if (l[i] !== true) {
-                        l[i] = true;
-                        const x = list[i];
-                        let f = isLoadOrAdd && (x.entityName === entityName && x.entityName !== "");
-                        if (!f && x.dependencies) {
-                            for (const dependency of x.dependencies) {
-                                f = dependency === fullName;
-                                if (f) {
-                                    break;
-                                }
-                            }
-                        }
-                        if (f && !s[i]) {
-                            s[i] = true;
-                            fn(x.fullName, entityName);
-                        }
-                        l[i] = false;
-                    }
-                }
-            };
-            fn(name, name);
-            for (let k = 0; k < list.length; k++) {
-                if (s[k]) {
-                    const o = {};
-                    for (const p in list[k]) {
-                        if (list[k].hasOwnProperty(p)) {
-                            o[p] = list[k][p];
-                        }
-                    }
-                    r.push(o);
-                }
-            }
-            this._doUpdateMode(r, type, name, entity, property);
-            this.cache[key] = r;
-        }
-        return r;
-    }
-    public _doUpdateMode(r, t, name: string, entity: string, property: string) {
-        const updateList = [{
+    public _doUpdateMode(r: IExprItem[], t: CalcType, name: string, entity: string, property: string) {
+        const updateList: IUpdateItem[] = [{
             entityName: entity,     /// 实体名
             fullName: name,         /// 全名
             propertyName: property, /// 属性名
@@ -81,23 +55,23 @@ export default class ExprList {
                 entityName: item.entityName,     /// 实体名
                 fullName: item.fullName,         /// 全名
                 propertyName: item.propertyName, /// 属性名
-                type: "U",
+                type: "update",
                 updateMode: item.updateMode,
                 updateTarget: item.updateTarget,
             });
         }
     }
-    public _doGetMode(updateList, l) {
-        const modeList = [];
+    public _doGetMode(updateList: IUpdateItem[], l: IExprItem) {
+        const modeList: IModeItem[] = [];
         /// 计算字段表达式的依赖更新模式
         if (updateList && l && l.dependencies) {
-            for (const updateItem of updateList.length) {
+            for (const updateItem of updateList) {
                 for (const dependency of l.dependencies) {
                     if (updateItem.fullName === dependency) {
                         let commonAncestry = true;
                         let isSubChange = false;
                         /// 找到依赖的变化字段
-                        if (updateItem.type === "U") {
+                        if (updateItem.type === "update") {
                             /// 如果该字段是更新
                             let isDependEntity = false; /// 表达式是否依赖了实体
                             for (const depend of l.dependencies) {
@@ -132,7 +106,7 @@ export default class ExprList {
                                 modeList.push({ updateMode: "All" });
                                 commonAncestry = false;
                             }
-                        } else if (updateItem.type === "R") {
+                        } else if (updateItem.type === "remove") {
                             /// 如果该记录是删除
                             if (updateItem.entityName === l.entityName) {
                                 /// 同级删除
@@ -178,13 +152,11 @@ export default class ExprList {
             }
         }
         /// 合并字段表达式的依赖更新模式
-        let a = "Single";
+        let a: ModeType = "Single";
         let at = "";
-        let b;
-        let bt;
         for (const item of modeList) {
-            b = item.updateMode;
-            bt = item.updateTarget || "";
+            const b = item.updateMode;
+            const bt = item.updateTarget || "";
             if (a === b && (a === "BranchDelete" || a === "BranchUpdate")) {
                 if (at.length > bt.length) {
                     at = bt;
@@ -215,14 +187,14 @@ export default class ExprList {
         this.sorted = false;
     }
     // 添加表达式
-    public add(expr: string, entityName: string, propertyName: string, types: string, callback, scope) {
+    public add(expr: string, entityName: string, propertyName: string, types: CalcType[], callback, scope) {
         this.cache = {};
         this.sorted = false;
         let index = -1;
         for (let i = 0; i < this.list.length; i++) {
             const item = this.list[i];
             if (item.expr === expr && item.entityName === entityName && item.propertyName === propertyName &&
-                item.types === types && item.callback === callback && item.scope === scope) {
+                compare(item.types.sort(), types.sort()) && item.callback === callback && item.scope === scope) {
                 index = i;
                 break;
             }
@@ -240,20 +212,20 @@ export default class ExprList {
         }
     }
     // 删除表达式
-    public remove(expr: string, entityName: string, propertyName: string, types: string, callback, scope) {
+    public remove(expr: string, entityName: string, propertyName: string, types: CalcType[], callback, scope) {
         this.cache = {};
         this.sorted = false;
         for (let i = 0; i < this.list.length; i++) {
             const item = this.list[i];
             if (item.expr === expr && item.entityName === entityName && item.propertyName === propertyName &&
-                item.types === types && item.callback === callback && item.scope === scope) {
+                compare(item.types.sort(), types.sort()) && item.callback === callback && item.scope === scope) {
                 this.list.splice(i, 1); /// 删除匹配的项
                 break;
             }
         }
     }
     // 检查和排序表达式列表
-    public checkAndSort(dependCallback): string {
+    public checkAndSort(dependCallback: (expr: string, entityName: string) => Type): string {
         this.cache = {};
         this.sorted = true;
         let msg = "";
@@ -322,16 +294,57 @@ export default class ExprList {
         }
         return msg;
     }
-    public getExprsByUpdate(entityName: string, propertyName: string) {
-        return this._getExprs(entityName, propertyName, "U");
-    }
-    public getExprsByLoad(entityName: string) {
-        return this._getExprs(entityName, "", "L");
-    }
-    public getExprsByAdd(entityName: string) {
-        return this._getExprs(entityName, "", "A");
-    }
-    public getExprsByRemove(entityName: string) {
-        return this._getExprs(entityName, "", "R");
+    // 根据计算类型获取表达式列表
+    public getExprs(type: CalcType, entity: string, property: string = "") {
+        const name = property ? entity + "." + property : entity;
+        const isLoadOrAdd = type === "load" || type === "add";
+        const key = name + "|" + type;
+        let r = this.sorted ? this.cache[key] : [];
+        if (!r) {
+            r = [];
+            const s = {};
+            const l = {};
+            const list: IExprItem[] = [];
+            for (const item of this.list) {
+                if (item.types && item.types.length > 0) {
+                    if (item.types.indexOf(type) >= 0) {
+                        list.push(item);
+                    }
+                } else {
+                    list.push(item);
+                }
+            }
+            const fn = (fullName: string, entityName: string) => {
+                for (let i = 0; i < list.length; i++) {
+                    if (l[i] !== true) {
+                        l[i] = true;
+                        const x = list[i];
+                        let f = isLoadOrAdd && (x.entityName === entityName && x.entityName !== "");
+                        if (!f && x.dependencies) {
+                            for (const dependency of x.dependencies) {
+                                f = dependency === fullName;
+                                if (f) {
+                                    break;
+                                }
+                            }
+                        }
+                        if (f && !s[i]) {
+                            s[i] = true;
+                            fn(x.fullName, entityName);
+                        }
+                        l[i] = false;
+                    }
+                }
+            };
+            fn(name, name);
+            for (let k = 0; k < list.length; k++) {
+                if (s[k]) {
+                    r.push(merger({}, list[k]) as IExprItem);
+                }
+            }
+            this._doUpdateMode(r, type, name, entity, property);
+            this.cache[key] = r;
+        }
+        return r;
     }
 }

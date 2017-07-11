@@ -1,5 +1,5 @@
 import { isNumber } from "../lib/base/common";
-import ExprContext from "../lib/context";
+import ExprContext, { FunctionParamsType, FunctionResultType } from "../lib/context";
 
 // 数值函数
 // ----------

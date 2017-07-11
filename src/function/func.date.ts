@@ -1,5 +1,5 @@
 import moment from "moment";
-import ExprContext from "../lib/context";
+import ExprContext, { FunctionParamsType, FunctionResultType } from "../lib/context";
 
 // 日期函数
 // ----------

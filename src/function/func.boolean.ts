@@ -1,4 +1,4 @@
-import ExprContext from "../lib/context";
+import ExprContext, { FunctionParamsType, FunctionResultType } from "../lib/context";
 
 // 布尔函数
 // ----------

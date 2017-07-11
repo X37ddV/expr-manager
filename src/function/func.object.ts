@@ -1,4 +1,4 @@
-import ExprContext from "../lib/context";
+import ExprContext, { FunctionEntityType, FunctionParamsType, FunctionResultType } from "../lib/context";
 
 // 对象函数
 // ----------

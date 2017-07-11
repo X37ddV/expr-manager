@@ -1,7 +1,7 @@
 import moment from "moment";
 import { format, isNumber, isString } from "../lib/base/common";
 import locale from "../lib/base/locale";
-import ExprContext from "../lib/context";
+import ExprContext, { FunctionParamsType, FunctionResultType } from "../lib/context";
 
 // 字符串函数
 // ----------

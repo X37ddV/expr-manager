@@ -2,10 +2,8 @@ import func from "./function/func";
 import Type from "./lib/base/type";
 import Value from "./lib/base/value";
 import ExprContext, { IFunction } from "./lib/context";
-import ExprList from "./lib/list";
+import ExprList, { CalcType } from "./lib/list";
 import "./locale/zh-cn";
-
-type CalcType = "load" | "add" | "update" | "remove";
 
 // 表达式管理器
 // ----------
@@ -36,14 +34,14 @@ export default class ExprManager {
             context.calcEntityDependencies(expr, entityName))(this.exprContext));
     }
     // 添加表达式
-    public addExpression(expr: string, entityName: string, propertyName: string, types: string, callback, scope) {
-        /// types = "L|A|U|R"
+    public addExpression(expr: string, entityName: string, propertyName: string,
+                         types: CalcType[], callback, scope) {
         this.exprList.add(expr, entityName, propertyName, types, callback, scope);
         return this;
     }
     // 删除表达式
-    public removeExpression(expr: string, entityName: string, propertyName: string, types: string, callback, scope) {
-        /// types = "L|A|U|R"
+    public removeExpression(expr: string, entityName: string, propertyName: string,
+                            types: CalcType[], callback, scope) {
         this.exprList.remove(expr, entityName, propertyName, types, callback, scope);
         return this;
     }
@@ -54,21 +52,7 @@ export default class ExprManager {
     }
     // 计算表达式
     public calcExpression(type: CalcType, info): ExprManager {
-        let list;
-        switch (type) {
-            case "load":
-                list = this.exprList.getExprsByLoad(info.entityName);
-                break;
-            case "add":
-                list = this.exprList.getExprsByAdd(info.entityName);
-                break;
-            case "update":
-                list = this.exprList.getExprsByUpdate(info.entityName, info.propertyName);
-                break;
-            case "remove":
-                list = this.exprList.getExprsByRemove(info.entityName);
-                break;
-        }
+        const list = this.exprList.getExprs(type, info.entityName, info.propertyName);
         for (const item of list) {
             info.exprInfo = item;
             item.callback.call(item.scope, type, info);

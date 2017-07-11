@@ -48,26 +48,10 @@ describe("依赖关系测试", function () {
         if (msg == "") {
             for (var k = 0; k < demoDepend.testCase.length; k++) {
                 var c = demoDepend.testCase[k];
-                var list = [];
                 var type = c.cmd[0];
                 var entityName = c.cmd[1];
                 var propertyName = c.cmd[2];
-                switch (type) {
-                    case "load":
-                        list = el.getExprsByLoad(entityName);
-                        break;
-                    case "add":
-                        list = el.getExprsByAdd(entityName);
-                        break;
-                    case "remove":
-                        list = el.getExprsByRemove(entityName);
-                        break;
-                    case "update":
-                        list = el.getExprsByUpdate(entityName, propertyName);
-                        break;
-                    default:
-                        expect(true).toEqual(false);
-                }
+                var list = el.getExprs(type, entityName, propertyName);
                 var pList = [];
                 for (var p = 0; p < list.length; p++) {
                     pList.push(list[p].fullName);
@@ -146,12 +130,12 @@ describe("接口测试", function () {
             expect(expr).toEqual(exprManager);
             expr = exprManager.addExpression(
                 "Field1 + ' ' + SubTable[0].Field1",
-                "Table", "CalcField0", "L|A|U|R",
+                "Table", "CalcField0", ["load", "add", "update", "remove"],
                 doCalc, null);
             expect(expr).toEqual(exprManager);
             expr = exprManager.addExpression(
                 "CalcField0",
-                "Table", "CalcField1", "L|A|U|R",
+                "Table", "CalcField1", ["load", "add", "update", "remove"],
                 doCalc, null);
             expect(expr).toEqual(exprManager);
             var err = exprManager.checkAndSort();
