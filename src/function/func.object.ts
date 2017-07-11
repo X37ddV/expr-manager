@@ -5,21 +5,21 @@ import ExprContext from "../lib/context";
 
 // 获取父实体对象，如果当前为根则获取自己
 const funcObjectParent = {
-    e: "parent",
+    e: "parent" as FunctionEntityType,
     fn: (context: ExprContext, source) => {
         return context.getParentValue(source);
     },
-    p: [],
-    r: "object",
+    p: [] as FunctionParamsType[],
+    r: "object" as FunctionResultType,
 };
 // 获取当前实体的索引号，没有实体返回-1
 const funcObjectRecNo = {
-    e: "value",
+    e: "value" as FunctionEntityType,
     fn: (context: ExprContext, source) => {
         return context.getRecNo(source);
     },
-    p: [],
-    r: "number",
+    p: [] as FunctionParamsType[],
+    r: "number" as FunctionResultType,
 };
 // 对象函数列表
 export default {

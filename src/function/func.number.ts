@@ -9,112 +9,112 @@ const funcNumberToString = {
     fn: (context: ExprContext, source) => {
         return context.genValue(source.toValue() + "");
     },
-    p: [],
-    r: "string",
+    p: [] as FunctionParamsType[],
+    r: "string" as FunctionResultType,
 };
 // 获取数的绝对值
 const funcNumberAbs = {
     fn: (context: ExprContext, source) => {
         return source.abs();
     },
-    p: [],
-    r: "number",
+    p: [] as FunctionParamsType[],
+    r: "number" as FunctionResultType,
 };
 // 对数进行向上取整
 const funcNumberCeil = {
     fn: (context: ExprContext, source) => {
         return source.ceil();
     },
-    p: [],
-    r: "number",
+    p: [] as FunctionParamsType[],
+    r: "number" as FunctionResultType,
 };
 // 对数进行向下取整
 const funcNumberFloor = {
     fn: (context: ExprContext, source) => {
         return source.floor();
     },
-    p: [],
-    r: "number",
+    p: [] as FunctionParamsType[],
+    r: "number" as FunctionResultType,
 };
 // 获取数的余弦
 const funcNumberCos = {
     fn: (context: ExprContext, source) => {
         return source.cos();
     },
-    p: [],
-    r: "number",
+    p: [] as FunctionParamsType[],
+    r: "number" as FunctionResultType,
 };
 // 获取 e 的指数
 const funcNumberExp = {
     fn: (context: ExprContext, source) => {
         return source.exp();
     },
-    p: [],
-    r: "number",
+    p: [] as FunctionParamsType[],
+    r: "number" as FunctionResultType,
 };
 // 获取数的自然对数（底为 e）
 const funcNumberLn = {
     fn: (context: ExprContext, source) => {
         return source.ln();
     },
-    p: [],
-    r: "number",
+    p: [] as FunctionParamsType[],
+    r: "number" as FunctionResultType,
 };
 // 获取数的指定底数的对数
 const funcNumberLog = {
     fn: (context: ExprContext, source, base) => {
         return source.log(base);
     },
-    p: ["number"],
-    r: "number",
+    p: ["number"] as FunctionParamsType[],
+    r: "number" as FunctionResultType,
 };
 // 获取数的指定指数的次幂
 const funcNumberPower = {
     fn: (context: ExprContext, source, exponent) => {
         return source.power(exponent);
     },
-    p: ["number"],
-    r: "number",
+    p: ["number"] as FunctionParamsType[],
+    r: "number" as FunctionResultType,
 };
 // 根据保留的小数位数对数四舍五入
 const funcNumberRound = {
     fn: (context: ExprContext, source, scale) => {
         return source.round(scale);
     },
-    p: ["number"],
-    r: "number",
+    p: ["number"] as FunctionParamsType[],
+    r: "number" as FunctionResultType,
 };
 // 获取数的正弦
 const funcNumberSin = {
     fn: (context: ExprContext, source) => {
         return source.sin();
     },
-    p: [],
-    r: "number",
+    p: [] as FunctionParamsType[],
+    r: "number" as FunctionResultType,
 };
 // 获取数的平方根
 const funcNumberSqrt = {
     fn: (context: ExprContext, source) => {
         return source.sqrt();
     },
-    p: [],
-    r: "number",
+    p: [] as FunctionParamsType[],
+    r: "number" as FunctionResultType,
 };
 // 获取树的正切值
 const funcNumberTan = {
     fn: (context: ExprContext, source) => {
         return source.tan();
     },
-    p: [],
-    r: "number",
+    p: [] as FunctionParamsType[],
+    r: "number" as FunctionResultType,
 };
 // 根据保留的小数位数对数进行截断
 const funcNumberTrunc = {
     fn: (context: ExprContext, source, scale) => {
         return source.trunc(scale);
     },
-    p: ["number"],
-    r: "number",
+    p: ["number"] as FunctionParamsType[],
+    r: "number" as FunctionResultType,
 };
 // 获取人民币大写
 const funcNumberToRMB = {
@@ -221,8 +221,8 @@ const funcNumberToRMB = {
         return context.genValue(isNumber(v) ?
             conversion(v, rmb === undefined || rmb, big === undefined || big) : null);
     },
-    p: ["boolean?", "boolean?"],
-    r: "string",
+    p: ["boolean?", "boolean?"] as FunctionParamsType[],
+    r: "string" as FunctionResultType,
 };
 // 数值函数列表
 export default {

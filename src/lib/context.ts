@@ -9,30 +9,32 @@ import Type from "./base/type";
 import Value from "./base/value";
 import ExprCurrent from "./current";
 
+export type FunctionEntityType = "root" | "parent" | "value" | "data";
+export type FunctionResultType = "undefined" | "string" | "number" | "boolean" | "date" |
+    "object" | "array";
+export type FunctionParamsType = "undefined" | "undefined?" | "string" | "string?" | "number" |
+    "number?" | "boolean" | "boolean?" | "date" | "date?" | "object" | "object?" | "array" |
+    "array?" | "expr" | "expr?";
+
 export interface IFunctionItem {
-    e?: "root" | "parent" | "value" | "data";
+    e?: FunctionEntityType;
     fn: (context, ...others) => any;
-    p: Array<
-        "undefined" | "undefined?" |
-        "string" | "string?" |
-        "number" | "number?" |
-        "boolean" | "boolean?" |
-        "date" | "date?" |
-        "object" | "object?" |
-        "array" | "array?" |
-        "expr" | "expr?"
-    >;
-    r: "undefined" | "string" | "number" | "boolean" | "date" | "object" | "array";
+    p: FunctionParamsType[];
+    r: FunctionParamsType;
+}
+
+export interface IFunctionGroup {
+    [name: string]: IFunctionItem;
 }
 
 export interface IFunction {
-    ""?: IFunctionItem;
-    "array"?: IFunctionItem;
-    "boolean"?: IFunctionItem;
-    "date"?: IFunctionItem;
-    "number"?: IFunctionItem;
-    "object"?: IFunctionItem;
-    "string"?: IFunctionItem;
+    ""?: IFunctionGroup;
+    array?: IFunctionGroup;
+    boolean?: IFunctionGroup;
+    date?: IFunctionGroup;
+    number?: IFunctionGroup;
+    object?: IFunctionGroup;
+    string?: IFunctionGroup;
 }
 
 // 表达式上下文

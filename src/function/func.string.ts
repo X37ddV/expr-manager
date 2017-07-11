@@ -11,8 +11,8 @@ const funcStringToString = {
     fn: (context: ExprContext, source) => {
         return context.genValue(source.toValue() + "");
     },
-    p: [],
-    r: "string",
+    p: [] as FunctionParamsType[],
+    r: "string" as FunctionResultType,
 };
 // 转换字符串类型为数字
 const funcStringToNumber = {
@@ -22,8 +22,8 @@ const funcStringToNumber = {
             context.genErrorValue(format(locale.getLocale().MSG_EF_STR_TO_NUM, source.toValue())) :
             context.genValue(n);
     },
-    p: [],
-    r: "number",
+    p: [] as FunctionParamsType[],
+    r: "number" as FunctionResultType,
 };
 // 转换字符串类型为日期时间
 const funcStringToDate = {
@@ -35,8 +35,8 @@ const funcStringToDate = {
             context.genValue(m.toDate()) :
             context.genErrorValue(format(locale.getLocale().MSG_EF_STR_TO_NUM, s, fmt));
     },
-    p: ["string?"],
-    r: "date",
+    p: ["string?"] as FunctionParamsType[],
+    r: "date" as FunctionResultType,
 };
 // 获取字符串长度
 const funcStringLength = {
@@ -44,8 +44,8 @@ const funcStringLength = {
         const value = source.toValue();
         return context.genValue(isString(value) ? value.length : null);
     },
-    p: [],
-    r: "number",
+    p: [] as FunctionParamsType[],
+    r: "number" as FunctionResultType,
 };
 // 转换字符串为大写
 const funcStringUpper = {
@@ -53,8 +53,8 @@ const funcStringUpper = {
         const value = source.toValue();
         return context.genValue(isString(value) ? value.toUpperCase() : null);
     },
-    p: [],
-    r: "string",
+    p: [] as FunctionParamsType[],
+    r: "string" as FunctionResultType,
 };
 // 转换字符串为小写
 const funcStringLower = {
@@ -62,8 +62,8 @@ const funcStringLower = {
         const value = source.toValue();
         return context.genValue(isString(value) ? value.toLowerCase() : null);
     },
-    p: [],
-    r: "string",
+    p: [] as FunctionParamsType[],
+    r: "string" as FunctionResultType,
 };
 // 去除字符串两端空格
 const funcStringTrim = {
@@ -71,8 +71,8 @@ const funcStringTrim = {
         const value = source.toValue();
         return context.genValue(isString(value) ? value.trim() : null);
     },
-    p: [],
-    r: "string",
+    p: [] as FunctionParamsType[],
+    r: "string" as FunctionResultType,
 };
 // 去除字符串左端空格
 const funcStringTrimLeft = {
@@ -80,8 +80,8 @@ const funcStringTrimLeft = {
         const value = source.toValue();
         return context.genValue(isString(value) ? value.replace(/^\s+/g, "") : null);
     },
-    p: [],
-    r: "string",
+    p: [] as FunctionParamsType[],
+    r: "string" as FunctionResultType,
 };
 // 去除字符串右端空格
 const funcStringTrimRight = {
@@ -89,8 +89,8 @@ const funcStringTrimRight = {
         const value = source.toValue();
         return context.genValue(isString(value) ? value.replace(/\s+$/g, "") : null);
     },
-    p: [],
-    r: "string",
+    p: [] as FunctionParamsType[],
+    r: "string" as FunctionResultType,
 };
 // 获取字符串的子字符串，指定开始位置和长度
 const funcStringSubString = {
@@ -104,8 +104,8 @@ const funcStringSubString = {
         return context.genValue(isString(value) && isNumber(start) && isNumber(len) ?
             value.substring(left, right) : null);
     },
-    p: ["number", "number"],
-    r: "string",
+    p: ["number", "number"] as FunctionParamsType[],
+    r: "string" as FunctionResultType,
 };
 // 获取字符串的左子字符串，指定长度
 const funcStringLeftString = {
@@ -113,8 +113,8 @@ const funcStringLeftString = {
         const value = source.toValue();
         return context.genValue(isString(value) && isNumber(len) ? value.substring(0, len) : null);
     },
-    p: ["number"],
-    r: "string",
+    p: ["number"] as FunctionParamsType[],
+    r: "string" as FunctionResultType,
 };
 // 获取字符串的右子字符串，指定长度
 const funcStringRightString = {
@@ -123,8 +123,8 @@ const funcStringRightString = {
         return context.genValue(isString(value) && isNumber(len) ?
             value.substring(value.length - len, value.length) : null);
     },
-    p: ["number"],
-    r: "string",
+    p: ["number"] as FunctionParamsType[],
+    r: "string" as FunctionResultType,
 };
 // 检索字符串，获取子字符串在字符串中的起始位置
 const funcStringPos = {
@@ -133,8 +133,8 @@ const funcStringPos = {
         return context.genValue(isString(value) && isString(subValue) ?
             value.indexOf(subValue) : null);
     },
-    p: ["string"],
-    r: "number",
+    p: ["string"] as FunctionParamsType[],
+    r: "number" as FunctionResultType,
 };
 // 字符串替换
 const funcStringReplace = {
@@ -192,8 +192,8 @@ const funcStringReplace = {
         }
         return r;
     },
-    p: ["string", "string", "string?"],
-    r: "string",
+    p: ["string", "string", "string?"] as FunctionParamsType[],
+    r: "string" as FunctionResultType,
 };
 // 正则替换
 const funcStringReplaceReg = {
@@ -215,8 +215,8 @@ const funcStringReplaceReg = {
         }
         return r;
     },
-    p: ["string", "string", "string?"],
-    r: "string",
+    p: ["string", "string", "string?"] as FunctionParamsType[],
+    r: "string" as FunctionResultType,
 };
 // 字符串函数列表
 export default {

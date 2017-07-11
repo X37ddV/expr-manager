@@ -1,27 +1,31 @@
+type FunctionEntityType = "root" | "parent" | "value" | "data";
+
+type FunctionResultType = "undefined" | "string" | "number" | "boolean" | "date" |
+    "object" | "array";
+
+type FunctionParamsType = "undefined" | "undefined?" | "string" | "string?" | "number" |
+    "number?" | "boolean" | "boolean?" | "date" | "date?" | "object" | "object?" | "array" |
+    "array?" | "expr" | "expr?";
+
 interface IFunctionItem {
-    e?: "root" | "parent" | "value" | "data";
+    e?: FunctionEntityType;
     fn: (context, ...others) => any;
-    p: Array<
-        "undefined" | "undefined?" |
-        "string" | "string?" |
-        "number" | "number?" |
-        "boolean" | "boolean?" |
-        "date" | "date?" |
-        "object" | "object?" |
-        "array" | "array?" |
-        "expr" | "expr?"
-    >;
-    r: "undefined" | "string" | "number" | "boolean" | "date" | "object" | "array";
+    p: FunctionParamsType[];
+    r: FunctionParamsType;
+}
+
+interface IFunctionGroup {
+    [name: string]: IFunctionItem;
 }
 
 interface IFunction {
-    _?: IFunctionItem;
-    array?: IFunctionItem;
-    boolean?: IFunctionItem;
-    date?: IFunctionItem;
-    number?: IFunctionItem;
-    object?: IFunctionItem;
-    string?: IFunctionItem;
+    ""?: IFunctionGroup;
+    "array"?: IFunctionGroup;
+    "boolean"?: IFunctionGroup;
+    "date"?: IFunctionGroup;
+    "number"?: IFunctionGroup;
+    "object"?: IFunctionGroup;
+    "string"?: IFunctionGroup;
 }
 
 type TokenType = "TK_UNKNOWN" | "TK_STRING" | "TK_NUMBER" | "TK_BOOL" | "TK_NULL" |

@@ -8,8 +8,8 @@ const funcBooleanToString = {
     fn: (context: ExprContext, source) => {
         return context.genValue(source.toValue() + "");
     },
-    p: [],
-    r: "string",
+    p: [] as FunctionParamsType[],
+    r: "string" as FunctionResultType,
 };
 // 布尔函数列表
 export default {

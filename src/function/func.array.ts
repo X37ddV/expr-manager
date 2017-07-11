@@ -88,17 +88,17 @@ function doCompCollection(source, expr, fn) {
 
 // 获取集合元素个数
 const funcArrayCount = {
-    e: "value",
+    e: "value" as FunctionEntityType,
     fn: (context: ExprContext, source) => {
         const r = source.toValue().length;
         return context.genValue(r, undefined, null, "");
     },
-    p: [],
-    r: "number",
+    p: [] as FunctionParamsType[],
+    r: "number" as FunctionResultType,
 };
 // 获取集合元素的合计值
 const funcArraySum = {
-    e: "value",
+    e: "value" as FunctionEntityType,
     fn: (context: ExprContext, source, expr) => {
         expr = expr || "$0";
         const r = doCompCollection.call(context, source, expr, (a, b) => {
@@ -106,12 +106,12 @@ const funcArraySum = {
         });
         return r;
     },
-    p: ["expr?"],
-    r: "undefined",
+    p: ["expr?"] as FunctionParamsType[],
+    r: "undefined" as FunctionResultType,
 };
 // 获取集合元素的最大值
 const funcArrayMax = {
-    e: "value",
+    e: "value" as FunctionEntityType,
     fn: (context: ExprContext, source, expr) => {
         expr = expr || "$0";
         const r = doCompCollection.call(context, source, expr, (a, b) => {
@@ -123,12 +123,12 @@ const funcArrayMax = {
         });
         return r;
     },
-    p: ["expr?"],
-    r: "undefined",
+    p: ["expr?"] as FunctionParamsType[],
+    r: "undefined" as FunctionResultType,
 };
 // 获取集合元素的最小值
 const funcArrayMin = {
-    e: "value",
+    e: "value" as FunctionEntityType,
     fn: (context: ExprContext, source, expr) => {
         expr = expr || "$0";
         const r = doCompCollection.call(context, source, expr, (a, b) => {
@@ -140,12 +140,12 @@ const funcArrayMin = {
         });
         return r;
     },
-    p: ["expr?"],
-    r: "undefined",
+    p: ["expr?"] as FunctionParamsType[],
+    r: "undefined" as FunctionResultType,
 };
 // 获取集合元素的平均值
 const funcArrayAverage = {
-    e: "value",
+    e: "value" as FunctionEntityType,
     fn: (context: ExprContext, source, expr) => {
         expr = expr || "$0";
         let r = doCompCollection.call(context, source, expr, (a, b) => {
@@ -161,12 +161,12 @@ const funcArrayAverage = {
         }
         return r;
     },
-    p: ["expr?"],
-    r: "number",
+    p: ["expr?"] as FunctionParamsType[],
+    r: "number" as FunctionResultType,
 };
 // 获取集合中唯一元素的集合
 const funcArrayDistinct = {
-    e: "data",
+    e: "data" as FunctionEntityType,
     fn: (context, source, expr) => {
         expr = expr || "$0";
         let r = context.genValue([], "array");
@@ -201,12 +201,12 @@ const funcArrayDistinct = {
         }
         return r;
     },
-    p: ["expr?"],
-    r: "array",
+    p: ["expr?"] as FunctionParamsType[],
+    r: "array" as FunctionResultType,
 };
 // 获取满足条件的元素集合
 const funcArrayWhere = {
-    e: "data",
+    e: "data" as FunctionEntityType,
     fn: (context, source, expr) => {
         expr = expr || "true";
         let r = context.genValue([], "array");
@@ -228,8 +228,8 @@ const funcArrayWhere = {
         }
         return r;
     },
-    p: ["expr"],
-    r: "array",
+    p: ["expr"] as FunctionParamsType[],
+    r: "array" as FunctionResultType,
 };
 // 集合函数列表
 export default {
