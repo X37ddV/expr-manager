@@ -27,7 +27,7 @@ export default class ExprList {
                     list.push(item);
                 }
             }
-            const fn = (fullName, entityName) => {
+            const fn = (fullName: string, entityName: string) => {
                 for (let i = 0; i < list.length; i++) {
                     if (l[i] !== true) {
                         l[i] = true;
@@ -66,7 +66,7 @@ export default class ExprList {
         }
         return r;
     }
-    public _doUpdateMode(r, t, name, entity, property) {
+    public _doUpdateMode(r, t, name: string, entity: string, property: string) {
         const updateList = [{
             entityName: entity,     /// 实体名
             fullName: name,         /// 全名

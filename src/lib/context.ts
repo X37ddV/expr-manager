@@ -10,17 +10,17 @@ import Value from "./base/value";
 import ExprCurrent from "./current";
 
 export type FunctionEntityType = "root" | "parent" | "value" | "data";
-export type FunctionResultType = "undefined" | "string" | "number" | "boolean" | "date" |
-    "object" | "array";
 export type FunctionParamsType = "undefined" | "undefined?" | "string" | "string?" | "number" |
     "number?" | "boolean" | "boolean?" | "date" | "date?" | "object" | "object?" | "array" |
     "array?" | "expr" | "expr?";
+export type FunctionResultType = "undefined" | "string" | "number" | "boolean" | "date" |
+    "object" | "array";
 
 export interface IFunctionItem {
     e?: FunctionEntityType;
     fn: (context, ...others) => any;
     p: FunctionParamsType[];
-    r: FunctionParamsType;
+    r: FunctionResultType;
 }
 
 export interface IFunctionGroup {

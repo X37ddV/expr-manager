@@ -11,7 +11,7 @@ interface IFunctionItem {
     e?: FunctionEntityType;
     fn: (context, ...others) => any;
     p: FunctionParamsType[];
-    r: FunctionParamsType;
+    r: FunctionResultType;
 }
 
 interface IFunctionGroup {
