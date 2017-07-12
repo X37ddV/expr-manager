@@ -4,34 +4,16 @@ import Parser from "./parser";
 import Type from "./type";
 import Value from "./value";
 
-interface IExprItem {
-    parser: Parser;
-    text: string;
-}
-
 export default abstract class Context {
-    private exprList: IExprItem[] = [];
+    private exprCache: {[key: string]: Parser} = {};
     // 得到解析信息
     public getParserInfo(expr: string): Parser {
-        expr = expr.trim(); /// 去除表达式两端无效空格
-        let index = -1; /// 查找当前上下文的exprList列表
-        for (let i = 0; i < this.exprList.length; i++) {
-            if (this.exprList[i].text === expr) {
-                index = i;
-                break;
-            }
+        let r = this.exprCache[expr];
+        if (!r) {
+            r = new Parser().parser(expr);
+            this.exprCache[expr] = r;
         }
-        let r;
-        if (index >= 0) { /// 该表达式之前被解析过，直接返回缓存里的解析结果
-            r = this.exprList[index].parser;
-        } else { /// 该表达式之前从未被解析过，开始新的解析
-            r = new Parser().parser(expr); /// return this;
-            this.exprList.push({ /// 将解析过的表达式缓存，下次不需要再次解析
-                parser: r,
-                text: expr,
-            });
-        }
-        return r; /// 返回ExprParser对象
+        return r;
     }
     // 生成ExprValue对象
     public genValue(value: any, type?: ValueType, entity?, errorMsg?: string, parentObj?): Value {
@@ -42,7 +24,7 @@ export default abstract class Context {
         return this.genValue(undefined, undefined, undefined, errorMsg, undefined);
     }
     // 生成ExprType对象
-    public genType(type?: ValueType, info?, data?, entity?, depends?, errorMsg?): Type {
+    public genType(type?: ValueType, info?, data?, entity?, depends?, errorMsg?: string): Type {
         return new Type(this, type, info, data, entity, depends, errorMsg);
     }
     // 有错误时，生成对应的ExprType对象

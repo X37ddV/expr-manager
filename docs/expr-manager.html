@@ -6590,7 +6590,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
 
 <span class="hljs-keyword">var</span> Context = (<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
     <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Context</span>(<span class="hljs-params"></span>) </span>{
-        <span class="hljs-keyword">this</span>.exprList = [];
+        <span class="hljs-keyword">this</span>.exprCache = {};
     }</pre></div></div>
             
         </li>
@@ -6607,24 +6607,10 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    Context.prototype.getParserInfo = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr</span>) </span>{
-        expr = expr.trim();
-        <span class="hljs-keyword">var</span> index = <span class="hljs-number">-1</span>;
-        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.exprList.length; i++) {
-            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.exprList[i].text === expr) {
-                index = i;
-                <span class="hljs-keyword">break</span>;
-            }
-        }
-        <span class="hljs-keyword">var</span> r;
-        <span class="hljs-keyword">if</span> (index &gt;= <span class="hljs-number">0</span>) {
-            r = <span class="hljs-keyword">this</span>.exprList[index].parser;
-        }
-        <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">var</span> r = <span class="hljs-keyword">this</span>.exprCache[expr];
+        <span class="hljs-keyword">if</span> (!r) {
             r = <span class="hljs-keyword">new</span> Parser().parser(expr);
-            <span class="hljs-keyword">this</span>.exprList.push({
-                <span class="hljs-attr">parser</span>: r,
-                <span class="hljs-attr">text</span>: expr,
-            });
+            <span class="hljs-keyword">this</span>.exprCache[expr] = r;
         }
         <span class="hljs-keyword">return</span> r;
     };</pre></div></div>

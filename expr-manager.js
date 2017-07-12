@@ -3341,28 +3341,14 @@ var Value = (function () {
 
 var Context = (function () {
     function Context() {
-        this.exprList = [];
+        this.exprCache = {};
     }
     // 得到解析信息
     Context.prototype.getParserInfo = function (expr) {
-        expr = expr.trim();
-        var index = -1;
-        for (var i = 0; i < this.exprList.length; i++) {
-            if (this.exprList[i].text === expr) {
-                index = i;
-                break;
-            }
-        }
-        var r;
-        if (index >= 0) {
-            r = this.exprList[index].parser;
-        }
-        else {
+        var r = this.exprCache[expr];
+        if (!r) {
             r = new Parser().parser(expr);
-            this.exprList.push({
-                parser: r,
-                text: expr,
-            });
+            this.exprCache[expr] = r;
         }
         return r;
     };

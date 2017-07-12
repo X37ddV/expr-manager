@@ -3,7 +3,19 @@ import locale from "./base/locale";
 import Type from "./base/type";
 
 export type CalcType = "load" | "add" | "update" | "remove";
-type ModeType = "Single" | "BranchUpdate" | "BranchDelete" | "All";
+export type ModeType = "Single" | "BranchUpdate" | "BranchDelete" | "All";
+export interface IExprItem {
+    callback: any;
+    entityName: string;
+    expr: string;
+    fullName: string;
+    propertyName: string;
+    scope: any;
+    types: CalcType[];
+    updateMode?: ModeType;
+    updateTarget?: string;
+    dependencies?: string[];
+}
 interface IUpdateItem {
     entityName: string;
     fullName: string;
@@ -17,28 +29,13 @@ interface IModeItem {
     updateMode: ModeType;
     updateTarget?: string;
 }
-export interface IExprItem {
-    callback: any;
-    entityName: string;
-    expr: string;
-    fullName: string;
-    propertyName: string;
-    scope: any;
-    types: CalcType[];
-    updateMode?: ModeType;
-    updateTarget?: string;
-    dependencies?: string[];
-}
-interface IExprCache {
-    [key: string]: IExprItem[];
-}
 
 // 表达式列表
 // ----------
 
 export default class ExprList {
     private list: IExprItem[] = [];
-    private cache: IExprCache = {};
+    private cache: {[key: string]: IExprItem[]} = {};
     private sorted = false;
     public _doUpdateMode(r: IExprItem[], t: CalcType, name: string, entity: string, property: string) {
         const updateList: IUpdateItem[] = [{

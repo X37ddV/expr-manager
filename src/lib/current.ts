@@ -1,12 +1,12 @@
-export interface IDataCurrent {
+interface IDataCurrent {
     [fullName: string]: number;
 }
-export interface ICurrentParam {
+interface ICurrentParam {
     current: string;
     cursor: number;
     isEntityData: boolean;
 }
-export interface ICurrentItem {
+interface ICurrentItem {
     pIndex: number;
     params: ICurrentParam[];
 }
