@@ -1,6 +1,5 @@
-interface IDataCurrent {
-    [fullName: string]: number;
-}
+import { IDataCursor } from "./context";
+
 interface ICurrentParam {
     current: string;
     cursor: number;
@@ -16,9 +15,9 @@ interface ICurrentItem {
 
 export default class ExprCurrent {
     private curr: ICurrentItem[] = [];
-    private dataCursor: IDataCurrent;
+    private dataCursor: IDataCursor;
     // 设置数据游标
-    public setDataCursor(cursor: IDataCurrent) {
+    public setDataCursor(cursor: IDataCursor) {
         this.dataCursor = cursor;
     }
     // 向栈顶添加新的计算环境

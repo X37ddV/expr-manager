@@ -26,6 +26,12 @@ describe("表达式测试", function () {
                     }
                 })(k, v, r, val.errorMsg));
             }
+            var valType = exprManager.calcDependencies(e, "E1");
+            it(demo.title + " - " + j  + " - " + i + " - " + e, (function (valType) {
+                return function() {
+                    // TODO: expect("").toEqual(valType.errorMsg);
+                }
+            })(valType));
         }
     }
 });

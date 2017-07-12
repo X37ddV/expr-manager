@@ -3736,7 +3736,7 @@ var ExprContext = (function (_super) {
             }
             else {
                 value = (source === null) ?
-                    this.getData(pIndex) :
+                    this.exprContext.getData(pIndex) :
                     value = source.toValue();
                 if (!(source === null && name === "")) {
                     switch (getValueType(value)) {
@@ -3922,10 +3922,6 @@ var ExprContext = (function (_super) {
             }
         }
         return d;
-    };
-    // 根据索引获取数据
-    ExprContext.prototype.getData = function (index) {
-        return this.exprContext.getData(index);
     };
     // 获取父名称
     ExprContext.prototype.getParentName = function (name) {

@@ -1,7 +1,7 @@
 import func from "./function/func";
 import Type from "./lib/base/type";
 import Value from "./lib/base/value";
-import ExprContext, { IFunction } from "./lib/context";
+import ExprContext, { IDataCursor, IFunction } from "./lib/context";
 import ExprList, { CalcType, IExprItem } from "./lib/list";
 import "./locale/zh-cn";
 
@@ -71,7 +71,7 @@ export default class ExprManager {
         return this.exprContext.calcEntityDependencies(expr, entityName);
     }
     // 计算表达式的值
-    public calcExpr(expr: string, entityName: string, dataCursor, field): Value {
+    public calcExpr(expr: string, entityName: string, dataCursor: IDataCursor, field): Value {
         /// field = {FieldDisplayName: "", FieldName: "", FieldValue: ""}
         this.exprContext.setDataCursor(dataCursor);
         if (field) {

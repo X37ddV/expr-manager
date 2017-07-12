@@ -37,7 +37,10 @@ export interface IFunction {
     string?: IFunctionGroup;
 }
 
-// TODO:
+export interface IDataCursor {
+    [fullName: string]: number;
+}
+
 interface IEntityInfo {
     field: string;
     fullName: string;
@@ -290,7 +293,7 @@ export default class ExprContext extends Context {
                 }
             } else { /// 当前表达式处于普通数据环境
                 value = (source === null) ?
-                    this.getData(pIndex) :
+                    this.exprContext.getData(pIndex) :
                     value = source.toValue();
                 if (!(source === null && name === "")) {
                     switch (getValueType(value)) {
@@ -334,7 +337,7 @@ export default class ExprContext extends Context {
         return "IIf";
     }
     // 设置数据游标
-    public setDataCursor(cursor) {
+    public setDataCursor(cursor: IDataCursor) {
         this.exprContext.setDataCursor(cursor);
     }
     // 设置页面上下文
@@ -468,10 +471,6 @@ export default class ExprContext extends Context {
             }
         }
         return d;
-    }
-    // 根据索引获取数据
-    public getData(index) {
-        return this.exprContext.getData(index);
     }
     // 获取父名称
     public getParentName(name) {

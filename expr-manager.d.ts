@@ -53,6 +53,10 @@ interface IToken {
     tokenValue: string;
 }
 
+interface IDataCursor {
+    [fullName: string]: number;
+}
+
 declare class Type {
     errorMsg: string;
     rootToken: IToken;
@@ -81,7 +85,7 @@ declare class ExprManager {
     checkAndSort(): string;
     calcExpression(type: CalcType, info): ExprManager;
     calcDependencies(expr: string, entityName: string): Type;
-    calcExpr(expr: string, entityName: string, dataCursor, field): Value;
+    calcExpr(expr: string, entityName: string, dataCursor: IDataCursor, field): Value;
     calc(expr: string, data): Value;
 }
 
