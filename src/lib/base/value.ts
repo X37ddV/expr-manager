@@ -31,7 +31,7 @@ export default class Value {
         }
         this.value = value;
         this.entity = entity || null;
-        this.errorMsg = errorMsg || "";
+        this.errorMsg = (errorMsg || "").trim();
         this.parentObj = parentObj || null;
     }
     // 生成值对象

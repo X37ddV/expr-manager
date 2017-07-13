@@ -7,7 +7,6 @@ locale.defineLocale("zh-cn", {
     // context
     MSG_EC_FUNC_E: "只有实体对象才可以调用 {0} 方法",
     MSG_EC_FUNC_P: "{0} 没有名称为 {1} 的方法或参数不匹配",
-    MSG_EC_FUNC_T: "{0} 没有与名称为 {1} 的相匹配的方法",
     MSG_EC_PROP_E: "{0} 无法获取属性: {1}",
     MSG_EC_PROP_N: "属性不存在: {0}",
     MSG_EC_VARI_I: "参数索引不存在: {0}",

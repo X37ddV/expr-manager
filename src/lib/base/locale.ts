@@ -3,7 +3,6 @@ import { merger } from "./common";
 interface ILocaleConfig {
     MSG_EC_FUNC_E: string;
     MSG_EC_FUNC_P: string;
-    MSG_EC_FUNC_T: string;
     MSG_EC_PROP_E: string;
     MSG_EC_PROP_N: string;
     MSG_EC_VARI_I: string;

@@ -88,9 +88,9 @@ var exprDataCalc = {
         ['\'Entity1[0]&&Entity1[0].Parent()\'', '"Entity1[0]&&Entity1[0].Parent()"'],
         ['Entity1[0].ToString()', 'undefined', 'object 没有名称为 ToString 的方法或参数不匹配'],
         ['Entity1[0].Parent().ToString()', 'undefined', 'object 没有名称为 ToString 的方法或参数不匹配'],
-        ['IfNull(Entity1[0])', 'undefined', ' 没有名称为 IfNull 的方法或参数不匹配'],
-        ['IfNull(Entity1[0].Parent())', 'undefined', ' 没有名称为 IfNull 的方法或参数不匹配'],
-        ['IIf(Entity1[0], Entity1[0].Parent())', 'undefined', ' 没有名称为 IIf 的方法或参数不匹配'],
+        ['IfNull(Entity1[0])', 'undefined', '没有名称为 IfNull 的方法或参数不匹配'],
+        ['IfNull(Entity1[0].Parent())', 'undefined', '没有名称为 IfNull 的方法或参数不匹配'],
+        ['IIf(Entity1[0], Entity1[0].Parent())', 'undefined', '没有名称为 IIf 的方法或参数不匹配'],
         ['Entity1[0].Parent().Parent()', cmpORoot],
         ['Root().E1[1].Entity1[0].Parent()', cmpOE1_1],
         ['Root().E1[0].Parent()', cmpORoot],
@@ -1292,21 +1292,21 @@ var exprErr = {
         ['FALSE', 'undefined', '属性不存在: FALSE'], //错误: 'field' 为空或不是对象
     //函数相关
     //参数
-        ['Root("")', 'undefined', ' 没有名称为 Root 的方法或参数不匹配'],
-        ['Root("",123)', 'undefined', ' 没有名称为 Root 的方法或参数不匹配'],
+        ['Root("")', 'undefined', '没有名称为 Root 的方法或参数不匹配'],
+        ['Root("",123)', 'undefined', '没有名称为 Root 的方法或参数不匹配'],
         ['true.ToString("123")', 'undefined', 'boolean 没有名称为 ToString 的方法或参数不匹配'],
         ['123.ToRMB("456") ', 'undefined', 'number 没有名称为 ToRMB 的方法或参数不匹配'],
         ['IfNull(undefined)', 'undefined', '属性不存在: undefined'],
-        ['IfNull()', 'undefined', ' 没有名称为 IfNull 的方法或参数不匹配'],
+        ['IfNull()', 'undefined', '没有名称为 IfNull 的方法或参数不匹配'],
         ['"123".LeftString(1)', '"1"'],
         ['"123".LeftString(true)', 'undefined', 'string 没有名称为 LeftString 的方法或参数不匹配'],
         ['"123".LeftString("1")', 'undefined', 'string 没有名称为 LeftString 的方法或参数不匹配'],
-        ['IfNull(true)', 'undefined', ' 没有名称为 IfNull 的方法或参数不匹配'],
-        ['IfNull(false)', 'undefined', ' 没有名称为 IfNull 的方法或参数不匹配'],
-        ['IIf(true, false)', 'undefined', ' 没有名称为 IIf 的方法或参数不匹配'],
-        ['IfNull(P6)', 'undefined', ' 没有名称为 IfNull 的方法或参数不匹配'],
-        ['IfNull(Root().E2[0].P6)', 'undefined', ' 没有名称为 IfNull 的方法或参数不匹配'],
-        ['IIf(P6, Root().E2[0].P6)', 'undefined', ' 没有名称为 IIf 的方法或参数不匹配'],
+        ['IfNull(true)', 'undefined', '没有名称为 IfNull 的方法或参数不匹配'],
+        ['IfNull(false)', 'undefined', '没有名称为 IfNull 的方法或参数不匹配'],
+        ['IIf(true, false)', 'undefined', '没有名称为 IIf 的方法或参数不匹配'],
+        ['IfNull(P6)', 'undefined', '没有名称为 IfNull 的方法或参数不匹配'],
+        ['IfNull(Root().E2[0].P6)', 'undefined', '没有名称为 IfNull 的方法或参数不匹配'],
+        ['IIf(P6, Root().E2[0].P6)', 'undefined', '没有名称为 IIf 的方法或参数不匹配'],
     //调用
         ['IfNull("false",true)', '"false"'],
         ['IIf(true,"true",false)', '"true"'],
@@ -1314,11 +1314,11 @@ var exprErr = {
         ['ID.IfNull("")', 'undefined', 'number 没有名称为 IfNull 的方法或参数不匹配'],
         ['Root().E1[0].ID.Parent()', 'undefined', 'number 没有名称为 Parent 的方法或参数不匹配'],
         ['Root().E1.Parent()', 'undefined', 'array 没有名称为 Parent 的方法或参数不匹配'], //['Root().E1[0].Parent()'],
-        ['ToString()', 'undefined', ' 没有名称为 ToString 的方法或参数不匹配'],
+        ['ToString()', 'undefined', '没有名称为 ToString 的方法或参数不匹配'],
         ['true.Average()', 'undefined', 'boolean 没有名称为 Average 的方法或参数不匹配'],
     //拼写
         ['IIf', 'undefined', '属性不存在: IIf'],
-        ['iif(true, false)', 'undefined', ' 没有名称为 iif 的方法或参数不匹配'],
+        ['iif(true, false)', 'undefined', '没有名称为 iif 的方法或参数不匹配'],
     //其他
         ['(#∑)', 'undefined', '无法识别 #∑']
     ]

@@ -26,7 +26,7 @@ export default class Type {
         this.data = data;
         this.entity = entity || null;
         this.depends = depends || null;
-        this.errorMsg = errorMsg || "";
+        this.errorMsg = (errorMsg || "").trim();
     }
     // 生成类型对象
     public genType(type: ValueType, info?, data?, entity?, depends?, errorMsg?: string): Type {

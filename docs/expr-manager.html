@@ -4999,7 +4999,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         <span class="hljs-keyword">this</span>.data = data;
         <span class="hljs-keyword">this</span>.entity = entity || <span class="hljs-literal">null</span>;
         <span class="hljs-keyword">this</span>.depends = depends || <span class="hljs-literal">null</span>;
-        <span class="hljs-keyword">this</span>.errorMsg = errorMsg || <span class="hljs-string">""</span>;
+        <span class="hljs-keyword">this</span>.errorMsg = (errorMsg || <span class="hljs-string">""</span>).trim();
     }</pre></div></div>
             
         </li>
@@ -5609,7 +5609,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         }
         <span class="hljs-keyword">this</span>.value = value;
         <span class="hljs-keyword">this</span>.entity = entity || <span class="hljs-literal">null</span>;
-        <span class="hljs-keyword">this</span>.errorMsg = errorMsg || <span class="hljs-string">""</span>;
+        <span class="hljs-keyword">this</span>.errorMsg = (errorMsg || <span class="hljs-string">""</span>).trim();
         <span class="hljs-keyword">this</span>.parentObj = parentObj || <span class="hljs-literal">null</span>;
     }</pre></div></div>
             
@@ -7070,7 +7070,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             <span class="hljs-string">""</span>;
         <span class="hljs-keyword">var</span> ft = <span class="hljs-keyword">this</span>.getFuncType(t, name, paramType);
         <span class="hljs-keyword">if</span> (ft === <span class="hljs-literal">null</span>) {
-            r = <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EC_FUNC_T, t, name));
+            r = <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EC_FUNC_P, t, name));
         }
         <span class="hljs-keyword">else</span> {
             <span class="hljs-keyword">var</span> depends = [];
@@ -8753,7 +8753,6 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             
             <div class="content"><div class='highlight'><pre>    MSG_EC_FUNC_E: <span class="hljs-string">"只有实体对象才可以调用 {0} 方法"</span>,
     <span class="hljs-attr">MSG_EC_FUNC_P</span>: <span class="hljs-string">"{0} 没有名称为 {1} 的方法或参数不匹配"</span>,
-    <span class="hljs-attr">MSG_EC_FUNC_T</span>: <span class="hljs-string">"{0} 没有与名称为 {1} 的相匹配的方法"</span>,
     <span class="hljs-attr">MSG_EC_PROP_E</span>: <span class="hljs-string">"{0} 无法获取属性: {1}"</span>,
     <span class="hljs-attr">MSG_EC_PROP_N</span>: <span class="hljs-string">"属性不存在: {0}"</span>,
     <span class="hljs-attr">MSG_EC_VARI_I</span>: <span class="hljs-string">"参数索引不存在: {0}"</span>,

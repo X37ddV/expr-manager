@@ -4,34 +4,40 @@ describe("表达式测试", function () {
     for (var j = 0; j < window.demoExpr.length; j++) {
         var demo = window.demoExpr[j];
         for (var i = 0; i < demo.exprs.length; i++) {
-            var e = demo.exprs[i][0];
-            var k = demo.exprs[i][1]; // 预期值 undefined为不校验或校验为错误
-            var r = demo.exprs[i][2] || ""; // 错误
-            var d = demo.exprs[i][3] || ""; // 描述
-            var val = exprManager.calcExpr(e, "E1", window.dataCursor, {
-                FieldDisplayName: "",
-                FieldName: "",
-                FieldValue: "",
-            });
-            var v = val.toValue();
-            v = v === undefined ? "undefined" : window.JSON.stringify(v);
-            if (typeof k == "string") {
-                it(demo.title + " - " + j  + " - " + i + " - " + e, (function (k, v, r, errorMsg) {
-                    return function() {
-                        if (errorMsg) {
-                            expect(r).toEqual(errorMsg);
-                        } else {
-                            expect(v).toEqual(k);
-                        }
-                    }
-                })(k, v, r, val.errorMsg));
-            }
-            var valType = exprManager.calcDependencies(e, "E1");
-            it(demo.title + " - " + j  + " - " + i + " - " + e, (function (valType) {
+            var expr = demo.exprs[i][0] || ""; // 表达式
+            var exprExpectedValue = demo.exprs[i][1] || ""; // 预期值
+            var exprExpectedValueError = demo.exprs[i][2] || ""; // 预期值错误
+            var exprExpectedDepen = demo.exprs[i][3] || ""; // 预期依赖
+            var exprExpectedDepenError = demo.exprs[i][4] || ""; // 预期依赖错误
+            var itTitle = demo.title + "[" + j  + "-" + i + "]" + expr;
+            it("Value:" + itTitle, (function (expr, exprExpectedValue, exprExpectedValueError) {
                 return function() {
-                    // TODO: expect("").toEqual(valType.errorMsg);
+                    var val = exprManager.calcExpr(expr, "E1", window.dataCursor, {
+                        FieldDisplayName: "",
+                        FieldName: "",
+                        FieldValue: "",
+                    });
+                    var exprActualValue = window.JSON.stringify(val.toValue());
+                    var exprActualValueError = val.errorMsg;
+                    if (exprActualValueError) {
+                        expect(exprActualValueError).toEqual(exprExpectedValueError);
+                    } else {
+                        expect(exprActualValue).toEqual(exprExpectedValue);
+                    }
                 }
-            })(valType));
+            })(expr, exprExpectedValue, exprExpectedValueError));
+            it("Depen:" + itTitle, (function (expr, exprExpectedDepen, exprExpectedDepenError) {
+                return function() {
+                    var valType = exprManager.calcDependencies(expr, "E1");
+                    var exprActualDepen = (valType.dependencies && valType.dependencies.join("|")) || "";
+                    var exprActualDepenError = valType.errorMsg;
+                    if (exprActualDepenError) {
+                        // expect(exprActualDepenError).toEqual(exprExpectedDepenError);
+                    } else {
+                        // expect(exprActualDepen).toEqual(exprExpectedDepen);
+                    }
+                }
+            })(expr, exprExpectedDepen, exprExpectedDepenError));
         }
     }
 });
