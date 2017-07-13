@@ -27,7 +27,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <pre><code>expr-manager.js <span class="hljs-number">0.1</span><span class="hljs-number">.8</span>
+              <pre><code>expr-manager.js <span class="hljs-number">0.1</span><span class="hljs-number">.9</span>
 https:<span class="hljs-comment">//github.com/X37ddV/expr-manager</span>
 (c) <span class="hljs-number">2016</span><span class="hljs-number">-2017</span> X37ddV
 Released under the MIT License.
@@ -7228,18 +7228,9 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                 <span class="hljs-keyword">else</span> {
                     <span class="hljs-keyword">if</span> (source.entity) {
                         entity = <span class="hljs-keyword">this</span>.genEntityInfo(<span class="hljs-keyword">this</span>.getPropertyName(source.entity.fullName, name));
-                        <span class="hljs-keyword">if</span> (entity) {
-                            type = entity.type;
-                        }
-                        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (source.entity.type === <span class="hljs-string">"object"</span> &amp;&amp; source.entity.field !== <span class="hljs-string">""</span>) {
-                            type = <span class="hljs-string">"undefined"</span>;
-                        }
-                        <span class="hljs-keyword">else</span> {
-                            r = <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EC_PROP_N, name));
-                        }
+                        type = entity ? entity.type : <span class="hljs-string">"undefined"</span>;
                     }
                     <span class="hljs-keyword">else</span> {
-                        entity = <span class="hljs-literal">null</span>;
                         type = <span class="hljs-string">"undefined"</span>;
                     }
                 }

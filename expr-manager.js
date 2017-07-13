@@ -1,4 +1,4 @@
-//     expr-manager.js 0.1.8
+//     expr-manager.js 0.1.9
 //     https://github.com/X37ddV/expr-manager
 //     (c) 2016-2017 X37ddV
 //     Released under the MIT License.
@@ -3621,18 +3621,9 @@ var ExprContext = (function (_super) {
                 else {
                     if (source.entity) {
                         entity = this.genEntityInfo(this.getPropertyName(source.entity.fullName, name));
-                        if (entity) {
-                            type = entity.type;
-                        }
-                        else if (source.entity.type === "object" && source.entity.field !== "") {
-                            type = "undefined";
-                        }
-                        else {
-                            r = this.genErrorType(format(locale.getLocale().MSG_EC_PROP_N, name));
-                        }
+                        type = entity ? entity.type : "undefined";
                     }
                     else {
-                        entity = null;
                         type = "undefined";
                     }
                 }

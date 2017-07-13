@@ -8,9 +8,9 @@ describe("表达式测试", function () {
             var exprExpectedValue = demo.exprs[i][1] || ""; // 预期值
             var exprExpectedValueError = demo.exprs[i][2] || ""; // 预期值错误
             var exprExpectedDepen = demo.exprs[i][3] || ""; // 预期依赖
-            var exprExpectedDepenError = demo.exprs[i][4] || ""; // 预期依赖错误
-            var itTitle = demo.title + "[" + j  + "-" + i + "]" + expr;
-            it("Value:" + itTitle, (function (expr, exprExpectedValue, exprExpectedValueError) {
+            var exprExpectedDepenError = demo.exprs[i][4] || exprExpectedValueError; // 预期依赖错误
+            var itTitle = "[" + j  + "-" + i + "]:" + demo.title + ":" + expr;
+            it("Value" + itTitle, (function (expr, exprExpectedValue, exprExpectedValueError) {
                 return function() {
                     var val = exprManager.calcExpr(expr, "E1", window.dataCursor, {
                         FieldDisplayName: "",
@@ -26,15 +26,15 @@ describe("表达式测试", function () {
                     }
                 }
             })(expr, exprExpectedValue, exprExpectedValueError));
-            it("Depen:" + itTitle, (function (expr, exprExpectedDepen, exprExpectedDepenError) {
+            it("Depen" + itTitle, (function (expr, exprExpectedDepen, exprExpectedDepenError) {
                 return function() {
                     var valType = exprManager.calcDependencies(expr, "E1");
                     var exprActualDepen = (valType.dependencies && valType.dependencies.join("|")) || "";
                     var exprActualDepenError = valType.errorMsg;
                     if (exprActualDepenError) {
-                        // expect(exprActualDepenError).toEqual(exprExpectedDepenError);
+                        expect(exprActualDepenError).toEqual(exprExpectedDepenError);
                     } else {
-                        // expect(exprActualDepen).toEqual(exprExpectedDepen);
+                        expect(exprActualDepen).toEqual(exprExpectedDepen);
                     }
                 }
             })(expr, exprExpectedDepen, exprExpectedDepenError));
