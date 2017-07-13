@@ -1,15 +1,15 @@
 describe("表达式测试", function () {
     var exprManager = new window.ExprManager();
     exprManager.init(window.data, window.dataContext, window.context);
-    for (var j = 0; j < window.demoExpr.length; j++) {
-        var demo = window.demoExpr[j];
-        for (var i = 0; i < demo.exprs.length; i++) {
-            var expr = demo.exprs[i][0] || ""; // 表达式
-            var exprExpectedValue = demo.exprs[i][1] || ""; // 预期值
-            var exprExpectedValueError = demo.exprs[i][2] || ""; // 预期值错误
-            var exprExpectedDepen = demo.exprs[i][3] || ""; // 预期依赖
-            var exprExpectedDepenError = demo.exprs[i][4] || exprExpectedValueError; // 预期依赖错误
-            var itTitle = "[" + j  + "-" + i + "]:" + demo.title + ":" + expr;
+    for (var i = 0; i < window.demoExpr.length; i++) {
+        var demo = window.demoExpr[i];
+        for (var j = 0; j < demo.exprs.length; j++) {
+            var expr = demo.exprs[j][0] || ""; // 表达式
+            var exprExpectedValue = demo.exprs[j][1] || ""; // 预期值
+            var exprExpectedValueError = demo.exprs[j][2] || ""; // 预期值错误
+            var exprExpectedDepen = demo.exprs[j][3] || ""; // 预期依赖
+            var exprExpectedDepenError = demo.exprs[j][4] || exprExpectedValueError; // 预期依赖错误
+            var itTitle = "[" + i  + "-" + j + "]:" + demo.title + ":" + expr;
             it("Value" + itTitle, (function (expr, exprExpectedValue, exprExpectedValueError) {
                 return function() {
                     var val = exprManager.calcExpr(expr, "E1", window.dataCursor, {

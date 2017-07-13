@@ -44,6 +44,7 @@ var cmpORoot = '{"E1":[' + cmpOE1_0 + ',' + cmpOE1_1 + '],"E2":[' + cmpOE2 + ']}
 var exprDataCalc = {
     title: "DataCalc基于实体",
     exprs: [
+        ['$C.userId + ""', '"admin"'],
     //子实体、实体，单条数据
         ['Entity1.ID', 'undefined', 'array 无法做属性访问操作', 'E1.Entity1.ID'], // TODO: 计算错误？
         ['Root().E1[0]', cmpOE1_0, '', 'E1'],
@@ -668,7 +669,9 @@ var exprNumber = {
         ['0.1.ToRMB(true, false)', '"一角"'],
         ['0.1.ToRMB(true, true)', '"壹角"'],
         ['0.1.ToRMB(false, true)', '"零点壹"'],
-        ['100002345.ToRMB()', '"壹亿零贰仟叁佰肆拾伍元整"']
+        ['100002345.ToRMB()', '"壹亿零贰仟叁佰肆拾伍元整"'],
+        ['123.ToRMB(false, false)', '"一百二十三"'],
+        ['00002010.00100.ToRMB()', '"贰仟零壹拾元零壹厘"']
     ]
 };
 var exprDate = {
@@ -1128,7 +1131,8 @@ var exprArray = {
         ['[].Where("")', '[]', '', '', '表达式不能为空'], // TODO: 子表达式不能为空？
         ['[1, 2].Distinct("$1")', 'undefined', '参数不存在: $1'],
         ['[1,2].Max()', '2'],
-        ['[2,1].Max()', '2']
+        ['[2,1].Max()', '2'],
+        ['[1]+[2]', '[1,2]']
     ]
 };
 var exprNull = {
@@ -1324,21 +1328,27 @@ var exprErr = {
     ]
 };
 
-var exprTemp = {
-    title: "覆盖测试",
+var exprFunction = {
+    title: "跟函数测试",
     exprs: [
        ['PropValue([{name:1},{name:2}], "name", "|")', '"1|2"'],
        ['PropValue([{name:1},{name:2}], "name")', '1'],
        ['PropValue([{name:1},{name:2}], "type")', 'null'],
-       ['123.ToRMB(false, false)', '"一百二十三"'],
-       ['00002010.00100.ToRMB()', '"贰仟零壹拾元零壹厘"'],
        ['FieldName()', '""'],
        ['FieldValue()', '""'],
        ['FieldDisplayName()', '""'],
-       ['$C.userId + ""', '"admin"'],
-       ['[1]+[2]', '[1,2]'],
        ['Random() >= 0 && Random() <= 1', 'true']
     ]
 };
 
-window.demoExpr = [exprDataCalc, exprOperator, exprString, exprNumber, exprDate, exprBoolean, exprObject, exprArray, exprNull, exprErr, exprTemp];
+window.demoExpr = [exprDataCalc, exprOperator, exprString, exprNumber, exprDate, exprBoolean, exprObject, exprArray, exprNull, exprErr, exprFunction];
+
+// var exprTemp = {
+//     title: "临时测试",
+//     exprs: [
+//        ['Entity1.ID', 'undefined', 'array 无法做属性访问操作', 'E1.Entity1.ID']
+//     ]
+// };
+
+// window.demoExpr = [exprTemp];
+
