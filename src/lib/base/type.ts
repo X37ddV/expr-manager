@@ -112,7 +112,7 @@ export default class Type {
         } else if ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
             (et.type === "number" || et.type === "undefined")) {
             t = (et.hasData() && (et.data === "null" || et.type === "number" && Number(et.data) === 0)) ?
-                this.genErrorType(format(locale.getLocale().MSG_EX_DIVIDE_N, et.info)) :
+                this.genErrorType(format(locale.getLocale().MSG_EX_DIVIDE_N, et.data)) :
                 this.genType("number");
         } else {
             t = this.genErrorType(format(locale.getLocale().MSG_EX_DIVIDE, this.type, et.type));
@@ -127,7 +127,7 @@ export default class Type {
         } else if ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
             (et.type === "number" || et.type === "undefined")) {
             t = (et.hasData() && (et.data === "null" || et.type === "number" && Number(et.data) === 0)) ?
-                this.genErrorType(format(locale.getLocale().MSG_EX_REMAINDER_N, et.info)) :
+                this.genErrorType(format(locale.getLocale().MSG_EX_REMAINDER_N, et.data)) :
                 this.genType("number");
         } else {
             t = this.genErrorType(format(locale.getLocale().MSG_EX_REMAINDER, this.type, et.type));

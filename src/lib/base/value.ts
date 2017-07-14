@@ -292,7 +292,7 @@ export default class Value {
                 this.genValue(false, "boolean") :
                 this.genErrorValue(format(locale.getLocale().MSG_EX_AND_L, this.type));
         } else {
-            v = (this.type === "boolean" && (ev.type === "boolean" || ev.type === "null")) ?
+            v = ((this.type === "boolean" || this.type === "null") && (ev.type === "boolean" || ev.type === "null")) ?
                 this.genValue(!!(this.value && ev.value), "boolean") :
                 this.genErrorValue(format(locale.getLocale().MSG_EX_AND, this.type, ev.type));
         }

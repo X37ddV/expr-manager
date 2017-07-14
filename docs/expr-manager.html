@@ -7682,9 +7682,14 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             }
             <span class="hljs-keyword">if</span> (!r) {
                 entity = <span class="hljs-keyword">this</span>.genEntityInfo(<span class="hljs-keyword">this</span>.getParentName(entity), <span class="hljs-string">"object"</span>);
-                entity.recNo = <span class="hljs-keyword">this</span>.exprContext.getEntityDataCursor(entity.name);
-                <span class="hljs-keyword">var</span> value = <span class="hljs-keyword">this</span>.getEntityData(entity.name);
-                r = <span class="hljs-keyword">this</span>.genValue(value, <span class="hljs-literal">undefined</span>, entity);
+                <span class="hljs-keyword">if</span> (entity.name) {
+                    entity.recNo = <span class="hljs-keyword">this</span>.exprContext.getEntityDataCursor(entity.name);
+                    <span class="hljs-keyword">var</span> value = <span class="hljs-keyword">this</span>.getEntityData(entity.name);
+                    r = <span class="hljs-keyword">this</span>.genValue(value, <span class="hljs-literal">undefined</span>, entity);
+                }
+                <span class="hljs-keyword">else</span> {
+                    r = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EC_FUNC_R, <span class="hljs-string">"Parent"</span>));
+                }
             }
         }
         <span class="hljs-keyword">else</span> {

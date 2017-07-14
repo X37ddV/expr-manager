@@ -434,19 +434,23 @@ export default class ExprContext extends Context {
             if (source === null) { /// Parent()
                 entity = this.exprContext.getEntityName();
             } else if (source.entity && source.entity.field === "") {
-                if (source.parentObj) { /// Root().Parent() , Entity1[1].NewEntity1[2].Parent()
-                    r = source.parentObj;
-                } else { /// Root().E1.Sum("Entity1[0].Parent().ID")
-                    entity = source.entity.fullName;
+                if (source.parentObj && this.getParentName(source.entity.fullName)) {
+                    r = source.parentObj; /// Entity1[1].NewEntity1[2].Parent()
+                } else {
+                    entity = source.entity.fullName; /// Root().E1.Sum("Entity1[0].Parent().ID")
                 }
             } else { /// {x:1}.Parent()
                 r = this.genErrorValue(format(locale.getLocale().MSG_EC_FUNC_E, "Parent"));
             }
             if (!r) {
                 entity = this.genEntityInfo(this.getParentName(entity), "object");
-                entity.recNo = this.exprContext.getEntityDataCursor(entity.name);
-                const value = this.getEntityData(entity.name); /// 取父实体对象
-                r = this.genValue(value, undefined, entity);
+                if (entity.name) {
+                    entity.recNo = this.exprContext.getEntityDataCursor(entity.name);
+                    const value = this.getEntityData(entity.name); /// 取父实体对象
+                    r = this.genValue(value, undefined, entity);
+                } else {
+                    r = this.genErrorValue(format(locale.getLocale().MSG_EC_FUNC_R, "Parent"));
+                }
             }
         } else {
             r = this.genValue(null);

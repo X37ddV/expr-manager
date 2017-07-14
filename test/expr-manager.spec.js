@@ -67,7 +67,7 @@ describe("依赖关系测试", function () {
                 for (var p = 0; p < list.length; p++) {
                     pList.push(list[p].fullName);
                 }
-                it(demoDepend.title, (function(pList, c){
+                it(demoDepend.title, (function(pList, c) {
                     return function () {
                         expect(pList.join("|")).toEqual(c.r);
                     }

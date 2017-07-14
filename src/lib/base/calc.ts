@@ -51,8 +51,9 @@ export default class Calc {
                         break;
                     } else if (isIIf && !lv.toValue()) { /// IIf函数的第一个参数为false，跳过第二个参数，直接计算第三个参数
                         i++;
-                    } else if (t.tokenType === "TK_OR" && !!lv.toValue() === true ||
-                        t.tokenType === "TK_AND" && !!lv.toValue() === false) { /// &&、|| 左运算数已经能判断结果，右运算数不再计算
+                    } else if (t.tokenType === "TK_OR" && lv.toValue() === true ||
+                        t.tokenType === "TK_AND" &&
+                        (lv.toValue() === false || lv.type === "null")) { /// &&、|| 左运算数已经能判断结果，右运算数不再计算
                         break;
                     }
                 } else if (i === 1) { /// 第二个子节点计算正确

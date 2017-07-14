@@ -1354,8 +1354,9 @@ var Calc = (function () {
                     else if (isIIf && !lv.toValue()) {
                         i++;
                     }
-                    else if (t.tokenType === "TK_OR" && !!lv.toValue() === true ||
-                        t.tokenType === "TK_AND" && !!lv.toValue() === false) {
+                    else if (t.tokenType === "TK_OR" && lv.toValue() === true ||
+                        t.tokenType === "TK_AND" &&
+                            (lv.toValue() === false || lv.type === "null")) {
                         break;
                     }
                 }
@@ -2656,7 +2657,7 @@ var Type = (function () {
         else if ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
             (et.type === "number" || et.type === "undefined")) {
             t = (et.hasData() && (et.data === "null" || et.type === "number" && Number(et.data) === 0)) ?
-                this.genErrorType(format(locale.getLocale().MSG_EX_DIVIDE_N, et.info)) :
+                this.genErrorType(format(locale.getLocale().MSG_EX_DIVIDE_N, et.data)) :
                 this.genType("number");
         }
         else {
@@ -2673,7 +2674,7 @@ var Type = (function () {
         else if ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
             (et.type === "number" || et.type === "undefined")) {
             t = (et.hasData() && (et.data === "null" || et.type === "number" && Number(et.data) === 0)) ?
-                this.genErrorType(format(locale.getLocale().MSG_EX_REMAINDER_N, et.info)) :
+                this.genErrorType(format(locale.getLocale().MSG_EX_REMAINDER_N, et.data)) :
                 this.genType("number");
         }
         else {
@@ -3152,7 +3153,7 @@ var Value = (function () {
                 this.genErrorValue(format(locale.getLocale().MSG_EX_AND_L, this.type));
         }
         else {
-            v = (this.type === "boolean" && (ev.type === "boolean" || ev.type === "null")) ?
+            v = ((this.type === "boolean" || this.type === "null") && (ev.type === "boolean" || ev.type === "null")) ?
                 this.genValue(!!(this.value && ev.value), "boolean") :
                 this.genErrorValue(format(locale.getLocale().MSG_EX_AND, this.type, ev.type));
         }
@@ -3881,7 +3882,7 @@ var ExprContext = (function (_super) {
                 entity = this.exprContext.getEntityName();
             }
             else if (source.entity && source.entity.field === "") {
-                if (source.parentObj) {
+                if (source.parentObj && this.getParentName(source.entity.fullName)) {
                     r = source.parentObj;
                 }
                 else {
@@ -3893,9 +3894,14 @@ var ExprContext = (function (_super) {
             }
             if (!r) {
                 entity = this.genEntityInfo(this.getParentName(entity), "object");
-                entity.recNo = this.exprContext.getEntityDataCursor(entity.name);
-                var value = this.getEntityData(entity.name);
-                r = this.genValue(value, undefined, entity);
+                if (entity.name) {
+                    entity.recNo = this.exprContext.getEntityDataCursor(entity.name);
+                    var value = this.getEntityData(entity.name);
+                    r = this.genValue(value, undefined, entity);
+                }
+                else {
+                    r = this.genErrorValue(format(locale.getLocale().MSG_EC_FUNC_R, "Parent"));
+                }
             }
         }
         else {
@@ -4573,7 +4579,7 @@ locale.defineLocale("zh-cn", {
     MSG_EX_OR_L: "{0} 无法做逻辑或运算的左运算数",
     MSG_EX_POSITIVE: "{0} 无法做一元正数运算",
     MSG_EX_REMAINDER: "{0} 和 {1} 无法做余数运算",
-    MSG_EX_REMAINDER_N: "{0} 不能作为除数使用",
+    MSG_EX_REMAINDER_N: "{0} 不能作为余数使用",
     MSG_EX_ROUND: "做四舍五入运算时，保留小数位数不能为负数: {0}",
     MSG_EX_SUBSCRIPT: "{0} 无法做下标操作",
     MSG_EX_SUBSCRIPT_T: "下标必须为数字: {0}",
