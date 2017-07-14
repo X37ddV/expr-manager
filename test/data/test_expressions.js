@@ -92,67 +92,67 @@ var exprDataCalc = {
         ['IfNull(Entity1[0])', 'undefined', '没有名称为 IfNull 的方法或参数不匹配'],
         ['IfNull(Entity1[0].Parent())', 'undefined', '没有名称为 IfNull 的方法或参数不匹配'],
         ['IIf(Entity1[0], Entity1[0].Parent())', 'undefined', '没有名称为 IIf 的方法或参数不匹配'],
-        ['Entity1[0].Parent().Parent()', cmpORoot, '', 'E1.Entity1|'], // TODO: 依赖关系错误
+        ['Entity1[0].Parent().Parent()', cmpORoot, '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常
         ['Root().E1[1].Entity1[0].Parent()', cmpOE1_1, '', 'E1|E1.Entity1'],
-        ['Root().E1[0].Parent()', cmpORoot, '', 'E1|'], // TODO: 依赖关系错误
-        ['Root().E1[0].Parent().Parent().Parent()', cmpORoot, '', 'E1|'], // TODO: 依赖关系错误
-        ['Root().E1[0].Parent().E1', cmpAE1, '', 'E1'],
-        ['Root().E1[0].Parent().E1[0]', cmpOE1_0, '', 'E1'],
-        ['Parent().E2[0].Entity1[0].Parent()', cmpOE2, '', 'E2|E2.Entity1'],
-        ['Parent().E2[0].RecNo()', '0', '', 'E2'],
-        ['Parent().E2[0].Entity1[7].RecNo()', '7', '', 'E2|E2.Entity1'],
-        ['Parent().E2[0].Entity1.Where("RecNo()==3")[0].ID', '204', '', 'E2|E2.Entity1|E2.Entity1.ID'],
+        ['Root().E1[0].Parent()', cmpORoot, '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常
+        ['Root().E1[0].Parent().Parent().Parent()', cmpORoot, '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常
+        ['Root().E1[0].Parent().E1', cmpAE1, '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常
+        ['Root().E1[0].Parent().E1[0]', cmpOE1_0, '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常
+        ['Parent().E2[0].Entity1[0].Parent()', cmpOE2, '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常
+        ['Parent().E2[0].RecNo()', '0', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常
+        ['Parent().E2[0].Entity1[7].RecNo()', '7', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常
+        ['Parent().E2[0].Entity1.Where("RecNo()==3")[0].ID', '204', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
         ['{"ID":101,"P1":30,"P2":12.95}.RecNo()', 'undefined', '只有实体对象才可以调用 RecNo 方法'], // TODO: 错误信息不一致
         ['Root().E1[RecNo()].P1', '"E1的第1条数据"', '', 'E1|E1.P1'],
         ['Entity1[0].Parent().RecNo()', '0', '', 'E1.Entity1|E1'],
     //
-        ['Parent().E1[0].ID + Parent().E2[0].ID', '32', '', 'E1|E1.ID|E2|E2.ID'],
-        ['Parent().E1[0].Entity1[2].ID', '103', '', 'E1|E1.Entity1|E1.Entity1.ID'],
-        ['Parent().E2[0].Entity1[2].P2', '12.23', '', 'E2|E2.Entity1|E2.Entity1.P2'],
-        ['Parent().E1[0].Entity1[2].ID + Parent().E2[0].Entity1[2].P2', '115.23', '', 'E1|E1.Entity1|E1.Entity1.ID|E2|E2.Entity1|E2.Entity1.P2'],
-        ['Parent().E1[0].Entity1[2].ID - Parent().E2[0].Entity1[2].P2', '90.77', '', 'E1|E1.Entity1|E1.Entity1.ID|E2|E2.Entity1|E2.Entity1.P2'],
-        ['Parent().E1[0].Entity1[2].ID * Parent().E2[0].Entity1[2].P2', '1259.69', '', 'E1|E1.Entity1|E1.Entity1.ID|E2|E2.Entity1|E2.Entity1.P2'],
-        ['Parent().E1[0].Entity1[2].ID / Parent().E2[0].Entity1[2].P2', '8.421913327882256', '', 'E1|E1.Entity1|E1.Entity1.ID|E2|E2.Entity1|E2.Entity1.P2'],
+        ['Parent().E1[0].ID + Parent().E2[0].ID', '32', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
+        ['Parent().E1[0].Entity1[2].ID', '103', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
+        ['Parent().E2[0].Entity1[2].P2', '12.23', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
+        ['Parent().E1[0].Entity1[2].ID + Parent().E2[0].Entity1[2].P2', '115.23', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
+        ['Parent().E1[0].Entity1[2].ID - Parent().E2[0].Entity1[2].P2', '90.77', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
+        ['Parent().E1[0].Entity1[2].ID * Parent().E2[0].Entity1[2].P2', '1259.69', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
+        ['Parent().E1[0].Entity1[2].ID / Parent().E2[0].Entity1[2].P2', '8.421913327882256', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
     //子实体、实体，多条数据
         ['Root().E1', cmpAE1, '', 'E1'],
         ['Entity1', cmpAE1Entity1, '', 'E1.Entity1'],
         ['Root().E2', cmpAE2, '', 'E2'],
-        ['Entity2[0].Parent().Parent().E2[0].Entity1', cmpAE2Entity1, '', 'E1.Entity2|E2|E2.Entity1'],
+        ['Entity2[0].Parent().Parent().E2[0].Entity1', cmpAE2Entity1, '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
         ['Root().E2', cmpAE2, '', 'E2'],
         ['!Root().E2', 'false', '', 'E2'],
         ['!!Root().E2', 'true', '', 'E2'],
         ['+Root().E2', 'undefined', 'array 无法做一元正数运算'],
         ['-Root().E2', 'undefined', 'array 无法做一元负数运算'],
-        ['Entity2[0].Parent().Parent().E2[0].Entity1*Root().E2', 'undefined', 'array 和 array 无法做乘法运算'],
-        ['Entity2[0].Parent().Parent().E2[0].Entity1/Root().E2', 'undefined', 'array 和 array 无法做除法运算'],
-        ['Entity2[0].Parent().Parent().E2[0].Entity1%Root().E2', 'undefined', 'array 和 array 无法做余数运算'],
+        ['Entity2[0].Parent().Parent().E2[0].Entity1*Root().E2', 'undefined', 'array 和 array 无法做乘法运算', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
+        ['Entity2[0].Parent().Parent().E2[0].Entity1/Root().E2', 'undefined', 'array 和 array 无法做除法运算', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
+        ['Entity2[0].Parent().Parent().E2[0].Entity1%Root().E2', 'undefined', 'array 和 array 无法做余数运算', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
         ['Root().E2/Entity1', 'undefined', 'array 和 array 无法做除法运算'],
         ['Root().E2%Entity1', 'undefined', 'array 和 array 无法做余数运算'],
-        ['Entity2[0].Parent().Parent().E2[0].Entity1+Root().E2', '[' + cmpOAE2Entity1 + ',' + cmpOE2 + ']', '', 'E1.Entity2|E2|E2.Entity1'],
-        ['Entity2[0].Parent().Parent().E2[0].Entity1+Entity2[0].Parent().Parent().E2[0].Entity1', '[' + cmpOAE2Entity1 + ',' + cmpOAE2Entity1 + ']', '', 'E1.Entity2|E2|E2.Entity1'],
-        ['Entity2[0].Parent().Parent().E2[0].Entity1-Root().E2', cmpAE2Entity1, '', 'E1.Entity2|E2|E2.Entity1'],
-        ['Entity2[0].Parent().Parent().E2[0].Entity1-Entity2[0].Parent().Parent().E2[0].Entity1', '[]', '', 'E1.Entity2|E2|E2.Entity1'],
-        ['Entity2[0].Parent().Parent().E2[0].Entity1-[{"ID":202,"P1":"E2[0].Entity1的第2条数据","P2":8.01},{"ID":203,"P1":"E2[0].Entity1的第3条数据","P2":12.23},{"ID":204,"P1":"E2[0].Entity1的第4条数据","P2":12.23},{"ID":205,"P1":"E2[0].Entity1的第5条数据","P2":12.23},{"ID":206,"P1":"E2[0].Entity1的第6条数据","P2":12.23},{"ID":207,"P1":"E2[0].Entity1的第7条数据","P2":12.23}]', '[{"ID":201,"P1":"E2[0].Entity1的第1条数据","P2":12.23},{"ID":208,"P1":"E2[0].Entity1的第8条数据","P2":12.23}]', '', 'E1.Entity2|E2|E2.Entity1'],
-        ['Entity2[0].Parent().Parent().E2[0].Entity1>Root().E2', 'undefined', 'array 和 array 无法做大于运算'],
-        ['Entity2[0].Parent().Parent().E2[0].Entity1>=Root().E2', 'undefined', 'array 和 array 无法做大于等于运算'],
-        ['Entity2[0].Parent().Parent().E2[0].Entity1<Root().E2', 'undefined', 'array 和 array 无法做小于运算'],
-        ['Entity2[0].Parent().Parent().E2[0].Entity1<=Root().E2', 'undefined', 'array 和 array 无法做小于等于运算'],
-        ['Entity2[0].Parent().Parent().E2[0].Entity1==Root().E2', 'false', '', 'E1.Entity2|E2|E2.Entity1'],
-        ['Entity2[0].Parent().Parent().E2[0].Entity1==Entity2[0].Parent().Parent().E2[0].Entity1', 'true', '', 'E1.Entity2|E2|E2.Entity1'],
-        ['Entity2[0].Parent().Parent().E2[0].Entity1!=Root().E2', 'true', '', 'E1.Entity2|E2|E2.Entity1'],
-        ['Entity2[0].Parent().Parent().E2[0].Entity1!=Entity2[0].Parent().Parent().E2[0].Entity1', 'false', '', 'E1.Entity2|E2|E2.Entity1'],
-        ['Entity2[0].Parent().Parent().E2[0].Entity1&&Root().E2', 'undefined', 'array 和 array 无法做逻辑与运算'],
-        ['Entity2[0].Parent().Parent().E2[0].Entity1||Root().E2', 'undefined', 'array 无法做逻辑或运算的左运算数', '', 'array 和 array 无法做逻辑或运算'], // TODO: 错误信息不一致
+        ['Entity2[0].Parent().Parent().E2[0].Entity1+Root().E2', '[' + cmpOAE2Entity1 + ',' + cmpOE2 + ']', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
+        ['Entity2[0].Parent().Parent().E2[0].Entity1+Entity2[0].Parent().Parent().E2[0].Entity1', '[' + cmpOAE2Entity1 + ',' + cmpOAE2Entity1 + ']', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
+        ['Entity2[0].Parent().Parent().E2[0].Entity1-Root().E2', cmpAE2Entity1, '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
+        ['Entity2[0].Parent().Parent().E2[0].Entity1-Entity2[0].Parent().Parent().E2[0].Entity1', '[]', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
+        ['Entity2[0].Parent().Parent().E2[0].Entity1-[{"ID":202,"P1":"E2[0].Entity1的第2条数据","P2":8.01},{"ID":203,"P1":"E2[0].Entity1的第3条数据","P2":12.23},{"ID":204,"P1":"E2[0].Entity1的第4条数据","P2":12.23},{"ID":205,"P1":"E2[0].Entity1的第5条数据","P2":12.23},{"ID":206,"P1":"E2[0].Entity1的第6条数据","P2":12.23},{"ID":207,"P1":"E2[0].Entity1的第7条数据","P2":12.23}]', '[{"ID":201,"P1":"E2[0].Entity1的第1条数据","P2":12.23},{"ID":208,"P1":"E2[0].Entity1的第8条数据","P2":12.23}]', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
+        ['Entity2[0].Parent().Parent().E2[0].Entity1>Root().E2', 'undefined', 'array 和 array 无法做大于运算', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
+        ['Entity2[0].Parent().Parent().E2[0].Entity1>=Root().E2', 'undefined', 'array 和 array 无法做大于等于运算', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
+        ['Entity2[0].Parent().Parent().E2[0].Entity1<Root().E2', 'undefined', 'array 和 array 无法做小于运算', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
+        ['Entity2[0].Parent().Parent().E2[0].Entity1<=Root().E2', 'undefined', 'array 和 array 无法做小于等于运算', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
+        ['Entity2[0].Parent().Parent().E2[0].Entity1==Root().E2', 'false', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
+        ['Entity2[0].Parent().Parent().E2[0].Entity1==Entity2[0].Parent().Parent().E2[0].Entity1', 'true', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
+        ['Entity2[0].Parent().Parent().E2[0].Entity1!=Root().E2', 'true', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
+        ['Entity2[0].Parent().Parent().E2[0].Entity1!=Entity2[0].Parent().Parent().E2[0].Entity1', 'false', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
+        ['Entity2[0].Parent().Parent().E2[0].Entity1&&Root().E2', 'undefined', 'array 和 array 无法做逻辑与运算', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
+        ['Entity2[0].Parent().Parent().E2[0].Entity1||Root().E2', 'undefined', 'array 无法做逻辑或运算的左运算数', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
         ['{Entity2[0].Parent().Parent().E2[0].Entity1:Root().E2}', 'undefined', ': 前不允许表达式存在', '', ': 前不允许表达式存在'],
-        ['{a:Entity2[0].Parent().Parent().E2[0].Entity1,b:Root().E2,c:Root().E2}', '{"a":' + cmpAE2Entity1 + ',"b":' + cmpAE2 + ',"c":' + cmpAE2 + '}', '', 'E1.Entity2|E2|E2.Entity1'],
+        ['{a:Entity2[0].Parent().Parent().E2[0].Entity1,b:Root().E2,c:Root().E2}', '{"a":' + cmpAE2Entity1 + ',"b":' + cmpAE2 + ',"c":' + cmpAE2 + '}', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
         ['\'Root().E2\'', '"Root().E2"', ''],
         ['\'Entity2[0].Parent().Parent().E2[0].Entity1&&Root().E2\'', '"Entity2[0].Parent().Parent().E2[0].Entity1&&Root().E2"', ''],
-        ['Entity2[0].Parent().Parent().E2[0].Entity1.ToString()', 'undefined', 'array 没有名称为 ToString 的方法或参数不匹配'],
+        ['Entity2[0].Parent().Parent().E2[0].Entity1.ToString()', 'undefined', 'array 没有名称为 ToString 的方法或参数不匹配', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
         ['Root().E2.ToString()', 'undefined', 'array 没有名称为 ToString 的方法或参数不匹配'],
-        ['IfNull(null,Entity2[0].Parent().Parent().E2[0].Entity1)', cmpAE2Entity1, '', 'E1.Entity2|E2|E2.Entity1'],
-        ['IfNull(Root().E2,Entity2[0].Parent().Parent().E2[0].Entity1)', cmpAE2, '', 'E2|E1.Entity2|E2.Entity1'],
-        ['IIf(true,Entity2[0].Parent().Parent().E2[0].Entity1, Root().E2)', cmpAE2Entity1, '', 'E1.Entity2|E2|E2.Entity1'],
-        ['IIf(false,Entity2[0].Parent().Parent().E2[0].Entity1, Root().E2)', cmpAE2, '', 'E1.Entity2|E2|E2.Entity1'],
+        ['IfNull(null,Entity2[0].Parent().Parent().E2[0].Entity1)', cmpAE2Entity1, '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
+        ['IfNull(Root().E2,Entity2[0].Parent().Parent().E2[0].Entity1)', cmpAE2, '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
+        ['IIf(true,Entity2[0].Parent().Parent().E2[0].Entity1, Root().E2)', cmpAE2Entity1, '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
+        ['IIf(false,Entity2[0].Parent().Parent().E2[0].Entity1, Root().E2)', cmpAE2, '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常],
         ['ID.Parent()', 'undefined', 'number 没有名称为 Parent 的方法或参数不匹配'],
         ['Entity1.Parent()', 'undefined', 'array 没有名称为 Parent 的方法或参数不匹配'],
         ['Entity1.Count()', '3', '', 'E1.Entity1'],
@@ -178,7 +178,7 @@ var exprDataCalc = {
         ['Entity1.Max("ID")', '103', '', 'E1.Entity1|E1.Entity1.ID'],
         ['Entity1.Max("$0.ID")', '103', '', 'E1.Entity1|E1.Entity1.ID'],
         ['Entity1.Max()', 'undefined', 'object 和 object 无法做大于运算', 'E1.Entity1'], // TODO: 需要确认是否为运行时错误
-        ['Entity1.Min("Parent().Parent().E1[0].Entity1[2].ID + Parent().Parent().E2[0].Entity1[2].P2")', '115.23', '', 'E1.Entity1|E1|E1.Entity1.ID|E2|E2.Entity1|E2.Entity1.P2'],
+        ['Entity1.Min("Parent().Parent().E1[0].Entity1[2].ID + Parent().Parent().E2[0].Entity1[2].P2")', '115.23', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常
         ['Entity1.Min("ID + P1")', 'undefined', 'number 和 string 无法做加法运算', 'E1.Entity1|E1.Entity1.ID|E1.Entity1.P1'], // TODO: 需要确认是否为运行时错误
         ['Entity1.Min("ID + Root().E2[0].Entity1[0].P2")', '113.23', '', 'E1.Entity1|E1.Entity1.ID|E2|E2.Entity1|E2.Entity1.P2'],
         ['Entity1.Min("Root().E1[0].Entity1[2].ID")', '103', '', 'E1.Entity1|E1|E1.Entity1.ID'],
@@ -376,7 +376,7 @@ var exprString = {
         ['"asdf".RightString(5)', '"asdf"'],
     //实体
         ['P1', '"E1的第1条数据"', '', 'E1.P1'],
-        ['Parent().E2[0].P1', '"E2的第1条数据"', '', 'E2|E2.P1'],
+        ['Parent().E2[0].P1', '"E2的第1条数据"', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常
         ['+P1', 'undefined', 'string 无法做一元正数运算'],
         ['-P1', 'undefined', 'string 无法做一元负数运算'],
         ['!P1', 'false', '', 'E1.P1'],
@@ -385,7 +385,7 @@ var exprString = {
         ['P1/P1', 'undefined', 'string 和 string 无法做除法运算'],
         ['P1%P1', 'undefined', 'string 和 string 无法做余数运算'],
         ['P1/P1', 'undefined', 'string 和 string 无法做除法运算'],
-        ['P1+P1+Parent().E2[0].P1', '"E1的第1条数据E1的第1条数据E2的第1条数据"', '', 'E1.P1|E2|E2.P1'],
+        ['P1+P1+Parent().E2[0].P1', '"E1的第1条数据E1的第1条数据E2的第1条数据"', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常
         ['P1+"P1"', '"E1的第1条数据P1"', '', 'E1.P1'],
         ['P1-P1', 'undefined', 'string 和 string 无法做减法运算'],
         ['P1>P1', 'false', '', 'E1.P1'],
@@ -394,20 +394,20 @@ var exprString = {
         ['P1<=P1', 'true', '', 'E1.P1'],
         ['P1>"1234"', 'true', '', 'E1.P1'],
         ['P1<"1234"', 'false', '', 'E1.P1'],
-        ['P1==Parent().E2[0].P1', 'false', '', 'E1.P1|E2|E2.P1'],
+        ['P1==Parent().E2[0].P1', 'false', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常
         ['P1==P1', 'true', '', 'E1.P1'],
-        ['P1!=Parent().E2[0].P1', 'true', '', 'E1.P1|E2|E2.P1'],
+        ['P1!=Parent().E2[0].P1', 'true', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常
         ['P1!=P1', 'false', '', 'E1.P1'],
         ['P1&&P1', 'undefined', 'string 和 string 无法做逻辑与运算'],
         ['P1||P1', 'undefined', 'string 无法做逻辑或运算的左运算数', '', 'string 和 string 无法做逻辑或运算'], // TODO: 错误信息不一致
         ['{P1:P1}', '{"P1":"E1的第1条数据"}', '', 'E1.P1'],
-        ['{a:P1,b:P1,c:Parent().E2[0].P1}', '{"a":"E1的第1条数据","b":"E1的第1条数据","c":"E2的第1条数据"}', '', 'E1.P1|E2|E2.P1'],
+        ['{a:P1,b:P1,c:Parent().E2[0].P1}', '{"a":"E1的第1条数据","b":"E1的第1条数据","c":"E2的第1条数据"}', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常
         ['\'P1\'', '"P1"'],
         ['P1.ToString()', '"E1的第1条数据"', '', 'E1.P1'],
         ['Root().E1.Sum("PU1").ToString()', 'undefined', 'null 不能调用 ToString 方法', 'E1|E1.PU1'], // TODO: 需要确认是否为运行时错误
         ['IfNull(null,P1)', '"E1的第1条数据"', '', 'E1.P1'],
-        ['IfNull(Parent().E2[0].P1,P1)', '"E2的第1条数据"', '', 'E2|E2.P1|E1.P1'],
-        ['IIf(true,Parent().E2[0].P1, P1)', '"E2的第1条数据"', '', 'E2|E2.P1|E1.P1'],
+        ['IfNull(Parent().E2[0].P1,P1)', '"E2的第1条数据"', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常
+        ['IIf(true,Parent().E2[0].P1, P1)', '"E2的第1条数据"', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常
         ['IIf(false,P1, P1)', '"E1的第1条数据"', '', 'E1.P1'],
         ['P1.ToNumber()', 'undefined', '"E1的第1条数据" 无法被转换为数字', 'E1.P1'], // TODO: 需要确认是否为运行时错误
         ['P5.ToNumber()', 'undefined', 'date 没有名称为 ToNumber 的方法或参数不匹配'],
@@ -606,19 +606,19 @@ var exprNumber = {
         ['P2-P2', '0', '', 'E1.P2'],
         ['P2-Entity1[0].P2', '12343.728', '', 'E1.P2|E1.Entity1|E1.Entity1.P2'],
         ['Entity1[0].P2-P2', '-12343.728', '', 'E1.Entity1|E1.Entity1.P2|E1.P2'],
-        ['P2>Parent().E2[0].P2', 'false', '', 'E1.P2|E2|E2.P2'],
-        ['P2>=Parent().E2[0].P2', 'true', '', 'E1.P2|E2|E2.P2'],
-        ['P2<Parent().E2[0].P2', 'false', '', 'E1.P2|E2|E2.P2'],
-        ['P2<=Parent().E2[0].P2', 'true', '', 'E1.P2|E2|E2.P2'],
+        ['P2>Parent().E2[0].P2', 'false', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常
+        ['P2>=Parent().E2[0].P2', 'true', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常
+        ['P2<Parent().E2[0].P2', 'false', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常
+        ['P2<=Parent().E2[0].P2', 'true', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常
         ['P2>Entity1[0].P2', 'true', '', 'E1.P2|E1.Entity1|E1.Entity1.P2'],
         ['P2<Entity1[0].P2', 'false', '', 'E1.P2|E1.Entity1|E1.Entity1.P2'],
         ['P2==0', 'false', '', 'E1.P2'],
-        ['P2==Parent().E2[0].P2', 'true', '', 'E1.P2|E2|E2.P2'],
+        ['P2==Parent().E2[0].P2', 'true', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常
         ['P2!=0', 'true', '', 'E1.P2'],
-        ['P2!=Parent().E2[0].P2', 'false', '', 'E1.P2|E2|E2.P2'],
+        ['P2!=Parent().E2[0].P2', 'false', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常
         ['P2&&P2', 'undefined', 'number 和 number 无法做逻辑与运算'],
         ['P2||P2', 'undefined', 'number 无法做逻辑或运算的左运算数', '', 'number 和 number 无法做逻辑或运算'],  // TODO: 错误信息不一致
-        ['[P2,-P2,Parent().E2[0].P2,0]', '[12345.678,-12345.678,12345.678,0]', '', 'E1.P2|E2|E2.P2'],
+        ['[P2,-P2,Parent().E2[0].P2,0]', '[12345.678,-12345.678,12345.678,0]', '', '', '根实体对象不能调用 Parent 方法'], // TODO: 检查出错，计算正常
         ['{P2:P2}', '{"P2":12345.678}', '', 'E1.P2'],
         ['{a:P2,b:P2,c:0}', '{"a":12345.678,"b":12345.678,"c":0}', '', 'E1.P2'],
         ['\'P2\'', '"P2"'],

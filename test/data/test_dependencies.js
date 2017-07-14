@@ -306,8 +306,8 @@ var test224 = {
 //var test241 = {
 //    title: "依赖关系测试241RecNo",
 //    dataSource: {
-//        "E1.Entity1.P1": { expr: "Root().E1.Count().ToString()+Root().E1[Parent().Parent().RecNo()].PN1+Root().E1[Parent().Parent().RecNo()].PN2" },
-//        "E1.Entity1.P2": { expr: "(Root().E1[Parent().Parent().RecNo()].Entity1[0].P1+Root().E1[Parent().Parent().RecNo()].PN2+Root().E1[Parent().Parent().RecNo()].PN1).Length()" },
+//        "E1.Entity1.P1": { expr: "Root().E1.Count().ToString()+Root().E1[Root().RecNo()].PN1+Root().E1[Root().RecNo()].PN2" },
+//        "E1.Entity1.P2": { expr: "(Root().E1[Root().RecNo()].Entity1[0].P1+Root().E1[Root().RecNo()].PN2+Root().E1[Root().RecNo()].PN1).Length()" },
 //        "E1.PN1": { expr: "'起点2'" },
 //        "E1.PN2": { expr: "Root().E1[RecNo()].PN1.Length()" }
 //    },
@@ -347,8 +347,8 @@ var test224 = {
 var test231 = {
     title: "依赖关系测试231",
     dataSource: {
-        "E2.P1": { expr: "Parent().E1.Count().ToString()+Parent().E1[0].P1+Parent().E1[0].P2" },
-        "E2.P2": { expr: "(P1+Parent().E1[0].P2+Parent().E1[0].P1).Length()" },
+        "E2.P1": { expr: "Root().E1.Count().ToString()+Root().E1[0].P1+Root().E1[0].P2" },
+        "E2.P2": { expr: "(P1+Root().E1[0].P2+Root().E1[0].P1).Length()" },
         "E1.P1": { expr: "'起点2'" },
         "E1.P2": { expr: "P1.Length()" }
     },
@@ -367,8 +367,8 @@ var test231 = {
 var test232 = {
     title: "依赖关系测试232",
     dataSource: {
-        "E2.Entity1.P1": { expr: "Parent().Parent().E1[0].Entity1.Count().ToString()+Parent().Parent().E1[0].Entity1[0].P1+Parent().Parent().E1[0].Entity1[0].P2" },
-        "E2.Entity1.P2": { expr: "P1+Parent().Parent().E1[0].Entity1[0].P2+Parent().Parent().E1[0].Entity1[0].P1" },
+        "E2.Entity1.P1": { expr: "Root().E1[0].Entity1.Count().ToString()+Root().E1[0].Entity1[0].P1+Root().E1[0].Entity1[0].P2" },
+        "E2.Entity1.P2": { expr: "P1+Root().E1[0].Entity1[0].P2+Root().E1[0].Entity1[0].P1" },
         "E1.Entity1.P1": { expr: "'起点2'" },
         "E1.Entity1.P2": { expr: "P1" }
     },
@@ -614,7 +614,7 @@ var test50 = {
         "E2.Entity1.P1": { expr: "Parent().PN1" },
         "E2.Entity1.P2": { expr: "(P1+Parent().PN1).Length()" },
         "E2.PN1": { expr: "'起点2'" },
-        "E2.PN2": { expr: "(Entity1[0].P2+PN1+Entity1[0].P1+Parent().E1[0].Entity1[0].P2).ToNumber()" }
+        "E2.PN2": { expr: "(Entity1[0].P2+PN1+Entity1[0].P1+Root().E1[0].Entity1[0].P2).ToNumber()" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.PN2|E1.Entity1.P1|E1.Entity1.P2|E2.PN2" },
@@ -646,7 +646,7 @@ var test51 = {
         "E2.Entity1.P1": { expr: "Parent().PN1" },
         "E2.Entity1.P2": { expr: "(RecNo()+P1+Parent().PN1).Length()" },
         "E2.PN1": { expr: "'起点2'" },
-        "E2.PN2": { expr: "(RecNo()+Entity1[0].P2+PN1+Entity1[0].P1+Parent().E1[0].Entity1[0].P2).Length()" }
+        "E2.PN2": { expr: "(RecNo()+Entity1[0].P2+PN1+Entity1[0].P1+Root().E1[0].Entity1[0].P2).Length()" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.PN2|E1.Entity1.P1|E1.Entity1.P2|E2.PN2" },
@@ -678,7 +678,7 @@ var test52 = {
         "E2.Entity1.P1": { expr: "Root().E2[Parent().RecNo()].PN1" },
         "E2.Entity1.P2": { expr: "(Root().E2[Parent().RecNo()].Entity1[RecNo()].P1+Root().E2[Parent().RecNo()].PN1).Length()" },
         "E2.PN1": { expr: "'起点2'" },
-        "E2.PN2": { expr: "(Entity1[0].P2+PN1+Entity1[0].P1+Parent().E1[0].Entity1[0].P2).Length()" }
+        "E2.PN2": { expr: "(Entity1[0].P2+PN1+Entity1[0].P1+Root().E1[0].Entity1[0].P2).Length()" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.PN2|E1.Entity1.P1|E1.Entity1.P2|E2.PN2" },
@@ -710,7 +710,7 @@ var test53 = {
         "E2.Entity1.P1": { expr: "Parent().Entity1.Count().ToString()+Parent().PN1" },
         "E2.Entity1.P2": { expr: "(P1+Parent().PN1).Length()" },
         "E2.PN1": { expr: "'起点2'" },
-        "E2.PN2": { expr: "(Entity1[0].P2+PN1+Entity1[0].P1+Parent().E1[0].Entity1[0].P2).Length()" }
+        "E2.PN2": { expr: "(Entity1[0].P2+PN1+Entity1[0].P1+Root().E1[0].Entity1[0].P2).Length()" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.PN2|E1.Entity1.P1|E1.Entity1.P2|E2.PN2" },
@@ -742,7 +742,7 @@ var test54 = {
         "E2.Entity1.P1": { expr: "Parent().PN1" },
         "E2.Entity1.P2": { expr: "(P1+Parent().PN1).Length()" },
         "E2.PN1": { expr: "'起点2'" },
-        "E2.PN2": { expr: "Entity1[0].P2+Root().E2.Sum('PN1')+Entity1[0].P1+Parent().E1[0].Entity1[0].P2" }
+        "E2.PN2": { expr: "Entity1[0].P2+Root().E2.Sum('PN1')+Entity1[0].P1+Root().E1[0].Entity1[0].P2" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.PN2|E1.Entity1.P1|E1.Entity1.P2|E2.PN2" },
@@ -774,7 +774,7 @@ var test55 = {
         "E2.Entity1.P1": { expr: "Parent().PN1" },
         "E2.Entity1.P2": { expr: "(P1+Parent().PN1).Length()" },
         "E2.PN1": { expr: "'起点2'" },
-        "E2.PN2": { expr: "Entity1[0].P2+Root().E2.Max('PN1')+Entity1[0].P1+Parent().E1[0].Entity1[0].P2" }
+        "E2.PN2": { expr: "Entity1[0].P2+Root().E2.Max('PN1')+Entity1[0].P1+Root().E1[0].Entity1[0].P2" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.PN2|E1.Entity1.P1|E1.Entity1.P2|E2.PN2" },
@@ -806,7 +806,7 @@ var test56 = {
         "E2.Entity1.P1": { expr: "Root().E2.Min('PN1')" },
         "E2.Entity1.P2": { expr: "(Parent().Entity1.Min('P1')+Root().E2.Min('PN1')).ToString().Length()" },
         "E2.PN1": { expr: "'起点2'" },
-        "E2.PN2": { expr: "Entity1.Min('P2')+Root().E2.Min('PN1')+Entity1.Min('P1')+Parent().E1[0].Entity1.Min('P2')" }
+        "E2.PN2": { expr: "Entity1.Min('P2')+Root().E2.Min('PN1')+Entity1.Min('P1')+Root().E1[0].Entity1.Min('P2')" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.PN2|E1.Entity1.P1|E1.Entity1.P2|E2.PN2" },
@@ -838,7 +838,7 @@ var test57 = {
         "E2.Entity1.P1": { expr: "Root().E2.Average('PN1')" },
         "E2.Entity1.P2": { expr: "(Parent().Entity1.Average('P1')+Root().E2.Average('PN1')).ToString().Length()" },
         "E2.PN1": { expr: "'起点2'" },
-        "E2.PN2": { expr: "Entity1.Average('P2')+Root().E2.Average('PN1')+Entity1.Average('P1')+Parent().E1[0].Entity1.Average('P2')" }
+        "E2.PN2": { expr: "Entity1.Average('P2')+Root().E2.Average('PN1')+Entity1.Average('P1')+Root().E1[0].Entity1.Average('P2')" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.PN2|E1.Entity1.P1|E1.Entity1.P2|E2.PN2" },
@@ -870,7 +870,7 @@ var test58 = {
         "E2.Entity1.P1": { expr: "Root().E2.Distinct('PN1')[0].PN1" },
         "E2.Entity1.P2": { expr: "(Parent().Entity1.Distinct('P1')[0].P1+Root().E2.Distinct('PN1')[0].PN1).ToString().Length()" },
         "E2.PN1": { expr: "'起点2'" },
-        "E2.PN2": { expr: "Entity1.Distinct('P2')[0].P2+Root().E2.Distinct('PN1')[0].PN1+Entity1.Distinct('P1')[0].P1+Parent().E1[0].Entity1.Distinct('P2')[0].P2" }
+        "E2.PN2": { expr: "Entity1.Distinct('P2')[0].P2+Root().E2.Distinct('PN1')[0].PN1+Entity1.Distinct('P1')[0].P1+Root().E1[0].Entity1.Distinct('P2')[0].P2" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.PN2|E1.Entity1.P1|E1.Entity1.P2|E2.PN2" },
@@ -902,7 +902,7 @@ var test59 = {
         "E2.Entity1.P1": { expr: "Root().E2.Where('PN1')[0].PN1" },
         "E2.Entity1.P2": { expr: "(Parent().Entity1.Where('P1')[0].P1+Root().E2.Where('PN1')[0].PN1).ToString().Length()" },
         "E2.PN1": { expr: "'起点2'" },
-        "E2.PN2": { expr: "Entity1.Where('P2')[0].P2+Root().E2.Where('PN1')[0].PN1+Entity1.Where('P1')[0].P1+Parent().E1[0].Entity1.Where('P2')[0].P2" }
+        "E2.PN2": { expr: "Entity1.Where('P2')[0].P2+Root().E2.Where('PN1')[0].PN1+Entity1.Where('P1')[0].P1+Root().E1[0].Entity1.Where('P2')[0].P2" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.PN2|E1.Entity1.P1|E1.Entity1.P2|E2.PN2" },

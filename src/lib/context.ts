@@ -99,12 +99,18 @@ export default class ExprContext extends Context {
                         type = "object";
                         break;
                     case "parent":
-                        if (source === null) { /// Paren()
-                            entity = this.getParentName(this.exprContext.getEntityName());
-                            type = "object";
-                        } else if (source.entity) { /// Root().E1[0].Parent()
-                            entity = this.getParentName(source.entity.fullName);
-                            type = "object";
+                        if (source === null || source.entity) {
+                            const entityName = source === null ?
+                                this.exprContext.getEntityName() : /// Paren()
+                                source.entity ?
+                                    source.entity.fullName : /// Root().E1[0].Parent()
+                                    "";
+                            entity = this.getParentName(entityName);
+                            if (entity) {
+                                type = "object";
+                            } else {
+                                r = this.genErrorType(format(locale.getLocale().MSG_EC_FUNC_R, "Parent"));
+                            }
                         } else { /// {x:1}.Parent()
                             r = this.genErrorType(format(locale.getLocale().MSG_EC_FUNC_E, "Parent"));
                         }

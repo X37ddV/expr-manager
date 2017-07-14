@@ -74,7 +74,11 @@ describe("依赖关系测试", function () {
                 })(pList, c));
             }
         } else {
-            expect(true).toEqual(false);
+            it(demoDepend.title, (function(msg){
+                return function () {
+                    expect(msg).toEqual("");
+                }
+            })(msg));
         }
     }
 });

@@ -3519,13 +3519,19 @@ var ExprContext = (function (_super) {
                         type = "object";
                         break;
                     case "parent":
-                        if (source === null) {
-                            entity = this.getParentName(this.exprContext.getEntityName());
-                            type = "object";
-                        }
-                        else if (source.entity) {
-                            entity = this.getParentName(source.entity.fullName);
-                            type = "object";
+                        if (source === null || source.entity) {
+                            var entityName = source === null ?
+                                this.exprContext.getEntityName() :
+                                source.entity ?
+                                    source.entity.fullName :
+                                    "";
+                            entity = this.getParentName(entityName);
+                            if (entity) {
+                                type = "object";
+                            }
+                            else {
+                                r = this.genErrorType(format(locale.getLocale().MSG_EC_FUNC_R, "Parent"));
+                            }
                         }
                         else {
                             r = this.genErrorType(format(locale.getLocale().MSG_EC_FUNC_E, "Parent"));
@@ -4519,6 +4525,7 @@ locale.defineLocale("zh-cn", {
     // context
     MSG_EC_FUNC_E: "只有实体对象才可以调用 {0} 方法",
     MSG_EC_FUNC_P: "{0} 没有名称为 {1} 的方法或参数不匹配",
+    MSG_EC_FUNC_R: "根实体对象不能调用 {0} 方法",
     MSG_EC_PROP_E: "{0} 无法获取属性: {1}",
     MSG_EC_PROP_N: "属性不存在: {0}",
     MSG_EC_VARI_I: "参数索引不存在: {0}",
