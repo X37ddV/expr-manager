@@ -80,7 +80,7 @@ export default class ExprContext extends Context {
                     if (ft.p[i] === "expr" && paramType[i] === "string" && getValueType(pd[i]) === "string") {
                         const dr = (source && source.entity) ?
                             this.calcEntityDependencies(pd[i], source.entity.fullName) :
-                            this.calcEntityDependencies(pd[i]);
+                            this.calcDataDependencies(pd[i]);
                         if (dr.errorMsg === "") {
                             depends = depends.concat(dr.dependencies);
                         } else {
@@ -191,7 +191,7 @@ export default class ExprContext extends Context {
                 if (source === null) {
                     entity = this.genEntityInfo(this.getPropertyName(this.exprContext.getEntityName(pIndex), name));
                     if (entity) {
-                        type = entity.type;
+                        type = name === "" ? "object" : entity.type;
                     } else {
                         r = this.genErrorType(format(locale.getLocale().MSG_EC_PROP_N, name));
                     }
@@ -682,26 +682,18 @@ export default class ExprContext extends Context {
     // 在实体计算环境下计算表达式的依赖关系
     public calcEntityDependencies(expr: string, entityName?: string): Type {
         const c = [];
-        let i = 1;
-        while (i < arguments.length) {
-            c.push({
-                current: arguments[i],
-                isEntityData: true,
-            });
-            i++;
-        }
+        c.push({
+            current: entityName,
+            isEntityData: true,
+        });
         return this.calcDependencies(expr, c);
     }
     // 在数据计算环境下计算表达式的依赖关系
     public calcDataDependencies(expr): Type {
         const c = [];
-        let i = 1;
-        while (i < arguments.length) {
-            c.push({
-                isEntityData: false,
-            });
-            i++;
-        }
+        c.push({
+            isEntityData: false,
+        });
         return this.calcDependencies(expr, c);
     }
     // 向栈顶添加新的计算环境

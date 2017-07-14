@@ -5522,7 +5522,9 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    Type.prototype.getVariableType = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">et</span>) </span>{
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.context.getVariableType(<span class="hljs-keyword">this</span>.data, et);
+        <span class="hljs-keyword">return</span> (et &amp;&amp; et.type !== <span class="hljs-string">"object"</span> &amp;&amp; et.type !== <span class="hljs-string">"undefined"</span>) ?
+            <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_DOT, et.type)) :
+            <span class="hljs-keyword">this</span>.context.getVariableType(<span class="hljs-keyword">this</span>.data, et);
     };</pre></div></div>
             
         </li>
@@ -7080,7 +7082,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                     <span class="hljs-keyword">if</span> (ft.p[i] === <span class="hljs-string">"expr"</span> &amp;&amp; paramType[i] === <span class="hljs-string">"string"</span> &amp;&amp; getValueType(pd[i]) === <span class="hljs-string">"string"</span>) {
                         <span class="hljs-keyword">var</span> dr = (source &amp;&amp; source.entity) ?
                             <span class="hljs-keyword">this</span>.calcEntityDependencies(pd[i], source.entity.fullName) :
-                            <span class="hljs-keyword">this</span>.calcEntityDependencies(pd[i]);
+                            <span class="hljs-keyword">this</span>.calcDataDependencies(pd[i]);
                         <span class="hljs-keyword">if</span> (dr.errorMsg === <span class="hljs-string">""</span>) {
                             depends = depends.concat(dr.dependencies);
                         }
@@ -7225,7 +7227,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                 <span class="hljs-keyword">if</span> (source === <span class="hljs-literal">null</span>) {
                     entity = <span class="hljs-keyword">this</span>.genEntityInfo(<span class="hljs-keyword">this</span>.getPropertyName(<span class="hljs-keyword">this</span>.exprContext.getEntityName(pIndex), name));
                     <span class="hljs-keyword">if</span> (entity) {
-                        type = entity.type;
+                        type = name === <span class="hljs-string">""</span> ? <span class="hljs-string">"object"</span> : entity.type;
                     }
                     <span class="hljs-keyword">else</span> {
                         r = <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EC_PROP_N, name));
@@ -8196,14 +8198,10 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             
             <div class="content"><div class='highlight'><pre>    ExprContext.prototype.calcEntityDependencies = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, entityName</span>) </span>{
         <span class="hljs-keyword">var</span> c = [];
-        <span class="hljs-keyword">var</span> i = <span class="hljs-number">1</span>;
-        <span class="hljs-keyword">while</span> (i &lt; <span class="hljs-built_in">arguments</span>.length) {
-            c.push({
-                <span class="hljs-attr">current</span>: <span class="hljs-built_in">arguments</span>[i],
-                <span class="hljs-attr">isEntityData</span>: <span class="hljs-literal">true</span>,
-            });
-            i++;
-        }
+        c.push({
+            <span class="hljs-attr">current</span>: entityName,
+            <span class="hljs-attr">isEntityData</span>: <span class="hljs-literal">true</span>,
+        });
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.calcDependencies(expr, c);
     };</pre></div></div>
             
@@ -8222,13 +8220,9 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             
             <div class="content"><div class='highlight'><pre>    ExprContext.prototype.calcDataDependencies = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr</span>) </span>{
         <span class="hljs-keyword">var</span> c = [];
-        <span class="hljs-keyword">var</span> i = <span class="hljs-number">1</span>;
-        <span class="hljs-keyword">while</span> (i &lt; <span class="hljs-built_in">arguments</span>.length) {
-            c.push({
-                <span class="hljs-attr">isEntityData</span>: <span class="hljs-literal">false</span>,
-            });
-            i++;
-        }
+        c.push({
+            <span class="hljs-attr">isEntityData</span>: <span class="hljs-literal">false</span>,
+        });
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.calcDependencies(expr, c);
     };</pre></div></div>
             

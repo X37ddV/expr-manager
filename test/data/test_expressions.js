@@ -46,9 +46,9 @@ var exprDataCalc = {
     exprs: [
         ['$C.userId + ""', '"admin"'],
     //子实体、实体，单条数据
-        ['Entity1.ID', 'undefined', 'array 无法做属性访问操作', 'E1.Entity1.ID'], // TODO: 计算错误？
+        ['Entity1.ID', 'undefined', 'array 无法做属性访问操作'],
         ['Root().E1[0]', cmpOE1_0, '', 'E1'],
-        ['Root()["E1"]', cmpAE1, ''], // TODO: 无法获取正确依赖
+        ['Root()["E1"]', cmpAE1, ''], // 正确: 字符串下标访问，不计算依赖关系
         ['Entity1[0]', cmpOE1Entity1_0, '', 'E1.Entity1'],
         ['Entity1[0].Parent()', cmpOE1_0, '', 'E1.Entity1|E1'],
         ['+Entity1[0].Parent()', 'undefined', 'object 无法做一元正数运算'],
@@ -1087,12 +1087,12 @@ var exprArray = {
         ['[1,2,3].Average()+"123"', 'undefined', 'number 和 string 无法做加法运算'],
         ['[1,2,3.3].Average()+[1,2,3.3].Min()', '3.1'],
         ['["1","2","3"].Average()', 'undefined', 'string 和 number 无法做除法运算'],
-        ['[1,2,3.3].Average("ID")', 'undefined', '1 无法获取属性: ID', 'E1.ID'], // TODO: 运行时错误？
+        ['[1,2,3.3].Average("ID")', 'undefined', '1 无法获取属性: ID'],
         ['[{a:1,b:2},{a:2,b:3},{a:3,b:4}].Average("b")', '3', '', '', '属性不存在: b'], // TODO: 计算正确，检查错误
         ['[null,null].Average()', '0'],
         ['[null].Average()', '0'],
         ['[1,2,3.3].Sum()', '6.3'],
-        ['[{ a: 1 }, { a: 2}].Sum("$0.a")', '3', '', 'E1'], // TODO: 依赖关系错误
+        ['[{ a: 1 }, { a: 2}].Sum("$0.a")', '3'],
         ['["1","2","3"].Sum()', '"123"'],
         ['[[1,2,3.3],["1","2","3"]].Sum()', '[1,2,3.3,"1","2","3"]'],
         ['[1,"2"].Sum()', 'undefined', 'number 和 string 无法做加法运算'],
@@ -1104,20 +1104,20 @@ var exprArray = {
         ['[null,null].Sum()', 'null'], //无error具体信息,原为undefined，后改为null
         ['[null].Sum()', 'null'],
         ['[1,2,3.3].Max()', '3.3'],
-        ['[1,2,3.3].Max("ID")', 'undefined', '1 无法获取属性: ID', 'E1.ID'], // TODO: 运行时错误？
+        ['[1,2,3.3].Max("ID")', 'undefined', '1 无法获取属性: ID'],
         ['[{a:1,b:2},{a:2,b:3},{a:3,b:4}].Max("b")', '4', '', '', '属性不存在: b'], // TODO: 计算正确，检查出错
         ['[1,2,3.3].Min()', '1'],
         ['["1","2","3.3"].Min()', '"1"'],
-        ['[1,2,3.3].Min("ID")', 'undefined', '1 无法获取属性: ID', 'E1.ID'], // TODO: 运行时错误？
+        ['[1,2,3.3].Min("ID")', 'undefined', '1 无法获取属性: ID'],
         ['[{a:1,b:2},{a:2,b:3},{a:3,b:4}].Min("b")', '2', '', '', '属性不存在: b'], // TODO: 计算正确，检查出错
         ['[1,2,3.3].Where()', 'undefined', 'array 没有名称为 Where 的方法或参数不匹配'],
-        ['[1,2,3.3].Where("ID")', 'undefined', '1 无法获取属性: ID', 'E1.ID'], // TODO: 运行时错误？
+        ['[1,2,3.3].Where("ID")', 'undefined', '1 无法获取属性: ID'],
         ['[1,2,3.3].Where(2)', 'undefined', 'array 没有名称为 Where 的方法或参数不匹配'],
         ['[1,2,3.3].Where("true")', '[1,2,3.3]'],
-        ['[2, 3, 4, 5, 1, 2, 3].Where("$0==2").length', 'undefined', 'array 无法做属性访问操作', '', 'array 和 number 无法做相等运算'], // TODO: 错误信息不一致
+        ['[2, 3, 4, 5, 1, 2, 3].Where("$0==2").length', 'undefined', 'array 无法做属性访问操作'],
         ['[2, 3, 4, 5, 1, 2, 3].Where("$0==2").Count()', '2', '', '', 'array 和 number 无法做相等运算'], // TODO: 计算正确，检查出错
         ['[2,2,3].Distinct()', '[2,3]'],
-        ['[2,2,3].Distinct("$0")', '[2,3]', '', 'E1'], // TODO: 没有依赖关系
+        ['[2,2,3].Distinct("$0")', '[2,3]'],
         ['[{a:1,b:2},{a:2,b:3},{a:3,b:4}].Where("a<=2&&a>1")', '[{"a":2,"b":3}]', '', '', '属性不存在: a'], // TODO: 计算正确，检查出错
         ['[{a:1,b:2},{a:2,b:3},{a:2,b:4},{a:1,b:4}].Distinct("a")', '[{"a":1,"b":2},{"a":2,"b":3}]', '', '', '属性不存在: a'], // TODO: 计算正确，检查出错
         ['[1,2,3.3].Count()+[1,2,3.3].Average().ToString()+[1,2,3.3].Sum()+[1,2,3.3].Max().ToString()+[1,2,3.3].Min().ToString()', 'undefined', 'number 和 string 无法做加法运算'],

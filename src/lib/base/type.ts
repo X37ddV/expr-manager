@@ -242,7 +242,9 @@ export default class Type {
     }
     // 获取变量值类型对象
     public getVariableType(et: Type): Type {
-        return this.context.getVariableType(this.data, et);
+        return (et && et.type !== "object" && et.type !== "undefined") ?
+            this.genErrorType(format(locale.getLocale().MSG_EX_DOT, et.type)) :
+            this.context.getVariableType(this.data, et);
     }
     // 获取函数返回结果类型对象
     public getFunctionType(et: Type): Type {

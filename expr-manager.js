@@ -2803,7 +2803,9 @@ var Type = (function () {
     };
     // 获取变量值类型对象
     Type.prototype.getVariableType = function (et) {
-        return this.context.getVariableType(this.data, et);
+        return (et && et.type !== "object" && et.type !== "undefined") ?
+            this.genErrorType(format(locale.getLocale().MSG_EX_DOT, et.type)) :
+            this.context.getVariableType(this.data, et);
     };
     // 获取函数返回结果类型对象
     Type.prototype.getFunctionType = function (et) {
@@ -3499,7 +3501,7 @@ var ExprContext = (function (_super) {
                     if (ft.p[i] === "expr" && paramType[i] === "string" && getValueType(pd[i]) === "string") {
                         var dr = (source && source.entity) ?
                             this.calcEntityDependencies(pd[i], source.entity.fullName) :
-                            this.calcEntityDependencies(pd[i]);
+                            this.calcDataDependencies(pd[i]);
                         if (dr.errorMsg === "") {
                             depends = depends.concat(dr.dependencies);
                         }
@@ -3618,7 +3620,7 @@ var ExprContext = (function (_super) {
                 if (source === null) {
                     entity = this.genEntityInfo(this.getPropertyName(this.exprContext.getEntityName(pIndex), name));
                     if (entity) {
-                        type = entity.type;
+                        type = name === "" ? "object" : entity.type;
                     }
                     else {
                         r = this.genErrorType(format(locale.getLocale().MSG_EC_PROP_N, name));
@@ -4134,26 +4136,18 @@ var ExprContext = (function (_super) {
     // 在实体计算环境下计算表达式的依赖关系
     ExprContext.prototype.calcEntityDependencies = function (expr, entityName) {
         var c = [];
-        var i = 1;
-        while (i < arguments.length) {
-            c.push({
-                current: arguments[i],
-                isEntityData: true,
-            });
-            i++;
-        }
+        c.push({
+            current: entityName,
+            isEntityData: true,
+        });
         return this.calcDependencies(expr, c);
     };
     // 在数据计算环境下计算表达式的依赖关系
     ExprContext.prototype.calcDataDependencies = function (expr) {
         var c = [];
-        var i = 1;
-        while (i < arguments.length) {
-            c.push({
-                isEntityData: false,
-            });
-            i++;
-        }
+        c.push({
+            isEntityData: false,
+        });
         return this.calcDependencies(expr, c);
     };
     // 向栈顶添加新的计算环境
