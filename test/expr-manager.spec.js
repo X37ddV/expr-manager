@@ -181,8 +181,8 @@ describe("接口测试", function () {
 
             // 移除表达式
             expr = exprManager.removeExpression(
-                "Field1 + ' ' + SubTable[0].Field1 + $C.Field0",
-                "Table", "CalcField0", "L|A|U|R",
+                "Field1 + ' ' + SubTable[0].Field1",
+                "Table", "CalcField0", ["load", "add", "update", "remove"],
                 doCalc, null);
             expect(expr).toEqual(exprManager);
             var err = exprManager.checkAndSort();
@@ -191,6 +191,11 @@ describe("接口测试", function () {
             // 添加错误表达式
             expr = exprManager.addExpression(
                 "''+0",
+                "Table", "CalcField1", ["add"],
+                doCalc, null);
+            expect(expr).toEqual(exprManager);
+            expr = exprManager.removeExpression(
+                "''+1",
                 "Table", "CalcField1", ["add"],
                 doCalc, null);
             expect(expr).toEqual(exprManager);
@@ -214,6 +219,15 @@ describe("接口测试", function () {
             expect(ExprManager.locale.getLocale('zh-TW')).toBeUndefined();
             expect(ExprManager.locale.getFunction('zh-TW')).toBeUndefined();
             expect(ExprManager.locale.getFunction()).toBeDefined();
+        }
+    })());
+
+    it("简单计算", (function(){
+        return function () {
+            var v = exprManager.calc("1+1", {});
+            expect(v.toValue()).toEqual(2);
+            var val = exprManager.calcExpr("1+1", "E1", window.dataCursor);
+            expect(val.toValue()).toEqual(2);
         }
     })());
 });
