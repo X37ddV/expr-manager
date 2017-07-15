@@ -289,6 +289,11 @@ var exprOperator = {
         ['true:false:false', 'undefined', ': 操作符必须存在于{}中'],
         ['P6:Root().E2[0].P6', 'undefined', ': 操作符必须存在于{}中'],
         ['true,false', 'undefined', ', 操作符必须存在于{}、[]、()中'],
+
+        ['a=1', 'undefined', '无法识别 ='],
+        ['1)', 'undefined', ') 不匹配'],
+        ['(1])', 'undefined', '( 不匹配'],
+        ['"".ID', 'undefined', '"" 无法做属性访问操作']
     ]
 };
 var exprString = {
@@ -439,7 +444,10 @@ var exprString = {
         ['"\\n\\t\\f\\b\\r\\u5230\\111\\xae"', '"\\n\\t\\f\\b\\r到I®"'],
         ['"\\1"', 'undefined', '\\1" 不是合法的八进制数'],
         ['"\\0"', 'undefined', '\\0" 不是合法的八进制数'],
-        ['"\\x1"', 'undefined', '\\x1" 不是合法的十六进制数']
+        ['"\\x1"', 'undefined', '\\x1" 不是合法的十六进制数'],
+
+        ['"xxx".ReplaceReg("x", "y", "a")', 'undefined', '"a" 不是合法的匹配模式'],
+        ['"xxx".Replace("x", "y", "a")', 'undefined', '"a" 不是合法的匹配模式']
     ]
 };
 var exprNumber = {
@@ -671,7 +679,9 @@ var exprNumber = {
         ['0.1.ToRMB(false, true)', '"零点壹"'],
         ['100002345.ToRMB()', '"壹亿零贰仟叁佰肆拾伍元整"'],
         ['123.ToRMB(false, false)', '"一百二十三"'],
-        ['00002010.00100.ToRMB()', '"贰仟零壹拾元零壹厘"']
+        ['00002010.00100.ToRMB()', '"贰仟零壹拾元零壹厘"'],
+        ['(-1).Ln()', 'undefined', '-1 无法做自然对数运算'],
+        ['-1.Ln()', '0']
     ]
 };
 var exprDate = {
@@ -1132,7 +1142,8 @@ var exprArray = {
         ['[1, 2].Distinct("$1")', 'undefined', '参数不存在: $1'],
         ['[1,2].Max()', '2'],
         ['[2,1].Max()', '2'],
-        ['[1]+[2]', '[1,2]']
+        ['[1]+[2]', '[1,2]'],
+        ['[1:2,3]', 'undefined', '数组中不允许使用 : 操作符']
     ]
 };
 var exprNull = {

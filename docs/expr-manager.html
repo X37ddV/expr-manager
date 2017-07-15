@@ -2582,8 +2582,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> funcStringLength = {
     <span class="hljs-attr">fn</span>: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">context, source</span>) </span>{
-        <span class="hljs-keyword">var</span> value = source.toValue();
-        <span class="hljs-keyword">return</span> context.genValue(isString(value) ? value.length : <span class="hljs-literal">null</span>);
+        <span class="hljs-keyword">return</span> context.genValue(source.toValue().length);
     },
     <span class="hljs-attr">p</span>: [],
     <span class="hljs-attr">r</span>: <span class="hljs-string">"number"</span>,
@@ -2604,8 +2603,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> funcStringUpper = {
     <span class="hljs-attr">fn</span>: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">context, source</span>) </span>{
-        <span class="hljs-keyword">var</span> value = source.toValue();
-        <span class="hljs-keyword">return</span> context.genValue(isString(value) ? value.toUpperCase() : <span class="hljs-literal">null</span>);
+        <span class="hljs-keyword">return</span> context.genValue(source.toValue().toUpperCase());
     },
     <span class="hljs-attr">p</span>: [],
     <span class="hljs-attr">r</span>: <span class="hljs-string">"string"</span>,
@@ -2626,8 +2624,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> funcStringLower = {
     <span class="hljs-attr">fn</span>: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">context, source</span>) </span>{
-        <span class="hljs-keyword">var</span> value = source.toValue();
-        <span class="hljs-keyword">return</span> context.genValue(isString(value) ? value.toLowerCase() : <span class="hljs-literal">null</span>);
+        <span class="hljs-keyword">return</span> context.genValue(source.toValue().toLowerCase());
     },
     <span class="hljs-attr">p</span>: [],
     <span class="hljs-attr">r</span>: <span class="hljs-string">"string"</span>,
@@ -2648,8 +2645,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> funcStringTrim = {
     <span class="hljs-attr">fn</span>: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">context, source</span>) </span>{
-        <span class="hljs-keyword">var</span> value = source.toValue();
-        <span class="hljs-keyword">return</span> context.genValue(isString(value) ? value.trim() : <span class="hljs-literal">null</span>);
+        <span class="hljs-keyword">return</span> context.genValue(source.toValue().trim());
     },
     <span class="hljs-attr">p</span>: [],
     <span class="hljs-attr">r</span>: <span class="hljs-string">"string"</span>,
@@ -2670,8 +2666,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> funcStringTrimLeft = {
     <span class="hljs-attr">fn</span>: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">context, source</span>) </span>{
-        <span class="hljs-keyword">var</span> value = source.toValue();
-        <span class="hljs-keyword">return</span> context.genValue(isString(value) ? value.replace(<span class="hljs-regexp">/^\s+/g</span>, <span class="hljs-string">""</span>) : <span class="hljs-literal">null</span>);
+        <span class="hljs-keyword">return</span> context.genValue(source.toValue().replace(<span class="hljs-regexp">/^\s+/g</span>, <span class="hljs-string">""</span>));
     },
     <span class="hljs-attr">p</span>: [],
     <span class="hljs-attr">r</span>: <span class="hljs-string">"string"</span>,
@@ -2692,8 +2687,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> funcStringTrimRight = {
     <span class="hljs-attr">fn</span>: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">context, source</span>) </span>{
-        <span class="hljs-keyword">var</span> value = source.toValue();
-        <span class="hljs-keyword">return</span> context.genValue(isString(value) ? value.replace(<span class="hljs-regexp">/\s+$/g</span>, <span class="hljs-string">""</span>) : <span class="hljs-literal">null</span>);
+        <span class="hljs-keyword">return</span> context.genValue(source.toValue().replace(<span class="hljs-regexp">/\s+$/g</span>, <span class="hljs-string">""</span>));
     },
     <span class="hljs-attr">p</span>: [],
     <span class="hljs-attr">r</span>: <span class="hljs-string">"string"</span>,
@@ -2720,8 +2714,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         <span class="hljs-keyword">if</span> (left &gt; right) {
             right = left;
         }
-        <span class="hljs-keyword">return</span> context.genValue(isString(value) &amp;&amp; isNumber(start) &amp;&amp; isNumber(len) ?
-            value.substring(left, right) : <span class="hljs-literal">null</span>);
+        <span class="hljs-keyword">return</span> context.genValue(value.substring(left, right));
     },
     <span class="hljs-attr">p</span>: [<span class="hljs-string">"number"</span>, <span class="hljs-string">"number"</span>],
     <span class="hljs-attr">r</span>: <span class="hljs-string">"string"</span>,
@@ -2742,8 +2735,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> funcStringLeftString = {
     <span class="hljs-attr">fn</span>: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">context, source, len</span>) </span>{
-        <span class="hljs-keyword">var</span> value = source.toValue();
-        <span class="hljs-keyword">return</span> context.genValue(isString(value) &amp;&amp; isNumber(len) ? value.substring(<span class="hljs-number">0</span>, len) : <span class="hljs-literal">null</span>);
+        <span class="hljs-keyword">return</span> context.genValue(source.toValue().substring(<span class="hljs-number">0</span>, len));
     },
     <span class="hljs-attr">p</span>: [<span class="hljs-string">"number"</span>],
     <span class="hljs-attr">r</span>: <span class="hljs-string">"string"</span>,
@@ -2765,8 +2757,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> funcStringRightString = {
     <span class="hljs-attr">fn</span>: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">context, source, len</span>) </span>{
         <span class="hljs-keyword">var</span> value = source.toValue();
-        <span class="hljs-keyword">return</span> context.genValue(isString(value) &amp;&amp; isNumber(len) ?
-            value.substring(value.length - len, value.length) : <span class="hljs-literal">null</span>);
+        <span class="hljs-keyword">return</span> context.genValue(value.substring(value.length - len, value.length));
     },
     <span class="hljs-attr">p</span>: [<span class="hljs-string">"number"</span>],
     <span class="hljs-attr">r</span>: <span class="hljs-string">"string"</span>,
@@ -2787,9 +2778,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> funcStringPos = {
     <span class="hljs-attr">fn</span>: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">context, source, subValue</span>) </span>{
-        <span class="hljs-keyword">var</span> value = source.toValue();
-        <span class="hljs-keyword">return</span> context.genValue(isString(value) &amp;&amp; isString(subValue) ?
-            value.indexOf(subValue) : <span class="hljs-literal">null</span>);
+        <span class="hljs-keyword">return</span> context.genValue(source.toValue().indexOf(subValue));
     },
     <span class="hljs-attr">p</span>: [<span class="hljs-string">"string"</span>],
     <span class="hljs-attr">r</span>: <span class="hljs-string">"number"</span>,
@@ -3037,8 +3026,9 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                     <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (isIIf &amp;&amp; !lv.toValue()) {
                         i++;
                     }
-                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (t.tokenType === <span class="hljs-string">"TK_OR"</span> &amp;&amp; !!lv.toValue() === <span class="hljs-literal">true</span> ||
-                        t.tokenType === <span class="hljs-string">"TK_AND"</span> &amp;&amp; !!lv.toValue() === <span class="hljs-literal">false</span>) {
+                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (t.tokenType === <span class="hljs-string">"TK_OR"</span> &amp;&amp; lv.toValue() === <span class="hljs-literal">true</span> ||
+                        t.tokenType === <span class="hljs-string">"TK_AND"</span> &amp;&amp;
+                            (lv.toValue() === <span class="hljs-literal">false</span> || lv.type === <span class="hljs-string">"null"</span>)) {
                         <span class="hljs-keyword">break</span>;
                     }
                 }
@@ -3112,8 +3102,6 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                             <span class="hljs-keyword">break</span>;
                         <span class="hljs-keyword">case</span> <span class="hljs-string">"TK_IDEN"</span>:
                             tv = rv.getVariableValue(lv);
-                            <span class="hljs-keyword">break</span>;
-                        <span class="hljs-keyword">default</span>:
                             <span class="hljs-keyword">break</span>;
                     }
                     <span class="hljs-keyword">break</span>;
@@ -3376,8 +3364,6 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                             <span class="hljs-keyword">break</span>;
                         <span class="hljs-keyword">case</span> <span class="hljs-string">"TK_IDEN"</span>:
                             tt = rt.getVariableType(lt);
-                            <span class="hljs-keyword">break</span>;
-                        <span class="hljs-keyword">default</span>:
                             <span class="hljs-keyword">break</span>;
                     }
                     <span class="hljs-keyword">break</span>;
@@ -4093,7 +4079,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    Parser.prototype.doCreateVirtualToken = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">type</span>) </span>{
-        <span class="hljs-keyword">var</span> v;
+        <span class="hljs-keyword">var</span> v = <span class="hljs-string">""</span>;
         <span class="hljs-keyword">switch</span> (type) {
             <span class="hljs-keyword">case</span> <span class="hljs-string">"VTK_COMMA"</span>:
                 v = <span class="hljs-string">","</span>;
@@ -4113,8 +4099,6 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             <span class="hljs-keyword">case</span> <span class="hljs-string">"VTK_FUNCTION"</span>:
                 v = <span class="hljs-string">"Fn()"</span>;
                 <span class="hljs-keyword">break</span>;
-            <span class="hljs-keyword">default</span>:
-                v = <span class="hljs-string">""</span>;
         }
         <span class="hljs-keyword">return</span> {
             <span class="hljs-attr">childs</span>: [],
@@ -4501,7 +4485,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">case</span> <span class="hljs-string">"TK_DOT"</span>:
                     <span class="hljs-keyword">if</span> (t.childs[<span class="hljs-number">1</span>].tokenType === <span class="hljs-string">"TK_IDEN"</span> &amp;&amp;
                         !hasToken(<span class="hljs-string">"VTK_FUNCTION,TK_IDEN,TK_DOT,VTK_SUBSCRIPT,VTK_PAREN,VTK_OBJECT"</span>, t.childs[<span class="hljs-number">0</span>].tokenType)) {
-                        msg = format(locale.getLocale().MSG_EP_SYNTAX_D, t.childs[<span class="hljs-number">0</span>].tokenType);
+                        msg = format(locale.getLocale().MSG_EP_SYNTAX_D, t.childs[<span class="hljs-number">0</span>].tokenText);
                     }
                     <span class="hljs-keyword">break</span>;</pre></div></div>
             
@@ -4807,8 +4791,6 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                             t = tmp;
                             i++;
                             n = ts[i + <span class="hljs-number">1</span>];
-                            <span class="hljs-keyword">break</span>;
-                        <span class="hljs-keyword">default</span>:
                             <span class="hljs-keyword">break</span>;
                     }
                 } <span class="hljs-keyword">while</span> (n &amp;&amp; (n.tokenType === <span class="hljs-string">"TK_DOT"</span> || n.tokenType === <span class="hljs-string">"VTK_ARRAY"</span>));
@@ -5245,7 +5227,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"number"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span>) &amp;&amp;
             (et.type === <span class="hljs-string">"number"</span> || et.type === <span class="hljs-string">"undefined"</span>)) {
             t = (et.hasData() &amp;&amp; (et.data === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"number"</span> &amp;&amp; <span class="hljs-built_in">Number</span>(et.data) === <span class="hljs-number">0</span>)) ?
-                <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_DIVIDE_N, et.info)) :
+                <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_DIVIDE_N, et.data)) :
                 <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"number"</span>);
         }
         <span class="hljs-keyword">else</span> {
@@ -5275,7 +5257,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"number"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span>) &amp;&amp;
             (et.type === <span class="hljs-string">"number"</span> || et.type === <span class="hljs-string">"undefined"</span>)) {
             t = (et.hasData() &amp;&amp; (et.data === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"number"</span> &amp;&amp; <span class="hljs-built_in">Number</span>(et.data) === <span class="hljs-number">0</span>)) ?
-                <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_REMAINDER_N, et.info)) :
+                <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_REMAINDER_N, et.data)) :
                 <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"number"</span>);
         }
         <span class="hljs-keyword">else</span> {
@@ -5298,10 +5280,13 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    Type.prototype.add = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">et</span>) </span>{
-        <span class="hljs-keyword">return</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span> &amp;&amp; et.type === <span class="hljs-string">"undefined"</span>) ? <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"undefined"</span>) :
-            (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> &amp;&amp; et.type === <span class="hljs-string">"null"</span>) ? <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"null"</span>) :
+        <span class="hljs-keyword">return</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span> &amp;&amp; et.type === <span class="hljs-string">"undefined"</span>) ?
+            <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"undefined"</span>) :
+            (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> &amp;&amp; et.type === <span class="hljs-string">"null"</span>) ?
+                <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"null"</span>) :
                 ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"number"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span>) &amp;&amp;
-                    (et.type === <span class="hljs-string">"number"</span> || et.type === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"undefined"</span>)) ? <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"number"</span>) :
+                    (et.type === <span class="hljs-string">"number"</span> || et.type === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"undefined"</span>)) ?
+                    <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"number"</span>) :
                     ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"string"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"number"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> ||
                         <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span>) &amp;&amp; (et.type === <span class="hljs-string">"string"</span> || et.type === <span class="hljs-string">"number"</span> ||
                         et.type === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"undefined"</span>)) ? <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"string"</span>) :
@@ -6167,7 +6152,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                 <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EX_AND_L, <span class="hljs-keyword">this</span>.type));
         }
         <span class="hljs-keyword">else</span> {
-            v = (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"boolean"</span> &amp;&amp; (ev.type === <span class="hljs-string">"boolean"</span> || ev.type === <span class="hljs-string">"null"</span>)) ?
+            v = ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"boolean"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span>) &amp;&amp; (ev.type === <span class="hljs-string">"boolean"</span> || ev.type === <span class="hljs-string">"null"</span>)) ?
                 <span class="hljs-keyword">this</span>.genValue(!!(<span class="hljs-keyword">this</span>.value &amp;&amp; ev.value), <span class="hljs-string">"boolean"</span>) :
                 <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EX_AND, <span class="hljs-keyword">this</span>.type, ev.type));
         }
@@ -7670,7 +7655,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                 entity = <span class="hljs-keyword">this</span>.exprContext.getEntityName();
             }
             <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (source.entity &amp;&amp; source.entity.field === <span class="hljs-string">""</span>) {
-                <span class="hljs-keyword">if</span> (source.parentObj) {
+                <span class="hljs-keyword">if</span> (source.parentObj &amp;&amp; <span class="hljs-keyword">this</span>.getParentName(source.entity.fullName)) {
                     r = source.parentObj;
                 }
                 <span class="hljs-keyword">else</span> {
@@ -8868,7 +8853,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
     <span class="hljs-attr">MSG_EX_OR_L</span>: <span class="hljs-string">"{0} 无法做逻辑或运算的左运算数"</span>,
     <span class="hljs-attr">MSG_EX_POSITIVE</span>: <span class="hljs-string">"{0} 无法做一元正数运算"</span>,
     <span class="hljs-attr">MSG_EX_REMAINDER</span>: <span class="hljs-string">"{0} 和 {1} 无法做余数运算"</span>,
-    <span class="hljs-attr">MSG_EX_REMAINDER_N</span>: <span class="hljs-string">"{0} 不能作为除数使用"</span>,
+    <span class="hljs-attr">MSG_EX_REMAINDER_N</span>: <span class="hljs-string">"{0} 不能作为余数使用"</span>,
     <span class="hljs-attr">MSG_EX_ROUND</span>: <span class="hljs-string">"做四舍五入运算时，保留小数位数不能为负数: {0}"</span>,
     <span class="hljs-attr">MSG_EX_SUBSCRIPT</span>: <span class="hljs-string">"{0} 无法做下标操作"</span>,
     <span class="hljs-attr">MSG_EX_SUBSCRIPT_T</span>: <span class="hljs-string">"下标必须为数字: {0}"</span>,
@@ -9242,7 +9227,22 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             
             <div class="content"><div class='highlight'><pre>    ExprManager.prototype.calc = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, data</span>) </span>{
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.exprContext.calcDataExpr(expr, data);
-    };
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-345">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-345">&#182;</a>
+              </div>
+              <p>本地化属性</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ExprManager.locale = locale;
     <span class="hljs-keyword">return</span> ExprManager;
 }());
 

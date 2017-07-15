@@ -136,10 +136,13 @@ export default class Type {
     }
     // 加法
     public add(et: Type): Type {
-        return (this.type === "undefined" && et.type === "undefined") ? this.genType("undefined") :
-            (this.type === "null" && et.type === "null") ? this.genType("null") :
+        return (this.type === "undefined" && et.type === "undefined") ?
+            this.genType("undefined") :
+            (this.type === "null" && et.type === "null") ?
+                this.genType("null") :
                 ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
-                    (et.type === "number" || et.type === "null" || et.type === "undefined")) ? this.genType("number") :
+                    (et.type === "number" || et.type === "null" || et.type === "undefined")) ?
+                    this.genType("number") :
                     ((this.type === "string" || this.type === "number" || this.type === "null" ||
                         this.type === "undefined") && (et.type === "string" || et.type === "number" ||
                             et.type === "null" || et.type === "undefined")) ? this.genType("string") :

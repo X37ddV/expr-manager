@@ -127,8 +127,6 @@ export default class Calc {
                         case "TK_IDEN": /// 访问属性
                             tv = rv.getVariableValue(lv);
                             break;
-                        default:
-                            break;
                     }
                     break;
                 case "VTK_COMMA": /// ,结点

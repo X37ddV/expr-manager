@@ -1,4 +1,5 @@
 import func from "./function/func";
+import locale from "./lib/base/locale";
 import Type from "./lib/base/type";
 import Value from "./lib/base/value";
 import ExprContext, { IDataCursor, IFunction } from "./lib/context";
@@ -9,6 +10,8 @@ import "./locale/zh-cn";
 // ----------
 
 export default class ExprManager {
+    // 本地化属性
+    public static locale = locale;
     private exprContext: ExprContext = new ExprContext();
     private exprList: ExprList = new ExprList();
     // 构造函数

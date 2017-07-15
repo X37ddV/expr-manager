@@ -187,6 +187,15 @@ describe("接口测试", function () {
             expect(expr).toEqual(exprManager);
             var err = exprManager.checkAndSort();
             expect(err).toEqual("");
+
+            // 添加错误表达式
+            expr = exprManager.addExpression(
+                "''+0",
+                "Table", "CalcField1", ["add"],
+                doCalc, null);
+            expect(expr).toEqual(exprManager);
+            var err = exprManager.checkAndSort();
+            expect(err).toEqual("");
         }
     })(exprManager));
 
@@ -197,4 +206,14 @@ describe("接口测试", function () {
             // TODO:
         }
     })(exprManager));
+
+    it("多语言定义", (function(){
+        return function () {
+            ExprManager.locale.defineLocale('zh-TW', null);
+            ExprManager.locale.defineFunction('zh-TW', null);
+            expect(ExprManager.locale.getLocale('zh-TW')).toBeUndefined();
+            expect(ExprManager.locale.getFunction('zh-TW')).toBeUndefined();
+            expect(ExprManager.locale.getFunction()).toBeDefined();
+        }
+    })());
 });

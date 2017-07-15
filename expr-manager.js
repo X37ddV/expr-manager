@@ -1091,8 +1091,7 @@ var funcStringToDate = {
 // 获取字符串长度
 var funcStringLength = {
     fn: function (context, source) {
-        var value = source.toValue();
-        return context.genValue(isString(value) ? value.length : null);
+        return context.genValue(source.toValue().length);
     },
     p: [],
     r: "number",
@@ -1100,8 +1099,7 @@ var funcStringLength = {
 // 转换字符串为大写
 var funcStringUpper = {
     fn: function (context, source) {
-        var value = source.toValue();
-        return context.genValue(isString(value) ? value.toUpperCase() : null);
+        return context.genValue(source.toValue().toUpperCase());
     },
     p: [],
     r: "string",
@@ -1109,8 +1107,7 @@ var funcStringUpper = {
 // 转换字符串为小写
 var funcStringLower = {
     fn: function (context, source) {
-        var value = source.toValue();
-        return context.genValue(isString(value) ? value.toLowerCase() : null);
+        return context.genValue(source.toValue().toLowerCase());
     },
     p: [],
     r: "string",
@@ -1118,8 +1115,7 @@ var funcStringLower = {
 // 去除字符串两端空格
 var funcStringTrim = {
     fn: function (context, source) {
-        var value = source.toValue();
-        return context.genValue(isString(value) ? value.trim() : null);
+        return context.genValue(source.toValue().trim());
     },
     p: [],
     r: "string",
@@ -1127,8 +1123,7 @@ var funcStringTrim = {
 // 去除字符串左端空格
 var funcStringTrimLeft = {
     fn: function (context, source) {
-        var value = source.toValue();
-        return context.genValue(isString(value) ? value.replace(/^\s+/g, "") : null);
+        return context.genValue(source.toValue().replace(/^\s+/g, ""));
     },
     p: [],
     r: "string",
@@ -1136,8 +1131,7 @@ var funcStringTrimLeft = {
 // 去除字符串右端空格
 var funcStringTrimRight = {
     fn: function (context, source) {
-        var value = source.toValue();
-        return context.genValue(isString(value) ? value.replace(/\s+$/g, "") : null);
+        return context.genValue(source.toValue().replace(/\s+$/g, ""));
     },
     p: [],
     r: "string",
@@ -1151,8 +1145,7 @@ var funcStringSubString = {
         if (left > right) {
             right = left;
         }
-        return context.genValue(isString(value) && isNumber(start) && isNumber(len) ?
-            value.substring(left, right) : null);
+        return context.genValue(value.substring(left, right));
     },
     p: ["number", "number"],
     r: "string",
@@ -1160,8 +1153,7 @@ var funcStringSubString = {
 // 获取字符串的左子字符串，指定长度
 var funcStringLeftString = {
     fn: function (context, source, len) {
-        var value = source.toValue();
-        return context.genValue(isString(value) && isNumber(len) ? value.substring(0, len) : null);
+        return context.genValue(source.toValue().substring(0, len));
     },
     p: ["number"],
     r: "string",
@@ -1170,8 +1162,7 @@ var funcStringLeftString = {
 var funcStringRightString = {
     fn: function (context, source, len) {
         var value = source.toValue();
-        return context.genValue(isString(value) && isNumber(len) ?
-            value.substring(value.length - len, value.length) : null);
+        return context.genValue(value.substring(value.length - len, value.length));
     },
     p: ["number"],
     r: "string",
@@ -1179,9 +1170,7 @@ var funcStringRightString = {
 // 检索字符串，获取子字符串在字符串中的起始位置
 var funcStringPos = {
     fn: function (context, source, subValue) {
-        var value = source.toValue();
-        return context.genValue(isString(value) && isString(subValue) ?
-            value.indexOf(subValue) : null);
+        return context.genValue(source.toValue().indexOf(subValue));
     },
     p: ["string"],
     r: "number",
@@ -1431,8 +1420,6 @@ var Calc = (function () {
                         case "TK_IDEN":
                             tv = rv.getVariableValue(lv);
                             break;
-                        default:
-                            break;
                     }
                     break;
                 case "VTK_COMMA":
@@ -1645,8 +1632,6 @@ var Check = (function () {
                             break;
                         case "TK_IDEN":
                             tt = rt.getVariableType(lt);
-                            break;
-                        default:
                             break;
                     }
                     break;
@@ -2114,7 +2099,7 @@ var Parser = (function () {
     };
     // 创建虚节点
     Parser.prototype.doCreateVirtualToken = function (type) {
-        var v;
+        var v = "";
         switch (type) {
             case "VTK_COMMA":
                 v = ",";
@@ -2134,8 +2119,6 @@ var Parser = (function () {
             case "VTK_FUNCTION":
                 v = "Fn()";
                 break;
-            default:
-                v = "";
         }
         return {
             childs: [],
@@ -2258,7 +2241,7 @@ var Parser = (function () {
                 case "TK_DOT":
                     if (t.childs[1].tokenType === "TK_IDEN" &&
                         !hasToken("VTK_FUNCTION,TK_IDEN,TK_DOT,VTK_SUBSCRIPT,VTK_PAREN,VTK_OBJECT", t.childs[0].tokenType)) {
-                        msg = format(locale.getLocale().MSG_EP_SYNTAX_D, t.childs[0].tokenType);
+                        msg = format(locale.getLocale().MSG_EP_SYNTAX_D, t.childs[0].tokenText);
                     }
                     break;
                 // - 冒号操作符检查
@@ -2450,8 +2433,6 @@ var Parser = (function () {
                             t = tmp;
                             i++;
                             n = ts[i + 1];
-                            break;
-                        default:
                             break;
                     }
                 } while (n && (n.tokenType === "TK_DOT" || n.tokenType === "VTK_ARRAY"));
@@ -2684,10 +2665,13 @@ var Type = (function () {
     };
     // 加法
     Type.prototype.add = function (et) {
-        return (this.type === "undefined" && et.type === "undefined") ? this.genType("undefined") :
-            (this.type === "null" && et.type === "null") ? this.genType("null") :
+        return (this.type === "undefined" && et.type === "undefined") ?
+            this.genType("undefined") :
+            (this.type === "null" && et.type === "null") ?
+                this.genType("null") :
                 ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
-                    (et.type === "number" || et.type === "null" || et.type === "undefined")) ? this.genType("number") :
+                    (et.type === "number" || et.type === "null" || et.type === "undefined")) ?
+                    this.genType("number") :
                     ((this.type === "string" || this.type === "number" || this.type === "null" ||
                         this.type === "undefined") && (et.type === "string" || et.type === "number" ||
                         et.type === "null" || et.type === "undefined")) ? this.genType("string") :
@@ -4749,6 +4733,8 @@ var ExprManager = (function () {
     ExprManager.prototype.calc = function (expr, data) {
         return this.exprContext.calcDataExpr(expr, data);
     };
+    // 本地化属性
+    ExprManager.locale = locale;
     return ExprManager;
 }());
 

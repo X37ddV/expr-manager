@@ -149,8 +149,6 @@ export default class Check {
                         case "TK_IDEN": /// 访问属性
                             tt = rt.getVariableType(lt);
                             break;
-                        default:
-                            break;
                     }
                     break;
                 case "VTK_COMMA": /// ,结点

@@ -41,8 +41,7 @@ const funcStringToDate = {
 // 获取字符串长度
 const funcStringLength = {
     fn: (context: ExprContext, source) => {
-        const value = source.toValue();
-        return context.genValue(isString(value) ? value.length : null);
+        return context.genValue(source.toValue().length);
     },
     p: [] as FunctionParamsType[],
     r: "number" as FunctionResultType,
@@ -50,8 +49,7 @@ const funcStringLength = {
 // 转换字符串为大写
 const funcStringUpper = {
     fn: (context: ExprContext, source) => {
-        const value = source.toValue();
-        return context.genValue(isString(value) ? value.toUpperCase() : null);
+        return context.genValue(source.toValue().toUpperCase());
     },
     p: [] as FunctionParamsType[],
     r: "string" as FunctionResultType,
@@ -59,8 +57,7 @@ const funcStringUpper = {
 // 转换字符串为小写
 const funcStringLower = {
     fn: (context: ExprContext, source) => {
-        const value = source.toValue();
-        return context.genValue(isString(value) ? value.toLowerCase() : null);
+        return context.genValue(source.toValue().toLowerCase());
     },
     p: [] as FunctionParamsType[],
     r: "string" as FunctionResultType,
@@ -68,8 +65,7 @@ const funcStringLower = {
 // 去除字符串两端空格
 const funcStringTrim = {
     fn: (context: ExprContext, source) => {
-        const value = source.toValue();
-        return context.genValue(isString(value) ? value.trim() : null);
+        return context.genValue(source.toValue().trim());
     },
     p: [] as FunctionParamsType[],
     r: "string" as FunctionResultType,
@@ -77,8 +73,7 @@ const funcStringTrim = {
 // 去除字符串左端空格
 const funcStringTrimLeft = {
     fn: (context: ExprContext, source) => {
-        const value = source.toValue();
-        return context.genValue(isString(value) ? value.replace(/^\s+/g, "") : null);
+        return context.genValue(source.toValue().replace(/^\s+/g, ""));
     },
     p: [] as FunctionParamsType[],
     r: "string" as FunctionResultType,
@@ -86,8 +81,7 @@ const funcStringTrimLeft = {
 // 去除字符串右端空格
 const funcStringTrimRight = {
     fn: (context: ExprContext, source) => {
-        const value = source.toValue();
-        return context.genValue(isString(value) ? value.replace(/\s+$/g, "") : null);
+        return context.genValue(source.toValue().replace(/\s+$/g, ""));
     },
     p: [] as FunctionParamsType[],
     r: "string" as FunctionResultType,
@@ -101,8 +95,7 @@ const funcStringSubString = {
         if (left > right) {
             right = left;
         }
-        return context.genValue(isString(value) && isNumber(start) && isNumber(len) ?
-            value.substring(left, right) : null);
+        return context.genValue(value.substring(left, right));
     },
     p: ["number", "number"] as FunctionParamsType[],
     r: "string" as FunctionResultType,
@@ -110,8 +103,7 @@ const funcStringSubString = {
 // 获取字符串的左子字符串，指定长度
 const funcStringLeftString = {
     fn: (context: ExprContext, source, len) => {
-        const value = source.toValue();
-        return context.genValue(isString(value) && isNumber(len) ? value.substring(0, len) : null);
+        return context.genValue(source.toValue().substring(0, len));
     },
     p: ["number"] as FunctionParamsType[],
     r: "string" as FunctionResultType,
@@ -120,8 +112,7 @@ const funcStringLeftString = {
 const funcStringRightString = {
     fn: (context: ExprContext, source, len) => {
         const value = source.toValue();
-        return context.genValue(isString(value) && isNumber(len) ?
-            value.substring(value.length - len, value.length) : null);
+        return context.genValue(value.substring(value.length - len, value.length));
     },
     p: ["number"] as FunctionParamsType[],
     r: "string" as FunctionResultType,
@@ -129,9 +120,7 @@ const funcStringRightString = {
 // 检索字符串，获取子字符串在字符串中的起始位置
 const funcStringPos = {
     fn: (context: ExprContext, source, subValue) => {
-        const value = source.toValue();
-        return context.genValue(isString(value) && isString(subValue) ?
-            value.indexOf(subValue) : null);
+        return context.genValue(source.toValue().indexOf(subValue));
     },
     p: ["string"] as FunctionParamsType[],
     r: "number" as FunctionResultType,

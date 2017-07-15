@@ -44,7 +44,7 @@ export default class Parser {
     }
     // 创建虚节点
     private doCreateVirtualToken(type: TokenType): IToken {
-        let v: string;
+        let v: string = "";
         switch (type) {
             case "VTK_COMMA": /// 逗号，用于函数多个参数、数组元素、对象属性之间
                 v = ",";
@@ -64,8 +64,6 @@ export default class Parser {
             case "VTK_FUNCTION": /// 函数
                 v = "Fn()";
                 break;
-            default:
-                v = "";
         }
         return {
             childs: [],
@@ -186,7 +184,7 @@ export default class Parser {
                     if (t.childs[1].tokenType === "TK_IDEN" &&
                         !hasToken("VTK_FUNCTION,TK_IDEN,TK_DOT,VTK_SUBSCRIPT,VTK_PAREN,VTK_OBJECT",
                         t.childs[0].tokenType)) { /// 无法做属性访问操作
-                        msg = format(locale.getLocale().MSG_EP_SYNTAX_D, t.childs[0].tokenType);
+                        msg = format(locale.getLocale().MSG_EP_SYNTAX_D, t.childs[0].tokenText);
                     }
                     break;
                 // - 冒号操作符检查
@@ -365,8 +363,6 @@ export default class Parser {
                             t = tmp; /// 将a[b]视为t节点
                             i++;
                             n = ts[i + 1];
-                            break;
-                        default:
                             break;
                     }
                 } while (n && (n.tokenType === "TK_DOT" || n.tokenType === "VTK_ARRAY"));
