@@ -2672,12 +2672,12 @@ var Type = (function () {
                 ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
                     (et.type === "number" || et.type === "null" || et.type === "undefined")) ?
                     this.genType("number") :
-                    ((this.type === "string" || this.type === "number" || this.type === "null" ||
-                        this.type === "undefined") && (et.type === "string" || et.type === "number" ||
-                        et.type === "null" || et.type === "undefined")) ? this.genType("string") :
+                    ((this.type === "string" || this.type === "null" || this.type === "undefined") &&
+                        (et.type === "string" || et.type === "null" || et.type === "undefined")) ?
+                        this.genType("string") :
                         ((this.type === "array" || this.type === "null" || this.type === "undefined") &&
-                            (et.type === "array" || et.type === "null" ||
-                                et.type === "undefined")) ? this.genType("array") :
+                            (et.type === "array" || et.type === "null" || et.type === "undefined")) ?
+                            this.genType("array") :
                             this.genErrorType(format(locale.getLocale().MSG_EX_ADD, this.type, et.type));
     };
     // 减法

@@ -195,7 +195,7 @@ describe("接口测试", function () {
                 doCalc, null);
             expect(expr).toEqual(exprManager);
             var err = exprManager.checkAndSort();
-            expect(err).toEqual("");
+            expect(err).toEqual("作用于实体\“Table\”上的表达式\“''+0\”解析出错：string 和 number 无法做加法运算");
         }
     })(exprManager));
 

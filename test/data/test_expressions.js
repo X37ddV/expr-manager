@@ -1241,8 +1241,8 @@ var exprNull = {
         ['1/PN1', 'undefined', 'null 不能作为除数使用', '', 'number 和 string 无法做除法运算'], // TODO:
         ['PN1%1', '0', '', '', 'string 和 number 无法做余数运算'], // TODO:
         ['PN1+PN1', 'null', '', 'E1.PN1'],
-        ['PN1+PN1+0', '0', '', 'E1.PN1'],
-        ['PN1+3', '3', '', 'E1.PN1'],
+        ['PN1+PN1+0', '0', '', '', 'string 和 number 无法做加法运算'], // TODO:
+        ['PN1+3', '3', '', '', 'string 和 number 无法做加法运算'], // TODO:
         ['PN1+""', '""', '', 'E1.PN1'],
         ['3+PN1+""', 'undefined', 'number 和 string 无法做加法运算', 'E1.PN1'], // TODO:
         ['[1,"2",true,{a:[4,5,6],b:PN1},[4,5,6],PN1]+PN1', '[1,"2",true,{"a":[4,5,6],"b":null},[4,5,6],null]', '', '', 'array 和 string 无法做加法运算'], // TODO:

@@ -3,9 +3,9 @@
     dataSource: {
         "E1.P1": { expr: "Root().E1.Count().ToString()" },
         "E1.P2": { expr: "P1.ToNumber()" },
-        "E1.P6": { expr: "P2+PN1==''" },
+        "E1.P6": { expr: "P2.ToString()+PN1==''" },
         "E1.PN1": { expr: "'起点2'" },
-        "E1.PN2": { expr: "(PN1+P2).Length()" }
+        "E1.PN2": { expr: "(PN1+P2.ToString()).Length()" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.P1|E1.P2|E1.PN1|E1.P6|E1.PN2" },
@@ -37,9 +37,9 @@ var test13 = {
     dataSource: {
         "E1.P1": { expr: "Root().E1.Count().ToString()" },
         "E1.P2": { expr: "P1.Length()" },
-        "E1.P6": { expr: "P2+PN1==''" },
+        "E1.P6": { expr: "P2.ToString()+PN1==''" },
         "E1.PN1": { expr: "'起点2'" },
-        "E1.PN2": { expr: "PN1+P2" },
+        "E1.PN2": { expr: "PN1.Length()+P2" },
         "E1.PN6": { expr: "PN1==''==P6" }
     },
     testCase: [
@@ -106,7 +106,7 @@ var test141 = {
 var test15 = {
     title: "依赖关系测试15Count",
     dataSource: {
-        "E1.PN1": { expr: "'起点2'+Entity2.Count()" },
+        "E1.PN1": { expr: "'起点2'+Entity2.Count().ToString()" },
         "E1.PN2": { expr: "PN1.Length()" },
         "E1.Entity1.P1": { expr: "Root().E1.Count()" },
         "E1.Entity1.P2": { expr: "P1" },
@@ -160,7 +160,7 @@ var test21 = {
     title: "依赖关系测试21",
     dataSource: {
         "E1.P1": { expr: "Root().E1.Count().ToString()+PN1" },
-        "E1.P2": { expr: "(P1+PN2).Length()" },
+        "E1.P2": { expr: "(P1+PN2.ToString()).Length()" },
         "E1.PN1": { expr: "'起点2'" },
         "E1.PN2": { expr: "PN1.Length()" }
     },
@@ -176,7 +176,7 @@ var test22 = {
     title: "依赖关系测试22",
     dataSource: {
         "E1.P1": { expr: "Root().E1.Count().ToString()+PN1" },
-        "E1.P2": { expr: "(P1+PN2).Length()" },
+        "E1.P2": { expr: "(P1+PN2.ToString()).Length()" },
         "E1.PN1": { expr: "'起点2'" },
         "E1.PN2": { expr: "(PN1+P1).Length()" }
     },
@@ -192,7 +192,7 @@ var test23 = {
     title: "依赖关系测试23",
     dataSource: {
         "E1.P1": { expr: "Root().E1.Count().ToString()+PN1" },
-        "E1.P2": { expr: "(P1+PN2+PN1).Length()" },
+        "E1.P2": { expr: "(P1+PN2.ToString()+PN1).Length()" },
         "E1.PN1": { expr: "'起点2'" },
         "E1.PN2": { expr: "PN1.Length()" }
     },
@@ -207,8 +207,8 @@ var test23 = {
 var test24 = {
     title: "依赖关系测试24",
     dataSource: {
-        "E1.P1": { expr: "Root().E1.Count().ToString()+PN1+PN2" },
-        "E1.P2": { expr: "(P1+PN2+PN1).Length()" },
+        "E1.P1": { expr: "Root().E1.Count().ToString()+PN1+PN2.ToString()" },
+        "E1.P2": { expr: "(P1+PN2.ToString()+PN1).Length()" },
         "E1.PN1": { expr: "'起点2'" },
         "E1.PN2": { expr: "PN1.Length()" }
     },
@@ -229,7 +229,7 @@ var test221 = {
         "E1.PN1": { expr: "'起点2'" },
         "E1.PN2": { expr: "PN1.Length()" },
         "E1.Entity1.P1": { expr: "Root().E1.Count()+Parent().PN1.Length()" },
-        "E1.Entity1.P2": { expr: "P1+Parent().PN2" }
+        "E1.Entity1.P2": { expr: "P1.Length()+Parent().PN2" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.PN2|E1.Entity1.P1|E1.Entity1.P2" },
@@ -249,7 +249,7 @@ var test222 = {
         "E1.PN1": { expr: "'起点2'" },
         "E1.PN2": { expr: "(PN1+Entity1[0].P1).Length()" },
         "E1.Entity1.P1": { expr: "Root().E1.Count()+Parent().PN1.Length()" },
-        "E1.Entity1.P2": { expr: "P1+Parent().PN2" }
+        "E1.Entity1.P2": { expr: "P1.Length()+Parent().PN2" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.Entity1.P1|E1.PN2|E1.Entity1.P2" },
@@ -267,7 +267,7 @@ var test223 = {
     title: "依赖关系测试223",
     dataSource: {
         "E1.Entity1.P1": { expr: "Root().E1.Count().ToString()+Parent().PN1" },
-        "E1.Entity1.P2": { expr: "(P1+Parent().PN2+Parent().PN1).Length()" },
+        "E1.Entity1.P2": { expr: "(P1+Parent().PN2.ToString()+Parent().PN1).Length()" },
         "E1.PN1": { expr: "'起点2'" },
         "E1.PN2": { expr: "PN1.Length()" }
     },
@@ -286,8 +286,8 @@ var test223 = {
 var test224 = {
     title: "依赖关系测试224",
     dataSource: {
-        "E1.Entity1.P1": { expr: "Root().E1.Count().ToString()+Parent().PN1+Parent().PN2" },
-        "E1.Entity1.P2": { expr: "(P1+Parent().PN2+Parent().PN1).Length()" },
+        "E1.Entity1.P1": { expr: "Root().E1.Count().ToString()+Parent().PN1+Parent().PN2.ToString()" },
+        "E1.Entity1.P2": { expr: "(P1+Parent().PN2.ToString()+Parent().PN1).Length()" },
         "E1.PN1": { expr: "'起点2'" },
         "E1.PN2": { expr: "PN1.Length()" }
     },
@@ -347,8 +347,8 @@ var test224 = {
 var test231 = {
     title: "依赖关系测试231",
     dataSource: {
-        "E2.P1": { expr: "Root().E1.Count().ToString()+Root().E1[0].P1+Root().E1[0].P2" },
-        "E2.P2": { expr: "(P1+Root().E1[0].P2+Root().E1[0].P1).Length()" },
+        "E2.P1": { expr: "Root().E1.Count().ToString()+Root().E1[0].P1+Root().E1[0].P2.ToString()" },
+        "E2.P2": { expr: "(P1+Root().E1[0].P2.ToString()+Root().E1[0].P1).Length()" },
         "E1.P1": { expr: "'起点2'" },
         "E1.P2": { expr: "P1.Length()" }
     },
@@ -367,8 +367,8 @@ var test231 = {
 var test232 = {
     title: "依赖关系测试232",
     dataSource: {
-        "E2.Entity1.P1": { expr: "Root().E1[0].Entity1.Count().ToString()+Root().E1[0].Entity1[0].P1+Root().E1[0].Entity1[0].P2" },
-        "E2.Entity1.P2": { expr: "P1+Root().E1[0].Entity1[0].P2+Root().E1[0].Entity1[0].P1" },
+        "E2.Entity1.P1": { expr: "Root().E1[0].Entity1.Count().ToString()+Root().E1[0].Entity1[0].P1+Root().E1[0].Entity1[0].P2.ToString()" },
+        "E2.Entity1.P2": { expr: "P1+Root().E1[0].Entity1[0].P2.ToString()+Root().E1[0].Entity1[0].P1" },
         "E1.Entity1.P1": { expr: "'起点2'" },
         "E1.Entity1.P2": { expr: "P1" }
     },
@@ -391,7 +391,7 @@ var test31 = {
         "E1.P1": { expr: "Root().E1.Count().ToString()+PN1" },
         "E1.P2": { expr: "P1.Length()" },
         "E1.PN1": { expr: "'起点2'" },
-        "E1.PN2": { expr: "(P2+PN1).Length()" }
+        "E1.PN2": { expr: "(P2.ToString()+PN1).Length()" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.P1|E1.P2|E1.PN2" },
@@ -407,7 +407,7 @@ var test32 = {
         "E1.P1": { expr: "Root().E1.Count().ToString()+PN1" },
         "E1.P2": { expr: "P1.Length()" },
         "E1.PN1": { expr: "'起点2'" },
-        "E1.PN2": { expr: "(P2+PN1+P1).Length()" }
+        "E1.PN2": { expr: "(P2.ToString()+PN1+P1).Length()" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.P1|E1.P2|E1.PN2" },
@@ -423,7 +423,7 @@ var test33 = {
         "E1.P1": { expr: "Root().E1.Count().ToString()+PN1" },
         "E1.P2": { expr: "(P1+PN1).Length()" },
         "E1.PN1": { expr: "'起点2'" },
-        "E1.PN2": { expr: "(P2+PN1).Length()" }
+        "E1.PN2": { expr: "(P2.ToString()+PN1).Length()" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.P1|E1.P2|E1.PN2" },
@@ -439,7 +439,7 @@ var test34 = {
         "E1.P1": { expr: "Root().E1.Count().ToString()+PN1" },
         "E1.P2": { expr: "(P1+PN1).Length()" },
         "E1.PN1": { expr: "'起点2'" },
-        "E1.PN2": { expr: "(P2+PN1+P1).Length()" }
+        "E1.PN2": { expr: "(P2.ToString()+PN1+P1).Length()" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.P1|E1.P2|E1.PN2" },
@@ -455,7 +455,7 @@ var test321 = {
         "E1.Entity1.P1": { expr: "Root().E1.Count().ToString()+Root().E1[0].PN1" },
         "E1.Entity1.P2": { expr: "Root().E1[0].Entity1[0].P1" },
         "E1.PN1": { expr: "'起点2'" },
-        "E1.PN2": { expr: "(Root().E1[0].Entity1[0].P2+Root().E1[0].PN1).Length()" }
+        "E1.PN2": { expr: "(Root().E1[0].Entity1[0].P2.ToString()+Root().E1[0].PN1).Length()" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.Entity1.P1|E1.Entity1.P2|E1.PN2" },
@@ -475,7 +475,7 @@ var test322 = {
         "E1.Entity1.P1": { expr: "Root().E1.Count().ToString()+Root().E1[0].PN1" },
         "E1.Entity1.P2": { expr: "Root().E1[0].Entity1[0].P1" },
         "E1.PN1": { expr: "'起点2'" },
-        "E1.PN2": { expr: "(Root().E1[0].Entity1[0].P2+Root().E1[0].PN1+Root().E1[0].Entity1[0].P1).Length()" }
+        "E1.PN2": { expr: "(Root().E1[0].Entity1[0].P2.ToString()+Root().E1[0].PN1+Root().E1[0].Entity1[0].P1).Length()" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.Entity1.P1|E1.Entity1.P2|E1.PN2" },
@@ -495,7 +495,7 @@ var test323 = {
         "E1.Entity1.P1": { expr: "Root().E1.Count().ToString()+Root().E1[0].PN1" },
         "E1.Entity1.P2": { expr: "(Root().E1[0].Entity1[0].P1+Root().E1[0].PN1).Length()" },
         "E1.PN1": { expr: "'起点2'" },
-        "E1.PN2": { expr: "(Root().E1[0].Entity1[0].P2+Root().E1[0].PN1).Length()" }
+        "E1.PN2": { expr: "(Root().E1[0].Entity1[0].P2.ToString()+Root().E1[0].PN1).Length()" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.Entity1.P1|E1.Entity1.P2|E1.PN2" },
@@ -515,7 +515,7 @@ var test324 = {
         "E1.Entity1.P1": { expr: "Root().E1.Count().ToString()+Root().E1[0].PN1" },
         "E1.Entity1.P2": { expr: "(Root().E1[0].Entity1[0].P1+Root().E1[0].PN1).Length()" },
         "E1.PN1": { expr: "'起点2'" },
-        "E1.PN2": { expr: "(Root().E1[0].Entity1[0].P2+Root().E1[0].PN1+Root().E1[0].Entity1[0].P1).Length()" }
+        "E1.PN2": { expr: "(Root().E1[0].Entity1[0].P2.ToString()+Root().E1[0].PN1+Root().E1[0].Entity1[0].P1).Length()" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.Entity1.P1|E1.Entity1.P2|E1.PN2" },
@@ -535,7 +535,7 @@ var test41 = {
     dataSource: {
         "E1.PU1": { expr: "'起点'+Root().E1.Count().ToString()" },
         "E1.PU2": { expr: "(PU1).Length()" },
-        "E1.PU6": { expr: "PU2+PN1" },
+        "E1.PU6": { expr: "PU2.ToString()+PN1" },
         "E1.PN1": { expr: "PU1" },
         "E1.PN2": { expr: "PN1.Length()+PU2" }
     },
@@ -607,14 +607,14 @@ var test43 = {
 var test50 = {
     title: "依赖关系测试50二对一",
     dataSource: {
-        "E1.Entity1.P1": { expr: "Parent().PN1+Parent().PN2" },
-        "E1.Entity1.P2": { expr: "(P1+Parent().PN2+Parent().PN1).Length()" },
+        "E1.Entity1.P1": { expr: "Parent().PN1+Parent().PN2.ToString()" },
+        "E1.Entity1.P2": { expr: "(P1+Parent().PN2.ToString()+Parent().PN1).Length()" },
         "E1.PN1": { expr: "'起点1'" },
         "E1.PN2": { expr: "PN1.Length()" },
         "E2.Entity1.P1": { expr: "Parent().PN1" },
         "E2.Entity1.P2": { expr: "(P1+Parent().PN1).Length()" },
         "E2.PN1": { expr: "'起点2'" },
-        "E2.PN2": { expr: "(Entity1[0].P2+PN1+Entity1[0].P1+Root().E1[0].Entity1[0].P2).ToNumber()" }
+        "E2.PN2": { expr: "(Entity1[0].P2.ToString()+PN1+Entity1[0].P1+Root().E1[0].Entity1[0].P2.ToString()).ToNumber()" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.PN2|E1.Entity1.P1|E1.Entity1.P2|E2.PN2" },
@@ -639,14 +639,14 @@ var test50 = {
 var test51 = {
     title: "依赖关系测试51二对一RecNo",
     dataSource: {
-        "E1.Entity1.P1": { expr: "Parent().PN1+Parent().PN2" },
-        "E1.Entity1.P2": { expr: "(RecNo()+P1+Parent().PN2+Parent().PN1).Length()" },
+        "E1.Entity1.P1": { expr: "Parent().PN1+Parent().PN2.ToString()" },
+        "E1.Entity1.P2": { expr: "(RecNo().ToString()+P1+Parent().PN2.ToString()+Parent().PN1).Length()" },
         "E1.PN1": { expr: "'起点1'" },
         "E1.PN2": { expr: "RecNo()+PN1.Length()" },
         "E2.Entity1.P1": { expr: "Parent().PN1" },
-        "E2.Entity1.P2": { expr: "(RecNo()+P1+Parent().PN1).Length()" },
+        "E2.Entity1.P2": { expr: "(RecNo().ToString()+P1+Parent().PN1).Length()" },
         "E2.PN1": { expr: "'起点2'" },
-        "E2.PN2": { expr: "(RecNo()+Entity1[0].P2+PN1+Entity1[0].P1+Root().E1[0].Entity1[0].P2).Length()" }
+        "E2.PN2": { expr: "(RecNo().ToString()+Entity1[0].P2.ToString()+PN1+Entity1[0].P1+Root().E1[0].Entity1[0].P2.ToString()).Length()" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.PN2|E1.Entity1.P1|E1.Entity1.P2|E2.PN2" },
@@ -671,14 +671,14 @@ var test51 = {
 var test52 = {
     title: "依赖关系测试52二对一RecNo",
     dataSource: {
-        "E1.Entity1.P1": { expr: "Root().E1[Parent().RecNo()].PN1+Root().E1[Parent().RecNo()].PN2" },
-        "E1.Entity1.P2": { expr: "(Root().E1[Parent().RecNo()].Entity1[0].P1+Root().E1[Parent().RecNo()].PN2+Root().E1[Parent().RecNo()].PN1).Length()" },
+        "E1.Entity1.P1": { expr: "Root().E1[Parent().RecNo()].PN1+Root().E1[Parent().RecNo()].PN2.ToString()" },
+        "E1.Entity1.P2": { expr: "(Root().E1[Parent().RecNo()].Entity1[0].P1+Root().E1[Parent().RecNo()].PN2.ToString()+Root().E1[Parent().RecNo()].PN1).Length()" },
         "E1.PN1": { expr: "'起点1'" },
         "E1.PN2": { expr: "PN1.Length()" },
         "E2.Entity1.P1": { expr: "Root().E2[Parent().RecNo()].PN1" },
         "E2.Entity1.P2": { expr: "(Root().E2[Parent().RecNo()].Entity1[RecNo()].P1+Root().E2[Parent().RecNo()].PN1).Length()" },
         "E2.PN1": { expr: "'起点2'" },
-        "E2.PN2": { expr: "(Entity1[0].P2+PN1+Entity1[0].P1+Root().E1[0].Entity1[0].P2).Length()" }
+        "E2.PN2": { expr: "(Entity1[0].P2.ToString()+PN1+Entity1[0].P1+Root().E1[0].Entity1[0].P2.ToString()).Length()" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.PN2|E1.Entity1.P1|E1.Entity1.P2|E2.PN2" },
@@ -703,14 +703,14 @@ var test52 = {
 var test53 = {
     title: "依赖关系测试53二对一Count",
     dataSource: {
-        "E1.Entity1.P1": { expr: "Root().E1.Count().ToString()+Parent().PN1+Parent().PN2" },
-        "E1.Entity1.P2": { expr: "(P1+Parent().PN2+Parent().PN1).Length()" },
+        "E1.Entity1.P1": { expr: "Root().E1.Count().ToString()+Parent().PN1+Parent().PN2.ToString()" },
+        "E1.Entity1.P2": { expr: "(P1+Parent().PN2.ToString()+Parent().PN1).Length()" },
         "E1.PN1": { expr: "'起点1'" },
         "E1.PN2": { expr: "PN1.Length()" },
         "E2.Entity1.P1": { expr: "Parent().Entity1.Count().ToString()+Parent().PN1" },
         "E2.Entity1.P2": { expr: "(P1+Parent().PN1).Length()" },
         "E2.PN1": { expr: "'起点2'" },
-        "E2.PN2": { expr: "(Entity1[0].P2+PN1+Entity1[0].P1+Root().E1[0].Entity1[0].P2).Length()" }
+        "E2.PN2": { expr: "(Entity1[0].P2.ToString()+PN1+Entity1[0].P1+Root().E1[0].Entity1[0].P2.ToString()).Length()" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.PN2|E1.Entity1.P1|E1.Entity1.P2|E2.PN2" },
@@ -735,14 +735,14 @@ var test53 = {
 var test54 = {
     title: "依赖关系测试54二对一Sum",
     dataSource: {
-        "E1.Entity1.P1": { expr: "Root().E1.Sum('PN1').ToString()+Parent().PN2" },
-        "E1.Entity1.P2": { expr: "(P1+Parent().PN2+Parent().PN1).Length()" },
+        "E1.Entity1.P1": { expr: "Root().E1.Sum('PN1').ToString()+Parent().PN2.ToString()" },
+        "E1.Entity1.P2": { expr: "(P1+Parent().PN2.ToString()+Parent().PN1).Length()" },
         "E1.PN1": { expr: "'起点1'" },
         "E1.PN2": { expr: "PN1.Length()" },
         "E2.Entity1.P1": { expr: "Parent().PN1" },
         "E2.Entity1.P2": { expr: "(P1+Parent().PN1).Length()" },
         "E2.PN1": { expr: "'起点2'" },
-        "E2.PN2": { expr: "Entity1[0].P2+Root().E2.Sum('PN1')+Entity1[0].P1+Root().E1[0].Entity1[0].P2" }
+        "E2.PN2": { expr: "Entity1[0].P2.ToString()+Root().E2.Sum('PN1')+Entity1[0].P1+Root().E1[0].Entity1[0].P2.ToString()" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.PN2|E1.Entity1.P1|E1.Entity1.P2|E2.PN2" },
@@ -768,13 +768,13 @@ var test55 = {
     title: "依赖关系测试55二对一Max",
     dataSource: {
         "E1.Entity1.P1": { expr: "Root().E1.Max('PN1')+Parent().PN2" },
-        "E1.Entity1.P2": { expr: "(P1+Parent().PN2+Parent().PN1).Length()" },
+        "E1.Entity1.P2": { expr: "(P1+Parent().PN2.ToString()+Parent().PN1).Length()" },
         "E1.PN1": { expr: "'起点1'" },
         "E1.PN2": { expr: "PN1.Length()" },
         "E2.Entity1.P1": { expr: "Parent().PN1" },
         "E2.Entity1.P2": { expr: "(P1+Parent().PN1).Length()" },
         "E2.PN1": { expr: "'起点2'" },
-        "E2.PN2": { expr: "Entity1[0].P2+Root().E2.Max('PN1')+Entity1[0].P1+Root().E1[0].Entity1[0].P2" }
+        "E2.PN2": { expr: "Entity1[0].P2.ToString()+Root().E2.Max('PN1')+Entity1[0].P1+Root().E1[0].Entity1[0].P2.ToString()" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.PN2|E1.Entity1.P1|E1.Entity1.P2|E2.PN2" },
@@ -863,14 +863,14 @@ var test57 = {
 var test58 = {
     title: "依赖关系测试58二对一Distinct",
     dataSource: {
-        "E1.Entity1.P1": { expr: "Root().E1.Distinct('PN1')[0].PN1+Root().E1.Distinct('PN2')[0].PN2" },
-        "E1.Entity1.P2": { expr: "(Parent().Entity1.Distinct('P1')[0].P1+Root().E1.Distinct('PN2')[0].PN2+Root().E1.Distinct('PN1')[0].PN1).ToString().Length()" }, //
+        "E1.Entity1.P1": { expr: "Root().E1.Distinct('PN1')[0].PN1+Root().E1.Distinct('PN2')[0].PN2.ToString()" },
+        "E1.Entity1.P2": { expr: "(Parent().Entity1.Distinct('P1')[0].P1+Root().E1.Distinct('PN2')[0].PN2.ToString()+Root().E1.Distinct('PN1')[0].PN1).ToString().Length()" }, //
         "E1.PN1": { expr: "'起点1'" },
         "E1.PN2": { expr: "Root().E1.Distinct('PN1')[0].PN1.ToString().Length()" },
         "E2.Entity1.P1": { expr: "Root().E2.Distinct('PN1')[0].PN1" },
         "E2.Entity1.P2": { expr: "(Parent().Entity1.Distinct('P1')[0].P1+Root().E2.Distinct('PN1')[0].PN1).ToString().Length()" },
         "E2.PN1": { expr: "'起点2'" },
-        "E2.PN2": { expr: "Entity1.Distinct('P2')[0].P2+Root().E2.Distinct('PN1')[0].PN1+Entity1.Distinct('P1')[0].P1+Root().E1[0].Entity1.Distinct('P2')[0].P2" }
+        "E2.PN2": { expr: "Entity1.Distinct('P2')[0].P2.ToString()+Root().E2.Distinct('PN1')[0].PN1+Entity1.Distinct('P1')[0].P1+Root().E1[0].Entity1.Distinct('P2')[0].P2.ToString()" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.PN2|E1.Entity1.P1|E1.Entity1.P2|E2.PN2" },
@@ -895,14 +895,14 @@ var test58 = {
 var test59 = {
     title: "依赖关系测试59二对一Where",
     dataSource: {
-        "E1.Entity1.P1": { expr: "Root().E1.Where('PN1')[0].PN1+Root().E1.Where('PN2')[0].PN2" },
-        "E1.Entity1.P2": { expr: "(Parent().Entity1.Where('P1')[0].P1+Root().E1.Where('PN2')[0].PN2+Root().E1.Where('PN1')[0].PN1).ToString().Length()" }, //
+        "E1.Entity1.P1": { expr: "Root().E1.Where('PN1')[0].PN1+Root().E1.Where('PN2')[0].PN2.ToString()" },
+        "E1.Entity1.P2": { expr: "(Parent().Entity1.Where('P1')[0].P1+Root().E1.Where('PN2')[0].PN2.ToString()+Root().E1.Where('PN1')[0].PN1).ToString().Length()" }, //
         "E1.PN1": { expr: "'起点1'" },
         "E1.PN2": { expr: "Root().E1.Where('PN1')[0].PN1.ToString().Length()" },
         "E2.Entity1.P1": { expr: "Root().E2.Where('PN1')[0].PN1" },
         "E2.Entity1.P2": { expr: "(Parent().Entity1.Where('P1')[0].P1+Root().E2.Where('PN1')[0].PN1).ToString().Length()" },
         "E2.PN1": { expr: "'起点2'" },
-        "E2.PN2": { expr: "Entity1.Where('P2')[0].P2+Root().E2.Where('PN1')[0].PN1+Entity1.Where('P1')[0].P1+Root().E1[0].Entity1.Where('P2')[0].P2" }
+        "E2.PN2": { expr: "Entity1.Where('P2')[0].P2.ToString()+Root().E2.Where('PN1')[0].PN1+Entity1.Where('P1')[0].P1+Root().E1[0].Entity1.Where('P2')[0].P2.ToString()" }
     },
     testCase: [
         { cmd: ["load", "E1"], r: "E1.PN1|E1.PN2|E1.Entity1.P1|E1.Entity1.P2|E2.PN2" },

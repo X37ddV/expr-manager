@@ -5287,12 +5287,12 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                 ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"number"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span>) &amp;&amp;
                     (et.type === <span class="hljs-string">"number"</span> || et.type === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"undefined"</span>)) ?
                     <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"number"</span>) :
-                    ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"string"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"number"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> ||
-                        <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span>) &amp;&amp; (et.type === <span class="hljs-string">"string"</span> || et.type === <span class="hljs-string">"number"</span> ||
-                        et.type === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"undefined"</span>)) ? <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"string"</span>) :
+                    ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"string"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span>) &amp;&amp;
+                        (et.type === <span class="hljs-string">"string"</span> || et.type === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"undefined"</span>)) ?
+                        <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"string"</span>) :
                         ((<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"array"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"null"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span>) &amp;&amp;
-                            (et.type === <span class="hljs-string">"array"</span> || et.type === <span class="hljs-string">"null"</span> ||
-                                et.type === <span class="hljs-string">"undefined"</span>)) ? <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"array"</span>) :
+                            (et.type === <span class="hljs-string">"array"</span> || et.type === <span class="hljs-string">"null"</span> || et.type === <span class="hljs-string">"undefined"</span>)) ?
+                            <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"array"</span>) :
                             <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_ADD, <span class="hljs-keyword">this</span>.type, et.type));
     };</pre></div></div>
             
