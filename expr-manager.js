@@ -2636,7 +2636,7 @@ var Type = (function () {
             t = this.genType("null");
         }
         else if ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
-            (et.type === "number" || et.type === "undefined")) {
+            (et.type === "number" || et.type === "undefined" || et.type === "null")) {
             t = (et.hasData() && (et.data === "null" || et.type === "number" && Number(et.data) === 0)) ?
                 this.genErrorType(format(locale.getLocale().MSG_EX_DIVIDE_N, et.data)) :
                 this.genType("number");
@@ -2871,16 +2871,17 @@ var Value = (function () {
     // 取正/负值
     Value.prototype.negative = function (op) {
         var v;
-        if (this.type === "null") {
+        var isEntityError = this.isEntity() && this.entity.type !== "number";
+        if (!isEntityError && this.type === "null") {
             v = this.genValue("0", "number");
         }
-        else if (this.type === "number") {
+        else if (!isEntityError && this.type === "number") {
             v = op === "-" ? Big(this.value).times(Big(-1)).toString() : this.value;
             v = this.genValue(v, "number");
         }
         else {
             var errorMsg = op === "-" ? locale.getLocale().MSG_EX_NEGATIVE : locale.getLocale().MSG_EX_POSITIVE;
-            v = this.genErrorValue(format(errorMsg, this.type));
+            v = this.genErrorValue(format(errorMsg, isEntityError ? this.entity.type : this.type));
         }
         return v;
     };
@@ -2896,54 +2897,69 @@ var Value = (function () {
     // 乘法
     Value.prototype.multiply = function (ev) {
         var v;
-        if (this.type === "null" && ev.type === "null") {
+        var isErr = this.isEntity() && this.entity.type !== "number";
+        var isErrEv = ev.isEntity() && ev.entity.type !== "number";
+        var isEntityError = isErr || isErrEv;
+        if (!isEntityError && this.type === "null" && ev.type === "null") {
             v = this.genValue(null, "null");
         }
-        else if ((this.type === "number" || this.type === "null") && (ev.type === "number" || ev.type === "null")) {
+        else if (!isEntityError &&
+            (this.type === "number" || this.type === "null") &&
+            (ev.type === "number" || ev.type === "null")) {
             var vl = Big(this.value || "0");
             var vr = Big(ev.value || "0");
             v = this.genValue(vl.times(vr).toString(), "number");
         }
         else {
-            v = this.genErrorValue(format(locale.getLocale().MSG_EX_MULTIPLY, this.type, ev.type));
+            v = this.genErrorValue(format(locale.getLocale().MSG_EX_MULTIPLY, isErr ? this.entity.type : this.type, isErrEv ? ev.entity.type : ev.type));
         }
         return v;
     };
     // 除法
     Value.prototype.divide = function (ev) {
         var v;
-        if (this.type === "null" && ev.type === "null") {
+        var isErr = this.isEntity() && this.entity.type !== "number";
+        var isErrEv = ev.isEntity() && ev.entity.type !== "number";
+        var isEntityError = isErr || isErrEv;
+        if (!isEntityError && this.type === "null" && ev.type === "null") {
             v = this.genValue(null, "null");
         }
-        else if (ev.type === "null" || ev.type === "number" && ev.value === "0") {
+        else if (!isEntityError &&
+            (ev.type === "null" || ev.type === "number" && ev.value === "0")) {
             v = this.genErrorValue(format(locale.getLocale().MSG_EX_DIVIDE_N, ev.value));
         }
-        else if ((this.type === "number" || this.type === "null") && (ev.type === "number")) {
+        else if (!isEntityError &&
+            (this.type === "number" || this.type === "null") && (ev.type === "number")) {
             var vl = Big(this.value || "0");
             var vr = Big(ev.value);
             v = this.genValue(vl.div(vr).toString(), "number");
         }
         else {
-            v = this.genErrorValue(format(locale.getLocale().MSG_EX_DIVIDE, this.type, ev.type));
+            v = this.genErrorValue(format(locale.getLocale().MSG_EX_DIVIDE, isErr ? this.entity.type : this.type, isErrEv ? ev.entity.type : ev.type));
         }
         return v;
     };
     // 求余
     Value.prototype.remainder = function (ev) {
         var v;
-        if (this.type === "null" && ev.type === "null") {
+        var isErr = this.isEntity() && this.entity.type !== "number";
+        var isErrEv = ev.isEntity() && ev.entity.type !== "number";
+        var isEntityError = isErr || isErrEv;
+        if (!isEntityError && this.type === "null" && ev.type === "null") {
             v = this.genValue(null, "null");
         }
-        else if (ev.type === "null" || ev.type === "number" && ev.value === "0") {
+        else if (!isEntityError &&
+            (ev.type === "null" || ev.type === "number" && ev.value === "0")) {
             v = this.genErrorValue(format(locale.getLocale().MSG_EX_REMAINDER_N, ev.value));
         }
-        else if ((this.type === "number" || this.type === "null") && (ev.type === "number")) {
+        else if (!isEntityError &&
+            (this.type === "number" || this.type === "null") && (ev.type === "number")) {
             var vl = Big(this.value || "0");
             var vr = Big(ev.value);
             v = this.genValue(vl.mod(vr).toString(), "number");
         }
         else {
-            v = this.genErrorValue(format(locale.getLocale().MSG_EX_REMAINDER, this.type, ev.type));
+            v = this.genErrorValue(format(locale.getLocale().MSG_EX_REMAINDER, isErr ? this.entity.type : this.type, isErrEv ? ev.entity.type : ev.type));
         }
         return v;
     };

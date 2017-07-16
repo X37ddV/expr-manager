@@ -160,7 +160,7 @@ var exprDataCalc = {
         ['Entity1.Average("ID")', '102', '', 'E1.Entity1|E1.Entity1.ID'],
         ['Entity1.Average("ID").ToString()', '"102"', '', 'E1.Entity1|E1.Entity1.ID'],
         ['Entity1.Average("P2")', '2.283333333333333', '', 'E1.Entity1|E1.Entity1.P2'],
-        ['Entity1.Average("ID")+""', 'undefined', 'number 和 string 无法做加法运算', 'E1.Entity1|E1.Entity1.ID'], // TODO: 需要确认是否为运行时错误
+        ['Entity1.Average("ID")+""', 'undefined', 'number 和 string 无法做加法运算'],
         ['Entity1.Average("ID")+Entity1.Min("ID")', '203', '', 'E1.Entity1|E1.Entity1.ID'],
         ['Root().E1.Average("P1")', 'undefined', 'string 和 number 无法做除法运算', 'E1|E1.P1'], // TODO: 需要确认是否为运行时错误
         ['Root().E1.Average("PN1")', '0', '', 'E1|E1.PN1'],
@@ -409,12 +409,12 @@ var exprString = {
         ['{a:P1,b:P1,c:Parent().E2[0].P1}', 'undefined', '根实体对象不能调用 Parent 方法'],
         ['\'P1\'', '"P1"'],
         ['P1.ToString()', '"E1的第1条数据"', '', 'E1.P1'],
-        ['Root().E1.Sum("PU1").ToString()', 'undefined', 'null 不能调用 ToString 方法', 'E1|E1.PU1'], // TODO: 需要确认是否为运行时错误
+        ['Root().E1.Sum("PU1").ToString()', 'undefined', 'null 不能调用 ToString 方法', 'E1|E1.PU1'],
         ['IfNull(null,P1)', '"E1的第1条数据"', '', 'E1.P1'],
         ['IfNull(Parent().E2[0].P1,P1)', 'undefined', '根实体对象不能调用 Parent 方法'],
         ['IIf(true,Parent().E2[0].P1, P1)', 'undefined', '根实体对象不能调用 Parent 方法'],
         ['IIf(false,P1, P1)', '"E1的第1条数据"', '', 'E1.P1'],
-        ['P1.ToNumber()', 'undefined', '"E1的第1条数据" 无法被转换为数字', 'E1.P1'], // TODO: 需要确认是否为运行时错误
+        ['P1.ToNumber()', 'undefined', '"E1的第1条数据" 无法被转换为数字', 'E1.P1'],
         ['P5.ToNumber()', 'undefined', 'date 没有名称为 ToNumber 的方法或参数不匹配'],
         ['P1.Length()', '8', '', 'E1.P1'],
         ['P1.Upper()', '"E1的第1条数据"', '', 'E1.P1'],
@@ -660,9 +660,9 @@ var exprNumber = {
         ['P2.Trunc(1)', '12345.6', '', 'E1.P2'],
         ['Entity1[0].P2.Trunc(1)', '1.9', '', 'E1.Entity1|E1.Entity1.P2'],
         ['(-P2).Trunc(1)', '-12345.6', '', 'E1.P2'],
-        ['P2.Trunc(0)', '12345', '', 'E1.P2'], //
+        ['P2.Trunc(0)', '12345', '', 'E1.P2'],
         ['Entity1[0].P2.Trunc(0)', '1', '', 'E1.Entity1|E1.Entity1.P2'],
-        ['Entity1[0].P2.Trunc(-1)', 'undefined', '做截断运算时，保留小数位数不能为负数: -1', 'E1.Entity1|E1.Entity1.P2'], // TODO: 需要确认是否为运行时错误
+        ['Entity1[0].P2.Trunc(-1)', 'undefined', '做截断运算时，保留小数位数不能为负数: -1', 'E1.Entity1|E1.Entity1.P2'],
         ['Entity1[0].P2.Trunc(3)', '1.95', '', 'E1.Entity1|E1.Entity1.P2'],
         ['P2.Round(2)', '12345.68', '', 'E1.P2'],
         ['Entity1[0].P2.Round(2)', '1.95', '', 'E1.Entity1|E1.Entity1.P2'],
@@ -1002,7 +1002,7 @@ var exprObject = {
         ['IIf(true,{d:Now().DateOf()}, {a:1,b:"2",c:true,e:{a:[4,5,6],b:null}})', '{"d":"' + datetime1 + '"}'],
         ['{a:1,b:"2",c:true,e:{a:[4,5,6],b:null}}.Parent()', 'undefined', '只有实体对象才可以调用 Parent 方法'],
         ['{name:"item1", alias: { en: "Item1", zh_CN: "项目1", zh_TW: "項目1"} }.name', '"item1"'],
-        ['{name:"item1", alias: { en: "Item1", zh_CN: "项目1", zh_TW: "項目1"} }.alias.zh_CN', '"项目1"', '', '', 'undefined 无法做属性访问操作'], // TODO: 计算正常，检查出错
+        ['{name:"item1", alias: { en: "Item1", zh_CN: "项目1", zh_TW: "項目1"} }.alias.zh_CN', '"项目1"'],
         ['{x:23,"$0":"nbgnbv"}["$0"]', '"nbgnbv"'],
         ['{x:23,"$0":"nbgnbv"}[""]', 'null'],
         ['{x:1}.$C', 'null'],
@@ -1138,7 +1138,7 @@ var exprArray = {
         ['[].Average()', '0'],
         ['[].Max()', 'null'],
         ['[].Min()', 'null'],
-        ['[].Where("")', '[]', '', '', '表达式不能为空'], // TODO: 子表达式不能为空？
+        ['[].Where("")', '[]', '', '', '表达式不能为空'],
         ['[1, 2].Distinct("$1")', 'undefined', '参数不存在: $1'],
         ['[1,2].Max()', '2'],
         ['[2,1].Max()', '2'],
@@ -1161,7 +1161,7 @@ var exprNull = {
         ['null%null', 'null'],
         ['null*1', '0'],
         ['null/1', '0'],
-        ['1/null', 'undefined', 'null 不能作为除数使用', '', 'number 和 null 无法做除法运算'], // TODO: 错误信息不一致
+        ['1/null', 'undefined', 'null 不能作为除数使用'],
         ['null%1', '0'],
         ['null+null', 'null'],
         ['null+null+0', '0'],
@@ -1229,17 +1229,18 @@ var exprNull = {
         ['PN1', 'null', '', 'E1.PN1'],
         ['PN1.', 'undefined', '. 无法作为表达式的结尾'],
         ['.PN1', 'undefined', '. 无法作为表达式的开头'],
-        ['+PN1', '0', '', '', 'string 无法做一元正数运算'], //PN1在算术运算中作0用 // TODO: 计算和检查不一致
-        ['-PN1', '0', '', '', 'string 无法做一元负数运算'], // TODO: 计算和检查不一致
+        ['+PN1', 'undefined', 'string 无法做一元正数运算'],
+        ['-PN1', 'undefined', 'string 无法做一元负数运算'],
         ['!PN1', 'true', '', 'E1.PN1'], //true,已修
         ['!!PN1', 'false', '', 'E1.PN1'], //false
-        ['PN1*PN1', 'null', '', '', 'string 和 string 无法做乘法运算'], // TODO:
-        ['PN1/PN1', 'null', '', '', 'string 和 string 无法做除法运算'], // TODO:
-        ['PN1%PN1', 'null', '', '', 'string 和 string 无法做余数运算'], // TODO:
-        ['PN1*1', '0', '', '', 'string 和 number 无法做乘法运算'], // TODO:
-        ['PN1/1', '0', '', '', 'string 和 number 无法做除法运算'], // TODO:
-        ['1/PN1', 'undefined', 'null 不能作为除数使用', '', 'number 和 string 无法做除法运算'], // TODO:
-        ['PN1%1', '0', '', '', 'string 和 number 无法做余数运算'], // TODO:
+        ['PN1*PN1', 'undefined', 'string 和 string 无法做乘法运算'],
+        ['PN1/PN1', 'undefined', 'string 和 string 无法做除法运算'],
+        ['PN1%PN1', 'undefined', 'string 和 string 无法做余数运算'],
+        ['PN1*1', 'undefined', 'string 和 number 无法做乘法运算'],
+        ['PN1/1', 'undefined', 'string 和 number 无法做除法运算'],
+        ['1/PN1', 'undefined', 'number 和 string 无法做除法运算'],
+        ['PN1%1', 'undefined', 'string 和 number 无法做余数运算'],
+        ['1%PN1', 'undefined', 'number 和 string 无法做余数运算'],
         ['PN1+PN1', 'null', '', 'E1.PN1'],
         ['PN1+PN1+0', '0', '', '', 'string 和 number 无法做加法运算'], // TODO:
         ['PN1+3', '3', '', '', 'string 和 number 无法做加法运算'], // TODO:

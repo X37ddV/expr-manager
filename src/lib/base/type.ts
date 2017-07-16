@@ -110,7 +110,7 @@ export default class Type {
         if (this.type === "null" && et.type === "null") {
             t = this.genType("null");
         } else if ((this.type === "number" || this.type === "null" || this.type === "undefined") &&
-            (et.type === "number" || et.type === "undefined")) {
+            (et.type === "number" || et.type === "undefined" || et.type === "null")) {
             t = (et.hasData() && (et.data === "null" || et.type === "number" && Number(et.data) === 0)) ?
                 this.genErrorType(format(locale.getLocale().MSG_EX_DIVIDE_N, et.data)) :
                 this.genType("number");

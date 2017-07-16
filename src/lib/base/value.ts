@@ -86,14 +86,15 @@ export default class Value {
     // 取正/负值
     public negative(op: string): Value {
         let v: Value;
-        if (this.type === "null") { /// 对null取负值结果为0
+        const isEntityError = this.isEntity() && this.entity.type !== "number";
+        if (!isEntityError && this.type === "null") { /// 对null取负值结果为0
             v = this.genValue("0", "number");
-        } else if (this.type === "number") { /// 对数字取负值
+        } else if (!isEntityError && this.type === "number") { /// 对数字取负值
             v = op === "-" ? Big(this.value).times(Big(-1)).toString() : this.value;
             v = this.genValue(v, "number");
-        } else { /// 该运算数类型无法进行取正/负运算
+        } else {
             const errorMsg = op === "-" ? locale.getLocale().MSG_EX_NEGATIVE : locale.getLocale().MSG_EX_POSITIVE;
-            v = this.genErrorValue(format(errorMsg, this.type));
+            v = this.genErrorValue(format(errorMsg, isEntityError ? this.entity.type : this.type));
         }
         return v;
     }
@@ -108,47 +109,68 @@ export default class Value {
     }
     // 乘法
     public multiply(ev: Value): Value {
-        let v;
-        if (this.type === "null" && ev.type === "null") { /// null*null结果为null
+        let v: Value;
+        const isErr = this.isEntity() && this.entity.type !== "number";
+        const isErrEv = ev.isEntity() && ev.entity.type !== "number";
+        const isEntityError = isErr || isErrEv;
+        if (!isEntityError && this.type === "null" && ev.type === "null") { /// null*null结果为null
             v = this.genValue(null, "null");
-        } else if ((this.type === "number" || this.type === "null") && (ev.type === "number" || ev.type === "null")) {
+        } else if (!isEntityError &&
+            (this.type === "number" || this.type === "null") &&
+            (ev.type === "number" || ev.type === "null")) {
             const vl = Big(this.value || "0"); /// null与数字做乘法运算时，null被转换成数字0
             const vr = Big(ev.value || "0");
             v = this.genValue(vl.times(vr).toString(), "number");
         } else { /// 两运算数不能进行乘法运算
-            v = this.genErrorValue(format(locale.getLocale().MSG_EX_MULTIPLY, this.type, ev.type));
+            v = this.genErrorValue(format(locale.getLocale().MSG_EX_MULTIPLY,
+                isErr ? this.entity.type : this.type,
+                isErrEv ? ev.entity.type : ev.type));
         }
         return v;
     }
     // 除法
     public divide(ev: Value): Value {
         let v: Value;
-        if (this.type === "null" && ev.type === "null") { /// null/null结果为null
+        const isErr = this.isEntity() && this.entity.type !== "number";
+        const isErrEv = ev.isEntity() && ev.entity.type !== "number";
+        const isEntityError = isErr || isErrEv;
+        if (!isEntityError && this.type === "null" && ev.type === "null") { /// null/null结果为null
             v = this.genValue(null, "null");
-        } else if (ev.type === "null" || ev.type === "number" && ev.value === "0") { /// 除数为0，报错
+        } else if (!isEntityError &&
+            (ev.type === "null" || ev.type === "number" && ev.value === "0")) { /// 除数为0，报错
             v = this.genErrorValue(format(locale.getLocale().MSG_EX_DIVIDE_N, ev.value));
-        } else if ((this.type === "number" || this.type === "null") && (ev.type === "number")) {
+        } else if (!isEntityError &&
+            (this.type === "number" || this.type === "null") && (ev.type === "number")) {
             const vl = Big(this.value || "0"); /// 被除数为null时会被转换成"0"
             const vr = Big(ev.value);
             v = this.genValue(vl.div(vr).toString(), "number");
         } else { /// 两运算数不能进行除法运算
-            v = this.genErrorValue(format(locale.getLocale().MSG_EX_DIVIDE, this.type, ev.type));
+            v = this.genErrorValue(format(locale.getLocale().MSG_EX_DIVIDE,
+                isErr ? this.entity.type : this.type,
+                isErrEv ? ev.entity.type : ev.type));
         }
         return v;
     }
     // 求余
     public remainder(ev: Value): Value {
         let v: Value;
-        if (this.type === "null" && ev.type === "null") { /// null%null结果为null
+        const isErr = this.isEntity() && this.entity.type !== "number";
+        const isErrEv = ev.isEntity() && ev.entity.type !== "number";
+        const isEntityError = isErr || isErrEv;
+        if (!isEntityError && this.type === "null" && ev.type === "null") { /// null%null结果为null
             v = this.genValue(null, "null");
-        } else if (ev.type === "null" || ev.type === "number" && ev.value === "0") { /// 除数为0，报错
+        } else if (!isEntityError &&
+            (ev.type === "null" || ev.type === "number" && ev.value === "0")) { /// 除数为0，报错
             v = this.genErrorValue(format(locale.getLocale().MSG_EX_REMAINDER_N, ev.value));
-        } else if ((this.type === "number" || this.type === "null") && (ev.type === "number")) {
+        } else if (!isEntityError &&
+            (this.type === "number" || this.type === "null") && (ev.type === "number")) {
             const vl = Big(this.value || "0"); /// 被除数为null时会被转换成"0"
             const vr = Big(ev.value);
             v = this.genValue(vl.mod(vr).toString(), "number");
         } else { /// 两运算数不能进行求余运算
-            v = this.genErrorValue(format(locale.getLocale().MSG_EX_REMAINDER, this.type, ev.type));
+            v = this.genErrorValue(format(locale.getLocale().MSG_EX_REMAINDER,
+                isErr ? this.entity.type : this.type,
+                isErrEv ? ev.entity.type : ev.type));
         }
         return v;
     }
