@@ -15,8 +15,8 @@ if (!v.errorMsg) {
     console.log(v.errorMsg); // => 0 不能作为除数使用
 }
 // 简单数据计算
-expr = "v1 + ' ' + v2 + '!'";
 var calcData = {v1: "hello", v2: "world"};
+expr = "v1 + ' ' + v2 + '!'";
 v = exprManager.calc(expr, calcData);
 console.log(v.toValue()); // => "hello world!"
 // 表达式函数

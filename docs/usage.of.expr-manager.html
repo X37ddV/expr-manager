@@ -120,8 +120,8 @@ v = exprManager.calc(expr);
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>expr = <span class="hljs-string">"v1 + ' ' + v2 + '!'"</span>;
-<span class="hljs-keyword">var</span> calcData = {<span class="hljs-attr">v1</span>: <span class="hljs-string">"hello"</span>, <span class="hljs-attr">v2</span>: <span class="hljs-string">"world"</span>};
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> calcData = {<span class="hljs-attr">v1</span>: <span class="hljs-string">"hello"</span>, <span class="hljs-attr">v2</span>: <span class="hljs-string">"world"</span>};
+expr = <span class="hljs-string">"v1 + ' ' + v2 + '!'"</span>;
 v = exprManager.calc(expr, calcData);
 <span class="hljs-built_in">console</span>.log(v.toValue()); <span class="hljs-comment">// =&gt; "hello world!"</span></pre></div></div>
             
