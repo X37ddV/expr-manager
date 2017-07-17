@@ -47,6 +47,7 @@ var exprDataCalc = {
         ['$C.userId + ""', '"admin"'],
     //子实体、实体，单条数据
         ['Entity1.ID', 'undefined', 'array 无法做属性访问操作'],
+        ['Entity1.Sum("1/PN2")', 'undefined', 'null 不能作为除数使用', 'E1.Entity1|E1.Entity1.PN2'],
         ['Root().E1[0]', cmpOE1_0, '', 'E1'],
         ['Root()["E1"]', cmpAE1, ''], // 正确: 字符串下标访问，不计算依赖关系
         ['Entity1[0]', cmpOE1Entity1_0, '', 'E1.Entity1'],
@@ -1359,12 +1360,13 @@ var exprFunction = {
 
 window.demoExpr = [exprDataCalc, exprOperator, exprString, exprNumber, exprDate, exprBoolean, exprObject, exprArray, exprNull, exprErr, exprFunction];
 
-// var exprTemp = {
-//     title: "临时测试",
-//     exprs: [
-//        ['Entity1.ID', 'undefined', 'array 无法做属性访问操作', 'E1.Entity1.ID']
-//     ]
-// };
+var exprCalc = {
+    title: "简单计算",
+    exprs: [
+       ['[null, 1].Distinct("a")', 'undefined', 'null 无法获取属性: a'],
+       ['1/0', 'undefined', '0 不能作为除数使用']
+    ]
+};
 
-// window.demoExpr = [exprTemp];
+window.demoExprCalc = [exprCalc];
 

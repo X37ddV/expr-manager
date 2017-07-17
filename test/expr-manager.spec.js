@@ -1,5 +1,28 @@
 describe("表达式测试", function () {
     var exprManager = new window.ExprManager();
+    // 简单计算
+    for (var i = 0; i < window.demoExprCalc.length; i++) {
+        var demo = window.demoExprCalc[i];
+        for (var j = 0; j < demo.exprs.length; j++) {
+            var expr = demo.exprs[j][0] || ""; // 表达式
+            var exprExpectedValue = demo.exprs[j][1] || ""; // 预期值
+            var exprExpectedValueError = demo.exprs[j][2] || ""; // 预期值错误
+            var itTitle = "[" + i  + "-" + j + "]:" + demo.title + ":" + expr;
+            it("Value" + itTitle, (function (expr, exprExpectedValue, exprExpectedValueError) {
+                return function() {
+                    var val = exprManager.calc(expr);
+                    var exprActualValue = window.JSON.stringify(val.toValue());
+                    var exprActualValueError = val.errorMsg;
+                    if (exprActualValueError) {
+                        expect(exprActualValueError).toEqual(exprExpectedValueError);
+                    } else {
+                        expect(exprActualValue).toEqual(exprExpectedValue);
+                    }
+                }
+            })(expr, exprExpectedValue, exprExpectedValueError));
+        }
+    }
+    // 高级计算
     exprManager.init(window.data, window.dataContext, window.context);
     for (var i = 0; i < window.demoExpr.length; i++) {
         var demo = window.demoExpr[i];
@@ -222,12 +245,14 @@ describe("接口测试", function () {
         }
     })());
 
-    it("简单计算", (function(){
-        return function () {
-            var v = exprManager.calc("1+1", {});
-            expect(v.toValue()).toEqual(2);
-            var val = exprManager.calcExpr("1+1", "E1", window.dataCursor);
-            expect(val.toValue()).toEqual(2);
-        }
-    })());
+    // it("简单计算", (function(){
+    //     return function () {
+    //         var v = exprManager.calc("1+1");
+    //         expect(v.toValue()).toEqual(2);
+    //         v = exprManager.calc("[null, 1].Distinct('a')");
+    //         expect(v.errorMsg).toEqual("null 无法获取属性: a");
+    //         var val = exprManager.calcExpr("1+1", "E1", window.dataCursor);
+    //         expect(val.toValue()).toEqual(2);
+    //     }
+    // })());
 });

@@ -9,6 +9,7 @@
 ### Simple calculation
 ```javascript
 var exprManager = new window.ExprManager();
+
 var expr = "0.1 + 0.2";
 var v = exprManager.calc(expr);
 if (!v.errorMsg) {
@@ -17,15 +18,18 @@ if (!v.errorMsg) {
 } else {
     console.log(v.errorMsg);
 }
+
 var calcData = {v1: "hello", v2: "world"};
 expr = "v1 + ' ' + v2 + '!'";
 v = exprManager.calc(expr, calcData);
 console.log(v.toValue());
 // => "hello world!"
+
 expr = "IIf(1 > 2, 'a', 'b')";
 v = exprManager.calc(expr);
 console.log(v.toValue());
 // => "b"
+
 expr = "123.ToString()"
 v = exprManager.calc(expr);
 console.log(v.toValue());
@@ -80,7 +84,9 @@ var data = {
 var context = {
     Field0: "!"
 };
+
 exprManager.init(data, dataContext, context);
+
 var tableName = "Table";
 var dataCursor = {
     "Table": 0,
@@ -90,6 +96,7 @@ expr = "Field1 + ' ' + SubTable[0].Field1 + $C.Field0";
 v = exprManager.calcExpr(expr, tableName, dataCursor);
 console.log(v.toValue());
 // => "Hello World!"
+
 var t = exprManager.calcDependencies(expr, tableName);
 console.log(t.dependencies);
 // => ["Table.Field1", "Table.SubTable", "Table.SubTable.Field1"]
@@ -97,31 +104,40 @@ console.log(t.dependencies);
 ### Advanced dependent calculation
 ```javascript
 exprManager.resetExpression();
+
 var doCalc = function(type, info) {
     console.log(type);
 };
-// 添加具有依赖关系的表达式
+
 exprManager.addExpression("Field1 + ' ' + SubTable[0].Field1",
     "Table", "CalcField0", ["load", "add", "update", "remove"],
     doCalc, null);
 exprManager.addExpression("CalcField0 + SubTable.Count().ToString()",
     "Table", "CalcField1", ["load", "add", "update", "remove"],
     doCalc, null);
+
 var errorMsg = exprManager.checkAndSort();
 if (!errorMsg) {
     exprManager.calcExpression("load", {
         entityName: "Table"
-    }); // => "load"
+    });
+    // => "load"
+
     exprManager.calcExpression("add", {
         entityName: "Table"
-    }); // => "add"
+    });
+    // => "add"
+    
     exprManager.calcExpression("update", {
         entityName: "Table",
         propertyName: "Field1"
-    }); // => "update"
+    });
+    // => "update"
+
     exprManager.calcExpression("remove", {
         entityName: "Table.SubTable"
-    }); // => "remove"
+    });
+    // => "remove"
 } else {
     console.log(errorMsg)
 }
