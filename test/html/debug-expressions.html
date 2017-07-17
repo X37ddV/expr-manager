@@ -83,7 +83,7 @@
         // 显示演示案例
         function genDemo(exprs) {
             var h = "<table width='100%'><tr style='background-color: #E3E3E3'>";
-            h += "<td>No.</td><td>Expression</td><td>Value</td><td>Error</td><td>Description</td>";
+            h += "<td>No.</td><td>Expression</td><td>Value</td><td>Error</td><td>Dependencies</td>";
             h += "</tr>";
             for (var i = 0; i < exprs.length; i++) {
                 if (exprs[i] == undefined)
@@ -91,7 +91,7 @@
                 var e = exprs[i][0];
                 var k = exprs[i][1]; // 预期值 undefined为不校验或校验为错误
                 var r = exprs[i][2] || ""; // 错误
-                var d = exprs[i][3] || ""; // 描述
+                var d = exprs[i][3] || ""; // 依赖
                 var val = doEval(e);
                 var v = encode(val.toValue());
                 var m = val.errorMsg;
