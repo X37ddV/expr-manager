@@ -150,9 +150,9 @@ var exprDataCalc = {
         ['Entity2[0].Parent().Parent().E2[0].Entity1.ToString()', 'undefined', '根实体对象不能调用 Parent 方法'],
         ['Root().E2.ToString()', 'undefined', 'array 没有名称为 ToString 的方法或参数不匹配'],
         ['IfNull(null,Entity2[0].Parent().Parent().E2[0].Entity1)', 'undefined', '根实体对象不能调用 Parent 方法'],
-        ['IfNull(Root().E2,Entity2[0].Parent().Parent().E2[0].Entity1)', cmpAE2, '', '', '根实体对象不能调用 Parent 方法'], // 正确: 计算IfNull，如果条件满足，不计算第二个参数
+        ['IfNull(Root().E2,Entity2[0].Parent().Parent().E2[0].Entity1)', 'undefined', '根实体对象不能调用 Parent 方法'],
         ['IIf(true,Entity2[0].Parent().Parent().E2[0].Entity1, Root().E2)', 'undefined', '根实体对象不能调用 Parent 方法'],
-        ['IIf(false,Entity2[0].Parent().Parent().E2[0].Entity1, Root().E2)', cmpAE2, '', '', '根实体对象不能调用 Parent 方法'], // 正确: 计算IIf，如果条件不满足，不计算第二个参数
+        ['IIf(false,Entity2[0].Parent().Parent().E2[0].Entity1, Root().E2)', 'undefined', '根实体对象不能调用 Parent 方法'],
         ['ID.Parent()', 'undefined', 'number 没有名称为 Parent 的方法或参数不匹配'],
         ['Entity1.Parent()', 'undefined', 'array 没有名称为 Parent 的方法或参数不匹配'],
         ['Entity1.Count()', '3', '', 'E1.Entity1'],
@@ -179,7 +179,7 @@ var exprDataCalc = {
         ['Entity1.Max("$0.ID")', '103', '', 'E1.Entity1|E1.Entity1.ID'],
         ['Entity1.Max()', 'undefined', 'object 和 object 无法做大于运算', 'E1.Entity1'], // TODO: 需要确认是否为运行时错误
         ['Entity1.Min("Parent().Parent().E1[0].Entity1[2].ID + Parent().Parent().E2[0].Entity1[2].P2")', 'undefined', '根实体对象不能调用 Parent 方法'],
-        ['Entity1.Min("ID + P1")', 'undefined', 'number 和 string 无法做加法运算', 'E1.Entity1|E1.Entity1.ID|E1.Entity1.P1'], // TODO: 需要确认是否为运行时错误
+        ['Entity1.Min("ID + P1")', 'undefined', 'number 和 string 无法做加法运算'],
         ['Entity1.Min("ID + Root().E2[0].Entity1[0].P2")', '113.23', '', 'E1.Entity1|E1.Entity1.ID|E2|E2.Entity1|E2.Entity1.P2'],
         ['Entity1.Min("Root().E1[0].Entity1[2].ID")', '103', '', 'E1.Entity1|E1|E1.Entity1.ID'],
         ['Entity1.Min("ID")', '101', '', 'E1.Entity1|E1.Entity1.ID'],
@@ -1138,7 +1138,7 @@ var exprArray = {
         ['[].Average()', '0'],
         ['[].Max()', 'null'],
         ['[].Min()', 'null'],
-        ['[].Where("")', '[]', '', '', '表达式不能为空'],
+        ['[].Where("")', 'undefined', '表达式不能为空'],
         ['[1, 2].Distinct("$1")', 'undefined', '参数不存在: $1'],
         ['[1,2].Max()', '2'],
         ['[2,1].Max()', '2'],
@@ -1242,15 +1242,15 @@ var exprNull = {
         ['PN1%1', 'undefined', 'string 和 number 无法做余数运算'],
         ['1%PN1', 'undefined', 'number 和 string 无法做余数运算'],
         ['PN1+PN1', 'null', '', 'E1.PN1'],
-        ['PN1+PN1+0', '0', '', '', 'string 和 number 无法做加法运算'], // TODO:
-        ['PN1+3', '3', '', '', 'string 和 number 无法做加法运算'], // TODO:
+        ['PN1+PN1+0', 'undefined', 'string 和 number 无法做加法运算'],
+        ['PN1+3', 'undefined', 'string 和 number 无法做加法运算'],
         ['PN1+""', '""', '', 'E1.PN1'],
-        ['3+PN1+""', 'undefined', 'number 和 string 无法做加法运算', 'E1.PN1'], // TODO:
-        ['[1,"2",true,{a:[4,5,6],b:PN1},[4,5,6],PN1]+PN1', '[1,"2",true,{"a":[4,5,6],"b":null},[4,5,6],null]', '', '', 'array 和 string 无法做加法运算'], // TODO:
-        ['PN1+true', 'undefined', 'null 和 boolean 无法做加法运算', '', 'string 和 boolean 无法做加法运算'], // TODO:
-        ['PN1+{}', 'undefined', 'null 和 object 无法做加法运算', '', 'string 和 object 无法做加法运算'], // TODO:
-        ['PN1-PN1', 'null', '', '', 'string 和 string 无法做减法运算'], // TODO:
-        ['PN1-3', '-3', '', '', 'string 和 number 无法做减法运算'], // TODO:
+        ['3+PN1+""', 'undefined', 'number 和 string 无法做加法运算'],
+        ['[1,"2",true,{a:[4,5,6],b:PN1},[4,5,6],PN1]+PN1', 'undefined', 'array 和 string 无法做加法运算'],
+        ['PN1+true', 'undefined', 'string 和 boolean 无法做加法运算'],
+        ['PN1+{}', 'undefined', 'string 和 object 无法做加法运算'],
+        ['PN1-PN1', 'undefined', 'string 和 string 无法做减法运算'],
+        ['PN1-3', 'undefined', 'string 和 number 无法做减法运算'],
         ['PN1>PN1', 'false', '', 'E1.PN1'],
         ['PN1>=PN1', 'true', '', 'E1.PN1'], //?只等和不等
         ['PN1>=null', 'true', '', 'E1.PN1'], //?只等和不等
@@ -1259,22 +1259,22 @@ var exprNull = {
         ['PN1==PN1', 'true', '', 'E1.PN1'],
         ['PN1==PU1', 'true', '', 'E1.PN1|E1.PU1'], //CG::表达式不会返回undefined，只会返回null
         ['PN1!=PN1', 'false', '', 'E1.PN1'],
-        ['PN1!=0', 'true', '', '', 'string 和 number 无法做不等运算'], // TODO:
-        ['0==PN1', 'false', '', '', 'number 和 string 无法做相等运算'], // TODO:
-        ['0!=PN1', 'true', '', '', 'number 和 string 无法做不等运算'], // TODO:
+        ['PN1!=0', 'undefined', 'string 和 number 无法做不等运算'],
+        ['0==PN1', 'undefined', 'number 和 string 无法做相等运算'],
+        ['0!=PN1', 'undefined', 'number 和 string 无法做不等运算'],
         ['""==PN1', 'false', '', 'E1.PN1'],
         ['""!=PN1', 'true', '', 'E1.PN1'],
-        ['[]==PN1', 'false', '', '', 'array 和 string 无法做相等运算'], // TODO:
-        ['[]!=PN1', 'true', '', '', 'array 和 string 无法做不等运算'], // TODO:
-        ['{}==PN1', 'false', '', '', 'object 和 string 无法做相等运算'], // TODO:
-        ['{}!=PN1', 'true', '', '', 'object 和 string 无法做不等运算'], // TODO:
-        ['PN1&&PN1', 'false', '', '', 'string 和 string 无法做逻辑与运算'], // TODO:
-        ['PN1&&true', 'false', '', '', 'string 和 boolean 无法做逻辑与运算'], // TODO:
+        ['[]==PN1', 'undefined', 'array 和 string 无法做相等运算'],
+        ['[]!=PN1', 'undefined', 'array 和 string 无法做不等运算'],
+        ['{}==PN1', 'undefined', 'object 和 string 无法做相等运算'],
+        ['{}!=PN1', 'undefined', 'object 和 string 无法做不等运算'],
+        ['PN1&&PN1', 'undefined', 'string 和 string 无法做逻辑与运算'],
+        ['PN1&&true', 'undefined', 'string 和 boolean 无法做逻辑与运算'],
         ['(!PN1)&&(!PN1)', 'true', '', 'E1.PN1'],
-        ['!PN1&&PN1', 'false', '', '', 'boolean 和 string 无法做逻辑与运算'], // TODO:
-        ['!PN1&&!PN1', 'true', '', 'E1.PN1'], // TODO:
-        ['PN1||PN1', 'false', '', '', 'string 和 string 无法做逻辑或运算'], // TODO:
-        ['!PN1||PN1', 'true', '', '', 'boolean 和 string 无法做逻辑或运算'], //返回值false，bug // TODO:
+        ['!PN1&&PN1', 'undefined', 'boolean 和 string 无法做逻辑与运算'],
+        ['!PN1&&!PN1', 'true', '', 'E1.PN1'],
+        ['PN1||PN1', 'undefined', 'string 和 string 无法做逻辑或运算'],
+        ['!PN1||PN1', 'undefined', 'boolean 和 string 无法做逻辑或运算'],
         ['[PN1,PN1,0]', '[null,null,0]', '', 'E1.PN1'],
         ['{PN1:PN1}', '{"PN1":null}', '', 'E1.PN1'],
         ['{a:PN1,b:PN1,c:0}', '{"a":null,"b":null,"c":0}', '', 'E1.PN1'],
@@ -1295,12 +1295,12 @@ var exprErr = {
     exprs: [
     //
         ['()', 'undefined', '该处 () 无意义'],
-        ['false && 3/0==5', 'false', '', '', '0 不能作为除数使用'],
-        ['null && 3/0==5', 'false', '', '', '0 不能作为除数使用'],
+        ['false && 3/0==5', 'undefined', '0 不能作为除数使用'],
+        ['null && 3/0==5', 'undefined', '0 不能作为除数使用'],
         ['"abc" && 3/0==5', 'undefined', '0 不能作为除数使用'],
-        ['true || 3/0==5','true', '', '', '0 不能作为除数使用'],
-        ['null || 3/0==5','undefined', '0 不能作为除数使用'],
-        ['"abc" || 3/0==5','undefined', '0 不能作为除数使用'],
+        ['true || 3/0==5', 'undefined', '0 不能作为除数使用'],
+        ['null || 3/0==5', 'undefined', '0 不能作为除数使用'],
+        ['"abc" || 3/0==5', 'undefined', '0 不能作为除数使用'],
     //
 
     //未定义属性

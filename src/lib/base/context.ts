@@ -1,3 +1,4 @@
+import Check from "./check";
 import { isFunctionToken } from "./common";
 import { ValueType } from "./interface";
 import Parser from "./parser";
@@ -12,6 +13,10 @@ export default abstract class Context {
         if (!r) {
             r = new Parser().parser(expr);
             this.exprCache[expr] = r;
+            if (!r.errorMsg) {
+                const p = new Check();
+                r.errorMsg = p.check(expr, this).errorMsg;
+            }
         }
         return r;
     }
