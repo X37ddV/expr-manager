@@ -40,10 +40,6 @@ export default class Type {
     public hasData(): boolean {
         return this.data !== undefined;
     }
-    // 得到类型值
-    public toValue(): ValueType {
-        return this.type;
-    }
     // 追加数组元素
     public arrayPush(et: Type): Type {
         if (this.type === "array") {
@@ -220,7 +216,7 @@ export default class Type {
             et.info[0] :
             et.info;
         if (this.type === "string" || this.type === "array") {
-            if (i === "number") {
+            if (i === "number" || i === "undefined") {
                 t = (this.type === "array" && this.entity) ?
                     this.context.getEntityType(this) :
                     (this.type === "string") ?

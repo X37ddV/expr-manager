@@ -190,8 +190,10 @@ export default class ExprList {
         let index = -1;
         for (let i = 0; i < this.list.length; i++) {
             const item = this.list[i];
-            if (item.expr === expr && item.entityName === entityName && item.propertyName === propertyName &&
-                compare(item.types.sort(), types.sort()) && item.callback === callback && item.scope === scope) {
+            if (item.expr === (expr || "") && item.entityName === (entityName || "") &&
+                item.propertyName === (propertyName || "") &&
+                (item.types === types || compare(item.types.sort(), types.sort())) &&
+                item.callback === callback && item.scope === scope) {
                 index = i;
                 break;
             }
@@ -214,8 +216,10 @@ export default class ExprList {
         this.sorted = false;
         for (let i = 0; i < this.list.length; i++) {
             const item = this.list[i];
-            if (item.expr === expr && item.entityName === entityName && item.propertyName === propertyName &&
-                compare(item.types.sort(), types.sort()) && item.callback === callback && item.scope === scope) {
+            if (item.expr === (expr || "") && item.entityName === (entityName || "") &&
+                item.propertyName === (propertyName || "") &&
+                (item.types === types || compare(item.types.sort(), types.sort())) &&
+                item.callback === callback && item.scope === scope) {
                 this.list.splice(i, 1); /// 删除匹配的项
                 break;
             }

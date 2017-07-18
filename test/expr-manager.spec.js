@@ -8,9 +8,9 @@ describe("表达式测试", function () {
             var exprExpectedValue = demo.exprs[j][1] || ""; // 预期值
             var exprExpectedValueError = demo.exprs[j][2] || ""; // 预期值错误
             var itTitle = "[" + i  + "-" + j + "]:" + demo.title + ":" + expr;
-            it("Value" + itTitle, (function (expr, exprExpectedValue, exprExpectedValueError) {
+            it("Value" + itTitle, (function (expr, exprData, exprExpectedValue, exprExpectedValueError) {
                 return function() {
-                    var val = exprManager.calc(expr);
+                    var val = exprManager.calc(expr, exprData || {});
                     var exprActualValue = window.JSON.stringify(val.toValue());
                     var exprActualValueError = val.errorMsg;
                     if (exprActualValueError) {
@@ -19,7 +19,7 @@ describe("表达式测试", function () {
                         expect(exprActualValue).toEqual(exprExpectedValue);
                     }
                 }
-            })(expr, exprExpectedValue, exprExpectedValueError));
+            })(expr, demo.exprData, exprExpectedValue, exprExpectedValueError));
         }
     }
     // 高级计算
@@ -33,9 +33,9 @@ describe("表达式测试", function () {
             var exprExpectedDepen = demo.exprs[j][3] || ""; // 预期依赖
             var exprExpectedDepenError = demo.exprs[j][4] || exprExpectedValueError; // 预期依赖错误
             var itTitle = "[" + i  + "-" + j + "]:" + demo.title + ":" + expr;
-            it("Value" + itTitle, (function (expr, exprExpectedValue, exprExpectedValueError) {
+            it("Value" + itTitle, (function (expr, entityName, exprExpectedValue, exprExpectedValueError) {
                 return function() {
-                    var val = exprManager.calcExpr(expr, "E1", window.dataCursor, {
+                    var val = exprManager.calcExpr(expr, entityName || "E1", window.dataCursor, {
                         FieldDisplayName: "",
                         FieldName: "",
                         FieldValue: "",
@@ -48,10 +48,10 @@ describe("表达式测试", function () {
                         expect(exprActualValue).toEqual(exprExpectedValue);
                     }
                 }
-            })(expr, exprExpectedValue, exprExpectedValueError));
-            it("Depen" + itTitle, (function (expr, exprExpectedDepen, exprExpectedDepenError) {
+            })(expr, demo.entityName, exprExpectedValue, exprExpectedValueError));
+            it("Depen" + itTitle, (function (expr, entityName, exprExpectedDepen, exprExpectedDepenError) {
                 return function() {
-                    var valType = exprManager.calcDependencies(expr, "E1");
+                    var valType = exprManager.calcDependencies(expr, entityName || "E1");
                     var exprActualDepen = (valType.dependencies && valType.dependencies.join("|")) || "";
                     var exprActualDepenError = valType.errorMsg;
                     if (exprActualDepenError) {
@@ -60,7 +60,7 @@ describe("表达式测试", function () {
                         expect(exprActualDepen).toEqual(exprExpectedDepen);
                     }
                 }
-            })(expr, exprExpectedDepen, exprExpectedDepenError));
+            })(expr, demo.entityName, exprExpectedDepen, exprExpectedDepenError));
         }
     }
 });
@@ -146,7 +146,9 @@ describe("接口测试", function () {
                         "Field2": { type: "object" },
                         "Field3": { type: "array" },
                         "Field4": { type: "date" },
-                        "Field5": { type: "boolean" }
+                        "Field5": { type: "boolean" },
+                        "CalcField0": { type: "stirng" },
+                        "CalcField1": { type: "stirng" }
                     }
                 }
             }
@@ -166,6 +168,22 @@ describe("接口测试", function () {
             // 添加表达式
             var expr = exprManager.resetExpression();
             expect(expr).toEqual(exprManager);
+
+            expr = exprManager.addExpression("", "", "", ["add"], doCalc, null);
+            expect(expr).toEqual(exprManager);
+            expr = exprManager.addExpression("", "", "", ["add"], doCalc, null);
+            expect(expr).toEqual(exprManager);
+            expr = exprManager.removeExpression("", "", "", ["add"], doCalc, null);
+            expect(expr).toEqual(exprManager);
+            expr = exprManager.addExpression("");
+            expect(expr).toEqual(exprManager);
+            expr = exprManager.removeExpression("");
+            expect(expr).toEqual(exprManager);
+            expr = exprManager.addExpression("1", "", "", ["add"], doCalc, null);
+            expect(expr).toEqual(exprManager);
+            expr = exprManager.removeExpression("1", "", "", ["add"], doCalc, null);
+            expect(expr).toEqual(exprManager);
+
             expr = exprManager.addExpression(
                 "Field1 + ' ' + SubTable[0].Field1",
                 "Table", "CalcField0", ["load", "add", "update", "remove"],
@@ -174,6 +192,16 @@ describe("接口测试", function () {
             expr = exprManager.addExpression(
                 "CalcField0",
                 "Table", "CalcField1", ["load", "add", "update", "remove"],
+                doCalc, null);
+            expect(expr).toEqual(exprManager);
+            expr = exprManager.addExpression(
+                "Parent().Field1",
+                "Table.SubTable", "CalcField0", ["load", "add", "update", "remove"],
+                doCalc, null);
+            expect(expr).toEqual(exprManager);
+            expr = exprManager.addExpression(
+                "CalcField0",
+                "Table.SubTable", "CalcField1", ["load", "add", "update", "remove"],
                 doCalc, null);
             expect(expr).toEqual(exprManager);
             var err = exprManager.checkAndSort();
@@ -196,9 +224,13 @@ describe("接口测试", function () {
                 entityName: "Table",
                 propertyName: "Field0"
             });
+            expr = exprManager.calcExpression("add", {
+                entityName: "Table.SubTable"
+            });
+            expect(expr).toEqual(exprManager);
             expect(expr).toEqual(exprManager);
             expr = exprManager.calcExpression("remove", {
-                entityName: "Table"
+                entityName: "Table.SubTable"
             });
             expect(expr).toEqual(exprManager);
 

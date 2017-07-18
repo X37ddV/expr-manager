@@ -183,7 +183,7 @@ gulp.task("build:example", function() {
 
 gulp.task("build:docs", function() {
     docco.document({
-        args: ["expr-manager.js", "test/usage.of.expr-manager.js"],
+        args: ["expr-manager.js", "test/debug/usage.of.expr-manager.js"],
         layout: "parallel",
         output: "docs",
         template: null,

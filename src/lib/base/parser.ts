@@ -217,9 +217,7 @@ export default class Parser {
                 // - 中括号检查
                 case "VTK_ARRAY": /// []
                     if (t.childs && t.childs.length > 0) {
-                        if (t.childs[0].tokenType === "TK_COLON") { /// 第一个子节点为":"会报错
-                            msg = format(locale.getLocale().MSG_EP_SYNTAX_A, ":");
-                        } else if (t.childs[0].tokenType === "VTK_COMMA") {
+                        if (t.childs[0].tokenType === "VTK_COMMA") {
                             if (t.parent && t.parent.tokenType === "VTK_SUBSCRIPT" &&
                                 t.parent.childs[0] !== t) { /// [23,45,6,32][2,4,5] 要报错
                                 msg = format(locale.getLocale().MSG_EP_SYNTAX_SUB, ",");

@@ -1,4 +1,4 @@
-//     expr-manager.js 0.2.0
+//     expr-manager.js 0.2.1
 //     https://github.com/X37ddV/expr-manager
 //     (c) 2016-2017 X37ddV
 //     Released under the MIT License.
@@ -33,10 +33,6 @@ function getValueType(v) {
 // 是否为**字符串**
 function isString(v) {
     return getValueType(v) === "string";
-}
-// 是否为**数字**
-function isNumber(v) {
-    return getValueType(v) === "number";
 }
 // 是否为**对象**
 function isObject(v) {
@@ -91,13 +87,11 @@ function isFunctionToken(t, name) {
 // 遍历**语法树**
 function eachToken(token, fn, scope) {
     var r = true;
-    if (token.childs) {
-        for (var _i = 0, _a = token.childs; _i < _a.length; _i++) {
-            var item = _a[_i];
-            if (eachToken(item, fn, scope) === false) {
-                r = false;
-                break;
-            }
+    for (var _i = 0, _a = token.childs || []; _i < _a.length; _i++) {
+        var item = _a[_i];
+        if (eachToken(item, fn, scope) === false) {
+            r = false;
+            break;
         }
     }
     return !r ? r : fn.call(scope, token);
@@ -964,9 +958,7 @@ var funcNumberToRMB = {
             }
             return r;
         };
-        var v = source.toValue();
-        return context.genValue(isNumber(v) ?
-            conversion(v, rmb === undefined || rmb, big === undefined || big) : null);
+        return context.genValue(conversion(source.toValue(), rmb === undefined || rmb, big === undefined || big));
     },
     p: ["boolean?", "boolean?"],
     r: "string",
@@ -1214,7 +1206,7 @@ var funcStringReplace = {
             else {
                 if (/i/.test(model)) {
                     index = value.toUpperCase().indexOf(srcStr.toUpperCase(), index);
-                    if (index !== -1) {
+                    if (index >= 0) {
                         t = value.split("");
                         var param = [index, length];
                         param = param.concat(desStr.split(""));
@@ -1519,17 +1511,14 @@ var Check = (function () {
                 };
                 eachToken(r.rootToken, function (token) {
                     var tt = _this.types[token.id];
-                    if (tt) {
-                        if (tt.depends) {
-                            pushDepends_1(tt.depends);
-                        }
-                        var e = tt.entity;
-                        if (e) {
-                            var pp = token.parent;
-                            var pt = pp ? _this.types[pp.id] : null;
-                            if (!pt || !pt.entity) {
-                                pushDepends_1(e.fullName);
-                            }
+                    if (tt && tt.depends) {
+                        pushDepends_1(tt.depends);
+                    }
+                    if (tt && tt.entity) {
+                        var pp = token.parent;
+                        var pt = pp ? _this.types[pp.id] : null;
+                        if (!pt || !pt.entity) {
+                            pushDepends_1(tt.entity.fullName);
                         }
                     }
                     return true;
@@ -1555,20 +1544,18 @@ var Check = (function () {
         var tt;
         var lt;
         var rt;
-        if (t.childs) {
-            for (var i = 0; i < t.childs.length; i++) {
-                msg = this.doCheck(t.childs[i], context);
-                if (msg !== "") {
-                    break;
-                }
-                else if (i === 0) {
-                    l = t.childs[0];
-                    lt = this.types[l.id];
-                }
-                else if (i === 1) {
-                    r = t.childs[1];
-                    rt = this.types[r.id];
-                }
+        for (var i = 0; i < t.childs.length; i++) {
+            msg = this.doCheck(t.childs[i], context);
+            if (msg !== "") {
+                break;
+            }
+            else if (i === 0) {
+                l = t.childs[0];
+                lt = this.types[l.id];
+            }
+            else if (i === 1) {
+                r = t.childs[1];
+                rt = this.types[r.id];
             }
         }
         if (msg === "") {
@@ -2274,10 +2261,7 @@ var Parser = (function () {
                 // - 中括号检查
                 case "VTK_ARRAY":
                     if (t.childs && t.childs.length > 0) {
-                        if (t.childs[0].tokenType === "TK_COLON") {
-                            msg = format(locale.getLocale().MSG_EP_SYNTAX_A, ":");
-                        }
-                        else if (t.childs[0].tokenType === "VTK_COMMA") {
+                        if (t.childs[0].tokenType === "VTK_COMMA") {
                             if (t.parent && t.parent.tokenType === "VTK_SUBSCRIPT" &&
                                 t.parent.childs[0] !== t) {
                                 msg = format(locale.getLocale().MSG_EP_SYNTAX_SUB, ",");
@@ -2562,10 +2546,6 @@ var Type = (function () {
     Type.prototype.hasData = function () {
         return this.data !== undefined;
     };
-    // 得到类型值
-    Type.prototype.toValue = function () {
-        return this.type;
-    };
     // 追加数组元素
     Type.prototype.arrayPush = function (et) {
         if (this.type === "array") {
@@ -2760,7 +2740,7 @@ var Type = (function () {
             et.info[0] :
             et.info;
         if (this.type === "string" || this.type === "array") {
-            if (i === "number") {
+            if (i === "number" || i === "undefined") {
                 t = (this.type === "array" && this.entity) ?
                     this.context.getEntityType(this) :
                     (this.type === "string") ?
@@ -3133,9 +3113,7 @@ var Value = (function () {
     Value.prototype.and = function (ev) {
         var v;
         if (!ev) {
-            v = (this.type === "boolean" || this.type === "null") ?
-                this.genValue(false, "boolean") :
-                this.genErrorValue(format(locale.getLocale().MSG_EX_AND_L, this.type));
+            v = this.genValue(false, "boolean");
         }
         else {
             v = ((this.type === "boolean" || this.type === "null") && (ev.type === "boolean" || ev.type === "null")) ?
@@ -3148,9 +3126,7 @@ var Value = (function () {
     Value.prototype.or = function (ev) {
         var v;
         if (!ev) {
-            v = (this.type === "boolean") ?
-                this.genValue(true, "boolean") :
-                this.genErrorValue(format(locale.getLocale().MSG_EX_OR_L, this.type));
+            v = this.genValue(true, "boolean");
         }
         else {
             v = ((this.type === "boolean" || this.type === "null") && (ev.type === "boolean" || ev.type === "null")) ?
@@ -3189,7 +3165,7 @@ var Value = (function () {
                 }
             }
             else {
-                v = this.genErrorValue(format(locale.getLocale().MSG_EX_SUBSCRIPT_T, i));
+                v = this.genErrorValue(format(locale.getLocale().MSG_EX_SUBSCRIPT_T, t));
             }
         }
         else if (this.type === "object") {
@@ -3220,24 +3196,24 @@ var Value = (function () {
     };
     // 绝对值
     Value.prototype.abs = function () {
-        var v = Big(this.value || "0");
+        var v = Big(this.value);
         return this.genValue(v.abs().toString(), "number");
     };
     // 向上取整
     Value.prototype.ceil = function () {
-        var v = Big(this.value || "0");
+        var v = Big(this.value);
         return this.genValue(v.ceil().toString(), "number");
     };
     // 向下取整
     Value.prototype.floor = function () {
-        var v = Big(this.value || "0");
+        var v = Big(this.value);
         return this.genValue(v.floor().toString(), "number");
     };
     // 四舍五入保留scale位小数
     Value.prototype.round = function (scale) {
         var v;
         if (scale >= 0) {
-            v = Big(this.value || "0");
+            v = Big(this.value);
             v = v.toDecimalPlaces(scale, 4);
             v = this.genValue(v.toString(), "number");
         }
@@ -3250,7 +3226,7 @@ var Value = (function () {
     Value.prototype.trunc = function (scale) {
         var v;
         if (scale >= 0) {
-            v = Big(this.value || "0");
+            v = Big(this.value);
             v = v.toDecimalPlaces(scale, 1);
             v = this.genValue(v.toString(), "number");
         }
@@ -3261,21 +3237,21 @@ var Value = (function () {
     };
     // 获取数的余弦
     Value.prototype.cos = function () {
-        var v = Big(this.value || "0");
+        var v = Big(this.value);
         var name = "cos";
         v = v[name]();
         return this.genValue(v.toString(), "number");
     };
     // 获取 e 的指数
     Value.prototype.exp = function () {
-        var v = Big(this.value || "0");
+        var v = Big(this.value);
         v = v.exp();
         return this.genValue(v.toString(), "number");
     };
     // 获取数的自然对数（底为 e）
     Value.prototype.ln = function () {
         var value;
-        var v = Big(this.value || "0");
+        var v = Big(this.value);
         if (v.greaterThan("0")) {
             v = v.ln();
             value = this.genValue(v.toString(), "number");
@@ -3288,7 +3264,7 @@ var Value = (function () {
     // 获取数的指定底数的对数
     Value.prototype.log = function (base) {
         var value;
-        var v = Big(this.value || "0");
+        var v = Big(this.value);
         if (v.greaterThan("0") && base > 0 && base !== 1) {
             v = v.log(base);
             value = this.genValue(v.toString(), "number");
@@ -3300,26 +3276,26 @@ var Value = (function () {
     };
     // 获取数的指定指数的次幂
     Value.prototype.power = function (exponent) {
-        var v = Big(this.value || "0");
+        var v = Big(this.value);
         v = v.pow(exponent);
         return this.genValue(v.toString(), "number");
     };
     // 获取数的正弦
     Value.prototype.sin = function () {
-        var v = Big(this.value || "0");
+        var v = Big(this.value);
         var name = "sin";
         v = v[name]();
         return this.genValue(v.toString(), "number");
     };
     // 获取数的平方根
     Value.prototype.sqrt = function () {
-        var v = Big(this.value || "0");
+        var v = Big(this.value);
         v = v.sqrt();
         return this.genValue(v.toString(), "number");
     };
     // 获取树的正切值
     Value.prototype.tan = function () {
-        var v = Big(this.value || "0");
+        var v = Big(this.value);
         var name = "tan";
         v = v[name]();
         return this.genValue(v.toString(), "number");
@@ -3630,7 +3606,7 @@ var ExprContext = (function (_super) {
                 }
             }
             else {
-                r = this.genType();
+                r = this.genType("undefined");
             }
         }
         return r;
@@ -4341,8 +4317,10 @@ var ExprList = (function () {
         var index = -1;
         for (var i = 0; i < this.list.length; i++) {
             var item = this.list[i];
-            if (item.expr === expr && item.entityName === entityName && item.propertyName === propertyName &&
-                compare(item.types.sort(), types.sort()) && item.callback === callback && item.scope === scope) {
+            if (item.expr === (expr || "") && item.entityName === (entityName || "") &&
+                item.propertyName === (propertyName || "") &&
+                (item.types === types || compare(item.types.sort(), types.sort())) &&
+                item.callback === callback && item.scope === scope) {
                 index = i;
                 break;
             }
@@ -4365,8 +4343,10 @@ var ExprList = (function () {
         this.sorted = false;
         for (var i = 0; i < this.list.length; i++) {
             var item = this.list[i];
-            if (item.expr === expr && item.entityName === entityName && item.propertyName === propertyName &&
-                compare(item.types.sort(), types.sort()) && item.callback === callback && item.scope === scope) {
+            if (item.expr === (expr || "") && item.entityName === (entityName || "") &&
+                item.propertyName === (propertyName || "") &&
+                (item.types === types || compare(item.types.sort(), types.sort())) &&
+                item.callback === callback && item.scope === scope) {
                 this.list.splice(i, 1);
                 break;
             }
@@ -4549,7 +4529,6 @@ locale.defineLocale("zh-cn", {
     // type & value
     MSG_EX_ADD: "{0} 和 {1} 无法做加法运算",
     MSG_EX_AND: "{0} 和 {1} 无法做逻辑与运算",
-    MSG_EX_AND_L: "{0} 无法做逻辑与运算的左运算数",
     MSG_EX_COMPARE_A: "{0} 和 {1} 无法做大于运算",
     MSG_EX_COMPARE_B: "{0} 和 {1} 无法做小于运算",
     MSG_EX_COMPARE_C: "{0} 和 {1} 无法做大于等于运算",
@@ -4565,7 +4544,6 @@ locale.defineLocale("zh-cn", {
     MSG_EX_MULTIPLY: "{0} 和 {1} 无法做乘法运算",
     MSG_EX_NEGATIVE: "{0} 无法做一元负数运算",
     MSG_EX_OR: "{0} 和 {1} 无法做逻辑或运算",
-    MSG_EX_OR_L: "{0} 无法做逻辑或运算的左运算数",
     MSG_EX_POSITIVE: "{0} 无法做一元正数运算",
     MSG_EX_REMAINDER: "{0} 和 {1} 无法做余数运算",
     MSG_EX_REMAINDER_N: "{0} 不能作为余数使用",

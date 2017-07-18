@@ -207,7 +207,7 @@ export default class ExprContext extends Context {
                     r = this.genType(type, type, name, entity);
                 }
             } else {
-                r = this.genType();
+                r = this.genType("undefined");
             }
         }
         return r;

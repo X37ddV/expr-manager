@@ -8,7 +8,7 @@
 ## Usage
 ### Simple calculation
 ```javascript
-var exprManager = new window.ExprManager();
+var exprManager = new ExprManager();
 
 var expr = "0.1 + 0.2";
 var v = exprManager.calc(expr);

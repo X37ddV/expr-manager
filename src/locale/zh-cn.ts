@@ -42,7 +42,6 @@ locale.defineLocale("zh-cn", {
     // type & value
     MSG_EX_ADD: "{0} 和 {1} 无法做加法运算",
     MSG_EX_AND: "{0} 和 {1} 无法做逻辑与运算",
-    MSG_EX_AND_L: "{0} 无法做逻辑与运算的左运算数",
     MSG_EX_COMPARE_A: "{0} 和 {1} 无法做大于运算",
     MSG_EX_COMPARE_B: "{0} 和 {1} 无法做小于运算",
     MSG_EX_COMPARE_C: "{0} 和 {1} 无法做大于等于运算",
@@ -58,7 +57,6 @@ locale.defineLocale("zh-cn", {
     MSG_EX_MULTIPLY: "{0} 和 {1} 无法做乘法运算",
     MSG_EX_NEGATIVE: "{0} 无法做一元负数运算",
     MSG_EX_OR: "{0} 和 {1} 无法做逻辑或运算",
-    MSG_EX_OR_L: "{0} 无法做逻辑或运算的左运算数",
     MSG_EX_POSITIVE: "{0} 无法做一元正数运算",
     MSG_EX_REMAINDER: "{0} 和 {1} 无法做余数运算",
     MSG_EX_REMAINDER_N: "{0} 不能作为余数使用",

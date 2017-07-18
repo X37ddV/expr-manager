@@ -1,5 +1,5 @@
 import moment from "moment";
-import { format, isNumber, isString } from "../lib/base/common";
+import { format, isString } from "../lib/base/common";
 import locale from "../lib/base/locale";
 import ExprContext, { FunctionParamsType, FunctionResultType } from "../lib/context";
 
@@ -162,7 +162,7 @@ const funcStringReplace = {
             } else { // 只替换第一个
                 if (/i/.test(model)) { // 不区分大小写
                     index = value.toUpperCase().indexOf(srcStr.toUpperCase(), index);
-                    if (index !== -1) {
+                    if (index >= 0) {
                         t = value.split("");
                         let param = [index, length];
                         param = param.concat(desStr.split(""));

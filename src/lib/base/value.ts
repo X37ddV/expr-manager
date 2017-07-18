@@ -289,9 +289,7 @@ export default class Value {
     public and(ev: Value): Value {
         let v;
         if (!ev) { /// 左运算视为false时，右运算数计算被跳过所以ev==undefined
-            v = (this.type === "boolean" || this.type === "null") ?
-                this.genValue(false, "boolean") :
-                this.genErrorValue(format(locale.getLocale().MSG_EX_AND_L, this.type));
+            v = this.genValue(false, "boolean");
         } else {
             v = ((this.type === "boolean" || this.type === "null") && (ev.type === "boolean" || ev.type === "null")) ?
                 this.genValue(!!(this.value && ev.value), "boolean") :
@@ -303,9 +301,7 @@ export default class Value {
     public or(ev: Value) {
         let v;
         if (!ev) { /// 左运算视为true时，右运算数计算被跳过所以ev==undefined
-            v = (this.type === "boolean") ?
-                this.genValue(true, "boolean") :
-                this.genErrorValue(format(locale.getLocale().MSG_EX_OR_L, this.type));
+            v = this.genValue(true, "boolean");
         } else {
             v = ((this.type === "boolean" || this.type === "null") && (ev.type === "boolean" || ev.type === "null")) ?
                 this.genValue(!!(this.value || ev.value), "boolean") :
@@ -339,7 +335,7 @@ export default class Value {
                     v = this.genErrorValue(format(locale.getLocale().MSG_EX_SUBSCRIPT_U, this.type, i));
                 }
             } else { /// 索引必须为数字:"fasdf"["0"]
-                v = this.genErrorValue(format(locale.getLocale().MSG_EX_SUBSCRIPT_T, i));
+                v = this.genErrorValue(format(locale.getLocale().MSG_EX_SUBSCRIPT_T, t));
             }
         } else if (this.type === "object") { /// {x:1,y:2}["x"] , Root()["E1"]
             v = this.genValue(i);
@@ -368,24 +364,24 @@ export default class Value {
     }
     // 绝对值
     public abs(): Value {
-        const v = Big(this.value || "0");
+        const v = Big(this.value);
         return this.genValue(v.abs().toString(), "number");
     }
     // 向上取整
     public ceil(): Value {
-        const v = Big(this.value || "0");
+        const v = Big(this.value);
         return this.genValue(v.ceil().toString(), "number");
     }
     // 向下取整
     public floor(): Value {
-        const v = Big(this.value || "0");
+        const v = Big(this.value);
         return this.genValue(v.floor().toString(), "number");
     }
     // 四舍五入保留scale位小数
     public round(scale: number): Value {
         let v;
         if (scale >= 0) {
-            v = Big(this.value || "0");
+            v = Big(this.value);
             v = v.toDecimalPlaces(scale, 4);
             v = this.genValue(v.toString(), "number");
         } else {
@@ -397,7 +393,7 @@ export default class Value {
     public trunc(scale: number): Value {
         let v;
         if (scale >= 0) {
-            v = Big(this.value || "0");
+            v = Big(this.value);
             v = v.toDecimalPlaces(scale, 1);
             v = this.genValue(v.toString(), "number");
         } else {
@@ -407,21 +403,21 @@ export default class Value {
     }
     // 获取数的余弦
     public cos(): Value {
-        let v = Big(this.value || "0");
+        let v = Big(this.value);
         const name = "cos";
         v = v[name]();
         return this.genValue(v.toString(), "number");
     }
     // 获取 e 的指数
     public exp(): Value {
-        let v = Big(this.value || "0");
+        let v = Big(this.value);
         v = v.exp();
         return this.genValue(v.toString(), "number");
     }
     // 获取数的自然对数（底为 e）
     public ln(): Value {
         let value;
-        let v = Big(this.value || "0");
+        let v = Big(this.value);
         if (v.greaterThan("0")) {
             v = v.ln();
             value = this.genValue(v.toString(), "number");
@@ -433,7 +429,7 @@ export default class Value {
     // 获取数的指定底数的对数
     public log(base: number): Value {
         let value;
-        let v = Big(this.value || "0");
+        let v = Big(this.value);
         if (v.greaterThan("0") && base > 0 && base !== 1) {
             v = v.log(base);
             value = this.genValue(v.toString(), "number");
@@ -444,26 +440,26 @@ export default class Value {
     }
     // 获取数的指定指数的次幂
     public power(exponent: number): Value {
-        let v = Big(this.value || "0");
+        let v = Big(this.value);
         v = v.pow(exponent);
         return this.genValue(v.toString(), "number");
     }
     // 获取数的正弦
     public sin(): Value {
-        let v = Big(this.value || "0");
+        let v = Big(this.value);
         const name = "sin";
         v = v[name]();
         return this.genValue(v.toString(), "number");
     }
     // 获取数的平方根
     public sqrt(): Value {
-        let v = Big(this.value || "0");
+        let v = Big(this.value);
         v = v.sqrt();
         return this.genValue(v.toString(), "number");
     }
     // 获取树的正切值
     public tan(): Value {
-        let v = Big(this.value || "0");
+        let v = Big(this.value);
         const name = "tan";
         v = v[name]();
         return this.genValue(v.toString(), "number");

@@ -12,10 +12,6 @@ export function getValueType(v: any): ValueType {
 export function isString(v: any): boolean {
     return getValueType(v) === "string";
 }
-// 是否为**数字**
-export function isNumber(v: any): boolean {
-    return getValueType(v) === "number";
-}
 // 是否为**对象**
 export function isObject(v: any): boolean {
     return getValueType(v) === "object";
@@ -69,12 +65,10 @@ export function isFunctionToken(t: IToken, name: string): boolean {
 // 遍历**语法树**
 export function eachToken(token: IToken, fn: (token: IToken) => boolean, scope): boolean {
     let r = true;
-    if (token.childs) { // 若有孩子节点, 先遍历孩子节点, 深度优先遍历
-        for (const item of token.childs) {
-            if (eachToken(item, fn, scope) === false) {
-                r = false;
-                break;
-            }
+    for (const item of token.childs || []) {
+        if (eachToken(item, fn, scope) === false) {
+            r = false;
+            break;
         }
     }
     return !r ? r : fn.call(scope, token);

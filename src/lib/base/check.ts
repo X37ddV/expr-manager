@@ -39,17 +39,14 @@ export default class Check {
                 };
                 eachToken(r.rootToken, (token) => {
                     const tt = this.types[token.id];
-                    if (tt) {
-                        if (tt.depends) {
-                            pushDepends(tt.depends);
-                        }
-                        const e = tt.entity;
-                        if (e) {
-                            const pp = token.parent;
-                            const pt = pp ? this.types[pp.id] : null;
-                            if (!pt || !pt.entity) {
-                                pushDepends(e.fullName);
-                            }
+                    if (tt && tt.depends) {
+                        pushDepends(tt.depends);
+                    }
+                    if (tt && tt.entity) {
+                        const pp = token.parent;
+                        const pt = pp ? this.types[pp.id] : null;
+                        if (!pt || !pt.entity) {
+                            pushDepends(tt.entity.fullName);
                         }
                     }
                     return true;
@@ -73,18 +70,16 @@ export default class Check {
         let tt: Type;
         let lt: Type;
         let rt: Type; /// 语法树结点对应的ExprType对象
-        if (t.childs) { /// 先检查该结点的所有子节点
-            for (let i = 0; i < t.childs.length; i++) {
-                msg = this.doCheck(t.childs[i], context);
-                if (msg !== "") { /// 子节点运算关系出错，直接返回错误信息，不再检查父节点
-                    break;
-                } else if (i === 0) {
-                    l = t.childs[0];
-                    lt = this.types[l.id]; /// 左运算数
-                } else if (i === 1) {
-                    r = t.childs[1];
-                    rt = this.types[r.id]; /// 右运算数
-                }
+        for (let i = 0; i < t.childs.length; i++) {
+            msg = this.doCheck(t.childs[i], context);
+            if (msg !== "") { /// 子节点运算关系出错，直接返回错误信息，不再检查父节点
+                break;
+            } else if (i === 0) {
+                l = t.childs[0];
+                lt = this.types[l.id]; /// 左运算数
+            } else if (i === 1) {
+                r = t.childs[1];
+                rt = this.types[r.id]; /// 右运算数
             }
         }
         if (msg === "") {

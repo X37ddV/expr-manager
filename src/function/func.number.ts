@@ -1,4 +1,3 @@
-import { isNumber } from "../lib/base/common";
 import ExprContext, { FunctionParamsType, FunctionResultType } from "../lib/context";
 
 // 数值函数
@@ -217,9 +216,8 @@ const funcNumberToRMB = {
 
             return r;
         };
-        const v = source.toValue();
-        return context.genValue(isNumber(v) ?
-            conversion(v, rmb === undefined || rmb, big === undefined || big) : null);
+        return context.genValue(conversion(source.toValue(),
+            rmb === undefined || rmb, big === undefined || big));
     },
     p: ["boolean?", "boolean?"] as FunctionParamsType[],
     r: "string" as FunctionResultType,

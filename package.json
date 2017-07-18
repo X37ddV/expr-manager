@@ -1,6 +1,6 @@
 {
   "name": "expr-manager",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Parse, validate, calc, and manage expression",
   "main": "expr-manager.js",
   "types": "expr-manager.d.js",

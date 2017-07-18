@@ -1346,7 +1346,7 @@ var exprErr = {
 };
 
 var exprFunction = {
-    title: "跟函数测试",
+    title: "根函数测试",
     exprs: [
        ['PropValue([{name:1},{name:2}], "name", "|")', '"1|2"'],
        ['PropValue([{name:1},{name:2}], "name")', '1'],
@@ -1358,15 +1358,82 @@ var exprFunction = {
     ]
 };
 
-window.demoExpr = [exprDataCalc, exprOperator, exprString, exprNumber, exprDate, exprBoolean, exprObject, exprArray, exprNull, exprErr, exprFunction];
+var exprSubTable = {
+    title: "细表测试",
+    entityName: "E1.Entity1",
+    exprs: [
+        ['Parent().ID', '11', '', 'E1.ID']
+    ]
+}
+
+window.demoExpr = [exprDataCalc, exprOperator, exprString, exprNumber, exprDate, exprBoolean,
+    exprObject, exprArray, exprNull, exprErr, exprFunction, exprSubTable];
 
 var exprCalc = {
     title: "简单计算",
+    exprData: {
+        EmptyString: "",
+        EmptyNumber: 0,
+        EmptyArray: [],
+        EmptyObject: {},
+        NullValue: null,
+    },
     exprs: [
        ['[null, 1].Distinct("a")', 'undefined', 'null 无法获取属性: a'],
-       ['1/0', 'undefined', '0 不能作为除数使用']
+       ['1/0', 'undefined', '0 不能作为除数使用'],
+       ['1%0', 'undefined', '0 不能作为余数使用'],
+       ['1/EmptyNumber', 'undefined', '0 不能作为除数使用'],
+       ['1%EmptyNumber', 'undefined', '0 不能作为余数使用'],
+       ['EmptyNumber==EmptyArray', 'undefined', 'number 和 array 无法做相等运算'],
+       ['EmptyNumber!=EmptyArray', 'undefined', 'number 和 array 无法做不等运算'],
+       ['[{}].Where(EmptyString)', '[{}]'],
+       ['1*null', '0'],
+       ['1+null', '1'],
+       ['1-null', '1'],
+       ['EmptyObject-EmptyObject', 'undefined', 'object 和 object 无法做减法运算'],
+       ['NullValue+[]', '[]'],
+       ['[]+NullValue', '[]'],
+       ['NullValue-[]', '[]'],
+       ['[]-NullValue', '[]'],
+       ['1*EmptyNumber', '0'],
+       ['NullValue-EmptyNumber', '0'],
+       ['1-EmptyNumber', '1'],
+       ['[]-EmptyArray', '[]'],
+       ['{a:1}["a"]', '1'],
+       ['"abc"[1]', '"b"'],
+       ['EmptyString[1]', 'undefined', 'string 下标越界: 1'],
+       ['"abc"["b"]', 'undefined', '下标必须为数字: string'],
+       ['[][1]', 'undefined', 'array 下标越界: 1'],
+       ['Now()[1]', 'undefined', 'date 无法做下标操作'],
+       ['-EmptyString', 'undefined', 'string 无法做一元负数运算'],
+       ['+EmptyString', 'undefined', 'string 无法做一元正数运算'],
+       ['EmptyArray*EmptyObject', 'undefined', 'array 和 object 无法做乘法运算'],
+       ['EmptyArray/EmptyObject', 'undefined', 'array 和 object 无法做除法运算'],
+       ['EmptyArray%EmptyObject', 'undefined', 'array 和 object 无法做余数运算'],
+       ['EmptyArray&&EmptyArray', 'undefined', 'array 和 array 无法做逻辑与运算'],
+       ['EmptyArray||EmptyArray', 'undefined', 'array 和 array 无法做逻辑或运算'],
+       ['false||EmptyArray', 'undefined', 'boolean 和 array 无法做逻辑或运算'],
+       ['true||EmptyArray', 'true'],
+       ['0||EmptyArray', 'undefined', 'number 和 array 无法做逻辑或运算'],
+       ['1||EmptyArray', 'undefined', 'number 和 array 无法做逻辑或运算'],
+       ['NullValue||EmptyArray', 'undefined', 'null 和 array 无法做逻辑或运算'],
+       ['false&&EmptyArray', 'false'],
+       ['true&&EmptyArray', 'undefined', 'boolean 和 array 无法做逻辑与运算'],
+       ['0&&EmptyArray', 'undefined', 'number 和 array 无法做逻辑与运算'],
+       ['1&&EmptyArray', 'undefined', 'number 和 array 无法做逻辑与运算'],
+       ['NullValue&&EmptyArray', 'false'],
+       ['[][null]', 'undefined', '下标必须为数字: null'],
+       ['[][EmptyString]', 'undefined', '下标必须为数字: string'],
+       ['[][NullValue]', 'undefined', '下标必须为数字: null'],
+       ['EmptyNumber[0]', 'undefined', 'number 无法做下标操作'],
+       ['EmptyNumber.ID', 'undefined', 'number 无法做属性访问操作'],
+       ['PropValue([], "name")', 'null'],
+       ['PropValue("", "name")', 'null'],
+       ['PropValue([1,2], "name", ",")', '","'],
+       ['"".Replace("a","b","i")', '""'],
+       ['EmptyString+EmptyNumber+EmptyString', 'undefined', 'string 和 number 无法做加法运算'],
+       //['{}[]', ''],
     ]
 };
 
 window.demoExprCalc = [exprCalc];
-

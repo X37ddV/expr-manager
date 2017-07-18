@@ -1,7 +1,11 @@
+// 开始
+// ----------
+// 引用expr-manager.js
+var ExprManager = require("../../expr-manager.js");
+var exprManager = new ExprManager();
+
 // 简单计算
 // ----------
-// 创建ExprManager对象
-var exprManager = new window.ExprManager();
 // 高精度浮点运算
 var expr = "0.1 + 0.2";
 var v = exprManager.calc(expr);
@@ -118,20 +122,20 @@ if (!errorMsg) {
     // 触发加载数据计算
     exprManager.calcExpression("load", {
         entityName: "Table"
-    }); // => "load"
+    }); // doCalc => "load"
     // 触发添加记录计算
     exprManager.calcExpression("add", {
         entityName: "Table"
-    }); // => "add"
+    }); // doCalc => "add"
     // 触发更新记录计算
     exprManager.calcExpression("update", {
         entityName: "Table",
         propertyName: "Field1"
-    }); // => "update"
+    }); // doCalc => "update"
     // 触发删除记录计算
     exprManager.calcExpression("remove", {
         entityName: "Table.SubTable"
-    }); // => "remove"
+    }); // doCalc => "remove"
 } else {
     console.log(errorMsg)
 }

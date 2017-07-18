@@ -38,7 +38,6 @@ interface ILocaleConfig {
 
     MSG_EX_ADD: string;
     MSG_EX_AND: string;
-    MSG_EX_AND_L: string;
     MSG_EX_COMPARE_A: string;
     MSG_EX_COMPARE_B: string;
     MSG_EX_COMPARE_C: string;
@@ -54,7 +53,6 @@ interface ILocaleConfig {
     MSG_EX_MULTIPLY: string;
     MSG_EX_NEGATIVE: string;
     MSG_EX_OR: string;
-    MSG_EX_OR_L: string;
     MSG_EX_POSITIVE: string;
     MSG_EX_REMAINDER: string;
     MSG_EX_REMAINDER_N: string;
