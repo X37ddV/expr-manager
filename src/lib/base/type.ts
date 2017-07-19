@@ -212,26 +212,28 @@ export default class Type {
     // 下标运算
     public subscript(et: Type): Type {
         let t;
-        const i = (et.type === "array") ?
-            et.info[0] :
-            et.info;
-        if (this.type === "string" || this.type === "array") {
-            if (i === "number" || i === "undefined") {
-                t = (this.type === "array" && this.entity) ?
-                    this.context.getEntityType(this) :
-                    (this.type === "string") ?
-                        this.genType("string") :
-                        this.genType("undefined");
+        if (et.info && et.info.length === 1) {
+            const i = et.info[0];
+            if (this.type === "string" || this.type === "array") {
+                if (i === "number" || i === "undefined") {
+                    t = (this.type === "array" && this.entity) ?
+                        this.context.getEntityType(this) :
+                        (this.type === "string") ?
+                            this.genType("string") :
+                            this.genType("undefined");
+                } else {
+                    t = this.genErrorType(format(locale.getLocale().MSG_EX_SUBSCRIPT_T, i));
+                }
+            } else if (this.type === "object") {
+                t = this.genType("string", "string", i);
+                t = t.getVariableType(this);
             } else {
-                t = this.genErrorType(format(locale.getLocale().MSG_EX_SUBSCRIPT_T, i));
+                t = (this.type === "undefined") ?
+                    this.genType("undefined") :
+                    this.genErrorType(format(locale.getLocale().MSG_EX_SUBSCRIPT, this.type));
             }
-        } else if (this.type === "object") {
-            t = this.genType("string", "string", i);
-            t = t.getVariableType(this);
         } else {
-            t = (this.type === "undefined") ?
-                this.genType("undefined") :
-                this.genErrorType(format(locale.getLocale().MSG_EX_SUBSCRIPT, this.type));
+            t = this.genErrorType(format(locale.getLocale().MSG_EX_SUBSCRIPT_N));
         }
         return t;
     }

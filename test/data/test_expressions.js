@@ -1432,7 +1432,15 @@ var exprCalc = {
        ['PropValue([1,2], "name", ",")', '","'],
        ['"".Replace("a","b","i")', '""'],
        ['EmptyString+EmptyNumber+EmptyString', 'undefined', 'string 和 number 无法做加法运算'],
-       //['{}[]', ''],
+       ['{}[]', 'undefined', '下标操作不能为空'],
+       ['{}[0]', 'null'],
+       ['{0:1}[0]', '1'],
+       ['""[]', 'undefined', '下标操作不能为空'],
+       ['[][]', 'undefined', '下标操作不能为空'],
+       ['NullValue[]', 'undefined', '下标操作不能为空'],
+       ['12[]', 'undefined', '12 后不允许出现 ['],
+       ['"123".LeftString(EmptyObject)', 'undefined', 'string 没有名称为 LeftString 的方法或参数不匹配'],
+       ['[{},[]].Distinct("$x")', 'undefined', '参数索引不存在: $x'],
     ]
 };
 

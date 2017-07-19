@@ -62,6 +62,7 @@ locale.defineLocale("zh-cn", {
     MSG_EX_REMAINDER_N: "{0} 不能作为余数使用",
     MSG_EX_ROUND: "做四舍五入运算时，保留小数位数不能为负数: {0}",
     MSG_EX_SUBSCRIPT: "{0} 无法做下标操作",
+    MSG_EX_SUBSCRIPT_N: "下标操作不能为空",
     MSG_EX_SUBSCRIPT_T: "下标必须为数字: {0}",
     MSG_EX_SUBSCRIPT_U: "{0} 下标越界: {1}",
     MSG_EX_SUBTRACT: "{0} 和 {1} 无法做减法运算",

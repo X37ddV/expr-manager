@@ -5426,29 +5426,32 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             
             <div class="content"><div class='highlight'><pre>    Type.prototype.subscript = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">et</span>) </span>{
         <span class="hljs-keyword">var</span> t;
-        <span class="hljs-keyword">var</span> i = (et.type === <span class="hljs-string">"array"</span>) ?
-            et.info[<span class="hljs-number">0</span>] :
-            et.info;
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"string"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"array"</span>) {
-            <span class="hljs-keyword">if</span> (i === <span class="hljs-string">"number"</span> || i === <span class="hljs-string">"undefined"</span>) {
-                t = (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"array"</span> &amp;&amp; <span class="hljs-keyword">this</span>.entity) ?
-                    <span class="hljs-keyword">this</span>.context.getEntityType(<span class="hljs-keyword">this</span>) :
-                    (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"string"</span>) ?
-                        <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"string"</span>) :
-                        <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"undefined"</span>);
+        <span class="hljs-keyword">if</span> (et.info &amp;&amp; et.info.length === <span class="hljs-number">1</span>) {
+            <span class="hljs-keyword">var</span> i = et.info[<span class="hljs-number">0</span>];
+            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"string"</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">"array"</span>) {
+                <span class="hljs-keyword">if</span> (i === <span class="hljs-string">"number"</span> || i === <span class="hljs-string">"undefined"</span>) {
+                    t = (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"array"</span> &amp;&amp; <span class="hljs-keyword">this</span>.entity) ?
+                        <span class="hljs-keyword">this</span>.context.getEntityType(<span class="hljs-keyword">this</span>) :
+                        (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"string"</span>) ?
+                            <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"string"</span>) :
+                            <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"undefined"</span>);
+                }
+                <span class="hljs-keyword">else</span> {
+                    t = <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_SUBSCRIPT_T, i));
+                }
+            }
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"object"</span>) {
+                t = <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"string"</span>, <span class="hljs-string">"string"</span>, i);
+                t = t.getVariableType(<span class="hljs-keyword">this</span>);
             }
             <span class="hljs-keyword">else</span> {
-                t = <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_SUBSCRIPT_T, i));
+                t = (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span>) ?
+                    <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"undefined"</span>) :
+                    <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_SUBSCRIPT, <span class="hljs-keyword">this</span>.type));
             }
         }
-        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"object"</span>) {
-            t = <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"string"</span>, <span class="hljs-string">"string"</span>, i);
-            t = t.getVariableType(<span class="hljs-keyword">this</span>);
-        }
         <span class="hljs-keyword">else</span> {
-            t = (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"undefined"</span>) ?
-                <span class="hljs-keyword">this</span>.genType(<span class="hljs-string">"undefined"</span>) :
-                <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_SUBSCRIPT, <span class="hljs-keyword">this</span>.type));
+            t = <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EX_SUBSCRIPT_N));
         }
         <span class="hljs-keyword">return</span> t;
     };</pre></div></div>
@@ -7332,6 +7335,9 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                     }
                 }
                 <span class="hljs-keyword">if</span> (!r) {
+                    <span class="hljs-keyword">if</span> (value === <span class="hljs-literal">undefined</span>) {
+                        value = <span class="hljs-literal">null</span>;
+                    }
                     r = <span class="hljs-keyword">this</span>.genValue(value);
                 }
             }
@@ -8836,6 +8842,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
     <span class="hljs-attr">MSG_EX_REMAINDER_N</span>: <span class="hljs-string">"{0} 不能作为余数使用"</span>,
     <span class="hljs-attr">MSG_EX_ROUND</span>: <span class="hljs-string">"做四舍五入运算时，保留小数位数不能为负数: {0}"</span>,
     <span class="hljs-attr">MSG_EX_SUBSCRIPT</span>: <span class="hljs-string">"{0} 无法做下标操作"</span>,
+    <span class="hljs-attr">MSG_EX_SUBSCRIPT_N</span>: <span class="hljs-string">"下标操作不能为空"</span>,
     <span class="hljs-attr">MSG_EX_SUBSCRIPT_T</span>: <span class="hljs-string">"下标必须为数字: {0}"</span>,
     <span class="hljs-attr">MSG_EX_SUBSCRIPT_U</span>: <span class="hljs-string">"{0} 下标越界: {1}"</span>,
     <span class="hljs-attr">MSG_EX_SUBTRACT</span>: <span class="hljs-string">"{0} 和 {1} 无法做减法运算"</span>,

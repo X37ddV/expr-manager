@@ -306,6 +306,9 @@ export default class ExprContext extends Context {
                     }
                 }
                 if (!r) {
+                    if (value === undefined) {
+                        value = null;
+                    }
                     r = this.genValue(value);
                 }
             }

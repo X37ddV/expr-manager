@@ -1,6 +1,6 @@
 // 开始
 // ----------
-// 引用expr-manager.js
+// 引用expr-manager.js<br/>创建ExprManager对象
 var ExprManager = require("../../expr-manager.js");
 var exprManager = new ExprManager();
 

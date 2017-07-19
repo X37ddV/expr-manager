@@ -115,6 +115,7 @@ interface ILocaleConfig {
     MSG_EX_REMAINDER_N: string;
     MSG_EX_ROUND: string;
     MSG_EX_SUBSCRIPT: string;
+    MSG_EX_SUBSCRIPT_N: string;
     MSG_EX_SUBSCRIPT_T: string;
     MSG_EX_SUBSCRIPT_U: string;
     MSG_EX_SUBTRACT: string;
