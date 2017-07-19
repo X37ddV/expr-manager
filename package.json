@@ -1,13 +1,13 @@
 {
   "name": "expr-manager",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Parse, validate, calc, and manage expression",
   "main": "expr-manager.js",
   "types": "expr-manager.d.js",
   "scripts": {
     "start": "gulp",
     "lint:expr-manager": "gulp lint:expr-manager",
-    "build:expr-manager": "gulp build:expr-manager build:expr-manager:min",
+    "build:expr-manager": "gulp build:expr-manager build:expr-manager:min build:expr-manager:locale",
     "lint:example": "gulp lint:example",
     "build:example": "gulp build:example",
     "build:docs": "gulp build:expr-manager build:docs build:docs:readme",

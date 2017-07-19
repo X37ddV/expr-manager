@@ -1,8 +1,13 @@
-import ExprManager from "expr-manager";
+(function (global, factory) {
+	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('../expr-manager')) :
+	typeof define === 'function' && define.amd ? define(['../expr-manager'], factory) :
+	(global.ExprManager = global.ExprManager || {}, global.ExprManager.locale = factory(global.ExprManager));
+}(this, (function (ExprManager) { 'use strict';
+
+ExprManager = ExprManager && 'default' in ExprManager ? ExprManager['default'] : ExprManager;
 
 // 多语言 - 中文
 // ----------
-
 // 设置当前语言
 ExprManager.locale.localeName = "zh-cn";
 // 错误信息
@@ -151,5 +156,8 @@ ExprManager.locale.defineFunction(ExprManager.locale.localeName, {
     "string.TrimRight": { fn: "去除字符串右端空格", p: [], r: "字符串" },
     "string.Upper": { fn: "转换字符串为大写", p: [], r: "大写字符串" },
 });
+var zhCn = ExprManager.locale;
 
-export default ExprManager.locale;
+return zhCn;
+
+})));

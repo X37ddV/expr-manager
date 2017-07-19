@@ -77,7 +77,7 @@ interface IFunctionConfig {
 // ----------
 
 class Locale {
-    public localeName: string = "zh-cn";
+    public localeName: string = "en";
     private locales: object = {};
     private functions: object = {};
     // 定义多语言

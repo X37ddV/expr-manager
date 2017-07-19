@@ -47,6 +47,21 @@ var rollupHideComments = function(options) {
 		}
 	}
 };
+var rollupExternalResolve = function(options) {
+    if ( options === void 0 ) options = {};
+	return {
+		name: "externalresolve",
+		transformBundle: function transformBundle(code) {
+            for (var key in options) {
+                if (options.hasOwnProperty(key)) {
+                    var value = options[key];
+                    code = code.replace(RegExp(key, "g"), value);
+                }
+            }
+			return code;
+		}
+	}
+};
 var karmaStart = function(done, browsers) {
     return new karma.Server({
         basePath: "",
@@ -55,6 +70,7 @@ var karmaStart = function(done, browsers) {
             path.join(rootPath, "node_modules", "moment", "moment.js"),
             path.join(rootPath, "node_modules", "decimal.js", "decimal.js"),
             path.join(rootPath, "expr-manager.js"),
+            path.join(rootPath, "locale", "zh-cn.js"),
             path.join(rootPath, "test", "data", "test_data.js"),
             path.join(rootPath, "test", "data", "test_dependencies.js"),
             path.join(rootPath, "test", "data", "test_expressions.js"),
@@ -138,15 +154,38 @@ gulp.task("build:expr-manager:min", function() {
         ],
         external: ["decimal.js", "moment"],
     }).then(function (bundle) {
-      bundle.write({
-        format: "umd",
-        moduleName: "ExprManager",
-        dest: path.join(rootPath, "expr-manager.min.js"),
-        globals: {
-            "decimal.js": "Decimal",
-            "moment": "moment",
-        }
-      });
+        bundle.write({
+            format: "umd",
+            moduleName: "ExprManager",
+            dest: path.join(rootPath, "expr-manager.min.js"),
+            globals: {
+                "decimal.js": "Decimal",
+                "moment": "moment",
+            }
+        });
+    })
+});
+
+gulp.task("build:expr-manager:locale", function() {
+    return rollup.rollup({
+        entry: path.join(rootPath, "src", "locale/zh-cn.ts"),
+        plugins: [
+            rollupJson(),
+            rollupTypescript(typescriptConfig),
+            rollupExternalResolve({
+                "expr-manager": "../expr-manager"
+            }),
+        ],
+        external: ["expr-manager"],
+    }).then(function (bundle) {
+        bundle.write({
+            format: "umd",
+            moduleName: "ExprManager.locale",
+            dest: path.join(rootPath, "locale", "zh-cn.js"),
+            globals: {
+                "expr-manager": "ExprManager"
+            }
+        });
     })
 });
 
@@ -272,7 +311,7 @@ gulp.task("test:all", function(done) {
     karmaStart(done, ["Safari", "Chrome", "PhantomJS"]);
 });
 
-gulp.task("default", ["lint:expr-manager", "lint:example", "build:expr-manager", "build:expr-manager:min", "build:example", "build:docs", "build:docs:readme", "test:phantomjs"]);
+gulp.task("default", ["lint:expr-manager", "lint:example", "build:expr-manager", "build:expr-manager:min", "build:expr-manager:locale", "build:example", "build:docs", "build:docs:readme", "test:phantomjs"]);
 gulp.task("travis", ["lint:expr-manager", "lint:example", "test:phantomjs"]);
 gulp.task("appveyor", ["lint:expr-manager", "lint:example", "test:phantomjs"]);
 gulp.task("circle", ["lint:expr-manager", "lint:example", "test:phantomjs"]);

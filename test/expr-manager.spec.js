@@ -277,14 +277,14 @@ describe("接口测试", function () {
         }
     })());
 
-    // it("简单计算", (function(){
-    //     return function () {
-    //         var v = exprManager.calc("1+1");
-    //         expect(v.toValue()).toEqual(2);
-    //         v = exprManager.calc("[null, 1].Distinct('a')");
-    //         expect(v.errorMsg).toEqual("null 无法获取属性: a");
-    //         var val = exprManager.calcExpr("1+1", "E1", window.dataCursor);
-    //         expect(val.toValue()).toEqual(2);
-    //     }
-    // })());
+    it("简单计算", (function(){
+        return function () {
+            var v = exprManager.calc("1+1");
+            expect(v.toValue()).toEqual(2);
+            v = exprManager.calc("[null, 1].Distinct('a')");
+            expect(v.errorMsg).toEqual("null 无法获取属性: a");
+            var val = exprManager.calcExpr("1+1", "E1", window.dataCursor);
+            expect(val.toValue()).toEqual(2);
+        }
+    })());
 });

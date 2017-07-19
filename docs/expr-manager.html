@@ -50,7 +50,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <pre><code>expr-manager.js <span class="hljs-number">0.2</span><span class="hljs-number">.1</span>
+              <pre><code>expr-manager.js <span class="hljs-number">0.2</span><span class="hljs-number">.2</span>
 https:<span class="hljs-comment">//github.com/X37ddV/expr-manager</span>
 (c) <span class="hljs-number">2016</span><span class="hljs-number">-2017</span> X37ddV
 Released under the MIT License.
@@ -2397,7 +2397,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> Locale = (<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
     <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Locale</span>(<span class="hljs-params"></span>) </span>{
-        <span class="hljs-keyword">this</span>.localeName = <span class="hljs-string">"zh-cn"</span>;
+        <span class="hljs-keyword">this</span>.localeName = <span class="hljs-string">"en"</span>;
         <span class="hljs-keyword">this</span>.locales = {};
         <span class="hljs-keyword">this</span>.functions = {};
     }</pre></div></div>
@@ -8689,7 +8689,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-319">&#182;</a>
               </div>
-              <h2 id="-">多语言 - 中文</h2>
+              <h2 id="-">表达式管理器</h2>
 
             </div>
             
@@ -8705,7 +8705,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
               
             </div>
             
-            <div class="content"><div class='highlight'><pre>locale.defineLocale(<span class="hljs-string">"zh-cn"</span>, {</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> ExprManager = (<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{</pre></div></div>
             
         </li>
         
@@ -8715,268 +8715,6 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-321">&#182;</a>
-              </div>
-              <p>context</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    MSG_EC_FUNC_E: <span class="hljs-string">"只有实体对象才可以调用 {0} 方法"</span>,
-    <span class="hljs-attr">MSG_EC_FUNC_P</span>: <span class="hljs-string">"{0} 没有名称为 {1} 的方法或参数不匹配"</span>,
-    <span class="hljs-attr">MSG_EC_FUNC_R</span>: <span class="hljs-string">"根实体对象不能调用 {0} 方法"</span>,
-    <span class="hljs-attr">MSG_EC_PROP_E</span>: <span class="hljs-string">"{0} 无法获取属性: {1}"</span>,
-    <span class="hljs-attr">MSG_EC_PROP_N</span>: <span class="hljs-string">"属性不存在: {0}"</span>,
-    <span class="hljs-attr">MSG_EC_VARI_I</span>: <span class="hljs-string">"参数索引不存在: {0}"</span>,
-    <span class="hljs-attr">MSG_EC_VARI_N</span>: <span class="hljs-string">"参数不存在: {0}"</span>,</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-322">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-322">&#182;</a>
-              </div>
-              <p>funtion</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    MSG_EF_MODEL: <span class="hljs-string">"\"{0}\" 不是合法的匹配模式"</span>,
-    <span class="hljs-attr">MSG_EF_STR_TO_DATE</span>: <span class="hljs-string">"\"{0}\" 无法被 \"{1}\" 格式化为日期时间"</span>,
-    <span class="hljs-attr">MSG_EF_STR_TO_NUM</span>: <span class="hljs-string">"\"{0}\" 无法被转换为数字"</span>,</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-323">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-323">&#182;</a>
-              </div>
-              <p>lexer</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    MSG_EL_SYNTAX_ON: <span class="hljs-string">"{0} 不是合法的八进制数"</span>,
-    <span class="hljs-attr">MSG_EL_SYNTAX_S</span>: <span class="hljs-string">"{0} 引号不匹配"</span>,
-    <span class="hljs-attr">MSG_EL_SYNTAX_UC</span>: <span class="hljs-string">"{0} 不是合法的unicode字符"</span>,
-    <span class="hljs-attr">MSG_EL_SYNTAX_XN</span>: <span class="hljs-string">"{0} 不是合法的十六进制数"</span>,</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-324">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-324">&#182;</a>
-              </div>
-              <p>parser</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    MSG_EP_EMPTY: <span class="hljs-string">"表达式不能为空"</span>,
-    <span class="hljs-attr">MSG_EP_LEXICAL_B</span>: <span class="hljs-string">"{0} 无法作为表达式的开头"</span>,
-    <span class="hljs-attr">MSG_EP_LEXICAL_E</span>: <span class="hljs-string">"{0} 无法作为表达式的结尾"</span>,
-    <span class="hljs-attr">MSG_EP_LEXICAL_L</span>: <span class="hljs-string">"{0} 后不允许出现 {1}"</span>,
-    <span class="hljs-attr">MSG_EP_MATCH</span>: <span class="hljs-string">"{0} 不匹配"</span>,
-    <span class="hljs-attr">MSG_EP_SYNTAX_A</span>: <span class="hljs-string">"数组中不允许使用 {0} 操作符"</span>,
-    <span class="hljs-attr">MSG_EP_SYNTAX_C</span>: <span class="hljs-string">"{0} 操作符必须存在于{}、[]、()中"</span>,
-    <span class="hljs-attr">MSG_EP_SYNTAX_D</span>: <span class="hljs-string">"{0} 无法做属性访问操作"</span>,
-    <span class="hljs-attr">MSG_EP_SYNTAX_E</span>: <span class="hljs-string">"{0} 前不允许表达式存在"</span>,
-    <span class="hljs-attr">MSG_EP_SYNTAX_M</span>: <span class="hljs-string">"{0} 在不是函数参数列表时不允许出现\",\"分隔符"</span>,
-    <span class="hljs-attr">MSG_EP_SYNTAX_N</span>: <span class="hljs-string">"该处 {0} 无意义"</span>,
-    <span class="hljs-attr">MSG_EP_SYNTAX_O</span>: <span class="hljs-string">"对象书写格式不正确"</span>,
-    <span class="hljs-attr">MSG_EP_SYNTAX_P</span>: <span class="hljs-string">"{0} 操作符必须存在于{}中"</span>,
-    <span class="hljs-attr">MSG_EP_SYNTAX_SUB</span>: <span class="hljs-string">"[]用作下标访问时不允许出现 {0} 分隔符"</span>,
-    <span class="hljs-attr">MSG_EP_UNKNOWN</span>: <span class="hljs-string">"无法识别 {0}"</span>,</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-325">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-325">&#182;</a>
-              </div>
-              <p>list</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    MSG_ES_PARSER: <span class="hljs-string">"作用于实体“{0}”上的表达式“{1}”解析出错：{2}"</span>,</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-326">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-326">&#182;</a>
-              </div>
-              <p>type &amp; value</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    MSG_EX_ADD: <span class="hljs-string">"{0} 和 {1} 无法做加法运算"</span>,
-    <span class="hljs-attr">MSG_EX_AND</span>: <span class="hljs-string">"{0} 和 {1} 无法做逻辑与运算"</span>,
-    <span class="hljs-attr">MSG_EX_COMPARE_A</span>: <span class="hljs-string">"{0} 和 {1} 无法做大于运算"</span>,
-    <span class="hljs-attr">MSG_EX_COMPARE_B</span>: <span class="hljs-string">"{0} 和 {1} 无法做小于运算"</span>,
-    <span class="hljs-attr">MSG_EX_COMPARE_C</span>: <span class="hljs-string">"{0} 和 {1} 无法做大于等于运算"</span>,
-    <span class="hljs-attr">MSG_EX_COMPARE_D</span>: <span class="hljs-string">"{0} 和 {1} 无法做小于等于运算"</span>,
-    <span class="hljs-attr">MSG_EX_DIVIDE</span>: <span class="hljs-string">"{0} 和 {1} 无法做除法运算"</span>,
-    <span class="hljs-attr">MSG_EX_DIVIDE_N</span>: <span class="hljs-string">"{0} 不能作为除数使用"</span>,
-    <span class="hljs-attr">MSG_EX_DOT</span>: <span class="hljs-string">"{0} 无法做属性访问操作"</span>,
-    <span class="hljs-attr">MSG_EX_EQUAL</span>: <span class="hljs-string">"{0} 和 {1} 无法做相等运算"</span>,
-    <span class="hljs-attr">MSG_EX_EQUAL_N</span>: <span class="hljs-string">"{0} 和 {1} 无法做不等运算"</span>,
-    <span class="hljs-attr">MSG_EX_FUNC_NULL</span>: <span class="hljs-string">"null 不能调用 {0} 方法"</span>,
-    <span class="hljs-attr">MSG_EX_LN</span>: <span class="hljs-string">"{0} 无法做自然对数运算"</span>,
-    <span class="hljs-attr">MSG_EX_LOG</span>: <span class="hljs-string">"无法做以 {0} 为底 {1} 的对数运算"</span>,
-    <span class="hljs-attr">MSG_EX_MULTIPLY</span>: <span class="hljs-string">"{0} 和 {1} 无法做乘法运算"</span>,
-    <span class="hljs-attr">MSG_EX_NEGATIVE</span>: <span class="hljs-string">"{0} 无法做一元负数运算"</span>,
-    <span class="hljs-attr">MSG_EX_OR</span>: <span class="hljs-string">"{0} 和 {1} 无法做逻辑或运算"</span>,
-    <span class="hljs-attr">MSG_EX_POSITIVE</span>: <span class="hljs-string">"{0} 无法做一元正数运算"</span>,
-    <span class="hljs-attr">MSG_EX_REMAINDER</span>: <span class="hljs-string">"{0} 和 {1} 无法做余数运算"</span>,
-    <span class="hljs-attr">MSG_EX_REMAINDER_N</span>: <span class="hljs-string">"{0} 不能作为余数使用"</span>,
-    <span class="hljs-attr">MSG_EX_ROUND</span>: <span class="hljs-string">"做四舍五入运算时，保留小数位数不能为负数: {0}"</span>,
-    <span class="hljs-attr">MSG_EX_SUBSCRIPT</span>: <span class="hljs-string">"{0} 无法做下标操作"</span>,
-    <span class="hljs-attr">MSG_EX_SUBSCRIPT_N</span>: <span class="hljs-string">"下标操作不能为空"</span>,
-    <span class="hljs-attr">MSG_EX_SUBSCRIPT_T</span>: <span class="hljs-string">"下标必须为数字: {0}"</span>,
-    <span class="hljs-attr">MSG_EX_SUBSCRIPT_U</span>: <span class="hljs-string">"{0} 下标越界: {1}"</span>,
-    <span class="hljs-attr">MSG_EX_SUBTRACT</span>: <span class="hljs-string">"{0} 和 {1} 无法做减法运算"</span>,
-    <span class="hljs-attr">MSG_EX_TRUNC</span>: <span class="hljs-string">"做截断运算时，保留小数位数不能为负数: {0}"</span>,
-});</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-327">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-327">&#182;</a>
-              </div>
-              <p>函数描述</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>locale.defineFunction(<span class="hljs-string">"zh-cn"</span>, {
-    <span class="hljs-string">"FieldDisplayName"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取当前字段别名"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"字段别名（显示名称）"</span> },
-    <span class="hljs-string">"FieldName"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取当前字段唯一标识"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"字段唯一标识"</span> },
-    <span class="hljs-string">"FieldValue"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取当前字段值"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"字段值"</span> },
-    <span class="hljs-string">"IIf"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"条件判断函数，如果第一个参数为true，则获取第二个参数，否则获取第三个参数"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"条件值"</span>, <span class="hljs-string">"真值"</span>, <span class="hljs-string">"假值"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"第二个参数或第三个参数"</span> },
-    <span class="hljs-string">"IfNull"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"空值判断函数，如果第一个参数为null，则获取第二个参数，否则获取第一个参数"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"值"</span>, <span class="hljs-string">"默认值"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"第一个参数或第二个参数"</span> },
-    <span class="hljs-string">"Now"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取本地当前日期时间"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"本地当前日期时间"</span> },
-    <span class="hljs-string">"Parent"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取当前实体的父实体对象，如果当前为根则获取自己"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"父实体对象"</span> },
-    <span class="hljs-string">"PropValue"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取对象属性值"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"对象或数组(没有分隔符则获取数组第一个元素，有分隔符获取数组所有元素集合)"</span>, <span class="hljs-string">"属性名"</span>, <span class="hljs-string">"分隔符?"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"属性值"</span> },
-    <span class="hljs-string">"Random"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"返回介于 0 ~ 1 之间的一个随机数"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"数字"</span> },
-    <span class="hljs-string">"RecNo"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取当前实体的索引号，没有记录返回-1"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"索引号"</span> },
-    <span class="hljs-string">"Root"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取实体根对象"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"实体根对象"</span> },
-    <span class="hljs-string">"array.Average"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取集合元素的平均值"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"表达式?"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"平均值"</span> },
-    <span class="hljs-string">"array.Count"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取集合元素个数"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"个数"</span> },
-    <span class="hljs-string">"array.Distinct"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取集合中唯一元素的集合"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"表达式?"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"集合"</span> },
-    <span class="hljs-string">"array.Max"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取集合元素的最大值"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"表达式?"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"最大值"</span> },
-    <span class="hljs-string">"array.Min"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取集合元素的最小值"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"表达式?"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"最小值"</span> },
-    <span class="hljs-string">"array.Sum"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取集合元素的合计值"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"表达式?"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"合计值"</span> },
-    <span class="hljs-string">"array.Where"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取满足条件的元素集合"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"条件表达式"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"集合"</span> },
-    <span class="hljs-string">"boolean.ToString"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"转换布尔类型为字符串"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"字符串"</span> },
-    <span class="hljs-string">"date.DateOf"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取 Date 对象的日期部分"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"日期"</span> },
-    <span class="hljs-string">"date.DayOf"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"从 Date 对象获取一个月中的某一天（1 ~ 31）"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"日"</span> },
-    <span class="hljs-string">"date.DayOfWeek"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"得到一周中的星期几（0 ~ 6）"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"周"</span> },
-    <span class="hljs-string">"date.DaysBetween"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取日期差"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"结束日期时间"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"日差"</span> },
-    <span class="hljs-string">"date.HourOf"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"从 Date 对象获取一天中的第几个小时"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"时"</span> },
-    <span class="hljs-string">"date.HoursBetween"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取小时差"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"结束日期时间"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"时差"</span> },
-    <span class="hljs-string">"date.IncDay"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"增加指定的天数"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"天数"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"日期时间"</span> },
-    <span class="hljs-string">"date.IncHour"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"增加指定的小时数"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"小时数"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"日期时间"</span> },
-    <span class="hljs-string">"date.IncMinute"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"增加指定的分钟数"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"分钟数"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"日期时间"</span> },
-    <span class="hljs-string">"date.IncMonth"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"增加指定的月数"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"月数"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"日期时间"</span> },
-    <span class="hljs-string">"date.IncSecond"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"增加指定的秒数"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"秒数"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"日期时间"</span> },
-    <span class="hljs-string">"date.IncWeek"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"增加指定的周数"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"周数"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"日期时间"</span> },
-    <span class="hljs-string">"date.IncYear"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"增加指定的年数"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"年数"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"日期时间"</span> },
-    <span class="hljs-string">"date.MilliSecondOf"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"从 Date 对象获取毫秒"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"毫秒"</span> },
-    <span class="hljs-string">"date.MilliSecondsBetween"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取毫秒差"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"结束日期时间"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"毫秒差"</span> },
-    <span class="hljs-string">"date.MinuteOf"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"从 Date 对象获取分钟（0 ~ 59）"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"分"</span> },
-    <span class="hljs-string">"date.MinutesBetween"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取分钟差"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"结束日期时间"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"分差"</span> },
-    <span class="hljs-string">"date.MonthOf"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"从 Date 对象获取月份（1 ~ 12）"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"月"</span> },
-    <span class="hljs-string">"date.MonthsBetween"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取月份差"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"结束日期时间"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"月差"</span> },
-    <span class="hljs-string">"date.SecondOf"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"从 Date 对象获取秒数（0 ~ 59）"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"秒"</span> },
-    <span class="hljs-string">"date.SecondsBetween"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取秒差"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"结束日期时间"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"秒差"</span> },
-    <span class="hljs-string">"date.ToString"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"转换日期时间类型为字符串"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"日期时间格式?"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"字符串"</span> },
-    <span class="hljs-string">"date.WeekOf"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"从 Date 对象获取一年中的第几周（1 ~ 53）"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"周"</span> },
-    <span class="hljs-string">"date.WeeksBetween"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取周差"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"结束日期时间"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"周差"</span> },
-    <span class="hljs-string">"date.YearOf"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"从 Date 对象获取年份"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"年"</span> },
-    <span class="hljs-string">"date.YearsBetween"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取年差"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"结束日期时间"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"年差"</span> },
-    <span class="hljs-string">"number.Abs"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取数的绝对值"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"绝对值"</span> },
-    <span class="hljs-string">"number.Ceil"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"对数进行向上取整"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"数值"</span> },
-    <span class="hljs-string">"number.Cos"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取数的余弦"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"余弦"</span> },
-    <span class="hljs-string">"number.Exp"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取 e 的指数"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"指数"</span> },
-    <span class="hljs-string">"number.Floor"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"对数进行向下取整"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"数值"</span> },
-    <span class="hljs-string">"number.Ln"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取数的自然对数（底为 e）"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"自然对数"</span> },
-    <span class="hljs-string">"number.Log"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取数的指定底数的对数"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"底数"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"对数"</span> },
-    <span class="hljs-string">"number.Power"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取数的指定指数的次幂"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"指数"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"次幂"</span> },
-    <span class="hljs-string">"number.Round"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"根据保留的小数位数对数四舍五入"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"保留小数位数"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"数值"</span> },
-    <span class="hljs-string">"number.Sin"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取数的正弦"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"正弦"</span> },
-    <span class="hljs-string">"number.Sqrt"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取数的平方根"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"平方根"</span> },
-    <span class="hljs-string">"number.Tan"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取树的正切值"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"正切值"</span> },
-    <span class="hljs-string">"number.ToRMB"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取人民币大写"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"是否人民币(默认true)?"</span>, <span class="hljs-string">"是否大写(默认true)?"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"人民币大写"</span> },
-    <span class="hljs-string">"number.ToString"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"转换数字类型为字符串"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"字符串"</span> },
-    <span class="hljs-string">"number.Trunc"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"根据保留的小数位数对数进行截断"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"保留小数位数"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"数值"</span> },
-    <span class="hljs-string">"object.Parent"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取父实体对象，如果当前为根则获取自己"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"父实体对象"</span> },
-    <span class="hljs-string">"object.RecNo"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取当前实体的索引号，没有实体返回-1"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"索引号"</span> },
-    <span class="hljs-string">"string.LeftString"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取字符串的左子字符串，指定长度"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"长度"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"子字符串"</span> },
-    <span class="hljs-string">"string.Length"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取字符串长度"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"字符串长度"</span> },
-    <span class="hljs-string">"string.Lower"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"转换字符串为小写"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"小写字符串"</span> },
-    <span class="hljs-string">"string.Pos"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"检索字符串，获取子字符串在字符串中的起始位置"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"子字符串"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"位置索引"</span> },
-    <span class="hljs-string">"string.Replace"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"字符串替换"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"被搜索的子字符串"</span>, <span class="hljs-string">"用于替换的子字符串"</span>, <span class="hljs-string">"匹配模式?"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"替换后的新字符串"</span> },
-    <span class="hljs-string">"string.ReplaceReg"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"正则替换"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"用于匹配子字符串的正则表达式"</span>, <span class="hljs-string">"用于替换的子字符串"</span>, <span class="hljs-string">"匹配模式?"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"替换后的新字符串"</span> },
-    <span class="hljs-string">"string.RightString"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取字符串的右子字符串，指定长度"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"长度"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"子字符串"</span> },
-    <span class="hljs-string">"string.SubString"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"获取字符串的子字符串，指定开始位置和长度"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"开始位置"</span>, <span class="hljs-string">"长度"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"子字符串"</span> },
-    <span class="hljs-string">"string.ToDate"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"转换字符串类型为日期时间"</span>, <span class="hljs-attr">p</span>: [<span class="hljs-string">"日期时间格式?"</span>], <span class="hljs-attr">r</span>: <span class="hljs-string">"日期时间"</span> },
-    <span class="hljs-string">"string.ToNumber"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"转换字符串类型为数字"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"数字"</span> },
-    <span class="hljs-string">"string.ToString"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"转换字符串类型为字符串"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"字符串"</span> },
-    <span class="hljs-string">"string.Trim"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"去除字符串两端空格"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"字符串"</span> },
-    <span class="hljs-string">"string.TrimLeft"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"去除字符串左端空格"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"字符串"</span> },
-    <span class="hljs-string">"string.TrimRight"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"去除字符串右端空格"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"字符串"</span> },
-    <span class="hljs-string">"string.Upper"</span>: { <span class="hljs-attr">fn</span>: <span class="hljs-string">"转换字符串为大写"</span>, <span class="hljs-attr">p</span>: [], <span class="hljs-attr">r</span>: <span class="hljs-string">"大写字符串"</span> },
-});</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-328">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-328">&#182;</a>
-              </div>
-              <h2 id="-">表达式管理器</h2>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-329">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-329">&#182;</a>
-              </div>
-              
-            </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> ExprManager = (<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-330">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-330">&#182;</a>
               </div>
               <p>构造函数</p>
 
@@ -8991,11 +8729,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-331">
+        <li id="section-322">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-331">&#182;</a>
+                <a class="pilcrow" href="#section-322">&#182;</a>
               </div>
               <p>初始化</p>
 
@@ -9011,11 +8749,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-332">
+        <li id="section-323">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-332">&#182;</a>
+                <a class="pilcrow" href="#section-323">&#182;</a>
               </div>
               <p>注册函数</p>
 
@@ -9029,11 +8767,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-333">
+        <li id="section-324">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-333">&#182;</a>
+                <a class="pilcrow" href="#section-324">&#182;</a>
               </div>
               <p>获取函数列表对象</p>
 
@@ -9046,11 +8784,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-334">
+        <li id="section-325">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-334">&#182;</a>
+                <a class="pilcrow" href="#section-325">&#182;</a>
               </div>
               <p>重置表达式列表对象</p>
 
@@ -9064,11 +8802,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-335">
+        <li id="section-326">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-335">&#182;</a>
+                <a class="pilcrow" href="#section-326">&#182;</a>
               </div>
               <p>添加表达式</p>
 
@@ -9082,11 +8820,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-336">
+        <li id="section-327">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-336">&#182;</a>
+                <a class="pilcrow" href="#section-327">&#182;</a>
               </div>
               <p>删除表达式</p>
 
@@ -9100,11 +8838,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-337">
+        <li id="section-328">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-337">&#182;</a>
+                <a class="pilcrow" href="#section-328">&#182;</a>
               </div>
               <p>获取表达式列表对象</p>
 
@@ -9117,11 +8855,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-338">
+        <li id="section-329">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-338">&#182;</a>
+                <a class="pilcrow" href="#section-329">&#182;</a>
               </div>
               <p>检查和排序表达式列表</p>
 
@@ -9136,13 +8874,13 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-339">
+        <li id="section-330">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-339">&#182;</a>
+                <a class="pilcrow" href="#section-330">&#182;</a>
               </div>
-              <p>计算表达式</p>
+              <p>高级依赖计算</p>
 
             </div>
             
@@ -9159,13 +8897,13 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-340">
+        <li id="section-331">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-340">&#182;</a>
+                <a class="pilcrow" href="#section-331">&#182;</a>
               </div>
-              <p>计算表达式的依赖关系</p>
+              <p>依赖关系计算</p>
 
             </div>
             
@@ -9176,13 +8914,13 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-341">
+        <li id="section-332">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-341">&#182;</a>
+                <a class="pilcrow" href="#section-332">&#182;</a>
               </div>
-              <p>计算表达式的值</p>
+              <p>高级计算</p>
 
             </div>
             
@@ -9202,13 +8940,13 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-342">
+        <li id="section-333">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-342">&#182;</a>
+                <a class="pilcrow" href="#section-333">&#182;</a>
               </div>
-              <p>计算表达式的值</p>
+              <p>简单计算</p>
 
             </div>
             
@@ -9219,11 +8957,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         </li>
         
         
-        <li id="section-343">
+        <li id="section-334">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-343">&#182;</a>
+                <a class="pilcrow" href="#section-334">&#182;</a>
               </div>
               <p>本地化属性</p>
 

@@ -4,7 +4,6 @@ import Type from "./lib/base/type";
 import Value from "./lib/base/value";
 import ExprContext, { IDataCursor, IFunction } from "./lib/context";
 import ExprList, { CalcType, IExprItem } from "./lib/list";
-import "./locale/zh-cn";
 
 // 表达式管理器
 // ----------
@@ -60,7 +59,7 @@ export default class ExprManager {
         return this.exprList.checkAndSort(((context) => (expr, entityName) =>
             context.calcEntityDependencies(expr, entityName))(this.exprContext));
     }
-    // 计算表达式
+    // 高级依赖计算
     public calcExpression(type: CalcType, info): ExprManager {
         const list = this.getExpressionList(type, info.entityName, info.propertyName);
         for (const item of list) {
@@ -69,11 +68,11 @@ export default class ExprManager {
         }
         return this;
     }
-    // 计算表达式的依赖关系
+    // 依赖关系计算
     public calcDependencies(expr: string, entityName: string): Type {
         return this.exprContext.calcEntityDependencies(expr, entityName);
     }
-    // 计算表达式的值
+    // 高级计算
     public calcExpr(expr: string, entityName: string, dataCursor: IDataCursor, field): Value {
         /// field = {FieldDisplayName: "", FieldName: "", FieldValue: ""}
         this.exprContext.setDataCursor(dataCursor);
@@ -86,7 +85,7 @@ export default class ExprManager {
         }
         return r;
     }
-    // 计算表达式的值
+    // 简单计算
     public calc(expr: string, data): Value {
         return this.exprContext.calcDataExpr(expr, data);
     }
