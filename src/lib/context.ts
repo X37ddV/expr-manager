@@ -60,9 +60,6 @@ export default class ExprContext extends Context {
     private contextVariables = [];                 /// 用于存储环境变量
     private data;                                  /// 全部数据
     private functions: IFunction = {};             /// 函数列表
-    private fieldName: string;
-    private fieldDisplayName: string;
-    private fieldValue: any;
     // 获取函数返回结果类型对象
     public doGetFunctionType(name: string, source, paramType, paramData): Type {
         let r: Type;
@@ -505,18 +502,6 @@ export default class ExprContext extends Context {
         }
         return r;
     }
-    // 设置字段名
-    public setFieldName(value) { this.fieldName = value; }
-    // 获取字段名
-    public getFieldName() { return this.fieldName || ""; }
-    // 设置字段显示名称
-    public setFieldDisplayName(value) { this.fieldDisplayName = value; }
-    // 获取字段显示名称
-    public getFieldDisplayName() { return this.fieldDisplayName || ""; }
-    // 设置字段值
-    public setFieldValue(value) { this.fieldValue = value; }
-    // 获取字段值
-    public getFieldValue() { return this.fieldValue || null; }
     // 检测参数类型数组是否匹配
     public findParams(ps, p) {
         let r = [];

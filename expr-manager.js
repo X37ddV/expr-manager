@@ -3930,18 +3930,6 @@ var ExprContext = (function (_super) {
         }
         return r;
     };
-    // 设置字段名
-    ExprContext.prototype.setFieldName = function (value) { this.fieldName = value; };
-    // 获取字段名
-    ExprContext.prototype.getFieldName = function () { return this.fieldName || ""; };
-    // 设置字段显示名称
-    ExprContext.prototype.setFieldDisplayName = function (value) { this.fieldDisplayName = value; };
-    // 获取字段显示名称
-    ExprContext.prototype.getFieldDisplayName = function () { return this.fieldDisplayName || ""; };
-    // 设置字段值
-    ExprContext.prototype.setFieldValue = function (value) { this.fieldValue = value; };
-    // 获取字段值
-    ExprContext.prototype.getFieldValue = function () { return this.fieldValue || null; };
     // 检测参数类型数组是否匹配
     ExprContext.prototype.findParams = function (ps, p) {
         var r = [];

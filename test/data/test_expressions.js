@@ -1450,6 +1450,9 @@ var exprCalcData = {
         ['$_1', 'undefined', '参数索引不存在: $_1'],
         ['$12', 'undefined', '参数不存在: $12'],
         ['None', 'null'],
+        ['FieldName()', 'null'],
+        ['FieldValue()', 'null'],
+        ['FieldDisplayName()', 'null'],
     ]
 };
 
