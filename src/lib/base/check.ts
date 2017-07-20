@@ -155,9 +155,7 @@ export default class Check {
                     break;
                 case "VTK_PAREN": /// ()结点
                     if (t.childs.length === 0) { /// 如：fun()
-                        tt = (p && p.tokenType === "TK_IDEN") ?
-                            context.genType("array", [], []) :
-                            context.genType("undefined");
+                        tt = context.genType("array", [], []);
                     } else {
                         tt = (p && p.tokenType === "TK_IDEN" && l.tokenType !== "VTK_COMMA") ?
                             context.genType("array", [], []).arrayPush(lt) : /// 如：fun(2)

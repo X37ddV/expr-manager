@@ -10,7 +10,7 @@ export default class Lexer {
     private index: number = 0; // 当前索引位置
     // 设置表达式
     public setExpr(expr: string): Lexer {
-        this.expr = expr ? expr.split("") : [];
+        this.expr = expr.split("");
         this.index = 0;
         return this;
     }
@@ -49,22 +49,22 @@ export default class Lexer {
                 case ":":
                 case ",":
                     tText = tValue = s[n++];
-                    tType =
-                        tValue === "[" ? "TK_LA" :
-                            tValue === "]" ? "TK_RA" :
-                                tValue === "{" ? "TK_LO" :
-                                    tValue === "}" ? "TK_RO" :
-                                        tValue === "." ? "TK_DOT" :
-                                            tValue === "(" ? "TK_LP" :
-                                                tValue === ")" ? "TK_RP" :
-                                                    tValue === "*" ? "TK_MULTI" :
-                                                        tValue === "/" ? "TK_DIV" :
-                                                            tValue === "%" ? "TK_MOD" :
-                                                                tValue === "+" ? "TK_PLUS" :
-                                                                    tValue === "-" ? "TK_MINUS" :
-                                                                        tValue === ":" ? "TK_COLON" :
-                                                                            tValue === "," ? "TK_COMMA" :
-                                                                                "";
+                    switch (tValue) {
+                        case "[": tType = "TK_LA"; break;
+                        case "]": tType = "TK_RA"; break;
+                        case "{": tType = "TK_LO"; break;
+                        case "}": tType = "TK_RO"; break;
+                        case ".": tType = "TK_DOT"; break;
+                        case "(": tType = "TK_LP"; break;
+                        case ")": tType = "TK_RP"; break;
+                        case "*": tType = "TK_MULTI"; break;
+                        case "/": tType = "TK_DIV"; break;
+                        case "%": tType = "TK_MOD"; break;
+                        case "+": tType = "TK_PLUS"; break;
+                        case "-": tType = "TK_MINUS"; break;
+                        case ":": tType = "TK_COLON"; break;
+                        case ",": tType = "TK_COMMA"; break;
+                    }
                     break;
                 case "!": /// ! !=
                     tValue = s[n++];
@@ -99,10 +99,10 @@ export default class Lexer {
                 case "|": /// ||
                     tValue = s[n++];
                     if (n < s.length && s[n] === tValue) {
-                        tType =
-                            tValue === "&" ? "TK_AND" :
-                                tValue === "|" ? "TK_OR" :
-                                    "TK_UNKNOWN";
+                        switch (tValue) {
+                            case "&": tType = "TK_AND"; break;
+                            case "|": tType = "TK_OR"; break;
+                        }
                         tValue += s[n++];
                     } else {
                         tType = "TK_UNKNOWN";

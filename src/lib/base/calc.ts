@@ -36,32 +36,30 @@ export default class Calc {
         let tv: Value;
         let lv: Value;
         let rv: Value;
-        if (t.childs) { /// 先计算该结点的所有子节点
-            const isIfNull = context.isIfNullToken(t); /// 是否为IfNull(1,2)函数形式的","结点
-            const isIIf = context.isIIfToken(t); /// 是否为IIf(true,1,2)函数形式的","结点
+        const isIfNull = context.isIfNullToken(t); /// 是否为IfNull(1,2)函数形式的","结点
+        const isIIf = context.isIIfToken(t); /// 是否为IIf(true,1,2)函数形式的","结点
 
-            for (let i = 0; i < t.childs.length; i++) {
-                msg = this.doCalc(t.childs[i], context);
-                if (msg !== "") { /// 计算子节点出错，直接返回错误信息，不再计算父节点
+        for (let i = 0; i < t.childs.length; i++) {
+            msg = this.doCalc(t.childs[i], context);
+            if (msg !== "") { /// 计算子节点出错，直接返回错误信息，不再计算父节点
+                break;
+            } else if (i === 0) { /// 第一个子节点计算正确
+                l = t.childs[0];
+                lv = this.values[l.id]; /// 左运算数
+                if (isIfNull && lv.toValue() !== null) { /// IfNull函数的第一个参数不为null，之后的参数不用计算，均为undefined
                     break;
-                } else if (i === 0) { /// 第一个子节点计算正确
-                    l = t.childs[0];
-                    lv = this.values[l.id]; /// 左运算数
-                    if (isIfNull && lv.toValue() !== null) { /// IfNull函数的第一个参数不为null，之后的参数不用计算，均为undefined
-                        break;
-                    } else if (isIIf && !lv.toValue()) { /// IIf函数的第一个参数为false，跳过第二个参数，直接计算第三个参数
-                        i++;
-                    } else if (t.tokenType === "TK_OR" && lv.toValue() === true ||
-                        t.tokenType === "TK_AND" &&
-                        (lv.toValue() === false || lv.type === "null")) { /// &&、|| 左运算数已经能判断结果，右运算数不再计算
-                        break;
-                    }
-                } else if (i === 1) { /// 第二个子节点计算正确
-                    r = t.childs[1];
-                    rv = this.values[r.id]; /// 右运算数
-                    if (isIIf) { /// IIf函数第一个参数为true,第二个参数计算出来后，无需计算后面的参数
-                        break;
-                    }
+                } else if (isIIf && !lv.toValue()) { /// IIf函数的第一个参数为false，跳过第二个参数，直接计算第三个参数
+                    i++;
+                } else if (t.tokenType === "TK_OR" && lv.toValue() === true ||
+                    t.tokenType === "TK_AND" &&
+                    (lv.toValue() === false || lv.type === "null")) { /// &&、|| 左运算数已经能判断结果，右运算数不再计算
+                    break;
+                }
+            } else if (i === 1) { /// 第二个子节点计算正确
+                r = t.childs[1];
+                rv = this.values[r.id]; /// 右运算数
+                if (isIIf) { /// IIf函数第一个参数为true,第二个参数计算出来后，无需计算后面的参数
+                    break;
                 }
             }
         }

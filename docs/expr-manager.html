@@ -3011,35 +3011,33 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         <span class="hljs-keyword">var</span> tv;
         <span class="hljs-keyword">var</span> lv;
         <span class="hljs-keyword">var</span> rv;
-        <span class="hljs-keyword">if</span> (t.childs) {
-            <span class="hljs-keyword">var</span> isIfNull = context.isIfNullToken(t);
-            <span class="hljs-keyword">var</span> isIIf = context.isIIfToken(t);
-            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; t.childs.length; i++) {
-                msg = <span class="hljs-keyword">this</span>.doCalc(t.childs[i], context);
-                <span class="hljs-keyword">if</span> (msg !== <span class="hljs-string">""</span>) {
+        <span class="hljs-keyword">var</span> isIfNull = context.isIfNullToken(t);
+        <span class="hljs-keyword">var</span> isIIf = context.isIIfToken(t);
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; t.childs.length; i++) {
+            msg = <span class="hljs-keyword">this</span>.doCalc(t.childs[i], context);
+            <span class="hljs-keyword">if</span> (msg !== <span class="hljs-string">""</span>) {
+                <span class="hljs-keyword">break</span>;
+            }
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (i === <span class="hljs-number">0</span>) {
+                l = t.childs[<span class="hljs-number">0</span>];
+                lv = <span class="hljs-keyword">this</span>.values[l.id];
+                <span class="hljs-keyword">if</span> (isIfNull &amp;&amp; lv.toValue() !== <span class="hljs-literal">null</span>) {
                     <span class="hljs-keyword">break</span>;
                 }
-                <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (i === <span class="hljs-number">0</span>) {
-                    l = t.childs[<span class="hljs-number">0</span>];
-                    lv = <span class="hljs-keyword">this</span>.values[l.id];
-                    <span class="hljs-keyword">if</span> (isIfNull &amp;&amp; lv.toValue() !== <span class="hljs-literal">null</span>) {
-                        <span class="hljs-keyword">break</span>;
-                    }
-                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (isIIf &amp;&amp; !lv.toValue()) {
-                        i++;
-                    }
-                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (t.tokenType === <span class="hljs-string">"TK_OR"</span> &amp;&amp; lv.toValue() === <span class="hljs-literal">true</span> ||
-                        t.tokenType === <span class="hljs-string">"TK_AND"</span> &amp;&amp;
-                            (lv.toValue() === <span class="hljs-literal">false</span> || lv.type === <span class="hljs-string">"null"</span>)) {
-                        <span class="hljs-keyword">break</span>;
-                    }
+                <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (isIIf &amp;&amp; !lv.toValue()) {
+                    i++;
                 }
-                <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (i === <span class="hljs-number">1</span>) {
-                    r = t.childs[<span class="hljs-number">1</span>];
-                    rv = <span class="hljs-keyword">this</span>.values[r.id];
-                    <span class="hljs-keyword">if</span> (isIIf) {
-                        <span class="hljs-keyword">break</span>;
-                    }
+                <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (t.tokenType === <span class="hljs-string">"TK_OR"</span> &amp;&amp; lv.toValue() === <span class="hljs-literal">true</span> ||
+                    t.tokenType === <span class="hljs-string">"TK_AND"</span> &amp;&amp;
+                        (lv.toValue() === <span class="hljs-literal">false</span> || lv.type === <span class="hljs-string">"null"</span>)) {
+                    <span class="hljs-keyword">break</span>;
+                }
+            }
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (i === <span class="hljs-number">1</span>) {
+                r = t.childs[<span class="hljs-number">1</span>];
+                rv = <span class="hljs-keyword">this</span>.values[r.id];
+                <span class="hljs-keyword">if</span> (isIIf) {
+                    <span class="hljs-keyword">break</span>;
                 }
             }
         }
@@ -3374,9 +3372,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                     <span class="hljs-keyword">break</span>;
                 <span class="hljs-keyword">case</span> <span class="hljs-string">"VTK_PAREN"</span>:
                     <span class="hljs-keyword">if</span> (t.childs.length === <span class="hljs-number">0</span>) {
-                        tt = (p &amp;&amp; p.tokenType === <span class="hljs-string">"TK_IDEN"</span>) ?
-                            context.genType(<span class="hljs-string">"array"</span>, [], []) :
-                            context.genType(<span class="hljs-string">"undefined"</span>);
+                        tt = context.genType(<span class="hljs-string">"array"</span>, [], []);
                     }
                     <span class="hljs-keyword">else</span> {
                         tt = (p &amp;&amp; p.tokenType === <span class="hljs-string">"TK_IDEN"</span> &amp;&amp; l.tokenType !== <span class="hljs-string">"VTK_COMMA"</span>) ?
@@ -3470,7 +3466,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    Lexer.prototype.setExpr = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr</span>) </span>{
-        <span class="hljs-keyword">this</span>.expr = expr ? expr.split(<span class="hljs-string">""</span>) : [];
+        <span class="hljs-keyword">this</span>.expr = expr.split(<span class="hljs-string">""</span>);
         <span class="hljs-keyword">this</span>.index = <span class="hljs-number">0</span>;
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
     };</pre></div></div>
@@ -3522,22 +3518,50 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                 <span class="hljs-keyword">case</span> <span class="hljs-string">":"</span>:
                 <span class="hljs-keyword">case</span> <span class="hljs-string">","</span>:
                     tText = tValue = s[n++];
-                    tType =
-                        tValue === <span class="hljs-string">"["</span> ? <span class="hljs-string">"TK_LA"</span> :
-                            tValue === <span class="hljs-string">"]"</span> ? <span class="hljs-string">"TK_RA"</span> :
-                                tValue === <span class="hljs-string">"{"</span> ? <span class="hljs-string">"TK_LO"</span> :
-                                    tValue === <span class="hljs-string">"}"</span> ? <span class="hljs-string">"TK_RO"</span> :
-                                        tValue === <span class="hljs-string">"."</span> ? <span class="hljs-string">"TK_DOT"</span> :
-                                            tValue === <span class="hljs-string">"("</span> ? <span class="hljs-string">"TK_LP"</span> :
-                                                tValue === <span class="hljs-string">")"</span> ? <span class="hljs-string">"TK_RP"</span> :
-                                                    tValue === <span class="hljs-string">"*"</span> ? <span class="hljs-string">"TK_MULTI"</span> :
-                                                        tValue === <span class="hljs-string">"/"</span> ? <span class="hljs-string">"TK_DIV"</span> :
-                                                            tValue === <span class="hljs-string">"%"</span> ? <span class="hljs-string">"TK_MOD"</span> :
-                                                                tValue === <span class="hljs-string">"+"</span> ? <span class="hljs-string">"TK_PLUS"</span> :
-                                                                    tValue === <span class="hljs-string">"-"</span> ? <span class="hljs-string">"TK_MINUS"</span> :
-                                                                        tValue === <span class="hljs-string">":"</span> ? <span class="hljs-string">"TK_COLON"</span> :
-                                                                            tValue === <span class="hljs-string">","</span> ? <span class="hljs-string">"TK_COMMA"</span> :
-                                                                                <span class="hljs-string">""</span>;
+                    <span class="hljs-keyword">switch</span> (tValue) {
+                        <span class="hljs-keyword">case</span> <span class="hljs-string">"["</span>:
+                            tType = <span class="hljs-string">"TK_LA"</span>;
+                            <span class="hljs-keyword">break</span>;
+                        <span class="hljs-keyword">case</span> <span class="hljs-string">"]"</span>:
+                            tType = <span class="hljs-string">"TK_RA"</span>;
+                            <span class="hljs-keyword">break</span>;
+                        <span class="hljs-keyword">case</span> <span class="hljs-string">"{"</span>:
+                            tType = <span class="hljs-string">"TK_LO"</span>;
+                            <span class="hljs-keyword">break</span>;
+                        <span class="hljs-keyword">case</span> <span class="hljs-string">"}"</span>:
+                            tType = <span class="hljs-string">"TK_RO"</span>;
+                            <span class="hljs-keyword">break</span>;
+                        <span class="hljs-keyword">case</span> <span class="hljs-string">"."</span>:
+                            tType = <span class="hljs-string">"TK_DOT"</span>;
+                            <span class="hljs-keyword">break</span>;
+                        <span class="hljs-keyword">case</span> <span class="hljs-string">"("</span>:
+                            tType = <span class="hljs-string">"TK_LP"</span>;
+                            <span class="hljs-keyword">break</span>;
+                        <span class="hljs-keyword">case</span> <span class="hljs-string">")"</span>:
+                            tType = <span class="hljs-string">"TK_RP"</span>;
+                            <span class="hljs-keyword">break</span>;
+                        <span class="hljs-keyword">case</span> <span class="hljs-string">"*"</span>:
+                            tType = <span class="hljs-string">"TK_MULTI"</span>;
+                            <span class="hljs-keyword">break</span>;
+                        <span class="hljs-keyword">case</span> <span class="hljs-string">"/"</span>:
+                            tType = <span class="hljs-string">"TK_DIV"</span>;
+                            <span class="hljs-keyword">break</span>;
+                        <span class="hljs-keyword">case</span> <span class="hljs-string">"%"</span>:
+                            tType = <span class="hljs-string">"TK_MOD"</span>;
+                            <span class="hljs-keyword">break</span>;
+                        <span class="hljs-keyword">case</span> <span class="hljs-string">"+"</span>:
+                            tType = <span class="hljs-string">"TK_PLUS"</span>;
+                            <span class="hljs-keyword">break</span>;
+                        <span class="hljs-keyword">case</span> <span class="hljs-string">"-"</span>:
+                            tType = <span class="hljs-string">"TK_MINUS"</span>;
+                            <span class="hljs-keyword">break</span>;
+                        <span class="hljs-keyword">case</span> <span class="hljs-string">":"</span>:
+                            tType = <span class="hljs-string">"TK_COLON"</span>;
+                            <span class="hljs-keyword">break</span>;
+                        <span class="hljs-keyword">case</span> <span class="hljs-string">","</span>:
+                            tType = <span class="hljs-string">"TK_COMMA"</span>;
+                            <span class="hljs-keyword">break</span>;
+                    }
                     <span class="hljs-keyword">break</span>;
                 <span class="hljs-keyword">case</span> <span class="hljs-string">"!"</span>:
                     tValue = s[n++];
@@ -3574,10 +3598,14 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                 <span class="hljs-keyword">case</span> <span class="hljs-string">"|"</span>:
                     tValue = s[n++];
                     <span class="hljs-keyword">if</span> (n &lt; s.length &amp;&amp; s[n] === tValue) {
-                        tType =
-                            tValue === <span class="hljs-string">"&amp;"</span> ? <span class="hljs-string">"TK_AND"</span> :
-                                tValue === <span class="hljs-string">"|"</span> ? <span class="hljs-string">"TK_OR"</span> :
-                                    <span class="hljs-string">"TK_UNKNOWN"</span>;
+                        <span class="hljs-keyword">switch</span> (tValue) {
+                            <span class="hljs-keyword">case</span> <span class="hljs-string">"&amp;"</span>:
+                                tType = <span class="hljs-string">"TK_AND"</span>;
+                                <span class="hljs-keyword">break</span>;
+                            <span class="hljs-keyword">case</span> <span class="hljs-string">"|"</span>:
+                                tType = <span class="hljs-string">"TK_OR"</span>;
+                                <span class="hljs-keyword">break</span>;
+                        }
                         tValue += s[n++];
                     }
                     <span class="hljs-keyword">else</span> {
@@ -5043,10 +5071,8 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    Type.prototype.arrayPush = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">et</span>) </span>{
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"array"</span>) {
-            <span class="hljs-keyword">this</span>.info.push(et.info);
-            <span class="hljs-keyword">this</span>.data.push(et.data);
-        }
+        <span class="hljs-keyword">this</span>.info.push(et.info);
+        <span class="hljs-keyword">this</span>.data.push(et.data);
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
     };</pre></div></div>
             
@@ -5064,10 +5090,8 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    Type.prototype.arrayConcat = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">et</span>) </span>{
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"array"</span> &amp;&amp; et.type === <span class="hljs-string">"array"</span>) {
-            <span class="hljs-keyword">this</span>.info = <span class="hljs-keyword">this</span>.info.concat(et.info);
-            <span class="hljs-keyword">this</span>.data = <span class="hljs-keyword">this</span>.data.concat(et.data);
-        }
+        <span class="hljs-keyword">this</span>.info = <span class="hljs-keyword">this</span>.info.concat(et.info);
+        <span class="hljs-keyword">this</span>.data = <span class="hljs-keyword">this</span>.data.concat(et.data);
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
     };</pre></div></div>
             
@@ -5085,12 +5109,10 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    Type.prototype.objectSetProperty = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">et</span>) </span>{
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"object"</span>) {
-            <span class="hljs-keyword">var</span> h = et.info;
-            <span class="hljs-keyword">this</span>.info[h.key] = h.value;
-            <span class="hljs-keyword">var</span> d = et.data;
-            <span class="hljs-keyword">this</span>.data[d.key] = d.value;
-        }
+        <span class="hljs-keyword">var</span> h = et.info;
+        <span class="hljs-keyword">this</span>.info[h.key] = h.value;
+        <span class="hljs-keyword">var</span> d = et.data;
+        <span class="hljs-keyword">this</span>.data[d.key] = d.value;
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
     };</pre></div></div>
             
@@ -5108,15 +5130,13 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    Type.prototype.objectSetProperties = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">et</span>) </span>{
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"object"</span> &amp;&amp; et.type === <span class="hljs-string">"array"</span>) {
-            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _i = <span class="hljs-number">0</span>, _a = et.info; _i &lt; _a.length; _i++) {
-                <span class="hljs-keyword">var</span> item = _a[_i];
-                <span class="hljs-keyword">this</span>.info[item.key] = item.value;
-            }
-            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _b = <span class="hljs-number">0</span>, _c = et.data; _b &lt; _c.length; _b++) {
-                <span class="hljs-keyword">var</span> item = _c[_b];
-                <span class="hljs-keyword">this</span>.data[item.key] = item.value;
-            }
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _i = <span class="hljs-number">0</span>, _a = et.info; _i &lt; _a.length; _i++) {
+            <span class="hljs-keyword">var</span> item = _a[_i];
+            <span class="hljs-keyword">this</span>.info[item.key] = item.value;
+        }
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _b = <span class="hljs-number">0</span>, _c = et.data; _b &lt; _c.length; _b++) {
+            <span class="hljs-keyword">var</span> item = _c[_b];
+            <span class="hljs-keyword">this</span>.data[item.key] = item.value;
         }
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
     };</pre></div></div>
@@ -5662,10 +5682,8 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    Value.prototype.arrayPush = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">ev</span>) </span>{
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"array"</span>) {
-            ev = ev || <span class="hljs-keyword">this</span>.genValue(<span class="hljs-literal">null</span>);
-            <span class="hljs-keyword">this</span>.toValue().push(ev.toValue());
-        }
+        ev = ev || <span class="hljs-keyword">this</span>.genValue(<span class="hljs-literal">null</span>);
+        <span class="hljs-keyword">this</span>.toValue().push(ev.toValue());
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
     };</pre></div></div>
             
@@ -5683,9 +5701,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    Value.prototype.arrayConcat = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">ev</span>) </span>{
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"array"</span> &amp;&amp; ev.type === <span class="hljs-string">"array"</span>) {
-            <span class="hljs-keyword">this</span>.value = <span class="hljs-keyword">this</span>.toValue().concat(ev.toValue());
-        }
+        <span class="hljs-keyword">this</span>.value = <span class="hljs-keyword">this</span>.toValue().concat(ev.toValue());
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
     };</pre></div></div>
             
@@ -5703,10 +5719,8 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    Value.prototype.objectSetProperty = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">ev</span>) </span>{
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"object"</span>) {
-            <span class="hljs-keyword">var</span> h = ev.toValue();
-            <span class="hljs-keyword">this</span>.value[h.key] = h.value;
-        }
+        <span class="hljs-keyword">var</span> h = ev.toValue();
+        <span class="hljs-keyword">this</span>.value[h.key] = h.value;
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
     };</pre></div></div>
             
@@ -5724,12 +5738,10 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    Value.prototype.objectSetProperties = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">ev</span>) </span>{
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">"object"</span> &amp;&amp; ev.type === <span class="hljs-string">"array"</span>) {
-            <span class="hljs-keyword">var</span> h = ev.toValue();
-            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _i = <span class="hljs-number">0</span>, h_1 = h; _i &lt; h_1.length; _i++) {
-                <span class="hljs-keyword">var</span> item = h_1[_i];
-                <span class="hljs-keyword">this</span>.value[item.key] = item.value;
-            }
+        <span class="hljs-keyword">var</span> h = ev.toValue();
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _i = <span class="hljs-number">0</span>, h_1 = h; _i &lt; h_1.length; _i++) {
+            <span class="hljs-keyword">var</span> item = h_1[_i];
+            <span class="hljs-keyword">this</span>.value[item.key] = item.value;
         }
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
     };</pre></div></div>
@@ -6901,14 +6913,9 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    ExprCurrent.prototype.isEntityData = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">index</span>) </span>{
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.curr.length &gt; <span class="hljs-number">0</span>) {
-            <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.curr[<span class="hljs-number">0</span>];
-            c.pIndex = index || <span class="hljs-number">0</span>;
-            <span class="hljs-keyword">return</span> c.params[c.pIndex].isEntityData;
-        }
-        <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-        }
+        <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.curr[<span class="hljs-number">0</span>];
+        c.pIndex = index || <span class="hljs-number">0</span>;
+        <span class="hljs-keyword">return</span> c.params[c.pIndex].isEntityData;
     };</pre></div></div>
             
         </li>
@@ -6925,7 +6932,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    ExprCurrent.prototype.getEntityName = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">index</span>) </span>{
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.getData(index) || <span class="hljs-string">""</span>;
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.getData(index);
     };</pre></div></div>
             
         </li>
@@ -6942,7 +6949,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    ExprCurrent.prototype.getEntityDataCursor = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">entityName, index</span>) </span>{
-        <span class="hljs-keyword">var</span> r = entityName ? <span class="hljs-keyword">this</span>.dataCursor[entityName] : <span class="hljs-number">0</span>;
+        <span class="hljs-keyword">var</span> r = <span class="hljs-keyword">this</span>.dataCursor[entityName];
        
         <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.curr.length; i++) {
             <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.curr[i];
@@ -6972,13 +6979,9 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    ExprCurrent.prototype.getData = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">index</span>) </span>{
-        <span class="hljs-keyword">var</span> r;
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.curr.length &gt; <span class="hljs-number">0</span>) {
-            <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.curr[<span class="hljs-number">0</span>];
-            c.pIndex = index || <span class="hljs-number">0</span>;
-            r = c.params[c.pIndex].current;
-        }
-        <span class="hljs-keyword">return</span> r;
+        <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.curr[<span class="hljs-number">0</span>];
+        c.pIndex = index || <span class="hljs-number">0</span>;
+        <span class="hljs-keyword">return</span> c.params[c.pIndex].current;
     };
     <span class="hljs-keyword">return</span> ExprCurrent;
 }());</pre></div></div>
@@ -7012,7 +7015,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
     __extends(ExprContext, _super);
     <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">ExprContext</span>(<span class="hljs-params"></span>) </span>{
         _super.apply(<span class="hljs-keyword">this</span>, <span class="hljs-built_in">arguments</span>);
-        <span class="hljs-keyword">this</span>.exprContext = <span class="hljs-keyword">new</span> ExprCurrent();
+        <span class="hljs-keyword">this</span>.exprCurrent = <span class="hljs-keyword">new</span> ExprCurrent();
         <span class="hljs-keyword">this</span>.pageContext = { <span class="hljs-attr">$C</span>: {} };
         <span class="hljs-keyword">this</span>.contextVariables = [];
         <span class="hljs-keyword">this</span>.functions = {};
@@ -7070,10 +7073,8 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                     <span class="hljs-keyword">case</span> <span class="hljs-string">"parent"</span>:
                         <span class="hljs-keyword">if</span> (source === <span class="hljs-literal">null</span> || source.entity) {
                             <span class="hljs-keyword">var</span> entityName = source === <span class="hljs-literal">null</span> ?
-                                <span class="hljs-keyword">this</span>.exprContext.getEntityName() :
-                                source.entity ?
-                                    source.entity.fullName :
-                                    <span class="hljs-string">""</span>;
+                                <span class="hljs-keyword">this</span>.exprCurrent.getEntityName() :
+                                source.entity.fullName;
                             entity = <span class="hljs-keyword">this</span>.getParentName(entityName);
                             <span class="hljs-keyword">if</span> (entity) {
                                 type = <span class="hljs-string">"object"</span>;
@@ -7090,7 +7091,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                     <span class="hljs-keyword">case</span> <span class="hljs-string">"value"</span>:
                         <span class="hljs-keyword">var</span> n = <span class="hljs-literal">null</span>;
                         <span class="hljs-keyword">if</span> (source === <span class="hljs-literal">null</span>) {
-                            n = <span class="hljs-keyword">this</span>.exprContext.getEntityName();
+                            n = <span class="hljs-keyword">this</span>.exprCurrent.getEntityName();
                         }
                         <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (source.entity) {
                             n = source.entity.fullName;
@@ -7174,7 +7175,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             <span class="hljs-keyword">else</span> {
                 pIndex = <span class="hljs-built_in">Number</span>(pIndex);
                 <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">isNaN</span>(pIndex)) {
-                    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.exprContext.isValid(pIndex)) {
+                    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.exprCurrent.isValid(pIndex)) {
                         name = <span class="hljs-string">""</span>;
                     }
                     <span class="hljs-keyword">else</span> {
@@ -7187,11 +7188,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             }
         }
         <span class="hljs-keyword">if</span> (!r) {
-            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.exprContext.isEntityData(pIndex)) {
+            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.exprCurrent.isEntityData(pIndex)) {
                 <span class="hljs-keyword">var</span> entity = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>;
                 <span class="hljs-keyword">var</span> type = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>;
                 <span class="hljs-keyword">if</span> (source === <span class="hljs-literal">null</span>) {
-                    entity = <span class="hljs-keyword">this</span>.genEntityInfo(<span class="hljs-keyword">this</span>.getPropertyName(<span class="hljs-keyword">this</span>.exprContext.getEntityName(pIndex), name));
+                    entity = <span class="hljs-keyword">this</span>.genEntityInfo(<span class="hljs-keyword">this</span>.getPropertyName(<span class="hljs-keyword">this</span>.exprCurrent.getEntityName(pIndex), name));
                     <span class="hljs-keyword">if</span> (entity) {
                         type = name === <span class="hljs-string">""</span> ? <span class="hljs-string">"object"</span> : entity.type;
                     }
@@ -7243,26 +7244,16 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             }
             <span class="hljs-keyword">else</span> {
                 pIndex = <span class="hljs-built_in">Number</span>(pIndex);
-                <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">isNaN</span>(pIndex)) {
-                    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.exprContext.isValid(pIndex)) {
-                        name = <span class="hljs-string">""</span>;
-                    }
-                    <span class="hljs-keyword">else</span> {
-                        r = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EC_VARI_N, name));
-                    }
-                }
-                <span class="hljs-keyword">else</span> {
-                    r = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EC_VARI_I, name));
-                }
+                name = <span class="hljs-string">""</span>;
             }
         }
         <span class="hljs-keyword">if</span> (!r) {
             <span class="hljs-keyword">var</span> value = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>;
-            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.exprContext.isEntityData(pIndex)) {
+            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.exprCurrent.isEntityData(pIndex)) {
                 <span class="hljs-keyword">var</span> entity = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>;
                 <span class="hljs-keyword">var</span> parentObj = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>;
                 <span class="hljs-keyword">if</span> (source === <span class="hljs-literal">null</span>) {
-                    entity = <span class="hljs-keyword">this</span>.genEntityInfo(<span class="hljs-keyword">this</span>.getPropertyName(<span class="hljs-keyword">this</span>.exprContext.getEntityName(pIndex), name));
+                    entity = <span class="hljs-keyword">this</span>.genEntityInfo(<span class="hljs-keyword">this</span>.getPropertyName(<span class="hljs-keyword">this</span>.exprCurrent.getEntityName(pIndex), name));
                     <span class="hljs-keyword">if</span> (!entity) {
                         r = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EC_PROP_N, name));
                     }
@@ -7321,7 +7312,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             }
             <span class="hljs-keyword">else</span> {
                 value = (source === <span class="hljs-literal">null</span>) ?
-                    <span class="hljs-keyword">this</span>.exprContext.getData(pIndex) :
+                    <span class="hljs-keyword">this</span>.exprCurrent.getData(pIndex) :
                     value = source.toValue();
                 <span class="hljs-keyword">if</span> (!(source === <span class="hljs-literal">null</span> &amp;&amp; name === <span class="hljs-string">""</span>)) {
                     <span class="hljs-keyword">switch</span> (getValueType(value)) {
@@ -7434,7 +7425,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    ExprContext.prototype.setDataCursor = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">cursor</span>) </span>{
-        <span class="hljs-keyword">this</span>.exprContext.setDataCursor(cursor);
+        <span class="hljs-keyword">this</span>.exprCurrent.setDataCursor(cursor);
     };</pre></div></div>
             
         </li>
@@ -7633,10 +7624,10 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             
             <div class="content"><div class='highlight'><pre>    ExprContext.prototype.getParentValue = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">source</span>) </span>{
         <span class="hljs-keyword">var</span> r;
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.exprContext.isEntityData()) {
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.exprCurrent.isEntityData()) {
             <span class="hljs-keyword">var</span> entity = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>;
             <span class="hljs-keyword">if</span> (source === <span class="hljs-literal">null</span>) {
-                entity = <span class="hljs-keyword">this</span>.exprContext.getEntityName();
+                entity = <span class="hljs-keyword">this</span>.exprCurrent.getEntityName();
             }
             <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (source.entity &amp;&amp; source.entity.field === <span class="hljs-string">""</span>) {
                 <span class="hljs-keyword">if</span> (source.parentObj &amp;&amp; <span class="hljs-keyword">this</span>.getParentName(source.entity.fullName)) {
@@ -7652,7 +7643,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             <span class="hljs-keyword">if</span> (!r) {
                 entity = <span class="hljs-keyword">this</span>.genEntityInfo(<span class="hljs-keyword">this</span>.getParentName(entity), <span class="hljs-string">"object"</span>);
                 <span class="hljs-keyword">if</span> (entity.name) {
-                    entity.recNo = <span class="hljs-keyword">this</span>.exprContext.getEntityDataCursor(entity.name);
+                    entity.recNo = <span class="hljs-keyword">this</span>.exprCurrent.getEntityDataCursor(entity.name);
                     <span class="hljs-keyword">var</span> value = <span class="hljs-keyword">this</span>.getEntityData(entity.name);
                     r = <span class="hljs-keyword">this</span>.genValue(value, <span class="hljs-literal">undefined</span>, entity);
                 }
@@ -7689,7 +7680,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                 <span class="hljs-keyword">var</span> prop = p_1[_i];
                 cp.push(prop);
                 d = d[prop];
-                <span class="hljs-keyword">var</span> cursor = <span class="hljs-keyword">this</span>.exprContext.getEntityDataCursor(cp.join(<span class="hljs-string">"."</span>), index);
+                <span class="hljs-keyword">var</span> cursor = <span class="hljs-keyword">this</span>.exprCurrent.getEntityDataCursor(cp.join(<span class="hljs-string">"."</span>), index);
                 d = d[cursor];
                 <span class="hljs-keyword">if</span> (d === <span class="hljs-literal">undefined</span>) {
                     <span class="hljs-keyword">break</span>;
@@ -7759,11 +7750,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             
             <div class="content"><div class='highlight'><pre>    ExprContext.prototype.getRecNo = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">source</span>) </span>{
         <span class="hljs-keyword">var</span> r;
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.exprContext.isEntityData()) {
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.exprCurrent.isEntityData()) {
             <span class="hljs-keyword">var</span> entity = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>;
             <span class="hljs-keyword">if</span> (source === <span class="hljs-literal">null</span>) {
-                entity = <span class="hljs-keyword">this</span>.exprContext.getEntityName();
-                <span class="hljs-keyword">var</span> value = <span class="hljs-keyword">this</span>.exprContext.getEntityDataCursor(entity);
+                entity = <span class="hljs-keyword">this</span>.exprCurrent.getEntityName();
+                <span class="hljs-keyword">var</span> value = <span class="hljs-keyword">this</span>.exprCurrent.getEntityDataCursor(entity);
                 r = <span class="hljs-keyword">this</span>.genValue(value);
             }
             <span class="hljs-keyword">else</span> {
@@ -8068,14 +8059,10 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    ExprContext.prototype._calcExpr = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, curr</span>) </span>{
-        <span class="hljs-keyword">if</span> (curr.length &gt; <span class="hljs-number">0</span>) {
-            <span class="hljs-keyword">this</span>.exprContext.push(curr);
-        }
+        <span class="hljs-keyword">this</span>.exprCurrent.push(curr);
         <span class="hljs-keyword">var</span> e = <span class="hljs-keyword">new</span> Calc();
         <span class="hljs-keyword">var</span> r = e.calc(expr, <span class="hljs-keyword">this</span>);
-        <span class="hljs-keyword">if</span> (curr.length &gt; <span class="hljs-number">0</span>) {
-            <span class="hljs-keyword">this</span>.exprContext.pop();
-        }
+        <span class="hljs-keyword">this</span>.exprCurrent.pop();
         <span class="hljs-keyword">return</span> r;
     };</pre></div></div>
             
@@ -8093,17 +8080,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    ExprContext.prototype.calcEntityExpr = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, entityName, cursor</span>) </span>{
-        <span class="hljs-keyword">var</span> c = [];
-        <span class="hljs-keyword">var</span> i = <span class="hljs-number">1</span>;
-        <span class="hljs-keyword">while</span> (i &lt; <span class="hljs-built_in">arguments</span>.length) {
-            c.push({
-                <span class="hljs-attr">current</span>: <span class="hljs-built_in">arguments</span>[i],
-                <span class="hljs-attr">cursor</span>: <span class="hljs-built_in">arguments</span>[i + <span class="hljs-number">1</span>],
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._calcExpr(expr, [{
+                <span class="hljs-attr">current</span>: entityName,
+                <span class="hljs-attr">cursor</span>: (cursor),
                 <span class="hljs-attr">isEntityData</span>: <span class="hljs-literal">true</span>,
-            });
-            i += <span class="hljs-number">2</span>;
-        }
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._calcExpr(expr, c);
+            }]);
     };</pre></div></div>
             
         </li>
@@ -8120,16 +8101,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    ExprContext.prototype.calcDataExpr = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, data</span>) </span>{
-        <span class="hljs-keyword">var</span> c = [];
-        <span class="hljs-keyword">var</span> i = <span class="hljs-number">1</span>;
-        <span class="hljs-keyword">while</span> (i &lt; <span class="hljs-built_in">arguments</span>.length) {
-            c.push({
-                <span class="hljs-attr">current</span>: <span class="hljs-built_in">arguments</span>[i],
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._calcExpr(expr, [{
+                <span class="hljs-attr">current</span>: data,
+                <span class="hljs-attr">cursor</span>: <span class="hljs-number">0</span>,
                 <span class="hljs-attr">isEntityData</span>: <span class="hljs-literal">false</span>,
-            });
-            i++;
-        }
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._calcExpr(expr, c);
+            }]);
     };</pre></div></div>
             
         </li>
@@ -8146,14 +8122,10 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    ExprContext.prototype.calcDependencies = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, curr</span>) </span>{
-        <span class="hljs-keyword">if</span> (curr.length &gt; <span class="hljs-number">0</span>) {
-            <span class="hljs-keyword">this</span>.exprContext.push(curr);
-        }
+        <span class="hljs-keyword">this</span>.exprCurrent.push(curr);
         <span class="hljs-keyword">var</span> p = <span class="hljs-keyword">new</span> Check();
         <span class="hljs-keyword">var</span> r = p.check(expr, <span class="hljs-keyword">this</span>);
-        <span class="hljs-keyword">if</span> (curr.length &gt; <span class="hljs-number">0</span>) {
-            <span class="hljs-keyword">this</span>.exprContext.pop();
-        }
+        <span class="hljs-keyword">this</span>.exprCurrent.pop();
         <span class="hljs-keyword">return</span> r;
     };</pre></div></div>
             
@@ -8171,12 +8143,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    ExprContext.prototype.calcEntityDependencies = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, entityName</span>) </span>{
-        <span class="hljs-keyword">var</span> c = [];
-        c.push({
-            <span class="hljs-attr">current</span>: entityName,
-            <span class="hljs-attr">isEntityData</span>: <span class="hljs-literal">true</span>,
-        });
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.calcDependencies(expr, c);
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.calcDependencies(expr, [{
+                <span class="hljs-attr">current</span>: entityName,
+                <span class="hljs-attr">cursor</span>: <span class="hljs-number">0</span>,
+                <span class="hljs-attr">isEntityData</span>: <span class="hljs-literal">true</span>,
+            }]);
     };</pre></div></div>
             
         </li>
@@ -8193,11 +8164,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    ExprContext.prototype.calcDataDependencies = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr</span>) </span>{
-        <span class="hljs-keyword">var</span> c = [];
-        c.push({
-            <span class="hljs-attr">isEntityData</span>: <span class="hljs-literal">false</span>,
-        });
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.calcDependencies(expr, c);
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.calcDependencies(expr, [{
+                <span class="hljs-attr">current</span>: <span class="hljs-string">""</span>,
+                <span class="hljs-attr">cursor</span>: <span class="hljs-number">0</span>,
+                <span class="hljs-attr">isEntityData</span>: <span class="hljs-literal">false</span>,
+            }]);
     };</pre></div></div>
             
         </li>
@@ -8214,7 +8185,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    ExprContext.prototype.pushEntityCurrent = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">entityName, cursor</span>) </span>{
-        <span class="hljs-keyword">this</span>.exprContext.push([{
+        <span class="hljs-keyword">this</span>.exprCurrent.push([{
                 <span class="hljs-attr">current</span>: entityName,
                 <span class="hljs-attr">cursor</span>: (cursor),
                 <span class="hljs-attr">isEntityData</span>: <span class="hljs-literal">true</span>,
@@ -8235,7 +8206,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    ExprContext.prototype.popEntityCurrent = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
-        <span class="hljs-keyword">this</span>.exprContext.pop();
+        <span class="hljs-keyword">this</span>.exprCurrent.pop();
     };
     <span class="hljs-keyword">return</span> ExprContext;
 }(Context));</pre></div></div>

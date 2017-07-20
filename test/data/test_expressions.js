@@ -1,5 +1,5 @@
 ﻿Date.prototype.toJSON = function() {
-	var r = moment(this).format("YYYY-MM-DDTHH:mm:ss");
+    var r = moment(this).format("YYYY-MM-DDTHH:mm:ss");
     return r;
 }
 if (!window.dateTime) {
@@ -28,7 +28,7 @@ if (ss2 < 10) {
     ss2 = "0" + ss2;
 }
 var datetime1 = year + "-" + mon2 + "-" + date2 + "T00:00:00";
-var datetime2 = year + "-" + mon2 + "-" + date2 + "T" + hour2 + ":" + min2 + ":" + s2;// + "." + ss2 + "Z";
+var datetime2 = year + "-" + mon2 + "-" + date2 + "T" + hour2 + ":" + min2 + ":" + s2; // + "." + ss2 + "Z";
 var cmpOE1_0 = '{"ID":11,"P1":"E1的第1条数据","P2":12345.678,"P3":{"name":"item1","alias":{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}},"P4":[1,2,{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}],"P5":"' + datetime2 + '","P6":true,"PN1":null,"PN2":null,"PN3":null,"PN4":null,"PN5":null,"PN6":null,"Entity1":[{"ID":101,"P1":"E1[0].Entity1第1条数据","P2":1.95,"P3":{"name":"item1","alias":{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}},"P4":[1,2,{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}],"P5":"' + datetime2 + '","P6":true,"PN1":null,"PN2":null,"PN3":null,"PN4":null,"PN5":null,"PN6":null},{"ID":102,"P1":"E1[0].Entity1第2条数据","P2":2.95,"P3":{"name":"item1","alias":{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}},"P4":[1,2,{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}],"P5":"' + datetime2 + '","P6":true,"PN1":null,"PN2":null,"PN3":null,"PN4":null,"PN5":null,"PN6":null,"NewEntity1":[{"ID":101,"P1":"E1[0].Entity1[1].NewEntity1第1条数据","P2":1.95,"P3":{"name":"item1","alias":{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}},"P4":[1,2,{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}],"P5":"' + datetime2 + '","P6":true,"PN1":null,"PN2":null,"PN3":null,"PN4":null,"PN5":null,"PN6":null},{"ID":102,"P1":"E1[0].Entity1[1].NewEntity1第2条数据","P2":2.95,"P3":{"name":"item1","alias":{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}},"P4":[1,2,{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}],"P5":"' + datetime2 + '","P6":true,"PN1":null,"PN2":null,"PN3":null,"PN4":null,"PN5":null,"PN6":null},{"ID":103,"P1":"E1[0].Entity1[1].NewEntity1第3条数据","P2":3.95,"P3":{"name":"item1","alias":{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}},"P4":[1,2,{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}],"P5":"' + datetime2 + '","P6":true,"PN1":null,"PN2":null,"PN3":null,"PN4":null,"PN5":null,"PN6":null}]},{"ID":103,"P1":"E1[0].Entity1第3条数据","P2":1.95,"P3":{"name":"item1","alias":{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}},"P4":[1,2,{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}],"P5":"' + datetime2 + '","P6":true,"PN1":null,"PN2":null,"PN3":null,"PN4":null,"PN5":null,"PN6":null}],"Entity2":[{"ID":201,"P1":"E1[0].Entity2第1条数据","P2":12.23},{"ID":202,"P1":"E1[0].Entity2第2条数据","P2":8.01}]}';
 var cmpOE1_1 = '{"ID":12,"P1":"E1的第2条数据","P2":12345.678,"P3":{"name":"item1","alias":{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}},"P4":[3,"vxcvxc",{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}],"P5":"' + datetime2 + '","P6":true,"PN1":null,"PN2":null,"PN3":null,"PN4":null,"PN5":null,"PN6":null,"Entity1":[{"ID":101,"P1":"E1[1].Entity1第1条数据","P2":1.95,"P3":{"name":"item1","alias":{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}},"P4":[1,2,{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}],"P5":"' + datetime2 + '","P6":true,"PN1":null,"PN2":null,"PN3":null,"PN4":null,"PN5":null,"PN6":null},{"ID":102,"P1":"E1[1].Entity1第2条数据","P2":2.95,"P3":{"name":"item1","alias":{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}},"P4":[1,2,{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}],"P5":"' + datetime2 + '","P6":true,"PN1":null,"PN2":null,"PN3":null,"PN4":null,"PN5":null,"PN6":null}]}';
 var cmpOAE1Entity1 = '{"ID":101,"P1":"E1[0].Entity1第1条数据","P2":1.95,"P3":{"name":"item1","alias":{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}},"P4":[1,2,{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}],"P5":"' + datetime2 + '","P6":true,"PN1":null,"PN2":null,"PN3":null,"PN4":null,"PN5":null,"PN6":null},{"ID":102,"P1":"E1[0].Entity1第2条数据","P2":2.95,"P3":{"name":"item1","alias":{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}},"P4":[1,2,{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}],"P5":"' + datetime2 + '","P6":true,"PN1":null,"PN2":null,"PN3":null,"PN4":null,"PN5":null,"PN6":null,"NewEntity1":[{"ID":101,"P1":"E1[0].Entity1[1].NewEntity1第1条数据","P2":1.95,"P3":{"name":"item1","alias":{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}},"P4":[1,2,{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}],"P5":"' + datetime2 + '","P6":true,"PN1":null,"PN2":null,"PN3":null,"PN4":null,"PN5":null,"PN6":null},{"ID":102,"P1":"E1[0].Entity1[1].NewEntity1第2条数据","P2":2.95,"P3":{"name":"item1","alias":{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}},"P4":[1,2,{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}],"P5":"' + datetime2 + '","P6":true,"PN1":null,"PN2":null,"PN3":null,"PN4":null,"PN5":null,"PN6":null},{"ID":103,"P1":"E1[0].Entity1[1].NewEntity1第3条数据","P2":3.95,"P3":{"name":"item1","alias":{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}},"P4":[1,2,{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}],"P5":"' + datetime2 + '","P6":true,"PN1":null,"PN2":null,"PN3":null,"PN4":null,"PN5":null,"PN6":null}]},{"ID":103,"P1":"E1[0].Entity1第3条数据","P2":1.95,"P3":{"name":"item1","alias":{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}},"P4":[1,2,{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}],"P5":"' + datetime2 + '","P6":true,"PN1":null,"PN2":null,"PN3":null,"PN4":null,"PN5":null,"PN6":null}';
@@ -45,7 +45,7 @@ var exprDataCalc = {
     title: "DataCalc基于实体",
     exprs: [
         ['$C.userId + ""', '"admin"'],
-    //子实体、实体，单条数据
+        //子实体、实体，单条数据
         ['Entity1.ID', 'undefined', 'array 无法做属性访问操作'],
         ['Entity1.Sum("1/PN2")', 'undefined', 'null 不能作为除数使用', 'E1.Entity1|E1.Entity1.PN2'],
         ['Root().E1[0]', cmpOE1_0, '', 'E1'],
@@ -106,7 +106,7 @@ var exprDataCalc = {
         ['{"ID":101,"P1":30,"P2":12.95}.RecNo()', 'undefined', '只有实体对象才可以调用 RecNo 方法'],
         ['Root().E1[RecNo()].P1', '"E1的第1条数据"', '', 'E1|E1.P1'],
         ['Entity1[0].Parent().RecNo()', '0', '', 'E1.Entity1|E1'],
-    //
+        //
         ['Parent().E1[0].ID + Parent().E2[0].ID', 'undefined', '根实体对象不能调用 Parent 方法'],
         ['Parent().E1[0].Entity1[2].ID', 'undefined', '根实体对象不能调用 Parent 方法'],
         ['Parent().E2[0].Entity1[2].P2', 'undefined', '根实体对象不能调用 Parent 方法'],
@@ -114,7 +114,7 @@ var exprDataCalc = {
         ['Parent().E1[0].Entity1[2].ID - Parent().E2[0].Entity1[2].P2', 'undefined', '根实体对象不能调用 Parent 方法'],
         ['Parent().E1[0].Entity1[2].ID * Parent().E2[0].Entity1[2].P2', 'undefined', '根实体对象不能调用 Parent 方法'],
         ['Parent().E1[0].Entity1[2].ID / Parent().E2[0].Entity1[2].P2', 'undefined', '根实体对象不能调用 Parent 方法'],
-    //子实体、实体，多条数据
+        //子实体、实体，多条数据
         ['Root().E1', cmpAE1, '', 'E1'],
         ['Entity1', cmpAE1Entity1, '', 'E1.Entity1'],
         ['Root().E2', cmpAE2, '', 'E2'],
@@ -220,7 +220,7 @@ var exprOperator = {
         ['1+1/(+(2-1))<=1-2-1', 'false'],
         ['+(1+1/(+(2-1))<=1-2-1)', 'undefined', 'boolean 无法做一元正数运算'],
         ['-(1+1/(+(2-1))<=1-2-1)', 'undefined', 'boolean 无法做一元负数运算'],
-		['!(1+1/(+(2-1))<=1-2-1)', 'true'],
+        ['!(1+1/(+(2-1))<=1-2-1)', 'true'],
         ['!!(1+1/(+(2-1))<=1-2-1)', 'false'],
         ['-1+1*(-(2-1))!=-1--(2-1)*1+1/(+(2-1))<=1-2-1', 'undefined', 'number 和 boolean 无法做不等运算'],
         ['-1+1*(-(2-1))!=-1--(2-1)==(1+1/(+(2-1))<=1-2-1)', 'false'],
@@ -260,7 +260,7 @@ var exprOperator = {
         ['"asdf" + "d"', '"asdfd"'],
         ['-1*-2.2', '2.2'],
         ['1*-(2-1)', '-1'],
-    //符号使用异常
+        //符号使用异常
         ['1**(2-1)', 'undefined', '* 后不允许出现 *'],
         ['-123<0<123', 'undefined', 'boolean 和 number 无法做小于运算'],
         ['[a:1,b:"2",c:true,e:{a:[4,5,6],b:null}]', 'undefined', '数组中不允许使用 : 操作符'],
@@ -380,7 +380,7 @@ var exprString = {
         ['" as df ".RightString(1)', '" "'],
         ['"asdf".RightString(-3)', '""'],
         ['"asdf".RightString(5)', '"asdf"'],
-    //实体
+        //实体
         ['P1', '"E1的第1条数据"', '', 'E1.P1'],
         ['Parent().E2[0].P1', 'undefined', '根实体对象不能调用 Parent 方法'],
         ['+P1', 'undefined', 'string 无法做一元正数运算'],
@@ -594,7 +594,7 @@ var exprNumber = {
         ['123.555.Round(0)', '124'],
         ['123.Round(0)', '123'],
         ['123.555.Round(-1)', 'undefined', '做四舍五入运算时，保留小数位数不能为负数: -1'], //120?undefined
-    //实体
+        //实体
         ['P2', '12345.678', '', 'E1.P2'],
         ['Entity1[0].P1', '"E1[0].Entity1第1条数据"', '', 'E1.Entity1|E1.Entity1.P1'],
         ['Entity1[0].P1.', 'undefined', '. 无法作为表达式的结尾'],
@@ -788,19 +788,19 @@ var exprDate = {
         ['"1999-12-31 23:59:59".ToDate().SecondsBetween("2000-01-01 00:00:00".ToDate())', '1'],
         ['Now().WeeksBetween(Now().IncWeek(2))', '2'],
         ['"2000-01-01 00:00:00".ToDate().WeeksBetween("2000-01-06 00:00:00".ToDate())', '0'],
-    //['Now().MonthsBetween(Now().IncMonth(1))', '1'], //30.4375
+        //['Now().MonthsBetween(Now().IncMonth(1))', '1'], //30.4375
         ['"2000-01-01 00:00:00".ToDate().MonthsBetween("2000-01-01 00:00:00".ToDate().IncMonth(1))', '1'], //30.4375
         ['"2000-02-01 00:00:00".ToDate().MonthsBetween("2000-02-01 00:00:00".ToDate().IncMonth(1))', '1'],
         ['"2000-01-01 00:00:00".ToDate().MonthsBetween("2000-01-30 00:00:00".ToDate())', '0'],
         ['"2000-01-01 00:00:00".ToDate().MonthsBetween("2000-01-31 23:59:59".ToDate())', '0'],
         ['"2000-02-01 00:00:00".ToDate().MonthsBetween("2000-03-01 00:00:00".ToDate())', '1'],
-    //['Now().YearsBetween(Now().IncYear(2))', '2'], //365.25
+        //['Now().YearsBetween(Now().IncYear(2))', '2'], //365.25
         ['"2000-01-01 00:00:00".ToDate().YearsBetween("2000-01-01 00:00:00".ToDate().IncYear(1))', '1'],
         ['"1999-01-01 00:00:00".ToDate().YearsBetween("1999-01-01 00:00:00".ToDate().IncYear(1))', '1'],
         ['"2000-01-01 00:00:00".ToDate().YearsBetween("2000-12-31 23:59:59".ToDate())', '0'],
         ['"1999-01-01 00:00:00".ToDate().YearsBetween("1999-12-31 23:59:59".ToDate())', '0'],
         ['"1999-01-01 00:00:00".ToDate().YearsBetween("2000-01-01 00:00:00".ToDate())', '1'],
-    //实体
+        //实体
         ['Root().E2[0].P5.', 'undefined', '. 无法作为表达式的结尾'],
         ['.Root().E2[0].P5', 'undefined', '. 无法作为表达式的开头'],
         ['+Root().E2[0].P5', 'undefined', 'date 无法做一元正数运算'],
@@ -884,7 +884,7 @@ var exprDate = {
 var exprBoolean = {
     title: "基于boolean",
     exprs: [
-    //普通
+        //普通
         ['true', 'true'],
         ['false', 'false'],
         ['+false', 'undefined', 'boolean 无法做一元正数运算'],
@@ -923,7 +923,7 @@ var exprBoolean = {
         ['IfNull(false,true)', 'false'],
         ['IIf(true,true,false)', 'true'],
         ['IIf(false,true,false)', 'false'],
-    //实体字段
+        //实体字段
         ['P6', 'true', '', 'E1.P6'],
         ['Root().E2[0].P6', 'true', '', 'E2|E2.P6'],
         ['+Root().E2[0].P6', 'undefined', 'boolean 无法做一元正数运算'],
@@ -959,7 +959,7 @@ var exprBoolean = {
 var exprObject = {
     title: "基于object",
     exprs: [
-    //普通
+        //普通
         ['{a:1,b:2,c:3}', '{"a":1,"b":2,"c":3}'],
         ['{a:"1",b:"2",c:"3"}', '{"a":"1","b":"2","c":"3"}'],
         ['{a:1,b:"2",c:true,e:{a:[4,5,6],b:null}}', '{"a":1,"b":"2","c":true,"e":{"a":[4,5,6],"b":null}}'],
@@ -1010,7 +1010,7 @@ var exprObject = {
         ['{a:[[11]]}=={a:[[11]]}', 'true'],
         ['{a:[[11]]}=={a:[[11]]} && {a:[11]}=={b:[22]}', 'false'],
         ['{a: 1*1, x}', 'undefined', '对象书写格式不正确'],
-    //实体字段
+        //实体字段
         ['P3', '{"name":"item1","alias":{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}}', '', 'E1.P3'],
         ['Root().E2[0].P3', '{"name":"item1","alias":{"en":"Item1","zh_CN":"项目1","zh_TW":"項目1"}}', '', 'E2|E2.P3'],
         ['+Root().E2[0].P3', 'undefined', 'object 无法做一元正数运算'],
@@ -1226,7 +1226,7 @@ var exprNull = {
         ['IfNull("12",null)', '"12"'],
         ['IIf(true,"12", null)', '"12"'],
         ['IIf(false,"12", null)', 'null'],
-    //实体
+        //实体
         ['PN1', 'null', '', 'E1.PN1'],
         ['PN1.', 'undefined', '. 无法作为表达式的结尾'],
         ['.PN1', 'undefined', '. 无法作为表达式的开头'],
@@ -1294,7 +1294,7 @@ var exprNull = {
 var exprErr = {
     title: "基于其他的",
     exprs: [
-    //
+        //
         ['()', 'undefined', '该处 () 无意义'],
         ['false && 3/0==5', 'undefined', '0 不能作为除数使用'],
         ['null && 3/0==5', 'undefined', '0 不能作为除数使用'],
@@ -1302,17 +1302,17 @@ var exprErr = {
         ['true || 3/0==5', 'undefined', '0 不能作为除数使用'],
         ['null || 3/0==5', 'undefined', '0 不能作为除数使用'],
         ['"abc" || 3/0==5', 'undefined', '0 不能作为除数使用'],
-    //
+        //
 
-    //未定义属性
+        //未定义属性
         ['E1', 'undefined', '属性不存在: E1'],
         ['Root().E2[0].tt', 'undefined', '属性不存在: tt', 'E2'], //无error信息
         ['True', 'undefined', '属性不存在: True'], //错误: 'field' 为空或不是对象
         ['False', 'undefined', '属性不存在: False'], //错误: 'field' 为空或不是对象
         ['TRUE', 'undefined', '属性不存在: TRUE'], //错误: 'field' 为空或不是对象
         ['FALSE', 'undefined', '属性不存在: FALSE'], //错误: 'field' 为空或不是对象
-    //函数相关
-    //参数
+        //函数相关
+        //参数
         ['Root("")', 'undefined', '没有名称为 Root 的方法或参数不匹配'],
         ['Root("",123)', 'undefined', '没有名称为 Root 的方法或参数不匹配'],
         ['true.ToString("123")', 'undefined', 'boolean 没有名称为 ToString 的方法或参数不匹配'],
@@ -1328,7 +1328,7 @@ var exprErr = {
         ['IfNull(P6)', 'undefined', '没有名称为 IfNull 的方法或参数不匹配'],
         ['IfNull(Root().E2[0].P6)', 'undefined', '没有名称为 IfNull 的方法或参数不匹配'],
         ['IIf(P6, Root().E2[0].P6)', 'undefined', '没有名称为 IIf 的方法或参数不匹配'],
-    //调用
+        //调用
         ['IfNull("false",true)', '"false"'],
         ['IIf(true,"true",false)', '"true"'],
         ['IIf(false,"true",false)', 'false'],
@@ -1337,10 +1337,10 @@ var exprErr = {
         ['Root().E1.Parent()', 'undefined', 'array 没有名称为 Parent 的方法或参数不匹配'], //['Root().E1[0].Parent()'],
         ['ToString()', 'undefined', '没有名称为 ToString 的方法或参数不匹配'],
         ['true.Average()', 'undefined', 'boolean 没有名称为 Average 的方法或参数不匹配'],
-    //拼写
+        //拼写
         ['IIf', 'undefined', '属性不存在: IIf'],
         ['iif(true, false)', 'undefined', '没有名称为 iif 的方法或参数不匹配'],
-    //其他
+        //其他
         ['(#∑)', 'undefined', '无法识别 #∑']
     ]
 };
@@ -1348,13 +1348,13 @@ var exprErr = {
 var exprFunction = {
     title: "根函数测试",
     exprs: [
-       ['PropValue([{name:1},{name:2}], "name", "|")', '"1|2"'],
-       ['PropValue([{name:1},{name:2}], "name")', '1'],
-       ['PropValue([{name:1},{name:2}], "type")', 'null'],
-       ['FieldName()', '""'],
-       ['FieldValue()', '""'],
-       ['FieldDisplayName()', '""'],
-       ['Random() >= 0 && Random() <= 1', 'true']
+        ['PropValue([{name:1},{name:2}], "name", "|")', '"1|2"'],
+        ['PropValue([{name:1},{name:2}], "name")', '1'],
+        ['PropValue([{name:1},{name:2}], "type")', 'null'],
+        ['FieldName()', '""'],
+        ['FieldValue()', '""'],
+        ['FieldDisplayName()', '""'],
+        ['Random() >= 0 && Random() <= 1', 'true']
     ]
 };
 
@@ -1367,10 +1367,11 @@ var exprSubTable = {
 }
 
 window.demoExpr = [exprDataCalc, exprOperator, exprString, exprNumber, exprDate, exprBoolean,
-    exprObject, exprArray, exprNull, exprErr, exprFunction, exprSubTable];
+    exprObject, exprArray, exprNull, exprErr, exprFunction, exprSubTable
+];
 
-var exprCalc = {
-    title: "简单计算",
+var exprCalcData = {
+    title: "简单数据计算",
     exprData: {
         EmptyString: "",
         EmptyNumber: 0,
@@ -1379,69 +1380,84 @@ var exprCalc = {
         NullValue: null,
     },
     exprs: [
-       ['[null, 1].Distinct("a")', 'undefined', 'null 无法获取属性: a'],
-       ['1/0', 'undefined', '0 不能作为除数使用'],
-       ['1%0', 'undefined', '0 不能作为余数使用'],
-       ['1/EmptyNumber', 'undefined', '0 不能作为除数使用'],
-       ['1%EmptyNumber', 'undefined', '0 不能作为余数使用'],
-       ['EmptyNumber==EmptyArray', 'undefined', 'number 和 array 无法做相等运算'],
-       ['EmptyNumber!=EmptyArray', 'undefined', 'number 和 array 无法做不等运算'],
-       ['[{}].Where(EmptyString)', '[{}]'],
-       ['1*null', '0'],
-       ['1+null', '1'],
-       ['1-null', '1'],
-       ['EmptyObject-EmptyObject', 'undefined', 'object 和 object 无法做减法运算'],
-       ['NullValue+[]', '[]'],
-       ['[]+NullValue', '[]'],
-       ['NullValue-[]', '[]'],
-       ['[]-NullValue', '[]'],
-       ['1*EmptyNumber', '0'],
-       ['NullValue-EmptyNumber', '0'],
-       ['1-EmptyNumber', '1'],
-       ['[]-EmptyArray', '[]'],
-       ['{a:1}["a"]', '1'],
-       ['"abc"[1]', '"b"'],
-       ['EmptyString[1]', 'undefined', 'string 下标越界: 1'],
-       ['"abc"["b"]', 'undefined', '下标必须为数字: string'],
-       ['[][1]', 'undefined', 'array 下标越界: 1'],
-       ['Now()[1]', 'undefined', 'date 无法做下标操作'],
-       ['-EmptyString', 'undefined', 'string 无法做一元负数运算'],
-       ['+EmptyString', 'undefined', 'string 无法做一元正数运算'],
-       ['EmptyArray*EmptyObject', 'undefined', 'array 和 object 无法做乘法运算'],
-       ['EmptyArray/EmptyObject', 'undefined', 'array 和 object 无法做除法运算'],
-       ['EmptyArray%EmptyObject', 'undefined', 'array 和 object 无法做余数运算'],
-       ['EmptyArray&&EmptyArray', 'undefined', 'array 和 array 无法做逻辑与运算'],
-       ['EmptyArray||EmptyArray', 'undefined', 'array 和 array 无法做逻辑或运算'],
-       ['false||EmptyArray', 'undefined', 'boolean 和 array 无法做逻辑或运算'],
-       ['true||EmptyArray', 'true'],
-       ['0||EmptyArray', 'undefined', 'number 和 array 无法做逻辑或运算'],
-       ['1||EmptyArray', 'undefined', 'number 和 array 无法做逻辑或运算'],
-       ['NullValue||EmptyArray', 'undefined', 'null 和 array 无法做逻辑或运算'],
-       ['false&&EmptyArray', 'false'],
-       ['true&&EmptyArray', 'undefined', 'boolean 和 array 无法做逻辑与运算'],
-       ['0&&EmptyArray', 'undefined', 'number 和 array 无法做逻辑与运算'],
-       ['1&&EmptyArray', 'undefined', 'number 和 array 无法做逻辑与运算'],
-       ['NullValue&&EmptyArray', 'false'],
-       ['[][null]', 'undefined', '下标必须为数字: null'],
-       ['[][EmptyString]', 'undefined', '下标必须为数字: string'],
-       ['[][NullValue]', 'undefined', '下标必须为数字: null'],
-       ['EmptyNumber[0]', 'undefined', 'number 无法做下标操作'],
-       ['EmptyNumber.ID', 'undefined', 'number 无法做属性访问操作'],
-       ['PropValue([], "name")', 'null'],
-       ['PropValue("", "name")', 'null'],
-       ['PropValue([1,2], "name", ",")', '","'],
-       ['"".Replace("a","b","i")', '""'],
-       ['EmptyString+EmptyNumber+EmptyString', 'undefined', 'string 和 number 无法做加法运算'],
-       ['{}[]', 'undefined', '下标操作不能为空'],
-       ['{}[0]', 'null'],
-       ['{0:1}[0]', '1'],
-       ['""[]', 'undefined', '下标操作不能为空'],
-       ['[][]', 'undefined', '下标操作不能为空'],
-       ['NullValue[]', 'undefined', '下标操作不能为空'],
-       ['12[]', 'undefined', '12 后不允许出现 ['],
-       ['"123".LeftString(EmptyObject)', 'undefined', 'string 没有名称为 LeftString 的方法或参数不匹配'],
-       ['[{},[]].Distinct("$x")', 'undefined', '参数索引不存在: $x'],
+        ['[null, 1].Distinct("a")', 'undefined', 'null 无法获取属性: a'],
+        ['1/0', 'undefined', '0 不能作为除数使用'],
+        ['1%0', 'undefined', '0 不能作为余数使用'],
+        ['1/EmptyNumber', 'undefined', '0 不能作为除数使用'],
+        ['1%EmptyNumber', 'undefined', '0 不能作为余数使用'],
+        ['EmptyNumber==EmptyArray', 'undefined', 'number 和 array 无法做相等运算'],
+        ['EmptyNumber!=EmptyArray', 'undefined', 'number 和 array 无法做不等运算'],
+        ['[{}].Where(EmptyString)', '[{}]'],
+        ['1*null', '0'],
+        ['1+null', '1'],
+        ['1-null', '1'],
+        ['EmptyObject-EmptyObject', 'undefined', 'object 和 object 无法做减法运算'],
+        ['NullValue+[]', '[]'],
+        ['[]+NullValue', '[]'],
+        ['NullValue-[]', '[]'],
+        ['[]-NullValue', '[]'],
+        ['1*EmptyNumber', '0'],
+        ['NullValue-EmptyNumber', '0'],
+        ['1-EmptyNumber', '1'],
+        ['[]-EmptyArray', '[]'],
+        ['{a:1}["a"]', '1'],
+        ['"abc"[1]', '"b"'],
+        ['EmptyString[1]', 'undefined', 'string 下标越界: 1'],
+        ['"abc"["b"]', 'undefined', '下标必须为数字: string'],
+        ['[][1]', 'undefined', 'array 下标越界: 1'],
+        ['Now()[1]', 'undefined', 'date 无法做下标操作'],
+        ['-EmptyString', 'undefined', 'string 无法做一元负数运算'],
+        ['+EmptyString', 'undefined', 'string 无法做一元正数运算'],
+        ['EmptyArray*EmptyObject', 'undefined', 'array 和 object 无法做乘法运算'],
+        ['EmptyArray/EmptyObject', 'undefined', 'array 和 object 无法做除法运算'],
+        ['EmptyArray%EmptyObject', 'undefined', 'array 和 object 无法做余数运算'],
+        ['EmptyArray&&EmptyArray', 'undefined', 'array 和 array 无法做逻辑与运算'],
+        ['EmptyArray||EmptyArray', 'undefined', 'array 和 array 无法做逻辑或运算'],
+        ['false||EmptyArray', 'undefined', 'boolean 和 array 无法做逻辑或运算'],
+        ['true||EmptyArray', 'true'],
+        ['0||EmptyArray', 'undefined', 'number 和 array 无法做逻辑或运算'],
+        ['1||EmptyArray', 'undefined', 'number 和 array 无法做逻辑或运算'],
+        ['NullValue||EmptyArray', 'undefined', 'null 和 array 无法做逻辑或运算'],
+        ['false&&EmptyArray', 'false'],
+        ['true&&EmptyArray', 'undefined', 'boolean 和 array 无法做逻辑与运算'],
+        ['0&&EmptyArray', 'undefined', 'number 和 array 无法做逻辑与运算'],
+        ['1&&EmptyArray', 'undefined', 'number 和 array 无法做逻辑与运算'],
+        ['NullValue&&EmptyArray', 'false'],
+        ['[][null]', 'undefined', '下标必须为数字: null'],
+        ['[][EmptyString]', 'undefined', '下标必须为数字: string'],
+        ['[][NullValue]', 'undefined', '下标必须为数字: null'],
+        ['EmptyNumber[0]', 'undefined', 'number 无法做下标操作'],
+        ['EmptyNumber.ID', 'undefined', 'number 无法做属性访问操作'],
+        ['PropValue([], "name")', 'null'],
+        ['PropValue("", "name")', 'null'],
+        ['PropValue([1,2], "name", ",")', '","'],
+        ['"".Replace("a","b","i")', '""'],
+        ['EmptyString+EmptyNumber+EmptyString', 'undefined', 'string 和 number 无法做加法运算'],
+        ['{}[]', 'undefined', '下标操作不能为空'],
+        ['{}[0]', 'null'],
+        ['{0:1}[0]', '1'],
+        ['""[]', 'undefined', '下标操作不能为空'],
+        ['[][]', 'undefined', '下标操作不能为空'],
+        ['NullValue[]', 'undefined', '下标操作不能为空'],
+        ['12[]', 'undefined', '12 后不允许出现 ['],
+        ['"123".LeftString(EmptyObject)', 'undefined', 'string 没有名称为 LeftString 的方法或参数不匹配'],
+        ['[{},[]].Distinct("$x")', 'undefined', '参数索引不存在: $x'],
+        ['0.1.1', 'undefined', '无法识别 0.1.1'],
+        ['$C.userId', '"admin"'],
+        ['$(-1)', 'undefined', '没有名称为 $ 的方法或参数不匹配'],
+        ['$0==$', 'true'],
+        ['$0==$==$0', 'undefined', 'boolean 和 object 无法做相等运算'],
+        ['$_1', 'undefined', '参数索引不存在: $_1'],
+        ['$12', 'undefined', '参数不存在: $12'],
+        ['None', 'null'],
     ]
 };
 
-window.demoExprCalc = [exprCalc];
+var exprCalc = {
+    title: "简单计算",
+    exprs: [
+        ['a', 'null'],
+    ]
+};
+
+window.demoExprCalc = [exprCalcData, exprCalc];

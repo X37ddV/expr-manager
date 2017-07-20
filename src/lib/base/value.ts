@@ -52,34 +52,26 @@ export default class Value {
     }
     // 追加数组元素
     public arrayPush(ev: Value): Value {
-        if (this.type === "array") {
-            ev = ev || this.genValue(null);
-            this.toValue().push(ev.toValue());
-        }
+        ev = ev || this.genValue(null);
+        this.toValue().push(ev.toValue());
         return this;
     }
     // 连接数组元素
     public arrayConcat(ev: Value): Value {
-        if (this.type === "array" && ev.type === "array") {
-            this.value = this.toValue().concat(ev.toValue());
-        }
+        this.value = this.toValue().concat(ev.toValue());
         return this;
     }
     // 设置对象属性
     public objectSetProperty(ev: Value): Value {
-        if (this.type === "object") {
-            const h = ev.toValue();
-            this.value[h.key] = h.value;
-        }
+        const h = ev.toValue();
+        this.value[h.key] = h.value;
         return this;
     }
     // 批量设置对象属性
     public objectSetProperties(ev: Value): Value {
-        if (this.type === "object" && ev.type === "array") {
-            const h = ev.toValue();
-            for (const item of h) {
-                this.value[item.key] = item.value;
-            }
+        const h = ev.toValue();
+        for (const item of h) {
+            this.value[item.key] = item.value;
         }
         return this;
     }

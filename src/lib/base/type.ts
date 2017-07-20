@@ -42,39 +42,31 @@ export default class Type {
     }
     // 追加数组元素
     public arrayPush(et: Type): Type {
-        if (this.type === "array") {
-            this.info.push(et.info); /// info存储数组元素的类型
-            this.data.push(et.data); /// data存储数组元素的值
-        }
+        this.info.push(et.info); /// info存储数组元素的类型
+        this.data.push(et.data); /// data存储数组元素的值
         return this;
     }
     // 连接数组元素
     public arrayConcat(et: Type): Type {
-        if (this.type === "array" && et.type === "array") {
-            this.info = this.info.concat(et.info); /// info存储数组元素的类型
-            this.data = this.data.concat(et.data); /// data存储数组元素的值
-        }
+        this.info = this.info.concat(et.info); /// info存储数组元素的类型
+        this.data = this.data.concat(et.data); /// data存储数组元素的值
         return this;
     }
     // 设置对象属性
     public objectSetProperty(et: Type): Type {
-        if (this.type === "object") {
-            const h = et.info;
-            this.info[h.key] = h.value;
-            const d = et.data;
-            this.data[d.key] = d.value;
-        }
+        const h = et.info;
+        this.info[h.key] = h.value;
+        const d = et.data;
+        this.data[d.key] = d.value;
         return this;
     }
     // 批量设置对象属性
     public objectSetProperties(et: Type): Type {
-        if (this.type === "object" && et.type === "array") {
-            for (const item of et.info) {
-                this.info[item.key] = item.value;
-            }
-            for (const item of et.data) {
-                this.data[item.key] = item.value;
-            }
+        for (const item of et.info) {
+            this.info[item.key] = item.value;
+        }
+        for (const item of et.data) {
+            this.data[item.key] = item.value;
         }
         return this;
     }

@@ -1318,35 +1318,33 @@ var Calc = (function () {
         var tv;
         var lv;
         var rv;
-        if (t.childs) {
-            var isIfNull = context.isIfNullToken(t);
-            var isIIf = context.isIIfToken(t);
-            for (var i = 0; i < t.childs.length; i++) {
-                msg = this.doCalc(t.childs[i], context);
-                if (msg !== "") {
+        var isIfNull = context.isIfNullToken(t);
+        var isIIf = context.isIIfToken(t);
+        for (var i = 0; i < t.childs.length; i++) {
+            msg = this.doCalc(t.childs[i], context);
+            if (msg !== "") {
+                break;
+            }
+            else if (i === 0) {
+                l = t.childs[0];
+                lv = this.values[l.id];
+                if (isIfNull && lv.toValue() !== null) {
                     break;
                 }
-                else if (i === 0) {
-                    l = t.childs[0];
-                    lv = this.values[l.id];
-                    if (isIfNull && lv.toValue() !== null) {
-                        break;
-                    }
-                    else if (isIIf && !lv.toValue()) {
-                        i++;
-                    }
-                    else if (t.tokenType === "TK_OR" && lv.toValue() === true ||
-                        t.tokenType === "TK_AND" &&
-                            (lv.toValue() === false || lv.type === "null")) {
-                        break;
-                    }
+                else if (isIIf && !lv.toValue()) {
+                    i++;
                 }
-                else if (i === 1) {
-                    r = t.childs[1];
-                    rv = this.values[r.id];
-                    if (isIIf) {
-                        break;
-                    }
+                else if (t.tokenType === "TK_OR" && lv.toValue() === true ||
+                    t.tokenType === "TK_AND" &&
+                        (lv.toValue() === false || lv.type === "null")) {
+                    break;
+                }
+            }
+            else if (i === 1) {
+                r = t.childs[1];
+                rv = this.values[r.id];
+                if (isIIf) {
+                    break;
                 }
             }
         }
@@ -1632,9 +1630,7 @@ var Check = (function () {
                     break;
                 case "VTK_PAREN":
                     if (t.childs.length === 0) {
-                        tt = (p && p.tokenType === "TK_IDEN") ?
-                            context.genType("array", [], []) :
-                            context.genType("undefined");
+                        tt = context.genType("array", [], []);
                     }
                     else {
                         tt = (p && p.tokenType === "TK_IDEN" && l.tokenType !== "VTK_COMMA") ?
@@ -1692,7 +1688,7 @@ var Lexer = (function () {
     }
     // 设置表达式
     Lexer.prototype.setExpr = function (expr) {
-        this.expr = expr ? expr.split("") : [];
+        this.expr = expr.split("");
         this.index = 0;
         return this;
     };
@@ -1731,22 +1727,50 @@ var Lexer = (function () {
                 case ":":
                 case ",":
                     tText = tValue = s[n++];
-                    tType =
-                        tValue === "[" ? "TK_LA" :
-                            tValue === "]" ? "TK_RA" :
-                                tValue === "{" ? "TK_LO" :
-                                    tValue === "}" ? "TK_RO" :
-                                        tValue === "." ? "TK_DOT" :
-                                            tValue === "(" ? "TK_LP" :
-                                                tValue === ")" ? "TK_RP" :
-                                                    tValue === "*" ? "TK_MULTI" :
-                                                        tValue === "/" ? "TK_DIV" :
-                                                            tValue === "%" ? "TK_MOD" :
-                                                                tValue === "+" ? "TK_PLUS" :
-                                                                    tValue === "-" ? "TK_MINUS" :
-                                                                        tValue === ":" ? "TK_COLON" :
-                                                                            tValue === "," ? "TK_COMMA" :
-                                                                                "";
+                    switch (tValue) {
+                        case "[":
+                            tType = "TK_LA";
+                            break;
+                        case "]":
+                            tType = "TK_RA";
+                            break;
+                        case "{":
+                            tType = "TK_LO";
+                            break;
+                        case "}":
+                            tType = "TK_RO";
+                            break;
+                        case ".":
+                            tType = "TK_DOT";
+                            break;
+                        case "(":
+                            tType = "TK_LP";
+                            break;
+                        case ")":
+                            tType = "TK_RP";
+                            break;
+                        case "*":
+                            tType = "TK_MULTI";
+                            break;
+                        case "/":
+                            tType = "TK_DIV";
+                            break;
+                        case "%":
+                            tType = "TK_MOD";
+                            break;
+                        case "+":
+                            tType = "TK_PLUS";
+                            break;
+                        case "-":
+                            tType = "TK_MINUS";
+                            break;
+                        case ":":
+                            tType = "TK_COLON";
+                            break;
+                        case ",":
+                            tType = "TK_COMMA";
+                            break;
+                    }
                     break;
                 case "!":
                     tValue = s[n++];
@@ -1783,10 +1807,14 @@ var Lexer = (function () {
                 case "|":
                     tValue = s[n++];
                     if (n < s.length && s[n] === tValue) {
-                        tType =
-                            tValue === "&" ? "TK_AND" :
-                                tValue === "|" ? "TK_OR" :
-                                    "TK_UNKNOWN";
+                        switch (tValue) {
+                            case "&":
+                                tType = "TK_AND";
+                                break;
+                            case "|":
+                                tType = "TK_OR";
+                                break;
+                        }
                         tValue += s[n++];
                     }
                     else {
@@ -2548,41 +2576,33 @@ var Type = (function () {
     };
     // 追加数组元素
     Type.prototype.arrayPush = function (et) {
-        if (this.type === "array") {
-            this.info.push(et.info);
-            this.data.push(et.data);
-        }
+        this.info.push(et.info);
+        this.data.push(et.data);
         return this;
     };
     // 连接数组元素
     Type.prototype.arrayConcat = function (et) {
-        if (this.type === "array" && et.type === "array") {
-            this.info = this.info.concat(et.info);
-            this.data = this.data.concat(et.data);
-        }
+        this.info = this.info.concat(et.info);
+        this.data = this.data.concat(et.data);
         return this;
     };
     // 设置对象属性
     Type.prototype.objectSetProperty = function (et) {
-        if (this.type === "object") {
-            var h = et.info;
-            this.info[h.key] = h.value;
-            var d = et.data;
-            this.data[d.key] = d.value;
-        }
+        var h = et.info;
+        this.info[h.key] = h.value;
+        var d = et.data;
+        this.data[d.key] = d.value;
         return this;
     };
     // 批量设置对象属性
     Type.prototype.objectSetProperties = function (et) {
-        if (this.type === "object" && et.type === "array") {
-            for (var _i = 0, _a = et.info; _i < _a.length; _i++) {
-                var item = _a[_i];
-                this.info[item.key] = item.value;
-            }
-            for (var _b = 0, _c = et.data; _b < _c.length; _b++) {
-                var item = _c[_b];
-                this.data[item.key] = item.value;
-            }
+        for (var _i = 0, _a = et.info; _i < _a.length; _i++) {
+            var item = _a[_i];
+            this.info[item.key] = item.value;
+        }
+        for (var _b = 0, _c = et.data; _b < _c.length; _b++) {
+            var item = _c[_b];
+            this.data[item.key] = item.value;
         }
         return this;
     };
@@ -2819,35 +2839,27 @@ var Value = (function () {
     };
     // 追加数组元素
     Value.prototype.arrayPush = function (ev) {
-        if (this.type === "array") {
-            ev = ev || this.genValue(null);
-            this.toValue().push(ev.toValue());
-        }
+        ev = ev || this.genValue(null);
+        this.toValue().push(ev.toValue());
         return this;
     };
     // 连接数组元素
     Value.prototype.arrayConcat = function (ev) {
-        if (this.type === "array" && ev.type === "array") {
-            this.value = this.toValue().concat(ev.toValue());
-        }
+        this.value = this.toValue().concat(ev.toValue());
         return this;
     };
     // 设置对象属性
     Value.prototype.objectSetProperty = function (ev) {
-        if (this.type === "object") {
-            var h = ev.toValue();
-            this.value[h.key] = h.value;
-        }
+        var h = ev.toValue();
+        this.value[h.key] = h.value;
         return this;
     };
     // 批量设置对象属性
     Value.prototype.objectSetProperties = function (ev) {
-        if (this.type === "object" && ev.type === "array") {
-            var h = ev.toValue();
-            for (var _i = 0, h_1 = h; _i < h_1.length; _i++) {
-                var item = h_1[_i];
-                this.value[item.key] = item.value;
-            }
+        var h = ev.toValue();
+        for (var _i = 0, h_1 = h; _i < h_1.length; _i++) {
+            var item = h_1[_i];
+            this.value[item.key] = item.value;
         }
         return this;
     };
@@ -3398,22 +3410,17 @@ var ExprCurrent = (function () {
     };
     // 栈顶计算环境的params属性的第index条记录是否为实体数据
     ExprCurrent.prototype.isEntityData = function (index) {
-        if (this.curr.length > 0) {
-            var c = this.curr[0];
-            c.pIndex = index || 0;
-            return c.params[c.pIndex].isEntityData;
-        }
-        else {
-            return false;
-        }
+        var c = this.curr[0];
+        c.pIndex = index || 0;
+        return c.params[c.pIndex].isEntityData;
     };
     // 得到栈顶计算环境的params属性的第index条记录存储的实体名
     ExprCurrent.prototype.getEntityName = function (index) {
-        return this.getData(index) || "";
+        return this.getData(index);
     };
     // 得到实体全名称entityName的访问游标
     ExprCurrent.prototype.getEntityDataCursor = function (entityName, index) {
-        var r = entityName ? this.dataCursor[entityName] : 0;
+        var r = this.dataCursor[entityName];
        
         for (var i = 0; i < this.curr.length; i++) {
             var c = this.curr[i];
@@ -3430,13 +3437,9 @@ var ExprCurrent = (function () {
     };
     // 得到栈顶计算环境的params属性的第index条记录存储的数据
     ExprCurrent.prototype.getData = function (index) {
-        var r;
-        if (this.curr.length > 0) {
-            var c = this.curr[0];
-            c.pIndex = index || 0;
-            r = c.params[c.pIndex].current;
-        }
-        return r;
+        var c = this.curr[0];
+        c.pIndex = index || 0;
+        return c.params[c.pIndex].current;
     };
     return ExprCurrent;
 }());
@@ -3447,7 +3450,7 @@ var ExprContext = (function (_super) {
     __extends(ExprContext, _super);
     function ExprContext() {
         _super.apply(this, arguments);
-        this.exprContext = new ExprCurrent();
+        this.exprCurrent = new ExprCurrent();
         this.pageContext = { $C: {} };
         this.contextVariables = [];
         this.functions = {};
@@ -3492,10 +3495,8 @@ var ExprContext = (function (_super) {
                     case "parent":
                         if (source === null || source.entity) {
                             var entityName = source === null ?
-                                this.exprContext.getEntityName() :
-                                source.entity ?
-                                    source.entity.fullName :
-                                    "";
+                                this.exprCurrent.getEntityName() :
+                                source.entity.fullName;
                             entity = this.getParentName(entityName);
                             if (entity) {
                                 type = "object";
@@ -3512,7 +3513,7 @@ var ExprContext = (function (_super) {
                     case "value":
                         var n = null;
                         if (source === null) {
-                            n = this.exprContext.getEntityName();
+                            n = this.exprCurrent.getEntityName();
                         }
                         else if (source.entity) {
                             n = source.entity.fullName;
@@ -3570,7 +3571,7 @@ var ExprContext = (function (_super) {
             else {
                 pIndex = Number(pIndex);
                 if (!isNaN(pIndex)) {
-                    if (this.exprContext.isValid(pIndex)) {
+                    if (this.exprCurrent.isValid(pIndex)) {
                         name = "";
                     }
                     else {
@@ -3583,11 +3584,11 @@ var ExprContext = (function (_super) {
             }
         }
         if (!r) {
-            if (this.exprContext.isEntityData(pIndex)) {
+            if (this.exprCurrent.isEntityData(pIndex)) {
                 var entity = void 0;
                 var type = void 0;
                 if (source === null) {
-                    entity = this.genEntityInfo(this.getPropertyName(this.exprContext.getEntityName(pIndex), name));
+                    entity = this.genEntityInfo(this.getPropertyName(this.exprCurrent.getEntityName(pIndex), name));
                     if (entity) {
                         type = name === "" ? "object" : entity.type;
                     }
@@ -3626,26 +3627,16 @@ var ExprContext = (function (_super) {
             }
             else {
                 pIndex = Number(pIndex);
-                if (!isNaN(pIndex)) {
-                    if (this.exprContext.isValid(pIndex)) {
-                        name = "";
-                    }
-                    else {
-                        r = this.genErrorValue(format(locale.getLocale().MSG_EC_VARI_N, name));
-                    }
-                }
-                else {
-                    r = this.genErrorValue(format(locale.getLocale().MSG_EC_VARI_I, name));
-                }
+                name = "";
             }
         }
         if (!r) {
             var value = void 0;
-            if (this.exprContext.isEntityData(pIndex)) {
+            if (this.exprCurrent.isEntityData(pIndex)) {
                 var entity = void 0;
                 var parentObj = void 0;
                 if (source === null) {
-                    entity = this.genEntityInfo(this.getPropertyName(this.exprContext.getEntityName(pIndex), name));
+                    entity = this.genEntityInfo(this.getPropertyName(this.exprCurrent.getEntityName(pIndex), name));
                     if (!entity) {
                         r = this.genErrorValue(format(locale.getLocale().MSG_EC_PROP_N, name));
                     }
@@ -3704,7 +3695,7 @@ var ExprContext = (function (_super) {
             }
             else {
                 value = (source === null) ?
-                    this.exprContext.getData(pIndex) :
+                    this.exprCurrent.getData(pIndex) :
                     value = source.toValue();
                 if (!(source === null && name === "")) {
                     switch (getValueType(value)) {
@@ -3752,7 +3743,7 @@ var ExprContext = (function (_super) {
     };
     // 设置数据游标
     ExprContext.prototype.setDataCursor = function (cursor) {
-        this.exprContext.setDataCursor(cursor);
+        this.exprCurrent.setDataCursor(cursor);
     };
     // 设置页面上下文
     ExprContext.prototype.setPageContext = function (ctx) {
@@ -3847,10 +3838,10 @@ var ExprContext = (function (_super) {
     // 获取父实体值
     ExprContext.prototype.getParentValue = function (source) {
         var r;
-        if (this.exprContext.isEntityData()) {
+        if (this.exprCurrent.isEntityData()) {
             var entity = void 0;
             if (source === null) {
-                entity = this.exprContext.getEntityName();
+                entity = this.exprCurrent.getEntityName();
             }
             else if (source.entity && source.entity.field === "") {
                 if (source.parentObj && this.getParentName(source.entity.fullName)) {
@@ -3866,7 +3857,7 @@ var ExprContext = (function (_super) {
             if (!r) {
                 entity = this.genEntityInfo(this.getParentName(entity), "object");
                 if (entity.name) {
-                    entity.recNo = this.exprContext.getEntityDataCursor(entity.name);
+                    entity.recNo = this.exprCurrent.getEntityDataCursor(entity.name);
                     var value = this.getEntityData(entity.name);
                     r = this.genValue(value, undefined, entity);
                 }
@@ -3890,7 +3881,7 @@ var ExprContext = (function (_super) {
                 var prop = p_1[_i];
                 cp.push(prop);
                 d = d[prop];
-                var cursor = this.exprContext.getEntityDataCursor(cp.join("."), index);
+                var cursor = this.exprCurrent.getEntityDataCursor(cp.join("."), index);
                 d = d[cursor];
                 if (d === undefined) {
                     break;
@@ -3921,11 +3912,11 @@ var ExprContext = (function (_super) {
     // 获取当前实体的索引号，没有实体返回-1
     ExprContext.prototype.getRecNo = function (source) {
         var r;
-        if (this.exprContext.isEntityData()) {
+        if (this.exprCurrent.isEntityData()) {
             var entity = void 0;
             if (source === null) {
-                entity = this.exprContext.getEntityName();
-                var value = this.exprContext.getEntityDataCursor(entity);
+                entity = this.exprCurrent.getEntityName();
+                var value = this.exprCurrent.getEntityDataCursor(entity);
                 r = this.genValue(value);
             }
             else {
@@ -4061,75 +4052,55 @@ var ExprContext = (function (_super) {
     };
     // 计算表达式
     ExprContext.prototype._calcExpr = function (expr, curr) {
-        if (curr.length > 0) {
-            this.exprContext.push(curr);
-        }
+        this.exprCurrent.push(curr);
         var e = new Calc();
         var r = e.calc(expr, this);
-        if (curr.length > 0) {
-            this.exprContext.pop();
-        }
+        this.exprCurrent.pop();
         return r;
     };
     // 在实体计算环境下计算表达式的值
     ExprContext.prototype.calcEntityExpr = function (expr, entityName, cursor) {
-        var c = [];
-        var i = 1;
-        while (i < arguments.length) {
-            c.push({
-                current: arguments[i],
-                cursor: arguments[i + 1],
+        return this._calcExpr(expr, [{
+                current: entityName,
+                cursor: (cursor),
                 isEntityData: true,
-            });
-            i += 2;
-        }
-        return this._calcExpr(expr, c);
+            }]);
     };
     // 在数据计算环境下计算表达式的值
     ExprContext.prototype.calcDataExpr = function (expr, data) {
-        var c = [];
-        var i = 1;
-        while (i < arguments.length) {
-            c.push({
-                current: arguments[i],
+        return this._calcExpr(expr, [{
+                current: data,
+                cursor: 0,
                 isEntityData: false,
-            });
-            i++;
-        }
-        return this._calcExpr(expr, c);
+            }]);
     };
     // 计算表达式的依赖关系
     ExprContext.prototype.calcDependencies = function (expr, curr) {
-        if (curr.length > 0) {
-            this.exprContext.push(curr);
-        }
+        this.exprCurrent.push(curr);
         var p = new Check();
         var r = p.check(expr, this);
-        if (curr.length > 0) {
-            this.exprContext.pop();
-        }
+        this.exprCurrent.pop();
         return r;
     };
     // 在实体计算环境下计算表达式的依赖关系
     ExprContext.prototype.calcEntityDependencies = function (expr, entityName) {
-        var c = [];
-        c.push({
-            current: entityName,
-            isEntityData: true,
-        });
-        return this.calcDependencies(expr, c);
+        return this.calcDependencies(expr, [{
+                current: entityName,
+                cursor: 0,
+                isEntityData: true,
+            }]);
     };
     // 在数据计算环境下计算表达式的依赖关系
     ExprContext.prototype.calcDataDependencies = function (expr) {
-        var c = [];
-        c.push({
-            isEntityData: false,
-        });
-        return this.calcDependencies(expr, c);
+        return this.calcDependencies(expr, [{
+                current: "",
+                cursor: 0,
+                isEntityData: false,
+            }]);
     };
     // 向栈顶添加新的计算环境
     ExprContext.prototype.pushEntityCurrent = function (entityName, cursor) {
-        this.exprContext.push([{
+        this.exprCurrent.push([{
                 current: entityName,
                 cursor: (cursor),
                 isEntityData: true,
@@ -4137,7 +4108,7 @@ var ExprContext = (function (_super) {
     };
     // 删除栈顶的计算环境
     ExprContext.prototype.popEntityCurrent = function () {
-        this.exprContext.pop();
+        this.exprCurrent.pop();
     };
     return ExprContext;
 }(Context));

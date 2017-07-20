@@ -7,7 +7,7 @@ import locale from "./base/locale";
 import Parser from "./base/parser";
 import Type from "./base/type";
 import Value from "./base/value";
-import ExprCurrent from "./current";
+import ExprCurrent, { ICurrentParam } from "./current";
 
 export type FunctionEntityType = "root" | "parent" | "value" | "data";
 export type FunctionParamsType = "undefined" | "undefined?" | "string" | "string?" | "number" |
@@ -54,7 +54,7 @@ interface IEntityInfo {
 // ----------
 
 export default class ExprContext extends Context {
-    private exprContext: ExprCurrent = new ExprCurrent(); /// 计算环境堆栈
+    private exprCurrent: ExprCurrent = new ExprCurrent(); /// 计算环境堆栈
     private pageContext = { $C: {} };              /// 页面上下文
     private dataContext;                           /// 数据上下文
     private contextVariables = [];                 /// 用于存储环境变量
@@ -101,10 +101,8 @@ export default class ExprContext extends Context {
                     case "parent":
                         if (source === null || source.entity) {
                             const entityName = source === null ?
-                                this.exprContext.getEntityName() : /// Paren()
-                                source.entity ?
-                                    source.entity.fullName : /// Root().E1[0].Parent()
-                                    "";
+                                this.exprCurrent.getEntityName() : /// Paren()
+                                source.entity.fullName; /// Root().E1[0].Parent()
                             entity = this.getParentName(entityName);
                             if (entity) {
                                 type = "object";
@@ -119,7 +117,7 @@ export default class ExprContext extends Context {
                     case "value":
                         let n = null;
                         if (source === null) {
-                            n = this.exprContext.getEntityName();
+                            n = this.exprCurrent.getEntityName();
                         } else if (source.entity) {
                             n = source.entity.fullName;
                         }
@@ -174,7 +172,7 @@ export default class ExprContext extends Context {
             } else {
                 pIndex = Number(pIndex);
                 if (!isNaN(pIndex)) { /// name为$0,$1,$2...
-                    if (this.exprContext.isValid(pIndex)) {
+                    if (this.exprCurrent.isValid(pIndex)) {
                         name = ""; /// 为了区分合法的$0,$1...与一般属性名a,b...，它们的处理方式不一样
                     } else { /// 参数不存在
                         r = this.genErrorType(format(locale.getLocale().MSG_EC_VARI_N, name));
@@ -185,11 +183,11 @@ export default class ExprContext extends Context {
             }
         }
         if (!r) {
-            if (this.exprContext.isEntityData(pIndex)) {
+            if (this.exprCurrent.isEntityData(pIndex)) {
                 let entity;
                 let type;
                 if (source === null) {
-                    entity = this.genEntityInfo(this.getPropertyName(this.exprContext.getEntityName(pIndex), name));
+                    entity = this.genEntityInfo(this.getPropertyName(this.exprCurrent.getEntityName(pIndex), name));
                     if (entity) {
                         type = name === "" ? "object" : entity.type;
                     } else {
@@ -223,24 +221,16 @@ export default class ExprContext extends Context {
                 r = this.genValue(this.pageContext.$C);
             } else {
                 pIndex = Number(pIndex);
-                if (!isNaN(pIndex)) { /// name为$0,$1,$2...
-                    if (this.exprContext.isValid(pIndex)) {
-                        name = ""; /// 为了区分合法的$0,$1...与一般属性名a,b...，它们的处理方式不一样
-                    } else { /// 参数不存在
-                        r = this.genErrorValue(format(locale.getLocale().MSG_EC_VARI_N, name));
-                    }
-                } else { /// 参数索引不存在
-                    r = this.genErrorValue(format(locale.getLocale().MSG_EC_VARI_I, name));
-                }
+                name = ""; /// $参数的正确性不用在计算阶段检查
             }
         }
         if (!r) {
             let value; /// 包含了name等属性的js对象
-            if (this.exprContext.isEntityData(pIndex)) { /// 当前表达式处于实体数据环境
+            if (this.exprCurrent.isEntityData(pIndex)) { /// 当前表达式处于实体数据环境
                 let entity;
                 let parentObj;
                 if (source === null) { /// P1 a $0
-                    entity = this.genEntityInfo(this.getPropertyName(this.exprContext.getEntityName(pIndex), name));
+                    entity = this.genEntityInfo(this.getPropertyName(this.exprCurrent.getEntityName(pIndex), name));
                     if (!entity) {
                         r = this.genErrorValue(format(locale.getLocale().MSG_EC_PROP_N, name));
                     } else {
@@ -292,7 +282,7 @@ export default class ExprContext extends Context {
                 }
             } else { /// 当前表达式处于普通数据环境
                 value = (source === null) ?
-                    this.exprContext.getData(pIndex) :
+                    this.exprCurrent.getData(pIndex) :
                     value = source.toValue();
                 if (!(source === null && name === "")) {
                     switch (getValueType(value)) {
@@ -340,7 +330,7 @@ export default class ExprContext extends Context {
     }
     // 设置数据游标
     public setDataCursor(cursor: IDataCursor) {
-        this.exprContext.setDataCursor(cursor);
+        this.exprCurrent.setDataCursor(cursor);
     }
     // 设置页面上下文
     public setPageContext(ctx) {
@@ -432,10 +422,10 @@ export default class ExprContext extends Context {
     // 获取父实体值
     public getParentValue(source): Value {
         let r: Value;
-        if (this.exprContext.isEntityData()) {
+        if (this.exprCurrent.isEntityData()) {
             let entity;
             if (source === null) { /// Parent()
-                entity = this.exprContext.getEntityName();
+                entity = this.exprCurrent.getEntityName();
             } else if (source.entity && source.entity.field === "") {
                 if (source.parentObj && this.getParentName(source.entity.fullName)) {
                     r = source.parentObj; /// Entity1[1].NewEntity1[2].Parent()
@@ -448,7 +438,7 @@ export default class ExprContext extends Context {
             if (!r) {
                 entity = this.genEntityInfo(this.getParentName(entity), "object");
                 if (entity.name) {
-                    entity.recNo = this.exprContext.getEntityDataCursor(entity.name);
+                    entity.recNo = this.exprCurrent.getEntityDataCursor(entity.name);
                     const value = this.getEntityData(entity.name); /// 取父实体对象
                     r = this.genValue(value, undefined, entity);
                 } else {
@@ -469,7 +459,7 @@ export default class ExprContext extends Context {
             for (const prop of p) {
                 cp.push(prop);
                 d = d[prop]; /// data[E1],得到实体数组
-                const cursor = this.exprContext.getEntityDataCursor(cp.join("."), index);
+                const cursor = this.exprCurrent.getEntityDataCursor(cp.join("."), index);
                 d = d[cursor]; /// 得到实体数组中第cursor条实体记录
                 if (d === undefined) {
                     break;
@@ -499,11 +489,11 @@ export default class ExprContext extends Context {
     // 获取当前实体的索引号，没有实体返回-1
     public getRecNo(source) {
         let r;
-        if (this.exprContext.isEntityData()) {
+        if (this.exprCurrent.isEntityData()) {
             let entity;
             if (source === null) { /// RecNo()
-                entity = this.exprContext.getEntityName();
-                const value = this.exprContext.getEntityDataCursor(entity);
+                entity = this.exprCurrent.getEntityName();
+                const value = this.exprCurrent.getEntityDataCursor(entity);
                 r = this.genValue(value);
             } else {
                 r = (source.entity && source.entity.field === "") ?
@@ -632,80 +622,56 @@ export default class ExprContext extends Context {
         this.contextVariables.pop();
     }
     // 计算表达式
-    public _calcExpr(expr: string, curr): Value {
-        if (curr.length > 0) {
-            this.exprContext.push(curr);
-        }
-
+    public _calcExpr(expr: string, curr: ICurrentParam[]): Value {
+        this.exprCurrent.push(curr);
         const e = new Calc();
         const r = e.calc(expr, this); /// 调用计算器对象对表达式进行分析和计算
-
-        if (curr.length > 0) {
-            this.exprContext.pop();
-        }
+        this.exprCurrent.pop();
         return r;
     }
     // 在实体计算环境下计算表达式的值
-    public calcEntityExpr(expr: string, entityName: string, cursor): Value {
-        const c = [];
-        let i = 1;
-        while (i < arguments.length) {
-            c.push({
-                current: arguments[i],
-                cursor: arguments[i + 1],
-                isEntityData: true,
-            });
-            i += 2;
-        }
-        return this._calcExpr(expr, c);
+    public calcEntityExpr(expr: string, entityName: string, cursor: number): Value {
+        return this._calcExpr(expr, [{
+            current: entityName,
+            cursor: (cursor),
+            isEntityData: true,
+        }]);
     }
     // 在数据计算环境下计算表达式的值
     public calcDataExpr(expr: string, data) {
-        const c = [];
-        let i = 1;
-        while (i < arguments.length) {
-            c.push({
-                current: arguments[i],
-                isEntityData: false,
-            });
-            i++;
-        }
-        return this._calcExpr(expr, c);
+        return this._calcExpr(expr, [{
+            current: data,
+            cursor: 0,
+            isEntityData: false,
+        }]);
     }
     // 计算表达式的依赖关系
-    public calcDependencies(expr: string, curr): Type {
-        if (curr.length > 0) {
-            this.exprContext.push(curr);
-        }
-
+    public calcDependencies(expr: string, curr: ICurrentParam[]): Type {
+        this.exprCurrent.push(curr);
         const p = new Check();
         const r = p.check(expr, this);
-
-        if (curr.length > 0) {
-            this.exprContext.pop();
-        }
+        this.exprCurrent.pop();
         return r;
     }
     // 在实体计算环境下计算表达式的依赖关系
-    public calcEntityDependencies(expr: string, entityName?: string): Type {
-        const c = [];
-        c.push({
+    public calcEntityDependencies(expr: string, entityName: string): Type {
+        return this.calcDependencies(expr, [{
             current: entityName,
+            cursor: 0,
             isEntityData: true,
-        });
-        return this.calcDependencies(expr, c);
+        }]);
     }
     // 在数据计算环境下计算表达式的依赖关系
-    public calcDataDependencies(expr): Type {
-        const c = [];
-        c.push({
+    public calcDataDependencies(expr: string): Type {
+        return this.calcDependencies(expr, [{
+            current: "",
+            cursor: 0,
             isEntityData: false,
-        });
-        return this.calcDependencies(expr, c);
+        }]);
     }
     // 向栈顶添加新的计算环境
-    public pushEntityCurrent(entityName, cursor) {
-        this.exprContext.push([{
+    public pushEntityCurrent(entityName: string, cursor: number) {
+        this.exprCurrent.push([{
             current: entityName,
             cursor: (cursor),
             isEntityData: true,
@@ -713,6 +679,6 @@ export default class ExprContext extends Context {
     }
     // 删除栈顶的计算环境
     public popEntityCurrent() {
-        this.exprContext.pop();
+        this.exprCurrent.pop();
     }
 }
