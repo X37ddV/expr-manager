@@ -2,7 +2,7 @@ var ExprManager = require("../../expr-manager.js");
 var locale = require("../../locale/zh-cn.js");
 var exprManager = new ExprManager();
 
-var v = exprManager.calc("", {
+var v = exprManager.calc("Parent()", {
     EmptyString: "",
     EmptyNumber: 0,
     EmptyArray: [],

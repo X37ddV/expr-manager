@@ -3416,7 +3416,7 @@ var ExprCurrent = (function () {
     };
     // 得到栈顶计算环境的params属性的第index条记录存储的实体名
     ExprCurrent.prototype.getEntityName = function (index) {
-        return this.getData(index);
+        return this.isEntityData(index) ? this.getData(index) : "";
     };
     // 得到实体全名称entityName的访问游标
     ExprCurrent.prototype.getEntityDataCursor = function (entityName, index) {
@@ -3439,6 +3439,7 @@ var ExprCurrent = (function () {
     ExprCurrent.prototype.getData = function (index) {
         var c = this.curr[0];
         c.pIndex = index || 0;
+        var p = c.params[c.pIndex];
         return c.params[c.pIndex].current;
     };
     return ExprCurrent;

@@ -7,7 +7,7 @@ import locale from "./base/locale";
 import Parser from "./base/parser";
 import Type from "./base/type";
 import Value from "./base/value";
-import ExprCurrent, { ICurrentParam } from "./current";
+import ExprCurrent, { ICurrentParam, IData } from "./current";
 
 export type FunctionEntityType = "root" | "parent" | "value" | "data";
 export type FunctionParamsType = "undefined" | "undefined?" | "string" | "string?" | "number" |
@@ -587,7 +587,7 @@ export default class ExprContext extends Context {
         return r;
     }
     // 获取上下文变量值
-    public getContextVariableValue(key): Value {
+    public getContextVariableValue(key: string): Value {
         let r;
         const v = this.contextVariables;
         if (v.length > 0) {
@@ -623,7 +623,7 @@ export default class ExprContext extends Context {
         }]);
     }
     // 在数据计算环境下计算表达式的值
-    public calcDataExpr(expr: string, data) {
+    public calcDataExpr(expr: string, data: IData) {
         return this._calcExpr(expr, [{
             current: data,
             cursor: 0,

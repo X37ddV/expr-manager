@@ -6932,7 +6932,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             </div>
             
             <div class="content"><div class='highlight'><pre>    ExprCurrent.prototype.getEntityName = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">index</span>) </span>{
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.getData(index);
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.isEntityData(index) ? <span class="hljs-keyword">this</span>.getData(index) : <span class="hljs-string">""</span>;
     };</pre></div></div>
             
         </li>
@@ -6981,6 +6981,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             <div class="content"><div class='highlight'><pre>    ExprCurrent.prototype.getData = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">index</span>) </span>{
         <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.curr[<span class="hljs-number">0</span>];
         c.pIndex = index || <span class="hljs-number">0</span>;
+        <span class="hljs-keyword">var</span> p = c.params[c.pIndex];
         <span class="hljs-keyword">return</span> c.params[c.pIndex].current;
     };
     <span class="hljs-keyword">return</span> ExprCurrent;

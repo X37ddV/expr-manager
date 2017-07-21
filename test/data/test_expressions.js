@@ -1453,6 +1453,7 @@ var exprCalcData = {
         ['FieldName()', 'null'],
         ['FieldValue()', 'null'],
         ['FieldDisplayName()', 'null'],
+        ['Parent()', 'null', '根实体对象不能调用 Parent 方法'],
     ]
 };
 
