@@ -7041,7 +7041,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             <span class="hljs-string">""</span>;
         <span class="hljs-keyword">var</span> ft = <span class="hljs-keyword">this</span>.getFuncType(t, name, paramType);
         <span class="hljs-keyword">if</span> (ft === <span class="hljs-literal">null</span>) {
-            r = <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EC_FUNC_P, t, name));
+            r = <span class="hljs-keyword">this</span>.genErrorType(format(locale.getLocale().MSG_EC_FUNC_P, t === <span class="hljs-string">"undefined"</span> ? <span class="hljs-string">""</span> : t, name));
         }
         <span class="hljs-keyword">else</span> {
             <span class="hljs-keyword">var</span> depends = [];
@@ -7772,9 +7772,9 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
         <span class="hljs-keyword">var</span> b = p.length &gt;= pl &amp;&amp; p.length &lt;= pt.length;
         <span class="hljs-keyword">if</span> (b) {
             <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = <span class="hljs-number">0</span>; j &lt; r.length; j++) {
-                b = r[j] === <span class="hljs-string">"undefined"</span> || p[j] === <span class="hljs-string">"undefined"</span> || p[j] === <span class="hljs-string">"null"</span> ||
-                    r[j] === p[j] || r[j] === <span class="hljs-string">"expr"</span> &amp;&amp; p[j] === <span class="hljs-string">"string"</span> || r[j] === <span class="hljs-string">"array"</span> &amp;&amp;
-                    r[j] === getValueType(p[j]) || r[j] === <span class="hljs-string">"object"</span> &amp;&amp; r[j] === getValueType(p[j]);
+                b = r[j] === <span class="hljs-string">"undefined"</span> || p[j] === <span class="hljs-string">"undefined"</span> || p[j] === <span class="hljs-string">"null"</span> || r[j] === p[j] ||
+                    r[j] === getValueType(p[j]) &amp;&amp; (r[j] === <span class="hljs-string">"array"</span> || r[j] === <span class="hljs-string">"object"</span>) ||
+                    r[j] === <span class="hljs-string">"expr"</span> &amp;&amp; p[j] === <span class="hljs-string">"string"</span>;
                 <span class="hljs-keyword">if</span> (!b) {
                     <span class="hljs-keyword">break</span>;
                 }

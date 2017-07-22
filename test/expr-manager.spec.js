@@ -261,6 +261,22 @@ describe("接口测试", function() {
 
     it("自定义函数", (function(exprManager) {
         return function() {
+            exprManager.regFunction({
+                "": {
+                    Test: {
+                        fn: function(context, source, arr, obj) {
+                            return context.genValue(true);
+                        },
+                        p: ["array", "object"],
+                        r: "boolean",
+                    }
+                }
+            });
+            ExprManager.locale.defineFunction(ExprManager.locale.localeName, {
+                "Test": { fn: "测试函数", p: ["数值", "对象"], r: "返回真" }
+            });
+            var v = exprManager.calc("Test([], {})");
+            expect(v.toValue()).toEqual(true);
             var groups = exprManager.getFunction();
             expect(groups).toBeDefined();
             for (var i in groups) {

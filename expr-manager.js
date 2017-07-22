@@ -3463,7 +3463,7 @@ var ExprContext = (function (_super) {
             "";
         var ft = this.getFuncType(t, name, paramType);
         if (ft === null) {
-            r = this.genErrorType(format(locale.getLocale().MSG_EC_FUNC_P, t, name));
+            r = this.genErrorType(format(locale.getLocale().MSG_EC_FUNC_P, t === "undefined" ? "" : t, name));
         }
         else {
             var depends = [];
@@ -3921,9 +3921,9 @@ var ExprContext = (function (_super) {
         var b = p.length >= pl && p.length <= pt.length;
         if (b) {
             for (var j = 0; j < r.length; j++) {
-                b = r[j] === "undefined" || p[j] === "undefined" || p[j] === "null" ||
-                    r[j] === p[j] || r[j] === "expr" && p[j] === "string" || r[j] === "array" &&
-                    r[j] === getValueType(p[j]) || r[j] === "object" && r[j] === getValueType(p[j]);
+                b = r[j] === "undefined" || p[j] === "undefined" || p[j] === "null" || r[j] === p[j] ||
+                    r[j] === getValueType(p[j]) && (r[j] === "array" || r[j] === "object") ||
+                    r[j] === "expr" && p[j] === "string";
                 if (!b) {
                     break;
                 }

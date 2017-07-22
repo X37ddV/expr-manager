@@ -1390,6 +1390,7 @@ var exprCalcData = {
         EmptyArray: [],
         EmptyObject: {},
         NullValue: null,
+        UndefinedValue: undefined,
     },
     exprs: [
         ['[null, 1].Distinct("a")', 'undefined', 'null 无法获取属性: a'],
@@ -1469,7 +1470,10 @@ var exprCalcData = {
         ['{1}', 'undefined', '对象书写格式不正确'],
         ['{1*2}', 'undefined', '对象书写格式不正确'],
         ['[{}].Sum("$0.Parent()")', 'null'],
-        ['[{}].Sum("$0.RecNo()")', '-1']
+        ['[{}].Sum("$0.RecNo()")', '-1'],
+        ['EmptyNumber.ToRMB()', '"零元整"'],
+        ['EmptyNumber.Error()', 'undefined', '没有名称为 Error 的方法或参数不匹配'],
+        ['UndefinedValue.ToRMB()', 'undefined', 'null 不能调用 ToRMB 方法'],
     ]
 };
 

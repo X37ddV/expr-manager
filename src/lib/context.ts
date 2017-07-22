@@ -68,7 +68,7 @@ export default class ExprContext extends Context {
             ""; /// 无显式调用者，全局函数
         const ft = this.getFuncType(t, name, paramType); /// 类型t的name函数
         if (ft === null) {
-            r = this.genErrorType(format(locale.getLocale().MSG_EC_FUNC_P, t, name));
+            r = this.genErrorType(format(locale.getLocale().MSG_EC_FUNC_P, t === "undefined" ? "" : t, name));
         } else {
             let depends: string[] = [];
             if (ft.p) {
@@ -498,9 +498,9 @@ export default class ExprContext extends Context {
         let b = p.length >= pl && p.length <= pt.length;
         if (b) {
             for (let j = 0; j < r.length; j++) { /// 参数类型比较
-                b = r[j] === "undefined" || p[j] === "undefined" || p[j] === "null" ||
-                r[j] === p[j] || r[j] === "expr" && p[j] === "string" || r[j] === "array" &&
-                r[j] === getValueType(p[j]) || r[j] === "object" && r[j] === getValueType(p[j]);
+                b = r[j] === "undefined" || p[j] === "undefined" || p[j] === "null" || r[j] === p[j] ||
+                    r[j] === getValueType(p[j]) && (r[j] === "array" || r[j] === "object") ||
+                    r[j] === "expr" && p[j] === "string";
                 if (!b) {
                     break;
                 }
