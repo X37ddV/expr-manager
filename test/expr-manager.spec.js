@@ -270,13 +270,29 @@ describe("接口测试", function() {
                         p: ["array", "object"],
                         r: "boolean",
                     }
+                },
+                "number": {
+                    Test: {
+                        fn: function(context, source, arr, obj) {
+                            return context.genValue(1);
+                        },
+                        p: ["array", "object"],
+                        r: "number",
+                    }
                 }
             });
             ExprManager.locale.defineFunction(ExprManager.locale.localeName, {
-                "Test": { fn: "测试函数", p: ["数值", "对象"], r: "返回真" }
+                "Test": { fn: "测试函数", p: ["数值", "对象"], r: "返回真" },
+                "number.Test": { fn: "测试函数", p: ["数值", "对象"], r: "返回1" }
             });
             var v = exprManager.calc("Test([], {})");
             expect(v.toValue()).toEqual(true);
+            var v = exprManager.calc("1.Test([], {})");
+            expect(v.toValue()).toEqual(1);
+            var v = exprManager.calc("a.Test([], {})", { a: true });
+            expect(v.errorMsg).toEqual("boolean 没有名称为 Test 的方法或参数不匹配");
+            var v = exprManager.calc("a.Test(a, a)", { a: true });
+            expect(v.errorMsg).toEqual("boolean 没有名称为 Test 的方法或参数不匹配");
             var groups = exprManager.getFunction();
             expect(groups).toBeDefined();
             for (var i in groups) {

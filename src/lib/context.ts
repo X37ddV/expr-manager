@@ -542,18 +542,16 @@ export default class ExprContext extends Context {
         if (getValueType(fn) === "array") {
             let t = "";
             for (const item of fn) {
-                if (r === null) {
+                if (t === "") {
                     t = item.r;
-                } else if (item.r !== type) {
-                    t = "undefined";
+                } else if (item.r !== t) {
+                    t = "";
                     break;
                 }
             }
-            if (t !== "") {
-                r = {
-                    r: t,
-                };
-            }
+            r = {
+                r: t || "undefined",
+            };
         } else if (fn !== null) {
             r = {
                 e: fn.e,

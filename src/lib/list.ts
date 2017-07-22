@@ -61,89 +61,87 @@ export default class ExprList {
     public _doGetMode(updateList: IUpdateItem[], l: IExprItem) {
         const modeList: IModeItem[] = [];
         /// 计算字段表达式的依赖更新模式
-        if (updateList && l && l.dependencies) {
-            for (const updateItem of updateList) {
-                for (const dependency of l.dependencies) {
-                    if (updateItem.fullName === dependency) {
-                        let commonAncestry = true;
-                        let isSubChange = false;
-                        /// 找到依赖的变化字段
-                        if (updateItem.type === "update") {
-                            /// 如果该字段是更新
-                            let isDependEntity = false; /// 表达式是否依赖了实体
-                            for (const depend of l.dependencies) {
-                                isDependEntity = (updateItem.fullName.indexOf(depend + ".") === 0);
-                                if (isDependEntity) {
-                                    break;
-                                }
+        for (const updateItem of updateList) {
+            for (const dependency of l.dependencies) {
+                if (updateItem.fullName === dependency) {
+                    let commonAncestry = true;
+                    let isSubChange = false;
+                    /// 找到依赖的变化字段
+                    if (updateItem.type === "update") {
+                        /// 如果该字段是更新
+                        let isDependEntity = false; /// 表达式是否依赖了实体
+                        for (const depend of l.dependencies) {
+                            isDependEntity = (updateItem.fullName.indexOf(depend + ".") === 0);
+                            if (isDependEntity) {
+                                break;
                             }
-                            if (updateItem.entityName === l.entityName) {
-                                /// 同级更新
-                                if (isDependEntity) {
-                                    modeList.push({ updateMode: "All" });
-                                } else {
-                                    modeList.push({ updateMode: "Single" });
-                                }
-                            } else if (l.entityName.indexOf(updateItem.entityName + ".") === 0) {
-                                /// 上级更新
-                                if (isDependEntity) {
-                                    modeList.push({ updateMode: "All" });
-                                } else {
-                                    modeList.push({
-                                        updateMode: "BranchUpdate",
-                                        updateTarget: this._doGetUpdateTarget(updateItem.entityName, l.entityName),
-                                    });
-                                }
-                            } else if (updateItem.entityName.indexOf(l.entityName + ".") === 0) {
-                                /// 下级更新
-                                modeList.push({ updateMode: "Single" });
-                                isSubChange = true;
+                        }
+                        if (updateItem.entityName === l.entityName) {
+                            /// 同级更新
+                            if (isDependEntity) {
+                                modeList.push({ updateMode: "All" });
                             } else {
-                                /// 外部更新
-                                modeList.push({ updateMode: "All" });
-                                commonAncestry = false;
+                                modeList.push({ updateMode: "Single" });
                             }
-                        } else if (updateItem.type === "remove") {
-                            /// 如果该记录是删除
-                            if (updateItem.entityName === l.entityName) {
-                                /// 同级删除
+                        } else if (l.entityName.indexOf(updateItem.entityName + ".") === 0) {
+                            /// 上级更新
+                            if (isDependEntity) {
                                 modeList.push({ updateMode: "All" });
-                            } else if (l.entityName.indexOf(updateItem.entityName + ".") === 0) {
-                                /// 上级删除
+                            } else {
                                 modeList.push({
-                                    updateMode: "BranchDelete",
+                                    updateMode: "BranchUpdate",
                                     updateTarget: this._doGetUpdateTarget(updateItem.entityName, l.entityName),
                                 });
-                            } else if (updateItem.entityName.indexOf(l.entityName + ".") === 0) {
-                                /// 下级删除
-                                modeList.push({ updateMode: "Single" });
-                                isSubChange = true;
-                            } else {
-                                /// 外部删除
-                                modeList.push({ updateMode: "All" });
-                                commonAncestry = false;
                             }
+                        } else if (updateItem.entityName.indexOf(l.entityName + ".") === 0) {
+                            /// 下级更新
+                            modeList.push({ updateMode: "Single" });
+                            isSubChange = true;
                         } else {
-                            /// 如果该记录是添加或加载
-                            if (updateItem.entityName === l.entityName) {
-                                /// 同级添加
-                                modeList.push({ updateMode: "All" });
-                            } else if (l.entityName.indexOf(updateItem.entityName + ".") === 0) {
-                                /// 上级添加
-                                modeList.push({ updateMode: "All" });
-                            } else if (updateItem.entityName.indexOf(l.entityName + ".") === 0) {
-                                /// 下级添加
-                                modeList.push({ updateMode: "Single" });
-                                isSubChange = true;
-                            } else {
-                                /// 外部添加
-                                modeList.push({ updateMode: "All" });
-                                commonAncestry = false;
-                            }
+                            /// 外部更新
+                            modeList.push({ updateMode: "All" });
+                            commonAncestry = false;
                         }
-                        if (commonAncestry && !isSubChange) {
-                            modeList.push({ updateMode: updateItem.updateMode, updateTarget: updateItem.updateTarget });
+                    } else if (updateItem.type === "remove") {
+                        /// 如果该记录是删除
+                        if (updateItem.entityName === l.entityName) {
+                            /// 同级删除
+                            modeList.push({ updateMode: "All" });
+                        } else if (l.entityName.indexOf(updateItem.entityName + ".") === 0) {
+                            /// 上级删除
+                            modeList.push({
+                                updateMode: "BranchDelete",
+                                updateTarget: this._doGetUpdateTarget(updateItem.entityName, l.entityName),
+                            });
+                        } else if (updateItem.entityName.indexOf(l.entityName + ".") === 0) {
+                            /// 下级删除
+                            modeList.push({ updateMode: "Single" });
+                            isSubChange = true;
+                        } else {
+                            /// 外部删除
+                            modeList.push({ updateMode: "All" });
+                            commonAncestry = false;
                         }
+                    } else {
+                        /// 如果该记录是添加或加载
+                        if (updateItem.entityName === l.entityName) {
+                            /// 同级添加
+                            modeList.push({ updateMode: "All" });
+                        } else if (l.entityName.indexOf(updateItem.entityName + ".") === 0) {
+                            /// 上级添加
+                            modeList.push({ updateMode: "All" });
+                        } else if (updateItem.entityName.indexOf(l.entityName + ".") === 0) {
+                            /// 下级添加
+                            modeList.push({ updateMode: "Single" });
+                            isSubChange = true;
+                        } else {
+                            /// 外部添加
+                            modeList.push({ updateMode: "All" });
+                            commonAncestry = false;
+                        }
+                    }
+                    if (commonAncestry && !isSubChange) {
+                        modeList.push({ updateMode: updateItem.updateMode, updateTarget: updateItem.updateTarget });
                     }
                 }
             }

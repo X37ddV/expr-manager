@@ -3967,19 +3967,17 @@ var ExprContext = (function (_super) {
             var t = "";
             for (var _i = 0, fn_1 = fn; _i < fn_1.length; _i++) {
                 var item = fn_1[_i];
-                if (r === null) {
+                if (t === "") {
                     t = item.r;
                 }
-                else if (item.r !== type) {
-                    t = "undefined";
+                else if (item.r !== t) {
+                    t = "";
                     break;
                 }
             }
-            if (t !== "") {
-                r = {
-                    r: t,
-                };
-            }
+            r = {
+                r: t || "undefined",
+            };
         }
         else if (fn !== null) {
             r = {
@@ -4106,105 +4104,103 @@ var ExprList = (function () {
     ExprList.prototype._doGetMode = function (updateList, l) {
         var modeList = [];
        
-        if (updateList && l && l.dependencies) {
-            for (var _i = 0, updateList_1 = updateList; _i < updateList_1.length; _i++) {
-                var updateItem = updateList_1[_i];
-                for (var _a = 0, _b = l.dependencies; _a < _b.length; _a++) {
-                    var dependency = _b[_a];
-                    if (updateItem.fullName === dependency) {
-                        var commonAncestry = true;
-                        var isSubChange = false;
+        for (var _i = 0, updateList_1 = updateList; _i < updateList_1.length; _i++) {
+            var updateItem = updateList_1[_i];
+            for (var _a = 0, _b = l.dependencies; _a < _b.length; _a++) {
+                var dependency = _b[_a];
+                if (updateItem.fullName === dependency) {
+                    var commonAncestry = true;
+                    var isSubChange = false;
+                   
+                    if (updateItem.type === "update") {
                        
-                        if (updateItem.type === "update") {
-                           
-                            var isDependEntity = false;
-                            for (var _c = 0, _d = l.dependencies; _c < _d.length; _c++) {
-                                var depend = _d[_c];
-                                isDependEntity = (updateItem.fullName.indexOf(depend + ".") === 0);
-                                if (isDependEntity) {
-                                    break;
-                                }
-                            }
-                            if (updateItem.entityName === l.entityName) {
-                               
-                                if (isDependEntity) {
-                                    modeList.push({ updateMode: "All" });
-                                }
-                                else {
-                                    modeList.push({ updateMode: "Single" });
-                                }
-                            }
-                            else if (l.entityName.indexOf(updateItem.entityName + ".") === 0) {
-                               
-                                if (isDependEntity) {
-                                    modeList.push({ updateMode: "All" });
-                                }
-                                else {
-                                    modeList.push({
-                                        updateMode: "BranchUpdate",
-                                        updateTarget: this._doGetUpdateTarget(updateItem.entityName, l.entityName),
-                                    });
-                                }
-                            }
-                            else if (updateItem.entityName.indexOf(l.entityName + ".") === 0) {
-                               
-                                modeList.push({ updateMode: "Single" });
-                                isSubChange = true;
-                            }
-                            else {
-                               
-                                modeList.push({ updateMode: "All" });
-                                commonAncestry = false;
+                        var isDependEntity = false;
+                        for (var _c = 0, _d = l.dependencies; _c < _d.length; _c++) {
+                            var depend = _d[_c];
+                            isDependEntity = (updateItem.fullName.indexOf(depend + ".") === 0);
+                            if (isDependEntity) {
+                                break;
                             }
                         }
-                        else if (updateItem.type === "remove") {
+                        if (updateItem.entityName === l.entityName) {
                            
-                            if (updateItem.entityName === l.entityName) {
-                               
+                            if (isDependEntity) {
                                 modeList.push({ updateMode: "All" });
                             }
-                            else if (l.entityName.indexOf(updateItem.entityName + ".") === 0) {
-                               
+                            else {
+                                modeList.push({ updateMode: "Single" });
+                            }
+                        }
+                        else if (l.entityName.indexOf(updateItem.entityName + ".") === 0) {
+                           
+                            if (isDependEntity) {
+                                modeList.push({ updateMode: "All" });
+                            }
+                            else {
                                 modeList.push({
-                                    updateMode: "BranchDelete",
+                                    updateMode: "BranchUpdate",
                                     updateTarget: this._doGetUpdateTarget(updateItem.entityName, l.entityName),
                                 });
                             }
-                            else if (updateItem.entityName.indexOf(l.entityName + ".") === 0) {
-                               
-                                modeList.push({ updateMode: "Single" });
-                                isSubChange = true;
-                            }
-                            else {
-                               
-                                modeList.push({ updateMode: "All" });
-                                commonAncestry = false;
-                            }
+                        }
+                        else if (updateItem.entityName.indexOf(l.entityName + ".") === 0) {
+                           
+                            modeList.push({ updateMode: "Single" });
+                            isSubChange = true;
                         }
                         else {
                            
-                            if (updateItem.entityName === l.entityName) {
-                               
-                                modeList.push({ updateMode: "All" });
-                            }
-                            else if (l.entityName.indexOf(updateItem.entityName + ".") === 0) {
-                               
-                                modeList.push({ updateMode: "All" });
-                            }
-                            else if (updateItem.entityName.indexOf(l.entityName + ".") === 0) {
-                               
-                                modeList.push({ updateMode: "Single" });
-                                isSubChange = true;
-                            }
-                            else {
-                               
-                                modeList.push({ updateMode: "All" });
-                                commonAncestry = false;
-                            }
+                            modeList.push({ updateMode: "All" });
+                            commonAncestry = false;
                         }
-                        if (commonAncestry && !isSubChange) {
-                            modeList.push({ updateMode: updateItem.updateMode, updateTarget: updateItem.updateTarget });
+                    }
+                    else if (updateItem.type === "remove") {
+                       
+                        if (updateItem.entityName === l.entityName) {
+                           
+                            modeList.push({ updateMode: "All" });
                         }
+                        else if (l.entityName.indexOf(updateItem.entityName + ".") === 0) {
+                           
+                            modeList.push({
+                                updateMode: "BranchDelete",
+                                updateTarget: this._doGetUpdateTarget(updateItem.entityName, l.entityName),
+                            });
+                        }
+                        else if (updateItem.entityName.indexOf(l.entityName + ".") === 0) {
+                           
+                            modeList.push({ updateMode: "Single" });
+                            isSubChange = true;
+                        }
+                        else {
+                           
+                            modeList.push({ updateMode: "All" });
+                            commonAncestry = false;
+                        }
+                    }
+                    else {
+                       
+                        if (updateItem.entityName === l.entityName) {
+                           
+                            modeList.push({ updateMode: "All" });
+                        }
+                        else if (l.entityName.indexOf(updateItem.entityName + ".") === 0) {
+                           
+                            modeList.push({ updateMode: "All" });
+                        }
+                        else if (updateItem.entityName.indexOf(l.entityName + ".") === 0) {
+                           
+                            modeList.push({ updateMode: "Single" });
+                            isSubChange = true;
+                        }
+                        else {
+                           
+                            modeList.push({ updateMode: "All" });
+                            commonAncestry = false;
+                        }
+                    }
+                    if (commonAncestry && !isSubChange) {
+                        modeList.push({ updateMode: updateItem.updateMode, updateTarget: updateItem.updateTarget });
                     }
                 }
             }
