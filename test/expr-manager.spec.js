@@ -1,4 +1,4 @@
-describe("表达式测试", function () {
+describe("表达式测试", function() {
     var exprManager = new window.ExprManager();
     // 简单计算
     for (var i = 0; i < window.demoExprCalc.length; i++) {
@@ -7,8 +7,8 @@ describe("表达式测试", function () {
             var expr = demo.exprs[j][0] || ""; // 表达式
             var exprExpectedValue = demo.exprs[j][1] || ""; // 预期值
             var exprExpectedValueError = demo.exprs[j][2] || ""; // 预期值错误
-            var itTitle = "[" + i  + "-" + j + "]:" + demo.title + ":" + expr;
-            it("Value" + itTitle, (function (expr, exprData, exprExpectedValue, exprExpectedValueError) {
+            var itTitle = "[" + i + "-" + j + "]:" + demo.title + ":" + expr;
+            it("Value" + itTitle, (function(expr, exprData, exprExpectedValue, exprExpectedValueError) {
                 return function() {
                     var val = exprManager.calc(expr, exprData || {});
                     var exprActualValue = window.JSON.stringify(val.toValue());
@@ -32,8 +32,8 @@ describe("表达式测试", function () {
             var exprExpectedValueError = demo.exprs[j][2] || ""; // 预期值错误
             var exprExpectedDepen = demo.exprs[j][3] || ""; // 预期依赖
             var exprExpectedDepenError = demo.exprs[j][4] || exprExpectedValueError; // 预期依赖错误
-            var itTitle = "[" + i  + "-" + j + "]:" + demo.title + ":" + expr;
-            it("Value" + itTitle, (function (expr, entityName, exprExpectedValue, exprExpectedValueError) {
+            var itTitle = "[" + i + "-" + j + "]:" + demo.title + ":" + expr;
+            it("Value" + itTitle, (function(expr, entityName, exprExpectedValue, exprExpectedValueError) {
                 return function() {
                     var val = exprManager.calcExpr(expr, entityName || "E1", window.dataCursor, {
                         FieldDisplayName: "",
@@ -49,7 +49,7 @@ describe("表达式测试", function () {
                     }
                 }
             })(expr, demo.entityName, exprExpectedValue, exprExpectedValueError));
-            it("Depen" + itTitle, (function (expr, entityName, exprExpectedDepen, exprExpectedDepenError) {
+            it("Depen" + itTitle, (function(expr, entityName, exprExpectedDepen, exprExpectedDepenError) {
                 return function() {
                     var valType = exprManager.calcDependencies(expr, entityName || "E1");
                     var exprActualDepen = (valType.dependencies && valType.dependencies.join("|")) || "";
@@ -65,7 +65,7 @@ describe("表达式测试", function () {
     }
 });
 
-describe("依赖关系测试", function () {
+describe("依赖关系测试", function() {
     var exprManager = new window.ExprManager();
     exprManager.init(window.data, window.dataContext, window.context);
     for (var m = 0; m < window.demoDependencies.length; m++) {
@@ -91,14 +91,14 @@ describe("依赖关系测试", function () {
                     pList.push(list[p].fullName);
                 }
                 it(demoDepend.title, (function(pList, c) {
-                    return function () {
+                    return function() {
                         expect(pList.join("|")).toEqual(c.r);
                     }
                 })(pList, c));
             }
         } else {
-            it(demoDepend.title, (function(msg){
-                return function () {
+            it(demoDepend.title, (function(msg) {
+                return function() {
                     expect(msg).toEqual("");
                 }
             })(msg));
@@ -106,20 +106,20 @@ describe("依赖关系测试", function () {
     }
 });
 
-describe("接口测试", function () {
+describe("接口测试", function() {
     // 准备测试数据
     var data = {
         Table: [{
             Field0: 0,
             Field1: "Hello",
-            Field2: {key: "i", value: 0},
+            Field2: { key: "i", value: 0 },
             Field3: [0, 1],
             Field4: new Date(),
             Field5: false,
             SubTable: [{
                 Field0: 0,
                 Field1: "Wrold",
-                Field2: {key: "j", value: 10},
+                Field2: { key: "j", value: 10 },
                 Field3: [2, 3],
                 Field4: new Date(),
                 Field5: true
@@ -159,8 +159,8 @@ describe("接口测试", function () {
     var exprManager = new window.ExprManager();
     exprManager.init(data, dataContext);
 
-    it("表达式列表", (function(exprManager){
-        return function () {
+    it("表达式列表", (function(exprManager) {
+        return function() {
             var doCalc = function(type, info) {
 
             };
@@ -259,16 +259,21 @@ describe("接口测试", function () {
         }
     })(exprManager));
 
-    it("自定义函数", (function(exprManager){
-        return function () {
-            var funcs = exprManager.getFunction();
-            expect(funcs).toBeDefined();
-            // TODO:
+    it("自定义函数", (function(exprManager) {
+        return function() {
+            var groups = exprManager.getFunction();
+            expect(groups).toBeDefined();
+            for (var i in groups) {
+                var funcs = groups[i];
+                for (var j in funcs) {
+                    expect(funcs[j].getLocale()).toBeDefined();
+                }
+            }
         }
     })(exprManager));
 
-    it("多语言定义", (function(){
-        return function () {
+    it("多语言定义", (function() {
+        return function() {
             ExprManager.locale.defineLocale('zh-TW', null);
             ExprManager.locale.defineFunction('zh-TW', null);
             expect(ExprManager.locale.getLocale('zh-TW')).toBeUndefined();
@@ -277,8 +282,8 @@ describe("接口测试", function () {
         }
     })());
 
-    it("简单计算", (function(){
-        return function () {
+    it("简单计算", (function() {
+        return function() {
             var v = exprManager.calc("1+1");
             expect(v.toValue()).toEqual(2);
             v = exprManager.calc("[null, 1].Distinct('a')");

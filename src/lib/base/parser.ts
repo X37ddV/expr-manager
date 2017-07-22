@@ -222,12 +222,10 @@ export default class Parser {
                                 t.parent.childs[0] !== t) { /// [23,45,6,32][2,4,5] 要报错
                                 msg = format(locale.getLocale().MSG_EP_SYNTAX_SUB, ",");
                             }
-                            if (t.childs[0].childs) {
-                                for (const item of t.childs[0].childs) {
-                                    if (item.tokenType === "TK_COLON") { /// [2,"ds",a:"tt",564] 要报错
-                                        msg = format(locale.getLocale().MSG_EP_SYNTAX_A, ":");
-                                        break;
-                                    }
+                            for (const item of t.childs[0].childs) {
+                                if (item.tokenType === "TK_COLON") { /// [2,"ds",a:"tt",564] 要报错
+                                    msg = format(locale.getLocale().MSG_EP_SYNTAX_A, ":");
+                                    break;
                                 }
                             }
                         }
@@ -235,20 +233,20 @@ export default class Parser {
                     break;
                 // - 大括号检查
                 case "VTK_OBJECT": /// 检查"{}"中是否只包含0到多个x:a格式字符串，如"{}","{x:'2'}","{x:'2',y:423}"
-                    let y = false;
+                    let y;
                     if (t.childs && (t.childs.length === 0 || hasToken("TK_COLON,VTK_COMMA", t.childs[0].tokenType))) {
                         if (t.childs.length > 0 && t.childs[0].tokenType === "VTK_COMMA") { /// 第一个字节点为","
-                            if (t.childs[0].childs) {
-                                for (const item of t.childs[0].childs) {
-                                    y = item.tokenType === "TK_COLON"; /// ","的每个子节点均为"x:a"格式
-                                    if (!y) {
-                                        break;
-                                    }
+                            for (const item of t.childs[0].childs) {
+                                y = item.tokenType === "TK_COLON"; /// ","的每个子节点均为"x:a"格式
+                                if (!y) {
+                                    break;
                                 }
                             }
                         } else { /// 空括号"{}"或只有一个":"子节点如"{a:2}"
                             y = true;
                         }
+                    } else {
+                        y = false;
                     }
                     if (!y) {
                         msg = locale.getLocale().MSG_EP_SYNTAX_O;

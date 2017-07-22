@@ -7255,14 +7255,9 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                 <span class="hljs-keyword">var</span> parentObj = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>;
                 <span class="hljs-keyword">if</span> (source === <span class="hljs-literal">null</span>) {
                     entity = <span class="hljs-keyword">this</span>.genEntityInfo(<span class="hljs-keyword">this</span>.getPropertyName(<span class="hljs-keyword">this</span>.exprCurrent.getEntityName(pIndex), name));
-                    <span class="hljs-keyword">if</span> (!entity) {
-                        r = <span class="hljs-keyword">this</span>.genErrorValue(format(locale.getLocale().MSG_EC_PROP_N, name));
-                    }
-                    <span class="hljs-keyword">else</span> {
-                        value = (entity.field !== <span class="hljs-string">""</span> || name === <span class="hljs-string">""</span>) ?
-                            <span class="hljs-keyword">this</span>.getEntityData(entity.name, pIndex) :
-                            <span class="hljs-keyword">this</span>.getEntityData(<span class="hljs-keyword">this</span>.getParentName(entity.name), pIndex);
-                    }
+                    value = (entity.field !== <span class="hljs-string">""</span> || name === <span class="hljs-string">""</span>) ?
+                        <span class="hljs-keyword">this</span>.getEntityData(entity.name, pIndex) :
+                        <span class="hljs-keyword">this</span>.getEntityData(<span class="hljs-keyword">this</span>.getParentName(entity.name), pIndex);
                     parentObj = <span class="hljs-literal">null</span>;
                 }
                 <span class="hljs-keyword">else</span> {

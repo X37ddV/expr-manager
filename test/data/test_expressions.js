@@ -45,6 +45,18 @@ var exprDataCalc = {
     title: "DataCalc基于实体",
     exprs: [
         ['$C.userId + ""', '"admin"'],
+        ['PN1', 'null', '', 'E1.PN1'],
+        ['PN2', 'null', '', 'E1.PN2'],
+        ['PN3', 'null', '', 'E1.PN3'],
+        ['PN4', 'null', '', 'E1.PN4'],
+        ['PN5', 'null', '', 'E1.PN5'],
+        ['PN6', 'null', '', 'E1.PN6'],
+        ['PU1', 'null', '', 'E1.PU1'],
+        ['PU2', 'null', '', 'E1.PU2'],
+        ['PU3', 'null', '', 'E1.PU3'],
+        ['PU4', 'null', '', 'E1.PU4'],
+        ['PU5', 'null', '', 'E1.PU5'],
+        ['PU6', 'null', '', 'E1.PU6'],
         //子实体、实体，单条数据
         ['Entity1.ID', 'undefined', 'array 无法做属性访问操作'],
         ['Entity1.Sum("1/PN2")', 'undefined', 'null 不能作为除数使用', 'E1.Entity1|E1.Entity1.PN2'],
@@ -1453,7 +1465,9 @@ var exprCalcData = {
         ['FieldName()', 'null'],
         ['FieldValue()', 'null'],
         ['FieldDisplayName()', 'null'],
-        ['Parent()', 'null', '根实体对象不能调用 Parent 方法'],
+        ['Parent()', 'undefined', '根实体对象不能调用 Parent 方法'],
+        ['{1}', 'undefined', '对象书写格式不正确'],
+        ['{1*2}', 'undefined', '对象书写格式不正确'],
     ]
 };
 

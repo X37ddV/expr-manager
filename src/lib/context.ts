@@ -228,13 +228,9 @@ export default class ExprContext extends Context {
                 let parentObj;
                 if (source === null) { /// P1 a $0
                     entity = this.genEntityInfo(this.getPropertyName(this.exprCurrent.getEntityName(pIndex), name));
-                    if (!entity) {
-                        r = this.genErrorValue(format(locale.getLocale().MSG_EC_PROP_N, name));
-                    } else {
-                        value = (entity.field !== "" || name === "") ?
-                            this.getEntityData(entity.name, pIndex) : /// name为当前信息默认实体E1的属性，如：P1 或name==$0,$1...
-                            this.getEntityData(this.getParentName(entity.name), pIndex); /// name为当前信息默认实体E1的子实体,Entity1
-                    }
+                    value = (entity.field !== "" || name === "") ?
+                        this.getEntityData(entity.name, pIndex) : /// name为当前信息默认实体E1的属性，如：P1 或name==$0,$1...
+                        this.getEntityData(this.getParentName(entity.name), pIndex); /// name为当前信息默认实体E1的子实体,Entity1
                     parentObj = null;
                 } else {
                     value = source.toValue();
@@ -251,30 +247,19 @@ export default class ExprContext extends Context {
                     }
                 }
                 if (!r) {
-                    if (value) {
-                        /// source==null时，$0,$1...被视为特殊的访问标记，并不是取对象属性，而是取整个对象
-                        if (!(source === null && name === "")) {
-                            value = value[name];
+                    /// source==null时，$0,$1...被视为特殊的访问标记，并不是取对象属性，而是取整个对象
+                    if (value && !(source === null && name === "")) {
+                        value = value[name];
+                    }
+                    if (value === undefined) { /// 数据中不包含name属性值，但上下文中包含name的类型定义
+                        value = null;
+                    }
+                    r = this.genValue(value, null, entity, "", parentObj);
+                    if (r && r.type === "array" && r.entity) {
+                        r.entity.map = [];
+                        for (let i = 0; i < value.length; i++) {
+                            r.entity.map.push(i); /// map存放该实体数组有效的访问下标
                         }
-                        if (value === undefined) { /// 数据中不包含name属性值，但上下文中包含name的类型定义
-                            value = null;
-                            if (entity) { /// 给value赋值为entity.type类型的默认值
-                                if (entity.type === "object") {
-                                    value = {};
-                                } else if (entity.type === "array") {
-                                    value = [];
-                                }
-                            }
-                        }
-                        r = this.genValue(value, null, entity, "", parentObj);
-                        if (r && r.type === "array" && r.entity) {
-                            r.entity.map = [];
-                            for (let i = 0; i < value.length; i++) {
-                                r.entity.map.push(i); /// map存放该实体数组有效的访问下标
-                            }
-                        }
-                    } else {
-                        r = this.genErrorValue(format(locale.getLocale().MSG_EC_PROP_E, value, name));
                     }
                 }
             } else { /// 当前表达式处于普通数据环境

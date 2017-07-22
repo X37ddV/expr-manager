@@ -3,6 +3,7 @@ import locale from "./lib/base/locale";
 import Type from "./lib/base/type";
 import Value from "./lib/base/value";
 import ExprContext, { IDataCursor, IFunction } from "./lib/context";
+import { IData } from "./lib/current";
 import ExprList, { CalcType, IExprItem } from "./lib/list";
 
 // 表达式管理器
@@ -86,7 +87,7 @@ export default class ExprManager {
         return r;
     }
     // 简单计算
-    public calc(expr: string, data): Value {
+    public calc(expr: string, data: IData): Value {
         return this.exprContext.calcDataExpr(expr, data);
     }
 }

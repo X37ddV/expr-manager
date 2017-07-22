@@ -2294,13 +2294,11 @@ var Parser = (function () {
                                 t.parent.childs[0] !== t) {
                                 msg = format(locale.getLocale().MSG_EP_SYNTAX_SUB, ",");
                             }
-                            if (t.childs[0].childs) {
-                                for (var _i = 0, _a = t.childs[0].childs; _i < _a.length; _i++) {
-                                    var item = _a[_i];
-                                    if (item.tokenType === "TK_COLON") {
-                                        msg = format(locale.getLocale().MSG_EP_SYNTAX_A, ":");
-                                        break;
-                                    }
+                            for (var _i = 0, _a = t.childs[0].childs; _i < _a.length; _i++) {
+                                var item = _a[_i];
+                                if (item.tokenType === "TK_COLON") {
+                                    msg = format(locale.getLocale().MSG_EP_SYNTAX_A, ":");
+                                    break;
                                 }
                             }
                         }
@@ -2308,22 +2306,23 @@ var Parser = (function () {
                     break;
                 // - 大括号检查
                 case "VTK_OBJECT":
-                    var y = false;
+                    var y = void 0;
                     if (t.childs && (t.childs.length === 0 || hasToken("TK_COLON,VTK_COMMA", t.childs[0].tokenType))) {
                         if (t.childs.length > 0 && t.childs[0].tokenType === "VTK_COMMA") {
-                            if (t.childs[0].childs) {
-                                for (var _b = 0, _c = t.childs[0].childs; _b < _c.length; _b++) {
-                                    var item = _c[_b];
-                                    y = item.tokenType === "TK_COLON";
-                                    if (!y) {
-                                        break;
-                                    }
+                            for (var _b = 0, _c = t.childs[0].childs; _b < _c.length; _b++) {
+                                var item = _c[_b];
+                                y = item.tokenType === "TK_COLON";
+                                if (!y) {
+                                    break;
                                 }
                             }
                         }
                         else {
                             y = true;
                         }
+                    }
+                    else {
+                        y = false;
                     }
                     if (!y) {
                         msg = locale.getLocale().MSG_EP_SYNTAX_O;
@@ -3638,14 +3637,9 @@ var ExprContext = (function (_super) {
                 var parentObj = void 0;
                 if (source === null) {
                     entity = this.genEntityInfo(this.getPropertyName(this.exprCurrent.getEntityName(pIndex), name));
-                    if (!entity) {
-                        r = this.genErrorValue(format(locale.getLocale().MSG_EC_PROP_N, name));
-                    }
-                    else {
-                        value = (entity.field !== "" || name === "") ?
-                            this.getEntityData(entity.name, pIndex) :
-                            this.getEntityData(this.getParentName(entity.name), pIndex);
-                    }
+                    value = (entity.field !== "" || name === "") ?
+                        this.getEntityData(entity.name, pIndex) :
+                        this.getEntityData(this.getParentName(entity.name), pIndex);
                     parentObj = null;
                 }
                 else {
@@ -3665,32 +3659,19 @@ var ExprContext = (function (_super) {
                     }
                 }
                 if (!r) {
-                    if (value) {
-                       
-                        if (!(source === null && name === "")) {
-                            value = value[name];
-                        }
-                        if (value === undefined) {
-                            value = null;
-                            if (entity) {
-                                if (entity.type === "object") {
-                                    value = {};
-                                }
-                                else if (entity.type === "array") {
-                                    value = [];
-                                }
-                            }
-                        }
-                        r = this.genValue(value, null, entity, "", parentObj);
-                        if (r && r.type === "array" && r.entity) {
-                            r.entity.map = [];
-                            for (var i = 0; i < value.length; i++) {
-                                r.entity.map.push(i);
-                            }
-                        }
+                   
+                    if (value && !(source === null && name === "")) {
+                        value = value[name];
                     }
-                    else {
-                        r = this.genErrorValue(format(locale.getLocale().MSG_EC_PROP_E, value, name));
+                    if (value === undefined) {
+                        value = null;
+                    }
+                    r = this.genValue(value, null, entity, "", parentObj);
+                    if (r && r.type === "array" && r.entity) {
+                        r.entity.map = [];
+                        for (var i = 0; i < value.length; i++) {
+                            r.entity.map.push(i);
+                        }
                     }
                 }
             }

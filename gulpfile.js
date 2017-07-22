@@ -25,12 +25,7 @@ var rollupBanner =
     "// + **[decimal.js](https://github.com/MikeMcl/decimal.js" +
     " 'An arbitrary-precision Decimal type for JavaScript')** 用于高精度计算<br />\n" +
     "// + **[moment.js](http://momentjs.com" +
-    " 'Parse, validate, manipulate, and display dates in javascript')** 用于日期计算",
-    rollupWarn = function(warning) {
-        if (warning.code !== "UNRESOLVED_IMPORT" && warning.code !== "MISSING_GLOBAL_NAME") {
-            console.log(warning.message + " - [" + warning.code + "]");
-        }
-    };
+    " 'Parse, validate, manipulate, and display dates in javascript')** 用于日期计算";
 var typescriptConfig = {
     target: "es5",
     noImplicitAny: false,
@@ -39,28 +34,28 @@ var typescriptConfig = {
     allowSyntheticDefaultImports: true
 };
 var rollupHideComments = function(options) {
-    if ( options === void 0 ) options = {};
-	return {
-		name: "hidecomments",
-		transformBundle: function transformBundle(code) {
-			return code.replace(/\s\/\/\/\s.*/g, "");
-		}
-	}
+    if (options === void 0) options = {};
+    return {
+        name: "hidecomments",
+        transformBundle: function transformBundle(code) {
+            return code.replace(/\s\/\/\/\s.*/g, "");
+        }
+    }
 };
 var rollupExternalResolve = function(options) {
-    if ( options === void 0 ) options = {};
-	return {
-		name: "externalresolve",
-		transformBundle: function transformBundle(code) {
+    if (options === void 0) options = {};
+    return {
+        name: "externalresolve",
+        transformBundle: function transformBundle(code) {
             for (var key in options) {
                 if (options.hasOwnProperty(key)) {
                     var value = options[key];
                     code = code.replace(RegExp(key, "g"), value);
                 }
             }
-			return code;
-		}
-	}
+            return code;
+        }
+    }
 };
 var karmaStart = function(done, browsers) {
     return new karma.Server({
@@ -83,8 +78,8 @@ var karmaStart = function(done, browsers) {
         coverageReporter: {
             dir: path.join(rootPath, "coverage"),
             reporters: [
-                {type: "html"},
-                {type: "lcov", subdir: "lcov"}
+                { type: "html" },
+                { type: "lcov", subdir: "lcov" }
             ]
         },
         port: 9876,
@@ -101,22 +96,22 @@ var karmaStart = function(done, browsers) {
 
 gulp.task("lint:expr-manager", () =>
     gulp.src(path.join(rootPath, "src", "**", "*.ts"))
-        .pipe(gulpTSLint({
-            formatter: "prose"
-        }))
-        .pipe(gulpTSLint.report({
-            emitError: false
-        }))
+    .pipe(gulpTSLint({
+        formatter: "prose"
+    }))
+    .pipe(gulpTSLint.report({
+        emitError: false
+    }))
 );
 
 gulp.task("lint:example", () =>
     gulp.src(path.join(rootPath, "example", "src", "**", "*.ts"))
-        .pipe(gulpTSLint({
-            formatter: "prose"
-        }))
-        .pipe(gulpTSLint.report({
-            emitError: false
-        }))
+    .pipe(gulpTSLint({
+        formatter: "prose"
+    }))
+    .pipe(gulpTSLint.report({
+        emitError: false
+    }))
 );
 
 gulp.task("build:expr-manager", function() {
@@ -128,19 +123,19 @@ gulp.task("build:expr-manager", function() {
             rollupHideComments(),
         ],
         external: ["decimal.js", "moment"],
-    }).then(function (bundle) {
-      bundle.write({
-        format: "umd",
-        moduleName: "ExprManager",
-        dest: path.join(rootPath, "expr-manager.js"),
-        globals: {
-            "decimal.js": "Decimal",
-            "moment": "moment",
-        },
-        sourceMap: false,
-        banner: rollupBanner,
-        intro: rollupIntro,
-      });
+    }).then(function(bundle) {
+        bundle.write({
+            format: "umd",
+            moduleName: "ExprManager",
+            dest: path.join(rootPath, "expr-manager.js"),
+            globals: {
+                "decimal.js": "Decimal",
+                "moment": "moment",
+            },
+            sourceMap: false,
+            banner: rollupBanner,
+            intro: rollupIntro,
+        });
     })
 });
 
@@ -153,7 +148,7 @@ gulp.task("build:expr-manager:min", function() {
             rollupUglify(),
         ],
         external: ["decimal.js", "moment"],
-    }).then(function (bundle) {
+    }).then(function(bundle) {
         bundle.write({
             format: "umd",
             moduleName: "ExprManager",
@@ -177,7 +172,7 @@ gulp.task("build:expr-manager:locale", function() {
             }),
         ],
         external: ["expr-manager"],
-    }).then(function (bundle) {
+    }).then(function(bundle) {
         bundle.write({
             format: "umd",
             moduleName: "ExprManager.locale",
@@ -203,7 +198,7 @@ gulp.task("build:example", function() {
             rollupTypescript(typescriptConfig)
         ],
         external: ["jquery", "underscore", "underscore.string", "mousetrap", "decimal.js", "moment", "expr-manager"],
-    }).then(function (bundle) {
+    }).then(function(bundle) {
         bundle.write({
             format: "umd",
             dest: path.join(rootPath, "example", "example.js"),
