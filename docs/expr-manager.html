@@ -8418,13 +8418,11 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
                     <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _i = <span class="hljs-number">0</span>, fillList_2 = fillList_1; _i &lt; fillList_2.length; _i++) {
                         <span class="hljs-keyword">var</span> fillItem = fillList_2[_i];
                         <span class="hljs-keyword">var</span> f = <span class="hljs-literal">false</span>;
-                        <span class="hljs-keyword">if</span> (item &amp;&amp; item.dependencies) {
-                            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _a = <span class="hljs-number">0</span>, _b = item.dependencies; _a &lt; _b.length; _a++) {
-                                <span class="hljs-keyword">var</span> dependency = _b[_a];
-                                f = fillItem.fullName === dependency;
-                                <span class="hljs-keyword">if</span> (f) {
-                                    <span class="hljs-keyword">break</span>;
-                                }
+                        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _a = <span class="hljs-number">0</span>, _b = item.dependencies; _a &lt; _b.length; _a++) {
+                            <span class="hljs-keyword">var</span> dependency = _b[_a];
+                            f = fillItem.fullName === dependency;
+                            <span class="hljs-keyword">if</span> (f) {
+                                <span class="hljs-keyword">break</span>;
                             }
                         }
                         <span class="hljs-keyword">if</span> (f) {

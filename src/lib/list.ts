@@ -258,12 +258,10 @@ export default class ExprList {
                 if (!findItem(stack, item)) {
                     for (const fillItem of fillList) {
                         let f = false;
-                        if (item && item.dependencies) {
-                            for (const dependency of item.dependencies) {
-                                f = fillItem.fullName === dependency;
-                                if (f) {
-                                    break;
-                                }
+                        for (const dependency of item.dependencies) {
+                            f = fillItem.fullName === dependency;
+                            if (f) {
+                                break;
                             }
                         }
                         if (f) {

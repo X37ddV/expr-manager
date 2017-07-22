@@ -303,6 +303,18 @@ var test224 = {
     ]
 };
 
+var test225 = {
+    title: "依赖关系测试225",
+    dataSource: {
+        "E1.Entity1.NewEntity1.P1": { expr: "Parent().P1" },
+        "E1.Entity1.P1": { expr: "Parent().P1" },
+        "E1.P1": { expr: "'起点2'" },
+    },
+    testCase: [
+        { cmd: ["update", "E1", "P1"], r: "E1.Entity1.P1|E1.Entity1.NewEntity1.P1" },
+    ]
+};
+
 //var test241 = {
 //    title: "依赖关系测试241RecNo",
 //    dataSource: {
@@ -1182,9 +1194,10 @@ var test601 = {
 };
 
 window.demoDependencies = [test11, test12, test13, test14, test15,
-test21, test22, test23, test24, test221, test222, test223, test224, test231, test232,
-test31, test32, test33, test34, test321, test322, test323, test324,
-test41, test42, test43,
-test50, test51, test52, test53, test54, test55, test56, test57, test58, test59, test591,
-test501, test502, test503, test521, test531, test541, test551, test561, test571, test581, test582, test583, test591, test592, test593,
-test601];
+    test21, test22, test23, test24, test221, test222, test223, test224, test225, test231, test232,
+    test31, test32, test33, test34, test321, test322, test323, test324,
+    test41, test42, test43,
+    test50, test51, test52, test53, test54, test55, test56, test57, test58, test59, test591,
+    test501, test502, test503, test521, test531, test541, test551, test561, test571, test581, test582, test583, test591, test592, test593,
+    test601
+];

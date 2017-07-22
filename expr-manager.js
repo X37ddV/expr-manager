@@ -4323,13 +4323,11 @@ var ExprList = (function () {
                     for (var _i = 0, fillList_2 = fillList_1; _i < fillList_2.length; _i++) {
                         var fillItem = fillList_2[_i];
                         var f = false;
-                        if (item && item.dependencies) {
-                            for (var _a = 0, _b = item.dependencies; _a < _b.length; _a++) {
-                                var dependency = _b[_a];
-                                f = fillItem.fullName === dependency;
-                                if (f) {
-                                    break;
-                                }
+                        for (var _a = 0, _b = item.dependencies; _a < _b.length; _a++) {
+                            var dependency = _b[_a];
+                            f = fillItem.fullName === dependency;
+                            if (f) {
+                                break;
                             }
                         }
                         if (f) {
