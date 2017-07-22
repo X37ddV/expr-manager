@@ -50,7 +50,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <pre><code>expr-manager.js <span class="hljs-number">0.2</span><span class="hljs-number">.2</span>
+              <pre><code>expr-manager.js <span class="hljs-number">0.2</span><span class="hljs-number">.3</span>
 https:<span class="hljs-comment">//github.com/X37ddV/expr-manager</span>
 (c) <span class="hljs-number">2016</span><span class="hljs-number">-2017</span> X37ddV
 Released under the MIT License.
@@ -7532,8 +7532,8 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             <span class="hljs-keyword">var</span> p = fullName.split(<span class="hljs-string">"."</span>);
             <span class="hljs-keyword">var</span> x = p[<span class="hljs-number">0</span>];
             <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.dataContext;
-            <span class="hljs-keyword">var</span> t = c[x];
-            <span class="hljs-keyword">if</span> (t) {
+            <span class="hljs-keyword">if</span> (c &amp;&amp; x &amp;&amp; c[x]) {
+                <span class="hljs-keyword">var</span> t = c[x];
                 name.push(x);
                 <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">1</span>; i &lt; p.length; i++) {
                     x = p[i];
@@ -8779,6 +8779,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             
             <div class="content"><div class='highlight'><pre>    ExprManager.prototype.calcExpr = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">expr, entityName, dataCursor, field</span>) </span>{
        
+        dataCursor = dataCursor || {};
         <span class="hljs-keyword">this</span>.exprContext.setDataCursor(dataCursor);
         <span class="hljs-keyword">if</span> (field) {
             <span class="hljs-keyword">this</span>.exprContext.pushContextVariables(field);

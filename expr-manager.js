@@ -1,4 +1,4 @@
-//     expr-manager.js 0.2.2
+//     expr-manager.js 0.2.3
 //     https://github.com/X37ddV/expr-manager
 //     (c) 2016-2017 X37ddV
 //     Released under the MIT License.
@@ -4492,6 +4492,7 @@ var ExprManager = (function () {
     // 高级计算
     ExprManager.prototype.calcExpr = function (expr, entityName, dataCursor, field) {
        
+        dataCursor = dataCursor || {};
         this.exprContext.setDataCursor(dataCursor);
         if (field) {
             this.exprContext.pushContextVariables(field);

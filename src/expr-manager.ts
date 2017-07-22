@@ -76,6 +76,7 @@ export default class ExprManager {
     // 高级计算
     public calcExpr(expr: string, entityName: string, dataCursor: IDataCursor, field): Value {
         /// field = {FieldDisplayName: "", FieldName: "", FieldValue: ""}
+        dataCursor = dataCursor || {};
         this.exprContext.setDataCursor(dataCursor);
         if (field) {
             this.exprContext.pushContextVariables(field);

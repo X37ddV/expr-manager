@@ -12,6 +12,6 @@ var exprManager = new ExprManager();
 exprManager.init({}, {
     E1: {}
 });
-var v = exprManager.calcExpr("E1", '');
+var v = exprManager.calcExpr("E1");
 
 console.log(v.errorMsg ? v.errorMsg : JSON.stringify(v.toValue()));
