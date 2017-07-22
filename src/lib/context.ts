@@ -228,10 +228,14 @@ export default class ExprContext extends Context {
                 let parentObj;
                 if (source === null) { /// P1 a $0
                     entity = this.genEntityInfo(this.getPropertyName(this.exprCurrent.getEntityName(pIndex), name));
-                    value = (entity.field !== "" || name === "") ?
-                        this.getEntityData(entity.name, pIndex) : /// name为当前信息默认实体E1的属性，如：P1 或name==$0,$1...
-                        this.getEntityData(this.getParentName(entity.name), pIndex); /// name为当前信息默认实体E1的子实体,Entity1
-                    parentObj = null;
+                    if (!entity) {
+                        r = this.genErrorValue(format(locale.getLocale().MSG_EC_PROP_N, name));
+                    } else {
+                        value = (entity.field !== "" || name === "") ?
+                            this.getEntityData(entity.name, pIndex) : /// name为当前信息默认实体E1的属性，如：P1 或name==$0,$1...
+                            this.getEntityData(this.getParentName(entity.name), pIndex); /// name为当前信息默认实体E1的子实体,Entity1
+                        parentObj = null;
+                    }
                 } else {
                     value = source.toValue();
                     if (source.entity &&
@@ -405,32 +409,26 @@ export default class ExprContext extends Context {
     public getParentValue(source): Value {
         let r: Value;
         if (this.exprCurrent.isEntityData()) {
-            let entity;
+            let entityName: string;
             if (source === null) { /// Parent()
-                entity = this.exprCurrent.getEntityName();
+                entityName = this.exprCurrent.getEntityName();
             } else if (source.entity && source.entity.field === "") {
                 if (source.parentObj && this.getParentName(source.entity.fullName)) {
                     r = source.parentObj; /// Entity1[1].NewEntity1[2].Parent()
                 } else {
-                    entity = source.entity.fullName; /// Root().E1.Sum("Entity1[0].Parent().ID")
+                    entityName = source.entity.fullName; /// Root().E1.Sum("Entity1[0].Parent().ID")
                 }
             } else { /// {x:1}.Parent()
                 r = this.genErrorValue(format(locale.getLocale().MSG_EC_FUNC_E, "Parent"));
             }
-            if (!r) {
-                entity = this.genEntityInfo(this.getParentName(entity), "object");
-                if (entity.name) {
-                    entity.recNo = this.exprCurrent.getEntityDataCursor(entity.name);
-                    const value = this.getEntityData(entity.name); /// 取父实体对象
-                    r = this.genValue(value, undefined, entity);
-                } else {
-                    r = this.genErrorValue(format(locale.getLocale().MSG_EC_FUNC_R, "Parent"));
-                }
+            if (!r && entityName) {
+                const entity = this.genEntityInfo(this.getParentName(entityName), "object");
+                entity.recNo = this.exprCurrent.getEntityDataCursor(entity.name);
+                const value = this.getEntityData(entity.name); /// 取父实体对象
+                r = this.genValue(value, undefined, entity);
             }
-        } else {
-            r = this.genValue(null);
         }
-        return r;
+        return r ? r : this.genValue(null);
     }
     // 获取实体数据，根据游标索引
     public getEntityData(entityName, index?) {
@@ -453,14 +451,8 @@ export default class ExprContext extends Context {
     // 获取父名称
     public getParentName(name) {
         const p = name.split(".");
-        let r;
-        if (p.length > 0) {
-            p.pop();
-            r = p.join(".");
-        } else {
-            r = "";
-        }
-        return r;
+        p.pop();
+        return p.join(".");
     }
     // 获取实体属性全名称
     public getPropertyName(name, prop) {

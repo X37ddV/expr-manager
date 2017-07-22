@@ -1468,6 +1468,8 @@ var exprCalcData = {
         ['Parent()', 'undefined', '根实体对象不能调用 Parent 方法'],
         ['{1}', 'undefined', '对象书写格式不正确'],
         ['{1*2}', 'undefined', '对象书写格式不正确'],
+        ['[{}].Sum("$0.Parent()")', 'null'],
+        ['[{}].Sum("$0.RecNo()")', '-1']
     ]
 };
 

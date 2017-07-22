@@ -290,6 +290,16 @@ describe("接口测试", function() {
             expect(v.errorMsg).toEqual("null 无法获取属性: a");
             var val = exprManager.calcExpr("1+1", "E1", window.dataCursor);
             expect(val.toValue()).toEqual(2);
+            var val = exprManager.calcExpr("Field0", "Table", {
+                "Table": -1,
+                "Table.SubTable": -1
+            });
+            expect(val.toValue()).toEqual(null);
+            var val = exprManager.calcExpr("Field0", "SubTable", {
+                "Table": -1,
+                "Table.SubTable": -1
+            });
+            expect(val.errorMsg).toEqual("属性不存在: Field0");
         }
     })());
 });

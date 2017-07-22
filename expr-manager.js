@@ -3637,10 +3637,15 @@ var ExprContext = (function (_super) {
                 var parentObj = void 0;
                 if (source === null) {
                     entity = this.genEntityInfo(this.getPropertyName(this.exprCurrent.getEntityName(pIndex), name));
-                    value = (entity.field !== "" || name === "") ?
-                        this.getEntityData(entity.name, pIndex) :
-                        this.getEntityData(this.getParentName(entity.name), pIndex);
-                    parentObj = null;
+                    if (!entity) {
+                        r = this.genErrorValue(format(locale.getLocale().MSG_EC_PROP_N, name));
+                    }
+                    else {
+                        value = (entity.field !== "" || name === "") ?
+                            this.getEntityData(entity.name, pIndex) :
+                            this.getEntityData(this.getParentName(entity.name), pIndex);
+                        parentObj = null;
+                    }
                 }
                 else {
                     value = source.toValue();
@@ -3821,37 +3826,29 @@ var ExprContext = (function (_super) {
     ExprContext.prototype.getParentValue = function (source) {
         var r;
         if (this.exprCurrent.isEntityData()) {
-            var entity = void 0;
+            var entityName = void 0;
             if (source === null) {
-                entity = this.exprCurrent.getEntityName();
+                entityName = this.exprCurrent.getEntityName();
             }
             else if (source.entity && source.entity.field === "") {
                 if (source.parentObj && this.getParentName(source.entity.fullName)) {
                     r = source.parentObj;
                 }
                 else {
-                    entity = source.entity.fullName;
+                    entityName = source.entity.fullName;
                 }
             }
             else {
                 r = this.genErrorValue(format(locale.getLocale().MSG_EC_FUNC_E, "Parent"));
             }
-            if (!r) {
-                entity = this.genEntityInfo(this.getParentName(entity), "object");
-                if (entity.name) {
-                    entity.recNo = this.exprCurrent.getEntityDataCursor(entity.name);
-                    var value = this.getEntityData(entity.name);
-                    r = this.genValue(value, undefined, entity);
-                }
-                else {
-                    r = this.genErrorValue(format(locale.getLocale().MSG_EC_FUNC_R, "Parent"));
-                }
+            if (!r && entityName) {
+                var entity = this.genEntityInfo(this.getParentName(entityName), "object");
+                entity.recNo = this.exprCurrent.getEntityDataCursor(entity.name);
+                var value = this.getEntityData(entity.name);
+                r = this.genValue(value, undefined, entity);
             }
         }
-        else {
-            r = this.genValue(null);
-        }
-        return r;
+        return r ? r : this.genValue(null);
     };
     // 获取实体数据，根据游标索引
     ExprContext.prototype.getEntityData = function (entityName, index) {
@@ -3875,15 +3872,8 @@ var ExprContext = (function (_super) {
     // 获取父名称
     ExprContext.prototype.getParentName = function (name) {
         var p = name.split(".");
-        var r;
-        if (p.length > 0) {
-            p.pop();
-            r = p.join(".");
-        }
-        else {
-            r = "";
-        }
-        return r;
+        p.pop();
+        return p.join(".");
     };
     // 获取实体属性全名称
     ExprContext.prototype.getPropertyName = function (name, prop) {
