@@ -3772,8 +3772,8 @@ var ExprContext = (function (_super) {
             var p = fullName.split(".");
             var x = p[0];
             var c = this.dataContext;
-            var t = c[x];
-            if (t) {
+            if (c && x && c[x]) {
+                var t = c[x];
                 name.push(x);
                 for (var i = 1; i < p.length; i++) {
                     x = p[i];

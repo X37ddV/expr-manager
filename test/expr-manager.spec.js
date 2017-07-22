@@ -302,4 +302,14 @@ describe("接口测试", function() {
             expect(val.errorMsg).toEqual("属性不存在: Field0");
         }
     })());
+
+    it("空数据计算", (function() {
+        return function() {
+            exprManager.init({}, {
+                E1: {}
+            });
+            var val = exprManager.calcExpr("E1", "", {});
+            expect(val.toValue()).toEqual(null);
+        }
+    })());
 });

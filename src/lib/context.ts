@@ -358,8 +358,8 @@ export default class ExprContext extends Context {
             const p = fullName.split(".");
             let x = p[0]; /// "E1"
             const c = this.dataContext;
-            let t = c[x]; /// dataContext["E1"]
-            if (t) {
+            if (c && x && c[x]) {
+                let t = c[x]; /// dataContext["E1"]
                 name.push(x);
                 for (let i = 1; i < p.length; i++) {
                     x = p[i];
