@@ -335,6 +335,15 @@ describe("接口测试", function() {
         }
     })());
 
+    it("表达式列表", (function() {
+        return function() {
+            var list = exprManager.getExpressionList("load", "");
+            expect(list.length).toEqual(0);
+            list = exprManager.resetExpression().getExpressionList("load", "");
+            expect(list.length).toEqual(0);
+        }
+    })());
+
     it("空数据计算", (function() {
         return function() {
             exprManager.init({}, {

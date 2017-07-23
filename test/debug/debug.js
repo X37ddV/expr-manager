@@ -24,4 +24,6 @@ var v = exprManager.calc("EmptyNumber.Test1([], {})", {
     UndefinedValue: undefined,
 });
 
+var a = exprManager.getExpressionList("load", "")
+
 console.log(v.errorMsg ? v.errorMsg : JSON.stringify(v.toValue()));
