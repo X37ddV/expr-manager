@@ -2239,7 +2239,7 @@ var Parser = (function () {
         // - 处理 , 逗号
         p = this.doParser_5(p);
         if (p.length > 1) {
-            this.errorMsg = "语法解析错误";
+            this.errorMsg = locale.getLocale().MSG_EP_PARSER;
         }
         return p[0];
     };

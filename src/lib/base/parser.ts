@@ -166,7 +166,7 @@ export default class Parser {
         // - 处理 , 逗号
         p = this.doParser_5(p);
         if (p.length > 1) { /// Token数组未能收拢为一棵树，解析出错
-            this.errorMsg = "语法解析错误";
+            this.errorMsg = locale.getLocale().MSG_EP_PARSER;
         }
         return p[0];
     }

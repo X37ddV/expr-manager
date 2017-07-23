@@ -30,6 +30,7 @@ ExprManager.locale.defineLocale(ExprManager.locale.localeName, {
     MSG_EP_LEXICAL_E: "{0} 无法作为表达式的结尾",
     MSG_EP_LEXICAL_L: "{0} 后不允许出现 {1}",
     MSG_EP_MATCH: "{0} 不匹配",
+    MSG_EP_PARSER: "语法解析错误",
     MSG_EP_SYNTAX_A: "数组中不允许使用 {0} 操作符",
     MSG_EP_SYNTAX_C: "{0} 操作符必须存在于{}、[]、()中",
     MSG_EP_SYNTAX_D: "{0} 无法做属性访问操作",

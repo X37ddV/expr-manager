@@ -4465,7 +4465,7 @@ Decimal = Decimal &amp;&amp; <span class="hljs-string">'default'</span> <span cl
             
             <div class="content"><div class='highlight'><pre>        p = <span class="hljs-keyword">this</span>.doParser_5(p);
         <span class="hljs-keyword">if</span> (p.length &gt; <span class="hljs-number">1</span>) {
-            <span class="hljs-keyword">this</span>.errorMsg = <span class="hljs-string">"语法解析错误"</span>;
+            <span class="hljs-keyword">this</span>.errorMsg = locale.getLocale().MSG_EP_PARSER;
         }
         <span class="hljs-keyword">return</span> p[<span class="hljs-number">0</span>];
     };</pre></div></div>

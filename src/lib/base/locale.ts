@@ -23,6 +23,7 @@ interface ILocaleConfig {
     MSG_EP_LEXICAL_E: string;
     MSG_EP_LEXICAL_L: string;
     MSG_EP_MATCH: string;
+    MSG_EP_PARSER: string;
     MSG_EP_SYNTAX_A: string;
     MSG_EP_SYNTAX_C: string;
     MSG_EP_SYNTAX_D: string;

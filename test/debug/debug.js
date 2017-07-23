@@ -14,8 +14,7 @@ exprManager.regFunction({
     }
 });
 
-//var v = exprManager.calc("Test([], {})", {
-var v = exprManager.calc("EmptyNumber.Test1([], {})", {
+var v = exprManager.calc("Test([], {})", {
     EmptyString: "",
     EmptyNumber: 0,
     EmptyArray: [],
@@ -23,7 +22,5 @@ var v = exprManager.calc("EmptyNumber.Test1([], {})", {
     NullValue: null,
     UndefinedValue: undefined,
 });
-
-var a = exprManager.getExpressionList("load", "")
 
 console.log(v.errorMsg ? v.errorMsg : JSON.stringify(v.toValue()));

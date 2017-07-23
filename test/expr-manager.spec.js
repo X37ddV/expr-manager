@@ -183,6 +183,8 @@ describe("接口测试", function() {
             expect(expr).toEqual(exprManager);
             expr = exprManager.removeExpression("1", "", "", ["add"], doCalc, null);
             expect(expr).toEqual(exprManager);
+            expr = exprManager.addExpression("2", "", "", ["add"], doCalc, null);
+            expect(expr).toEqual(exprManager);
 
             expr = exprManager.addExpression(
                 "Field1 + ' ' + SubTable[0].Field1",
