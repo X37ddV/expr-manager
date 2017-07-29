@@ -111,6 +111,12 @@ function exprSuggestGetExpr(line: string, pos: number): string {
     } else {
         t = "";
     }
+    if (t) {
+        const prevIndex = pos - t.length - 1;
+        if (line[prevIndex] === ".") {
+            t = exprSuggestGetExpr(line, prevIndex) + "." + t;
+        }
+    }
     return t;
 }
 

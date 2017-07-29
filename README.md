@@ -121,23 +121,23 @@ if (!errorMsg) {
     exprManager.calcExpression("load", {
         entityName: "Table"
     });
-    // => "load"
+    // doCalc => "load"
 
     exprManager.calcExpression("add", {
         entityName: "Table"
     });
-    // => "add"
+    // doCalc => "add"
     
     exprManager.calcExpression("update", {
         entityName: "Table",
         propertyName: "Field1"
     });
-    // => "update"
+    // doCalc => "update"
 
     exprManager.calcExpression("remove", {
         entityName: "Table.SubTable"
     });
-    // => "remove"
+    // doCalc => "remove"
 } else {
     console.log(errorMsg)
 }

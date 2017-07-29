@@ -524,6 +524,12 @@ function exprSuggestGetExpr(line, pos) {
     else {
         t = "";
     }
+    if (t) {
+        var prevIndex = pos - t.length - 1;
+        if (line[prevIndex] === ".") {
+            t = exprSuggestGetExpr(line, prevIndex) + "." + t;
+        }
+    }
     return t;
 }
 function exprSuggestInString(line, pos) {
