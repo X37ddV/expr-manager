@@ -3,10 +3,13 @@
 [![NPM version][npm-version-image]][npm-url] [![NPM downloads][npm-downloads-image]][npm-url] [![MIT License][license-image]][license-url] [![Travis Status][travis-image]][travis-url] [![Appveyor status][appveyor-image]][appveyor-url] [![Circleci status][circleci-image]][circleci-url] [![Coverage Status][coverage-image]][coverage-url]
 
 ## Installation
-	npm install expr-manager
+
+    npm install expr-manager
 
 ## Usage
+
 ### Simple calculation
+
 ```javascript
 var exprManager = new ExprManager();
 
@@ -35,7 +38,9 @@ v = exprManager.calc(expr);
 console.log(v.toValue());
 // => "123"
 ```
+
 ### Advanced calculation
+
 ```javascript
 var dataContext = {
     "Table": {
@@ -101,7 +106,9 @@ var t = exprManager.calcDependencies(expr, tableName);
 console.log(t.dependencies);
 // => ["Table.Field1", "Table.SubTable", "Table.SubTable.Field1"]
 ```
+
 ### Advanced dependent calculation
+
 ```javascript
 exprManager.resetExpression();
 
@@ -127,7 +134,7 @@ if (!errorMsg) {
         entityName: "Table"
     });
     // doCalc => "add"
-    
+
     exprManager.calcExpression("update", {
         entityName: "Table",
         propertyName: "Field1"
@@ -144,6 +151,7 @@ if (!errorMsg) {
 ```
 
 ## Value type
+
 | Type        | Value                                     |
 | ----------- | ----------------------------------------- |
 | string      | "value1" 'value2'                         |
@@ -155,6 +163,7 @@ if (!errorMsg) {
 | null        | null                                      |
 
 ## Operator precedence
+
 | Operator        | Description                                                        |
 | --------------- | ------------------------------------------------------------------ |
 | . \[\] \(\) {}  | Member access, array, grouping, object                             |
@@ -169,6 +178,7 @@ if (!errorMsg) {
 | ,               | Multiple evaluation                                                |
 
 ## System functions
+
 | Owner   | Functions                                                                   |
 | ------- | --------------------------------------------------------------------------- |
 |         | FieldDisplayName FieldName FieldValue IIf IfNull Now Parent PropValue Random RecNo Root |
@@ -180,10 +190,12 @@ if (!errorMsg) {
 | string  | LeftString Length Lower Pos Replace ReplaceReg RightString SubString ToDate ToNumber ToString Trim TrimLeft TrimRight Upper |
 
 ## Example
+
     npm install
     npm start
     open example/index.html
-![](docs/preview.gif)
+
+![preview](docs/preview.gif)
 
 ## License
 
