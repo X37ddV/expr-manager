@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>usage.of.expr-manager.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="../../docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="../../expr-manager.html">
+                  expr-manager.js
+                </a>
+              
+                
+                <a class="source" href="usage.of.expr-manager.html">
+                  test/debug/usage.of.expr-manager.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>usage.of.expr-manager.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <h2 id="-">开始</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>引用expr-manager.js<br/>创建ExprManager对象</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> ExprManager = <span class="hljs-built_in">require</span>(<span class="hljs-string">"../../expr-manager.js"</span>);
+<span class="hljs-keyword">var</span> locale = <span class="hljs-built_in">require</span>(<span class="hljs-string">"../../locale/zh-cn.js"</span>);
+<span class="hljs-keyword">var</span> exprManager = <span class="hljs-keyword">new</span> ExprManager();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h2 id="-">简单计算</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>高精度浮点运算</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> expr = <span class="hljs-string">"0.1 + 0.2"</span>;
+<span class="hljs-keyword">var</span> v = exprManager.calc(expr);
+<span class="hljs-built_in">console</span>.log(v.toValue()); <span class="hljs-comment">// =&gt; 0.3</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>处理计算错误</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>expr = <span class="hljs-string">"1 / 0"</span>;
+v = exprManager.calc(expr);
+<span class="hljs-keyword">if</span> (!v.errorMsg) {
+    <span class="hljs-built_in">console</span>.log(v.toValue());
+} <span class="hljs-keyword">else</span> {
+    <span class="hljs-built_in">console</span>.log(v.errorMsg); <span class="hljs-comment">// =&gt; 0 不能作为除数使用</span>
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>简单数据计算</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> calcData = {<span class="hljs-attr">v1</span>: <span class="hljs-string">"hello"</span>, <span class="hljs-attr">v2</span>: <span class="hljs-string">"world"</span>};
+expr = <span class="hljs-string">"v1 + ' ' + v2 + '!'"</span>;
+v = exprManager.calc(expr, calcData);
+<span class="hljs-built_in">console</span>.log(v.toValue()); <span class="hljs-comment">// =&gt; "hello world!"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>表达式函数</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>expr = <span class="hljs-string">"IIf(1 &gt; 2, 'a', 'b')"</span>;
+v = exprManager.calc(expr);
+<span class="hljs-built_in">console</span>.log(v.toValue()); <span class="hljs-comment">// =&gt; "b"</span>
+expr = <span class="hljs-string">"123.ToRMB()"</span>;
+v = exprManager.calc(expr);
+<span class="hljs-built_in">console</span>.log(v.toValue()); <span class="hljs-comment">// =&gt; "壹佰贰拾叁元整"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h2 id="-">高级计算</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>准备数据</p>
+<ul>
+<li>数据结构 - dataContext - 主细表结构定义</li>
+<li>数据内容 - data</li>
+<li>全局变量 - context</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> dataContext = {
+    <span class="hljs-string">"Table"</span>: {
+        <span class="hljs-attr">fields</span>: {
+            <span class="hljs-string">"Field0"</span>: { <span class="hljs-attr">type</span>: <span class="hljs-string">"number"</span>, <span class="hljs-attr">primaryKey</span>: <span class="hljs-literal">true</span> },
+            <span class="hljs-string">"Field1"</span>: { <span class="hljs-attr">type</span>: <span class="hljs-string">"string"</span> },
+            <span class="hljs-string">"Field2"</span>: { <span class="hljs-attr">type</span>: <span class="hljs-string">"object"</span> },
+            <span class="hljs-string">"Field3"</span>: { <span class="hljs-attr">type</span>: <span class="hljs-string">"array"</span> },
+            <span class="hljs-string">"Field4"</span>: { <span class="hljs-attr">type</span>: <span class="hljs-string">"date"</span> },
+            <span class="hljs-string">"Field5"</span>: { <span class="hljs-attr">type</span>: <span class="hljs-string">"boolean"</span> },
+            <span class="hljs-string">"CalcField0"</span>: { <span class="hljs-attr">type</span>: <span class="hljs-string">"string"</span> },
+            <span class="hljs-string">"CalcField1"</span>: { <span class="hljs-attr">type</span>: <span class="hljs-string">"string"</span> }
+        },
+        <span class="hljs-attr">childs</span>: {
+            <span class="hljs-string">"SubTable"</span>: {
+                <span class="hljs-attr">fields</span>: {
+                    <span class="hljs-string">"Field0"</span>: { <span class="hljs-attr">type</span>: <span class="hljs-string">"number"</span>, <span class="hljs-attr">primaryKey</span>: <span class="hljs-literal">true</span> },
+                    <span class="hljs-string">"Field1"</span>: { <span class="hljs-attr">type</span>: <span class="hljs-string">"string"</span> },
+                    <span class="hljs-string">"Field2"</span>: { <span class="hljs-attr">type</span>: <span class="hljs-string">"object"</span> },
+                    <span class="hljs-string">"Field3"</span>: { <span class="hljs-attr">type</span>: <span class="hljs-string">"array"</span> },
+                    <span class="hljs-string">"Field4"</span>: { <span class="hljs-attr">type</span>: <span class="hljs-string">"date"</span> },
+                    <span class="hljs-string">"Field5"</span>: { <span class="hljs-attr">type</span>: <span class="hljs-string">"boolean"</span> }
+                }
+            }
+        }
+    }
+};
+<span class="hljs-keyword">var</span> data = {
+    <span class="hljs-attr">Table</span>: [{
+        <span class="hljs-attr">Field0</span>: <span class="hljs-number">0</span>,
+        <span class="hljs-attr">Field1</span>: <span class="hljs-string">"Hello"</span>,
+        <span class="hljs-attr">Field2</span>: {<span class="hljs-attr">key</span>: <span class="hljs-string">"i"</span>, <span class="hljs-attr">value</span>: <span class="hljs-number">0</span>},
+        <span class="hljs-attr">Field3</span>: [<span class="hljs-number">0</span>, <span class="hljs-number">1</span>],
+        <span class="hljs-attr">Field4</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(),
+        <span class="hljs-attr">Field5</span>: <span class="hljs-literal">false</span>,
+        <span class="hljs-attr">SubTable</span>: [{
+            <span class="hljs-attr">Field0</span>: <span class="hljs-number">0</span>,
+            <span class="hljs-attr">Field1</span>: <span class="hljs-string">"Wrold"</span>,
+            <span class="hljs-attr">Field2</span>: {<span class="hljs-attr">key</span>: <span class="hljs-string">"j"</span>, <span class="hljs-attr">value</span>: <span class="hljs-number">10</span>},
+            <span class="hljs-attr">Field3</span>: [<span class="hljs-number">2</span>, <span class="hljs-number">3</span>],
+            <span class="hljs-attr">Field4</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(),
+            <span class="hljs-attr">Field5</span>: <span class="hljs-literal">true</span>
+        }]
+    }]
+};
+<span class="hljs-keyword">var</span> context = {
+    <span class="hljs-attr">Field0</span>: <span class="hljs-string">"!"</span>
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>初始化计算环境</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>exprManager.init(data, dataContext, context);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>主细表结构计算</p>
+<ul>
+<li>tableName - 当前表名称</li>
+<li>dataCursor - 各表当前游标</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> tableName = <span class="hljs-string">"Table"</span>;
+<span class="hljs-keyword">var</span> dataCursor = {
+    <span class="hljs-string">"Table"</span>: <span class="hljs-number">0</span>,
+    <span class="hljs-string">"Table.SubTable"</span>: <span class="hljs-number">0</span>
+};
+expr = <span class="hljs-string">"Field1 + ' ' + SubTable[0].Field1 + $C.Field0"</span>;
+v = exprManager.calcExpr(expr, tableName, dataCursor);
+<span class="hljs-built_in">console</span>.log(v.toValue()); <span class="hljs-comment">// =&gt; "Hello World!"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>表达式依赖关系</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> t = exprManager.calcDependencies(expr, tableName);
+<span class="hljs-built_in">console</span>.log(t.dependencies); <span class="hljs-comment">// =&gt; ["Table.Field1", "Table.SubTable", "Table.SubTable.Field1"]</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <h2 id="-">高级依赖计算</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>复位表达式列表</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>exprManager.resetExpression();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>计算回调函数</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> doCalc = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">type, info</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(type);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>添加具有依赖关系的表达式</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>exprManager.addExpression(<span class="hljs-string">"Field1 + ' ' + SubTable[0].Field1"</span>,
+    <span class="hljs-string">"Table"</span>, <span class="hljs-string">"CalcField0"</span>, [<span class="hljs-string">"load"</span>, <span class="hljs-string">"add"</span>, <span class="hljs-string">"update"</span>, <span class="hljs-string">"remove"</span>],
+    doCalc, <span class="hljs-literal">null</span>);
+exprManager.addExpression(<span class="hljs-string">"CalcField0 + SubTable.Count().ToString()"</span>,
+    <span class="hljs-string">"Table"</span>, <span class="hljs-string">"CalcField1"</span>, [<span class="hljs-string">"load"</span>, <span class="hljs-string">"add"</span>, <span class="hljs-string">"update"</span>, <span class="hljs-string">"remove"</span>],
+    doCalc, <span class="hljs-literal">null</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>表达式列表校验</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> errorMsg = exprManager.checkAndSort();
+<span class="hljs-keyword">if</span> (!errorMsg) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>触发加载数据计算</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    exprManager.calcExpression(<span class="hljs-string">"load"</span>, {
+        <span class="hljs-attr">entityName</span>: <span class="hljs-string">"Table"</span>
+    }); <span class="hljs-comment">// doCalc =&gt; "load"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>触发添加记录计算</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    exprManager.calcExpression(<span class="hljs-string">"add"</span>, {
+        <span class="hljs-attr">entityName</span>: <span class="hljs-string">"Table"</span>
+    }); <span class="hljs-comment">// doCalc =&gt; "add"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>触发更新记录计算</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    exprManager.calcExpression(<span class="hljs-string">"update"</span>, {
+        <span class="hljs-attr">entityName</span>: <span class="hljs-string">"Table"</span>,
+        <span class="hljs-attr">propertyName</span>: <span class="hljs-string">"Field1"</span>
+    }); <span class="hljs-comment">// doCalc =&gt; "update"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>触发删除记录计算</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    exprManager.calcExpression(<span class="hljs-string">"remove"</span>, {
+        <span class="hljs-attr">entityName</span>: <span class="hljs-string">"Table.SubTable"</span>
+    }); <span class="hljs-comment">// doCalc =&gt; "remove"</span>
+} <span class="hljs-keyword">else</span> {
+    <span class="hljs-built_in">console</span>.log(errorMsg)
+}</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

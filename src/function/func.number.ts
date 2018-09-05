@@ -120,8 +120,8 @@ const funcNumberToRMB = {
     fn: (context: ExprContext, source, rmb, big) => {
         const conversion = (num, isRMB, isBig) => {
             const cn = (isBig ? "零壹贰叁肆伍陆柒捌玖" : "零一二三四五六七八九").split("");
-            const cq = (isBig ? "拾佰仟" : "十百千").split(""); cq.unshift("");
-            const cw = "万亿兆".split(""); cw.unshift("");
+            const cq = [""].concat((isBig ? "拾佰仟" : "十百千").split(""));
+            const cw = [""].concat("万亿兆".split(""));
             const cd = isRMB ? "元" : "点";
             const cl = "角分厘".split("");
             const cz = isRMB ? "整" : "";

@@ -9,7 +9,7 @@ describe("表达式测试", function() {
             var exprExpectedValueError = demo.exprs[j][2] || ""; // 预期值错误
             var itTitle = "[" + i + "-" + j + "]:" + demo.title + ":" + expr;
             it("Value" + itTitle, (function(expr, exprData, exprExpectedValue, exprExpectedValueError) {
-                return function() {
+                return function(done) {
                     var val = exprManager.calc(expr, exprData || {});
                     var exprActualValue = window.JSON.stringify(val.toValue());
                     var exprActualValueError = val.errorMsg;
@@ -18,6 +18,7 @@ describe("表达式测试", function() {
                     } else {
                         expect(exprActualValue).toEqual(exprExpectedValue);
                     }
+                    done();
                 }
             })(expr, demo.exprData, exprExpectedValue, exprExpectedValueError));
         }
@@ -34,7 +35,7 @@ describe("表达式测试", function() {
             var exprExpectedDepenError = demo.exprs[j][4] || exprExpectedValueError; // 预期依赖错误
             var itTitle = "[" + i + "-" + j + "]:" + demo.title + ":" + expr;
             it("Value" + itTitle, (function(expr, entityName, exprExpectedValue, exprExpectedValueError) {
-                return function() {
+                return function(done) {
                     var val = exprManager.calcExpr(expr, entityName || "E1", window.dataCursor, {
                         FieldDisplayName: "",
                         FieldName: "",
@@ -47,10 +48,11 @@ describe("表达式测试", function() {
                     } else {
                         expect(exprActualValue).toEqual(exprExpectedValue);
                     }
+                    done();
                 }
             })(expr, demo.entityName, exprExpectedValue, exprExpectedValueError));
             it("Depen" + itTitle, (function(expr, entityName, exprExpectedDepen, exprExpectedDepenError) {
-                return function() {
+                return function(done) {
                     var valType = exprManager.calcDependencies(expr, entityName || "E1");
                     var exprActualDepen = (valType.dependencies && valType.dependencies.join("|")) || "";
                     var exprActualDepenError = valType.errorMsg;
@@ -59,6 +61,7 @@ describe("表达式测试", function() {
                     } else {
                         expect(exprActualDepen).toEqual(exprExpectedDepen);
                     }
+                    done();
                 }
             })(expr, demo.entityName, exprExpectedDepen, exprExpectedDepenError));
         }
@@ -91,15 +94,17 @@ describe("依赖关系测试", function() {
                     pList.push(list[p].fullName);
                 }
                 it(demoDepend.title, (function(pList, c) {
-                    return function() {
+                    return function(done) {
                         expect(pList.join("|")).toEqual(c.r);
+                        done();
                     }
                 })(pList, c));
             }
         } else {
             it(demoDepend.title, (function(msg) {
-                return function() {
+                return function(done) {
                     expect(msg).toEqual("");
+                    done();
                 }
             })(msg));
         }
@@ -155,12 +160,10 @@ describe("接口测试", function() {
         }
     };
 
-    // 初始化ExprManager
-    var exprManager = new window.ExprManager();
-    exprManager.init(data, dataContext);
-
-    it("表达式列表", (function(exprManager) {
-        return function() {
+    it("表达式列表", (function() {
+        return function(done) {
+            var exprManager = new window.ExprManager();
+            exprManager.init(data, dataContext);
             var doCalc = function(type, info) {
 
             };
@@ -258,11 +261,14 @@ describe("接口测试", function() {
             expect(expr).toEqual(exprManager);
             var err = exprManager.checkAndSort();
             expect(err).toEqual("作用于实体\“Table\”上的表达式\“''+0\”解析出错：string 和 number 无法做加法运算");
+            done();
         }
-    })(exprManager));
+    })());
 
-    it("自定义函数", (function(exprManager) {
-        return function() {
+    it("自定义函数", (function() {
+        return function(done) {
+            var exprManager = new window.ExprManager();
+            exprManager.init(data, dataContext);
             exprManager.regFunction({
                 "": {
                     Test: {
@@ -303,21 +309,27 @@ describe("接口测试", function() {
                     expect(funcs[j].getLocale()).toBeDefined();
                 }
             }
+            done();
         }
-    })(exprManager));
+    })());
 
     it("多语言定义", (function() {
-        return function() {
+        return function(done) {
+            var exprManager = new window.ExprManager();
+            exprManager.init(data, dataContext);
             ExprManager.locale.defineLocale('zh-TW', null);
             ExprManager.locale.defineFunction('zh-TW', null);
             expect(ExprManager.locale.getLocale('zh-TW')).toBeUndefined();
             expect(ExprManager.locale.getFunction('zh-TW')).toBeUndefined();
             expect(ExprManager.locale.getFunction()).toBeDefined();
+            done();
         }
     })());
 
     it("简单计算", (function() {
-        return function() {
+        return function(done) {
+            var exprManager = new window.ExprManager();
+            exprManager.init(data, dataContext);
             var v = exprManager.calc("1+1");
             expect(v.toValue()).toEqual(2);
             v = exprManager.calc("[null, 1].Distinct('a')");
@@ -334,20 +346,25 @@ describe("接口测试", function() {
                 "Table.SubTable": -1
             });
             expect(v.errorMsg).toEqual("属性不存在: Field0");
+            done();
         }
     })());
 
     it("表达式列表", (function() {
-        return function() {
+        return function(done) {
+            var exprManager = new window.ExprManager();
+            exprManager.init(data, dataContext);
             var list = exprManager.getExpressionList("load", "");
             expect(list.length).toEqual(0);
             list = exprManager.resetExpression().getExpressionList("load", "");
             expect(list.length).toEqual(0);
+            done();
         }
     })());
 
     it("空数据计算", (function() {
-        return function() {
+        return function(done) {
+            var exprManager = new window.ExprManager();
             exprManager.init({}, {
                 E1: {}
             });
@@ -357,6 +374,7 @@ describe("接口测试", function() {
             expect(v.toValue()).toEqual(null);
             v = exprManager.calcExpr("E1");
             expect(v.toValue()).toEqual(null);
+            done();
         }
     })());
 });

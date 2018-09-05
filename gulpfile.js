@@ -1,19 +1,19 @@
-var fs = require('fs'),
-    path = require('path'),
+var fs = require("fs"),
+    path = require("path"),
     gulp = require("gulp"),
     gulpTSLint = require("gulp-tslint"),
     rollup = require("rollup"),
     rollupJson = require("rollup-plugin-json"),
     rollupSass = require("rollup-plugin-sass"),
     rollupString = require("rollup-plugin-string"),
-    rollupUglify = require("rollup-plugin-uglify"),
+    rollupUglify = require("rollup-plugin-uglify").uglify,
     rollupTypescript = require("rollup-plugin-typescript"),
-    jasmine = require('jasmine'),
+    jasmine = require("jasmine"),
     karma = require("karma"),
     docco = require("docco"),
     exprManager = require("./expr-manager");
 var rootPath = __dirname;
-var version = JSON.parse(fs.readFileSync(path.join(rootPath, 'package.json'))).version || '';
+var version = JSON.parse(fs.readFileSync(path.join(rootPath, "package.json"))).version || "";
 var rollupBanner =
     "//     expr-manager.js " + version + "\n" +
     "//     https://github.com/X37ddV/expr-manager\n" +
@@ -116,7 +116,7 @@ gulp.task("lint:example", () =>
 
 gulp.task("build:expr-manager", function() {
     return rollup.rollup({
-        entry: path.join(rootPath, "src", "expr-manager.ts"),
+        input: path.join(rootPath, "src", "expr-manager.ts"),
         plugins: [
             rollupJson(),
             rollupTypescript(typescriptConfig),
@@ -126,8 +126,8 @@ gulp.task("build:expr-manager", function() {
     }).then(function(bundle) {
         bundle.write({
             format: "umd",
-            moduleName: "ExprManager",
-            dest: path.join(rootPath, "expr-manager.js"),
+            name: "ExprManager",
+            file: path.join(rootPath, "expr-manager.js"),
             globals: {
                 "decimal.js": "Decimal",
                 "moment": "moment",
@@ -141,7 +141,7 @@ gulp.task("build:expr-manager", function() {
 
 gulp.task("build:expr-manager:min", function() {
     return rollup.rollup({
-        entry: path.join(rootPath, "src", "expr-manager.ts"),
+        input: path.join(rootPath, "src", "expr-manager.ts"),
         plugins: [
             rollupJson(),
             rollupTypescript(typescriptConfig),
@@ -151,8 +151,8 @@ gulp.task("build:expr-manager:min", function() {
     }).then(function(bundle) {
         bundle.write({
             format: "umd",
-            moduleName: "ExprManager",
-            dest: path.join(rootPath, "expr-manager.min.js"),
+            name: "ExprManager",
+            file: path.join(rootPath, "expr-manager.min.js"),
             globals: {
                 "decimal.js": "Decimal",
                 "moment": "moment",
@@ -163,7 +163,7 @@ gulp.task("build:expr-manager:min", function() {
 
 gulp.task("build:expr-manager:locale", function() {
     return rollup.rollup({
-        entry: path.join(rootPath, "src", "locale/zh-cn.ts"),
+        input: path.join(rootPath, "src", "locale/zh-cn.ts"),
         plugins: [
             rollupJson(),
             rollupTypescript(typescriptConfig),
@@ -175,8 +175,8 @@ gulp.task("build:expr-manager:locale", function() {
     }).then(function(bundle) {
         bundle.write({
             format: "umd",
-            moduleName: "ExprManager.locale",
-            dest: path.join(rootPath, "locale", "zh-cn.js"),
+            name: "ExprManager.locale",
+            file: path.join(rootPath, "locale", "zh-cn.js"),
             globals: {
                 "expr-manager": "ExprManager"
             }
@@ -186,7 +186,7 @@ gulp.task("build:expr-manager:locale", function() {
 
 gulp.task("build:example", function() {
     return rollup.rollup({
-        entry: path.join(rootPath, "example", "src", "app.ts"),
+        input: path.join(rootPath, "example", "src", "app.ts"),
         plugins: [
             rollupString({
                 include: "**/*.tpl"
@@ -201,7 +201,7 @@ gulp.task("build:example", function() {
     }).then(function(bundle) {
         bundle.write({
             format: "umd",
-            dest: path.join(rootPath, "example", "example.js"),
+            file: path.join(rootPath, "example", "example.js"),
             globals: {
                 "jquery": "jQuery",
                 "underscore": "_",
@@ -215,7 +215,7 @@ gulp.task("build:example", function() {
     })
 });
 
-gulp.task("build:docs", function() {
+gulp.task("build:docs", function(done) {
     docco.document({
         args: ["expr-manager.js", "test/debug/usage.of.expr-manager.js"],
         layout: "parallel",
@@ -225,10 +225,12 @@ gulp.task("build:docs", function() {
         extension: null,
         languages: {},
         marked: null
+    }, () => {
+        done();
     });
 });
 
-gulp.task("build:docs:readme", function() {
+gulp.task("build:docs:readme", function(done) {
     var groups = new exprManager().getFunction();
     var functions = [];
     var maxGroup = 7;
@@ -285,9 +287,10 @@ gulp.task("build:docs:readme", function() {
             sysFunc += genRow(functions[f].group, maxGroup, functions[f].funcs.join(" "), maxFunctions);
         }
     }
-    var readme = fs.readFileSync(path.join(rootPath, 'README.md')).toString();
-    readme = readme.replace(/##\sSystem\sfunctions[^#]*/g, "## System functions\n" + sysFunc + "\n");
+    var readme = fs.readFileSync(path.join(rootPath, "README.md")).toString();
+    readme = readme.replace(/##\sSystem\sfunctions[^#]*/g, "## System functions\n\n" + sysFunc + "\n");
     fs.writeFileSync(path.join(rootPath, 'README.md'), readme);
+    done();
 });
 
 gulp.task("test:phantomjs", function(done) {
@@ -306,7 +309,7 @@ gulp.task("test:all", function(done) {
     karmaStart(done, ["Safari", "Chrome", "PhantomJS"]);
 });
 
-gulp.task("default", ["lint:expr-manager", "lint:example", "build:expr-manager", "build:expr-manager:min", "build:expr-manager:locale", "build:example", "build:docs", "build:docs:readme", "test:phantomjs"]);
-gulp.task("travis", ["lint:expr-manager", "lint:example", "test:phantomjs"]);
-gulp.task("appveyor", ["lint:expr-manager", "lint:example", "test:phantomjs"]);
-gulp.task("circle", ["lint:expr-manager", "lint:example", "test:phantomjs"]);
+gulp.task("default", gulp.series(["lint:expr-manager", "lint:example", "build:expr-manager", "build:expr-manager:min", "build:expr-manager:locale", "build:example", "build:docs", "build:docs:readme", "test:phantomjs"]));
+gulp.task("travis", gulp.series(["lint:expr-manager", "lint:example", "test:phantomjs"]));
+gulp.task("appveyor", gulp.series(["lint:expr-manager", "lint:example", "test:phantomjs"]));
+gulp.task("circle", gulp.series(["lint:expr-manager", "lint:example", "test:phantomjs"]));
